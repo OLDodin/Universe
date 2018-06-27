@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<WidgetButton>
+	<Priority>200</Priority>
+	<Name>ShopButton</Name>
+	<IgnoreDblClick>true</IgnoreDblClick>
+	<Placement>
+		<X>
+			<Align>WIDGET_ALIGN_HIGH</Align>
+			<Size>20</Size>
+			<HighPos>24</HighPos>
+		</X>
+		<Y>
+			<Align>WIDGET_ALIGN_LOW</Align>
+			<Size>20</Size>
+			<Pos>2</Pos>
+		</Y>
+	</Placement>
+	<TransparentInput>false</TransparentInput>
+	<Variants>
+		<Item>
+			<LayerHighlight href="Textures/ShopLight.xdb#xpointer(/WidgetLayerTiledTexture)" />
+			<PushedOffset x="-1" y="1" />
+			<StateNormal>
+				<LayerMain href="Textures/Shop.xdb#xpointer(/WidgetLayerTiledTexture)" />
+			</StateNormal>
+			<ReactionOnUp>true</ReactionOnUp>
+			<Reaction>OnShopChange</Reaction>
+			<ReactionRightClick>OnTestShop</ReactionRightClick>
+		</Item>
+	</Variants>
+</WidgetButton>

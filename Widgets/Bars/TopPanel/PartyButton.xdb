@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<WidgetButton>
+	<Priority>200</Priority>
+	<Name>PartyButton</Name>
+	<Children>
+	</Children>
+	<BackLayer href="Textures/PartyButton.xdb#xpointer(/WidgetLayerTiledTexture)" />
+	<Placement>
+		<X>
+			<Align>WIDGET_ALIGN_LOW</Align>
+			<Size>20</Size>
+			<Pos>97</Pos>
+		</X>
+		<Y>
+			<Align>WIDGET_ALIGN_LOW</Align>
+			<Size>20</Size>
+			<Pos>3</Pos>
+		</Y>
+	</Placement>
+	<TransparentInput>false</TransparentInput>
+	<Variants>
+		<Item>
+			<Reaction>OnRaidFilter</Reaction>
+		</Item>
+	</Variants>
+</WidgetButton>

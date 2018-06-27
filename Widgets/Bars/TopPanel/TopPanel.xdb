@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<WidgetPanel>
+	<Name>TopPanel</Name>
+	<Children>
+		<Item href="PartyButton.xdb#xpointer(/WidgetButton)"/>
+		<Item href="CheckButton.xdb#xpointer(/WidgetButton)"/>
+		<Item href="ShopButton.xdb#xpointer(/WidgetButton)"/>
+		<Item href="ConfigButton.xdb#xpointer(/WidgetButton)"/>
+	</Children>
+	<BackLayer href="Textures/TopPanel.xdb#xpointer(/WidgetLayerTiledTexture)" />
+	<Placement>
+		<X>
+			<Align>WIDGET_ALIGN_LOW</Align>
+			<Size>120</Size>
+			<Pos>0</Pos>
+		</X>
+		<Y>
+			<Align>WIDGET_ALIGN_LOW</Align>
+			<Size>26</Size>
+			<Pos>0</Pos>
+		</Y>
+	</Placement>
+	<IgnoreDblClick>true</IgnoreDblClick>
+	<reactionOnPointing>ShowTopPanel</reactionOnPointing>
+	<PickChildrenOnly>false</PickChildrenOnly>
+</WidgetPanel>

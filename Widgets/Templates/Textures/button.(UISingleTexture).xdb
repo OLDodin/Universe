@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<UISingleTexture>
+	<singleTexture href="button.(UITexture).xdb#xpointer(/UITexture)" />
+	<permanentCache>0</permanentCache>
+	<sourceFile href="button.tga" />
+	<sourceFileCRC>167333244</sourceFileCRC>
+</UISingleTexture>

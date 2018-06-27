@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<UITexture>
+	<mipSW>-1</mipSW>
+	<mipsNumber>1</mipsNumber>
+	<generateMipChain>false</generateMipChain>
+	<type>DXT5</type>
+	<width>64</width>
+	<height>64</height>
+	<realWidth>64</realWidth>
+	<realHeight>64</realHeight>
+	<disableLODControl>false</disableLODControl>
+	<alphaTex>true</alphaTex>
+	<binaryFileSize>138</binaryFileSize>
+	<binaryFile href="BarBack.(UITexture).bin" />
+	<binaryFileSize2>0</binaryFileSize2>
+	<binaryFile2 href="" />
+	<sourceFile href="BarBack.tga" />
+	<sourceFileCRC>1227433508</sourceFileCRC>
+	<wrap>false</wrap>
+	<LocalizationInfo />
+</UITexture>

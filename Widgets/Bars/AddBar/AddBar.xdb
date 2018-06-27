@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<WidgetButton>
+	<Priority>50</Priority>
+	<Name>AddBar</Name>
+	<Children>
+		<Item href="Background.xdb#xpointer(/WidgetPanel)"/>
+		<Item href="AddIcon.xdb#xpointer(/WidgetPanel)"/>
+	</Children>
+	<Variants>
+		<Item>
+			<Reaction>addClick</Reaction>
+			<ReactionRightClick>addClick</ReactionRightClick>
+		</Item>
+	</Variants>
+	<BackLayer href="Textures/Background.xdb#xpointer(/WidgetLayerTiledTexture)" />
+</WidgetButton>

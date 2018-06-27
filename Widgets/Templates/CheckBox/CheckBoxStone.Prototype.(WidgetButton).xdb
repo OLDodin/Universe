@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<WidgetButton>
+	<Header>
+		<isPrototype>true</isPrototype>
+	</Header>
+	<Priority>256</Priority>
+	<Placement>
+		<X>
+			<Size>25</Size>
+		</X>
+		<Y>
+			<Size>25</Size>
+		</Y>
+	</Placement>
+	<IgnoreDblClick>true</IgnoreDblClick>
+	<Variants>
+		<Item>
+			<TextFileRef href="ButtonExecute.txt" />
+			<LayerHighlight href="checkbox_light.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)" />
+			<StateNormal>
+				<LayerMain href="checkbox_active.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)" />
+				<FormatFileRef href="ButtonExecute.txt" />
+			</StateNormal>
+			<StatePushed>
+				<LayerMain href="checkbox.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)" />
+				<<FormatFileRef href="ButtonExecute.txt" />
+			</StatePushed>
+			<ReactionOnUp>true</ReactionOnUp>
+			<Reaction>execute</Reaction>
+		</Item>
+		<Item>
+			<TextFileRef href="ButtonExecute.txt" />
+			<LayerHighlight href="checkbox_light.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)" />
+			<StateNormal>
+				<LayerMain href="checkbox.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)" />
+				<FormatFileRef href="ButtonExecute.txt" />
+			</StateNormal>
+			<ReactionOnUp>true</ReactionOnUp>
+			<Reaction>execute</Reaction>
+		</Item>
+	</Variants>
+</WidgetButton>

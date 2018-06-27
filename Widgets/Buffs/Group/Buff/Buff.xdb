@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<WidgetPanel>
+	<Priority>130</Priority>
+	<Name>Buff</Name>
+	<Children>
+		<Item href="DotIcon.xdb#xpointer(/WidgetPanel)"/>
+		<Item href="DotText.xdb#xpointer(/WidgetTextView)"/>
+		<Item href="DotStackText.xdb#xpointer(/WidgetTextView)"/>
+	</Children>
+	<Placement>
+		<X>
+			<Size>128</Size>
+		</X>
+		<Y>
+			<Size>128</Size>
+			<Pos>29</Pos>
+		</Y>
+	</Placement>
+	<TransparentInput>true</TransparentInput>
+</WidgetPanel>

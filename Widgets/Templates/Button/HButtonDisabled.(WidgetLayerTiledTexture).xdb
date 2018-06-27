@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<WidgetLayerTiledTexture>
+	<Color>0xffffffff</Color>
+	<Grayed>false</Grayed>
+	<BlendEffect>BLEND_EFFECT_ALPHABLND</BlendEffect>
+	<flatPlacement>false</flatPlacement>
+	<lazyLoad>false</lazyLoad>
+	<textureItem href="HButtonDisabled.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
+	<Layout>
+		<LeftX>32</LeftX>
+		<MiddleX>64</MiddleX>
+		<RightX>32</RightX>
+		<TopY>30</TopY>
+		<MiddleY>0</MiddleY>
+		<BottomY>0</BottomY>
+	</Layout>
+</WidgetLayerTiledTexture>

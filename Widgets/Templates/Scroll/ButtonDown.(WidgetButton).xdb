@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<WidgetButton>
+	<Name />
+	<!--<Header>
+		<isPrototype>true</isPrototype>
+	</Header>-->
+	<Priority>8</Priority>
+	
+	<!--<textureMask href="Button/ButtonBack.(UITexture).xdb#xpointer(/UITexture)" />-->
+	
+	<Placement>
+		<X>
+			<Align>WIDGET_ALIGN_CENTER</Align>
+			<Size>20</Size>
+		</X>
+		<Y>
+			<Align>WIDGET_ALIGN_HIGH</Align>			
+			<HighPos>0</HighPos>			
+			<Size>20</Size>
+		</Y>
+	</Placement>
+	<Visible>true</Visible>
+	<IgnoreDblClick>true</IgnoreDblClick>	
+	<Variants>
+		<Item>
+			<LayerHighlight href="Button/ButtonHighlight.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)" />
+			<StateNormal>
+				<LayerMain href="ButtonDown/ButtonDownNormal.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)" />				
+			</StateNormal>
+			<StatePushed>
+				<LayerMain href="ButtonDown/ButtonDownPressed.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)" />
+			</StatePushed>
+			<StateDisabled>
+				<LayerMain href="Button/ButtonDisabled.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)" />				
+			</StateDisabled>
+			<!--<ReactionOnUp>true</ReactionOnUp>-->
+		</Item>
+	</Variants>
+</WidgetButton>

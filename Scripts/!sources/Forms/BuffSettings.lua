@@ -1,0 +1,231 @@
+function CreateBuffSettingsForm()
+	local form = createWidget(nil, "buffSettingsForm", "Form", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 550, 420, 350, 130)
+	priority(form, 5500)
+	hide(form)
+	
+	local panel=createWidget(form, nil, "Panel")
+	setLocaleText(createWidget(form, "configBuffsHeader", "TextView",  WIDGET_ALIGN_CENTER, nil, 250, 20, nil, 20))
+	setText(createWidget(form, "closeSomeSettingsButton", "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 20, 20, 20, 20), "x")
+
+	setLocaleText(createWidget(form, "addGroupBuffsButton", "Button", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 160, 25, 360, 320))
+	createWidget(form, "EditLine1", "EditLine", nil, nil, 330, 25, 20, 320)
+
+	createWidget(form, "container", "ScrollableContainer", WIDGET_ALIGN_BOTH, WIDGET_ALIGN_LOW, nil, 270, 20, 50)
+
+	setLocaleText(createWidget(form, "saveButton", "Button", WIDGET_ALIGN_CENTER, WIDGET_ALIGN_HIGH, 200, 30, nil, 20))
+	
+	DnD:Init(form, panel, true)
+
+	return form
+end
+
+function SaveBuffFormSettings(aForm)
+	local mySettings = {}
+	
+	local profile = GetCurrentProfile()
+	mySettings.buffGroups = profile.buffFormSettings.buffGroups
+	
+	UpdateTableValuesFromContainer(mySettings.buffGroups, aForm, getChild(aForm, "container"))
+	for i, _ in pairs(mySettings.buffGroups) do
+		if not mySettings.buffGroups[i].buffs then
+			mySettings.buffGroups[i].buffs = {}
+		end
+	end
+	return mySettings
+end
+
+function LoadBuffFormSettings(aForm)
+	local profile = GetCurrentProfile()
+	local mySettings = profile.buffFormSettings
+	
+	ShowValuesFromTable(profile.buffFormSettings.buffGroups, aForm, getChild(aForm, "container"))
+end
+
+
+local m_loadedWndInd = 0
+
+function CreateConfigGroupBuffsForm()
+	local form=createWidget(nil, "configGroupBuffsForm", "Form", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 1000, 600, 550, 130)
+	priority(form, 5500)
+	hide(form)
+	local panel=createWidget(form, nil, "Panel")
+	
+	local group1 = createWidget(form, "group1", "Panel")
+	align(group1, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)
+	resize(group1, 415, 121)
+	move(group1, 15, 137)
+	
+	local group2 = createWidget(form, "group2", "Panel")
+	align(group2, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)
+	resize(group2, 415, 91)
+	move(group2, 15, 257)
+	
+	local group3 = createWidget(form, "group3", "Panel")
+	align(group3, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)
+	resize(group3, 415, 181)
+	move(group3, 15, 357)
+	
+	local group4 = createWidget(form, "group4", "Panel")
+	align(group4, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)
+	resize(group4, 555, 498)
+	move(group4, 428, 47)
+	
+	setLocaleText(createWidget(form, "configGroupBuffsHeader", "TextView",  WIDGET_ALIGN_CENTER, nil, 250, 20, nil, 16))
+	setText(createWidget(form, "closeSomeSettingsButton", "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 20, 20, 20, 20), "x")
+
+	setLocaleText(createWidget(form, "widthBuffCntText", "TextView", nil, nil, 200, 25, 20, 50))
+	setLocaleText(createWidget(form, "heightBuffCntText", "TextView", nil, nil, 200, 25, 20, 80))
+	setLocaleText(createWidget(form, "sizeBuffGroupText", "TextView", nil, nil, 200, 25, 20, 110))
+	
+
+	createWidget(form, "EditLine1", "EditLine", nil, nil, 200, 25, 220, 50)
+	createWidget(form, "EditLine2", "EditLine", nil, nil, 200, 25, 220, 80)
+	createWidget(form, "EditLine3", "EditLine", nil, nil, 200, 25, 220, 110)
+	
+	setLocaleText(createWidget(form, "buffOnMe", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 400, 25, 20, 140), true)
+	setLocaleText(createWidget(form, "buffOnTarget", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 400, 25, 20, 170), true)
+	setLocaleText(createWidget(form, "aboveHeadButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 400, 25, 20, 200), true)
+	setLocaleText(createWidget(form, "isEnemyButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 400, 25, 20, 230), true)
+	
+	setLocaleText(createWidget(form, "buffsFixButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 400, 25, 20, 260), true)
+	setLocaleText(createWidget(form, "buffsFixInsidePanelButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 400, 25, 20, 290), true)
+	setLocaleText(createWidget(form, "flipBuffsButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 400, 25, 20, 320), true)
+	
+	
+	setLocaleText(createWidget(form, "saveButton", "Button", WIDGET_ALIGN_CENTER, WIDGET_ALIGN_HIGH, 200, 30, nil, 20))
+	
+	setLocaleText(createWidget(form, "raidBuffsButton", "TextView", nil, nil, 400, 25, 20, 360))
+	setLocaleText(createWidget(form, "autoDebuffModeButtonUnk", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 400, 25, 20, 390), true)
+	setLocaleText(createWidget(form, "checkEnemyCleanableUnk", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 400, 25, 20, 420), true)
+	setLocaleText(createWidget(form, "showImportantButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 400, 25, 20, 450), true)
+	setLocaleText(createWidget(form, "checkControlsButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 400, 25, 20, 480), true)
+	setLocaleText(createWidget(form, "checkMovementsButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 400, 25, 20, 510), true)
+	
+	
+
+	setLocaleText(createWidget(form, "addBuffsButton", "Button", WIDGET_ALIGN_LOW, WIDGET_ALIGN_HIGH, 130, 25, 843, 60))
+	createWidget(form, "EditLine5", "EditLine", WIDGET_ALIGN_LOW, WIDGET_ALIGN_HIGH, 390, 25, 433, 60)
+
+	setLocaleText(createWidget(form, "configGroupBuffsId", "TextView",  WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 30, 25, 513, 50))
+	setLocaleText(createWidget(form, "configGroupBuffsName", "TextView",  WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 220, 25, 293, 50))
+	--setLocaleText(createWidget(form, "configGroupBuffsTime", "TextView",  WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 130, 25, 233, 50))
+	--setLocaleText(createWidget(form, "configGroupBuffsCD", "TextView",  WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 40, 25, 203, 50))
+	setLocaleText(createWidget(form, "configGroupBuffsBuff", "TextView",  WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 50, 25, 153, 50))
+	setLocaleText(createWidget(form, "castByMe", "TextView",  WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 50, 25, 103, 50))
+	setLocaleText(createWidget(form, "isSpell", "TextView",  WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 100, 25, 0, 50))
+
+	createWidget(form, "container", "ScrollableContainer", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_HIGH, 560, 450, 15, 78)
+
+	DnD:Init(form, panel, true)
+	return form
+end
+
+function GetConfigGroupBuffsActiveNum()
+	return m_loadedWndInd
+end
+
+function SaveConfigGroupBuffsForm(aForm, aClose)
+	local mySettings = {}
+	
+	local profile = GetCurrentProfile()
+	mySettings.buffGroups = profile.buffFormSettings.buffGroups
+
+	if m_loadedWndInd == 0 then
+		return mySettings
+	end
+	mySettings.buffGroups[m_loadedWndInd].w = tonumber(getTextString(getChild(aForm, "EditLine1")))
+	mySettings.buffGroups[m_loadedWndInd].h = tonumber(getTextString(getChild(aForm, "EditLine2")))
+	mySettings.buffGroups[m_loadedWndInd].size = tonumber(getTextString(getChild(aForm, "EditLine3")))
+	mySettings.buffGroups[m_loadedWndInd].buffOnMe = getCheckBoxState(getChild(aForm, "buffOnMe"))
+	mySettings.buffGroups[m_loadedWndInd].buffOnTarget = getCheckBoxState(getChild(aForm, "buffOnTarget"))
+	mySettings.buffGroups[m_loadedWndInd].fixed = getCheckBoxState(getChild(aForm, "buffsFixButton"))
+	mySettings.buffGroups[m_loadedWndInd].fixedInsidePanel = getCheckBoxState(getChild(aForm, "buffsFixInsidePanelButton"))
+	mySettings.buffGroups[m_loadedWndInd].flipBuffsButton = getCheckBoxState(getChild(aForm, "flipBuffsButton"))
+	mySettings.buffGroups[m_loadedWndInd].aboveHeadButton = getCheckBoxState(getChild(aForm, "aboveHeadButton"))
+	mySettings.buffGroups[m_loadedWndInd].isEnemyButton = getCheckBoxState(getChild(aForm, "isEnemyButton"))
+	mySettings.buffGroups[m_loadedWndInd].autoDebuffModeButtonUnk = getCheckBoxState(getChild(aForm, "autoDebuffModeButtonUnk"))
+	mySettings.buffGroups[m_loadedWndInd].checkEnemyCleanableUnk = getCheckBoxState(getChild(aForm, "checkEnemyCleanableUnk"))
+	mySettings.buffGroups[m_loadedWndInd].showImportantButton = getCheckBoxState(getChild(aForm, "showImportantButton"))
+	mySettings.buffGroups[m_loadedWndInd].checkControlsButton = getCheckBoxState(getChild(aForm, "checkControlsButton"))
+	mySettings.buffGroups[m_loadedWndInd].checkMovementsButton = getCheckBoxState(getChild(aForm, "checkMovementsButton"))
+
+	local container = getChild(aForm, "container")
+	if container and mySettings.buffGroups[m_loadedWndInd].buffs then
+		for i, j in ipairs(mySettings.buffGroups[m_loadedWndInd].buffs) do
+			j.time = tonumber(getTextString(getChild(container, "CD"..tostring(i), true)))
+			j.name = getText(getChild(container, "Name"..tostring(i), true))
+			j.isBuff = getCheckBoxState(getChild(container, "isBuff"..tostring(i), true))
+			j.isCD = getCheckBoxState(getChild(container, "isCD"..tostring(i), true))
+			j.castByMe = getCheckBoxState(getChild(container, "castByMe"..tostring(i), true))
+			j.isSpell = getCheckBoxState(getChild(container, "isSpell"..tostring(i), true))
+		end
+	end
+	if aClose then
+		m_loadedWndInd = 0
+	end
+	return mySettings
+end
+
+function LoadConfigGroupBuffsForm(aForm, anIndex)
+	local profile = GetCurrentProfile()
+	local mySettings = profile.buffFormSettings
+	local info = profile.buffFormSettings.buffGroups[anIndex]
+	m_loadedWndInd = anIndex
+	setText(getChild(aForm, "EditLine1"), info.w or 5)
+	setText(getChild(aForm, "EditLine2"), info.h or 1)
+	setText(getChild(aForm, "EditLine3"), info.size or 50)
+	if info.buffOnMe == nil then 
+		info.buffOnMe = true
+	end
+	if info.buffOnTarget == nil then 
+		info.buffOnTarget = false
+	end
+	if info.fixed == nil then 
+		info.fixed = false
+	end
+	if info.fixedInsidePanel == nil then 
+		info.fixedInsidePanel = false
+	end
+	if info.flipBuffsButton == nil then 
+		info.flipBuffsButton = false
+	end
+	if info.aboveHeadButton == nil then 
+		info.aboveHeadButton = false
+	end
+	if info.isEnemyButton == nil then 
+		info.isEnemyButton = false
+	end
+	if info.autoDebuffModeButtonUnk == nil then 
+		info.autoDebuffModeButtonUnk = false
+	end
+	if info.checkEnemyCleanableUnk == nil then 
+		info.checkEnemyCleanableUnk = false
+	end
+	if info.showImportantButton == nil then 
+		info.showImportantButton = false
+	end
+	if info.checkControlsButton == nil then 
+		info.checkControlsButton = false
+	end
+	if info.checkMovementsButton == nil then 
+		info.checkMovementsButton = false
+	end
+	setCheckBox(getChild(aForm, "buffOnMe"), info.buffOnMe)
+	setCheckBox(getChild(aForm, "buffOnTarget"), info.buffOnTarget)
+	setCheckBox(getChild(aForm, "buffsFixButton"), info.fixed)
+	setCheckBox(getChild(aForm, "buffsFixInsidePanelButton"), info.fixedInsidePanel)
+	setCheckBox(getChild(aForm, "flipBuffsButton"), info.flipBuffsButton)
+	setCheckBox(getChild(aForm, "aboveHeadButton"), info.aboveHeadButton)
+	setCheckBox(getChild(aForm, "isEnemyButton"), info.isEnemyButton)
+	setCheckBox(getChild(aForm, "autoDebuffModeButtonUnk"), info.autoDebuffModeButtonUnk)
+	setCheckBox(getChild(aForm, "checkEnemyCleanableUnk"), info.checkEnemyCleanableUnk)
+	setCheckBox(getChild(aForm, "showImportantButton"), info.showImportantButton)
+	setCheckBox(getChild(aForm, "checkControlsButton"), info.checkControlsButton)
+	setCheckBox(getChild(aForm, "checkMovementsButton"), info.checkMovementsButton)
+
+	if not profile.buffFormSettings.buffGroups[anIndex].buffs then
+		profile.buffFormSettings.buffGroups[anIndex].buffs = {}
+	end
+
+	ShowValuesFromTable(profile.buffFormSettings.buffGroups[anIndex].buffs, aForm)
+end

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<WidgetPanel>
+	<Priority>51</Priority>
+	<Name>HealthBarBackground</Name>
+	<Children>
+	</Children>
+	<BackLayer href="Textures/Background.xdb#xpointer(/WidgetLayerTiledTexture)" />
+	<Placement>
+		<X>
+			<Align>WIDGET_ALIGN_LOW</Align>
+			<Size>250</Size>
+			<Pos>0</Pos>
+		</X>
+		<Y>
+			<Align>WIDGET_ALIGN_LOW</Align>
+			<Size>20</Size>
+			<Pos>0</Pos>
+		</Y>
+	</Placement>
+	<reactionWheelUp>OnWheelUp</reactionWheelUp>
+	<reactionWheelDown>OnWheelDown</reactionWheelDown>
+	<!-- <TransparentInput>true</TransparentInput> -->
+</WidgetPanel>

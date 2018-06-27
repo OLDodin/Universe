@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<WidgetGlideScrollBar>
+	<Name>GlideScrollBar</Name>
+	<Priority>8</Priority>	
+	<BackLayer href="Bar/BarBack.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)" />
+	<Placement>
+		<X>
+			<Align>WIDGET_ALIGN_LOW</Align>			
+			<Pos>10</Pos>
+			<Size>20</Size>
+		</X>
+		<Y>
+			<Align>WIDGET_ALIGN_BOTH</Align>
+			<Pos>10</Pos>
+			<HighPos>10</HighPos>
+		</Y>
+	</Placement>
+	<Visible>true</Visible>
+	<decButton href="ButtonUp.(WidgetButton).xdb#xpointer(/WidgetButton)" />
+	<incButton href="ButtonDown.(WidgetButton).xdb#xpointer(/WidgetButton)" />
+	<slider href="Slider.(WidgetGlideSlider).xdb#xpointer(/WidgetGlideSlider)" />
+</WidgetGlideScrollBar>

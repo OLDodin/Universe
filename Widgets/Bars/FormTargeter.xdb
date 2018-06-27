@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<WidgetForm>
+	<Name>UniverseTargeter</Name>
+	<Priority>4551</Priority>
+	<Children>
+		<Item href="TopTargeterPanel/TopPanel.xdb#xpointer(/WidgetButton)"/>
+		<Item href="Bar/Bar.xdb#xpointer(/WidgetButton)"/>
+	</Children>
+	<BackLayer href="" />
+	<FrontLayer href="" />
+	<Placement>
+		<QuantumScale>false</QuantumScale>
+		<X>
+			<Align>WIDGET_ALIGN_LOW</Align>
+			<Size>250</Size>
+			<Pos>280</Pos>
+		</X>
+		<Y>
+			<Align>WIDGET_ALIGN_LOW</Align>
+			<Size>175</Size>
+			<Pos>380</Pos>
+		</Y>
+	</Placement>
+	<PickChildrenOnly>true</PickChildrenOnly>
+</WidgetForm>

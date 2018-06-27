@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<WidgetForm>
+	<Children>
+		<Item href="Panel.xdb#xpointer(/WidgetPanel)" />
+		<Item href="EditLine.xdb#xpointer(/WidgetEditLine)" />
+		<Item href="Button.xdb#xpointer(/WidgetButton)" />
+		<Item href="CheckBox.xdb#xpointer(/WidgetButton)" />
+		<Item href="TextView.xdb#xpointer(/WidgetTextView)" />
+		<Item href="TextContainer.xdb#xpointer(/WidgetTextContainer)" />
+		<Item href="Form.xdb#xpointer(/WidgetForm)" />
+		<Item href="ScrollableContainer.xdb#xpointer(/WidgetScrollableContainer)" />
+		<Item href="Timer.xdb#xpointer(/WidgetPanel)" />
+		<Item href="Buff/Buff.xdb#xpointer(/WidgetPanel)" />
+		<Item href="ModePanel/ModeDropDownPanel.(WidgetPanel).xdb#xpointer(/WidgetPanel)" />
+	</Children>
+	<PickChildrenOnly>true</PickChildrenOnly>
+</WidgetForm>

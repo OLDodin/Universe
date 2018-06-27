@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<WidgetButton>
+	<Priority>200</Priority>
+	<Name>AssertButton</Name>
+	<IgnoreDblClick>true</IgnoreDblClick>
+	<Children>
+	</Children>
+	<Placement>
+		<X>
+			<Align>WIDGET_ALIGN_HIGH</Align>
+			<Size>20</Size>
+			<HighPos>4</HighPos>
+		</X>
+		<Y>
+			<Align>WIDGET_ALIGN_LOW</Align>
+			<Size>20</Size>
+			<Pos>2</Pos>
+		</Y>
+	</Placement>
+	<Variants>
+		<Item>
+			<LayerHighlight href="Textures/AssertLight.xdb#xpointer(/WidgetLayerTiledTexture)" />
+			<PushedOffset x="-1" y="1" />
+			<StateNormal>
+				<LayerMain href="Textures/Assert.xdb#xpointer(/WidgetLayerTiledTexture)" />
+			</StateNormal>
+			<ReactionOnUp>true</ReactionOnUp>
+			<Reaction>OnAssertChange</Reaction>
+		</Item>
+	</Variants>
+</WidgetButton>

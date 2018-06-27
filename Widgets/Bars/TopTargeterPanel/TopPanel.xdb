@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<WidgetPanel>
+	<Name>TopTargeterPanel</Name>
+	<Children>
+		<Item href="ConfigButton.xdb#xpointer(/WidgetButton)"/>
+		<Item href="ButtonLocker.xdb#xpointer(/WidgetButton)"/>
+		<Item href="ModePanel/ModeDropDownPanel.(WidgetPanel).xdb#xpointer(/WidgetPanel)" />
+	</Children>
+	<BackLayer href="Textures/TopPanel.xdb#xpointer(/WidgetLayerTiledTexture)" />
+	<Placement>
+		<X>
+			<Align>WIDGET_ALIGN_LOW</Align>
+			<Size>120</Size>
+			<Pos>0</Pos>
+		</X>
+		<Y>
+			<Align>WIDGET_ALIGN_LOW</Align>
+			<Size>26</Size>
+			<Pos>0</Pos>
+		</Y>
+	</Placement>
+	<IgnoreDblClick>true</IgnoreDblClick>
+	
+	<PickChildrenOnly>false</PickChildrenOnly>
+</WidgetPanel>

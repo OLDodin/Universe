@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<UITexture>
+	<mipSW>-1</mipSW>
+	<mipsNumber>1</mipsNumber>
+	<generateMipChain>false</generateMipChain>
+	<type>DXT5</type>
+	<width>32</width>
+	<height>32</height>
+	<realWidth>20</realWidth>
+	<realHeight>20</realHeight>
+	<disableLODControl>false</disableLODControl>
+	<alphaTex>true</alphaTex>
+	<binaryFileSize>409</binaryFileSize>
+	<binaryFile href="Necromancer.(UITexture).bin" />
+	<sourceFile href="Necromancer.tga" />
+	<sourceFileCRC>-511324576</sourceFileCRC>
+	<wrap>false</wrap>
+	<LocalizationInfo />
+</UITexture>

@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<WidgetPanel>
+	<Name>BuffGroup</Name>
+	<Priority>250</Priority>
+	<Children>
+		<Item href="TopPanel/Panel.xdb#xpointer(/WidgetPanel)"/>
+		<Item href="Buff/Buff.xdb#xpointer(/WidgetPanel)"/>
+	</Children>
+	<Placement>
+		<X>
+			<Align>WIDGET_ALIGN_LOW</Align>
+			<Pos>300</Pos>
+		</X>
+		<Y>
+			<Align>WIDGET_ALIGN_LOW</Align>
+			<Pos>100</Pos>
+		</Y>
+	</Placement>
+	<PickChildrenOnly>true</PickChildrenOnly>
+</WidgetPanel>

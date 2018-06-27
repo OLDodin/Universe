@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<WidgetButton>
+	<Priority>50</Priority>
+	<Name>PlayerBar</Name>
+	<Children>
+		<Item href="HealthBar.xdb#xpointer(/WidgetPanel)"/>
+		<Item href="ManaBar.xdb#xpointer(/WidgetPanel)"/>
+		<Item href="ShieldBar.xdb#xpointer(/WidgetPanel)"/>
+		<Item href="Background.xdb#xpointer(/WidgetPanel)"/>
+		<Item href="ClassIcon.xdb#xpointer(/WidgetPanel)"/>
+		<Item href="ArrowIcon.xdb#xpointer(/WidgetPanel)"/>
+		<Item href="CheckIcon.xdb#xpointer(/WidgetPanel)"/>
+		<Item href="NameText.xdb#xpointer(/WidgetTextView)"/>
+		<Item href="DistText.xdb#xpointer(/WidgetTextView)"/>
+		<Item href="ProcText.xdb#xpointer(/WidgetTextView)"/>
+		<Item href="WoundsText.xdb#xpointer(/WidgetTextView)"/>
+		<Item href="Far.xdb#xpointer(/WidgetPanel)"/>
+		<Item href="ClearBar.xdb#xpointer(/WidgetPanel)"/>
+
+		<Item href="BuffPanelNegative.xdb#xpointer(/WidgetPanel)"/>
+		<Item href="BuffPanel.xdb#xpointer(/WidgetPanel)"/>
+		<Item href="BuffPanelImportant.xdb#xpointer(/WidgetPanel)"/>
+	</Children>
+	<Variants>
+		<Item>
+			<Reaction>OnLeftClick</Reaction>
+			<ReactionRightClick>OnRightClick</ReactionRightClick>
+		</Item>
+	</Variants>
+	<reactionOnPointing>OnPointing</reactionOnPointing>
+	<BackLayer href="" />
+</WidgetButton>

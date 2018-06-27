@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<WidgetPanel>
+	<Name>ModePanel</Name>
+	<Children>
+		<Item href="ModeDropDownBtn/ModeDropDownBtn.(WidgetButton).xdb#xpointer(/WidgetButton)" />
+		<Item href="TextViews/Name.(WidgetTextView).xdb#xpointer(/WidgetTextView)" />
+	</Children>
+	<BackLayer href="ModeDropDownPanel.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)" />
+	<Placement>
+		<X>
+			<Align>WIDGET_ALIGN_LOW</Align>
+			<Size>120</Size>
+			<Pos>37</Pos>
+		</X>
+		<Y>
+			<Align>WIDGET_ALIGN_LOW</Align>
+			<Size>22</Size>
+			<Pos>2</Pos>
+		</Y>
+	</Placement>
+</WidgetPanel>
