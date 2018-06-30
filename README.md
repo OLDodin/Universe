@@ -1,5 +1,5 @@
 # Universe
-Allods online addon - raid, targeter, buffs and binds
+Аллоды онлайн. Allods online. Universe.
 
 Дополнение для игры Аллоды онлайн.
 
