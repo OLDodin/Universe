@@ -263,7 +263,7 @@ Locales["eng"]["targetBindAltButton"]=		"Alt+click"
 Locales["eng"]["targetBindCtrlButton"]=		"Ctrl+click"
 Locales["eng"]["separateBuffDebuff"]=		"Separate buff/debuff"
 Locales["eng"]["twoColumnMode"]=			"Two column mode"
-Locales["rus"]["colorDebuffButton"]=		"     • Highlight these players:"
+Locales["eng"]["colorDebuffButton"]=		"     • Highlight these players:"
 
 Locales["eng"]["ALL_TARGETS"]=				"All"
 Locales["eng"]["ENEMY_TARGETS"]=			"Enemy"
