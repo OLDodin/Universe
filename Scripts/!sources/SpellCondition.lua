@@ -5,7 +5,9 @@ function SpellCondition:Init(aSettings)
 	self.avlCustomTree  = GetAVLWStrTree()
 	self.treeCustomCreated = GetTableSize(self.settings.customSpells)~=0
 	for _, element in ipairs(self.settings.customSpells) do
-		self.avlCustomTree:add(element)
+		if element.name then
+			self.avlCustomTree:add(element)
+		end
 	end
 
 end

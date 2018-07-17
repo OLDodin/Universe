@@ -601,7 +601,7 @@ local function OnPlayerSelect(aParams, aLeftClick)
 	local playerBar = FindClickedInRaid(aParams.widget)
 	if playerBar then
 		if not m_moveMode then
-			if playerBar.playerID then
+			--if playerBar.playerID then
 				if m_bindSubSystemLoaded then
 					MakeBindAction(aParams, playerBar, aLeftClick, true)
 				else	
@@ -611,7 +611,7 @@ local function OnPlayerSelect(aParams, aLeftClick)
 						ShowMenu(playerBar, aParams, m_raidPanel, m_lastRaidPanelSize, FindMyUniqueIDInRaid())
 					end
 				end
-			end
+			--end
 		else
 			SwapPlayers(m_movingUniqueID, playerBar.uniqueID)
 			StopMove()

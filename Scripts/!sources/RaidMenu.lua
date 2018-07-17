@@ -75,6 +75,7 @@ function GenerateMenuInfos(aPlayerBar, aMyUniqueID)
 	local canInvite = canWhisper and not raid.IsAutomatic() and not group.IsAutomatic()
 	local isLeader = aPlayerBar.optimizeInfo.isLeader
 
+	
 	if isAvatar and (isRaid() or isGroup()) then
 		local lootScheme=loot.GetLootScheme()
 		if lootScheme then
@@ -95,7 +96,7 @@ function GenerateMenuInfos(aPlayerBar, aMyUniqueID)
 		end
 	end
 
-	if not isAvatar then
+	if not isAvatar and playerID ~= nil then
 		AddToMenu("inspectButton", function () if avatar.IsInspectAllowed() then avatar.StartInspect(playerID) end CloseMenu() end)
 	end
 
@@ -117,7 +118,7 @@ function GenerateMenuInfos(aPlayerBar, aMyUniqueID)
 			local isMaster = rights and (rights[0] and rights[0]==RAID_MEMBER_RIGHT_LOOT_MASTER or rights[1] and rights[1]==RAID_MEMBER_RIGHT_LOOT_MASTER)
 			if isAvatar 		then AddToMenu("raidLeaveMenuButton", function () raid.Leave() CloseMenu() end) end
 			if raid.IsLeader() 			then
-				if not isAvatar 	then
+				if not isAvatar and playerID ~= nil 	then
 					AddToMenu("leaderMenuButton", function () raid.ChangeLeader(uniqueID) CloseMenu() end)
 					if not isHelper then AddToMenu("addLeaderHelperMenuButton", function () raid.AddRight(uniqueID, RAID_MEMBER_RIGHT_LEADER_HELPER) CloseMenu() end)
 					else 				 AddToMenu("deleteLeaderHelperMenuButton", function () raid.RemoveRight(uniqueID, RAID_MEMBER_RIGHT_LEADER_HELPER) CloseMenu() end) end
@@ -147,7 +148,7 @@ function GenerateMenuInfos(aPlayerBar, aMyUniqueID)
 				end
 			else
 				if group.CanKickMember() 	then AddToMenu("kickMenuButton", function () group.KickMember(name) CloseMenu() end) end
-				if group.IsLeader() 		then AddToMenu("leaderMenuButton", function () group.SetLeader(uniqueID) CloseMenu() end) end
+				if group.IsLeader() and playerID ~= nil 		then AddToMenu("leaderMenuButton", function () group.SetLeader(uniqueID) CloseMenu() end) end
 			end
 		else
 			if canInvite and group.CanInvite()	then AddToMenu("inviteMenuButton", function () group.Invite(playerID) CloseMenu() end) end

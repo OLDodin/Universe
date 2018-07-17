@@ -8,7 +8,9 @@ function BuffCondition:Init(aSettings)
 	self.avlCustomTree  = GetAVLWStrTree()
 	self.treeCustomCreated = GetTableSize(self.settings.customBuffs)~=0
 	for _, element in pairs(self.settings.customBuffs) do
-		self.avlCustomTree:add(element)
+		if element.name then
+			self.avlCustomTree:add(element)
+		end
 	end
 
 end
