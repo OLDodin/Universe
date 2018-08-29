@@ -802,6 +802,9 @@ function ShowReadyCheck(aCheckInfo, aCurrentRaid)
 	if not aCheckInfo then
 		return
 	end
+	if not aCheckInfo.isInProgress then
+		return
+	end
 	
 	if aCurrentRaid.type == PARTY_TYPE then
 		for i=0, GetTableSize(aCurrentRaid.members)-1 do
@@ -853,6 +856,7 @@ function RaidChanged(aParams)
 	end
 	
 	BuildRaidGUI(m_currentRaid)
+	ReadyCheckChanged()
 	
 	for i=0, GetTableSize(m_raidPlayerPanelList)-1 do
 		local subParty = m_raidPlayerPanelList[i]
@@ -861,7 +865,6 @@ function RaidChanged(aParams)
 			if not playerBar.isUsed then
 				playerBar.playerID = nil
 				hide(playerBar.wdg)
-				HideReadyStateInGUI(playerBar)
 			end
 		end
 	end

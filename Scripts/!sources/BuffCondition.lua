@@ -88,7 +88,7 @@ function BuffCondition:Check(aBuffInfo)
 				groupName == "poisons" or 
 				groupName == "stackablemagics"
 			then
-				return true
+				return true, nil, true
 			end
 		end		
 	end
@@ -100,7 +100,7 @@ function BuffCondition:Check(aBuffInfo)
 			if 	groupName == "magics" or 
 				groupName == "stackablemagics"
 			then
-				return true
+				return true, nil, true
 			end
 		end					
 	end

@@ -102,8 +102,9 @@ function PlayerBuffs:CallListenerIfNeeded(aBuffID, aListener, aCondition, aRaidT
 			if aCondition:IsImportant(buffInfo) then
 				aListener.listenerChangeImportantBuff(buffInfo, aListener)
 			end
-			local searchResult, findedObj = aCondition:Check(buffInfo)
+			local searchResult, findedObj, cleanableBuff = aCondition:Check(buffInfo)
 			if searchResult then
+				buffInfo.cleanableBuff = cleanableBuff
 				if aRaidType then
 					if buffInfo.isPositive then
 						aListener.listenerChangeBuff(buffInfo, aListener)

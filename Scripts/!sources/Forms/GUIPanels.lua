@@ -254,13 +254,14 @@ local function PlayerRemoveBuff(aBuffID, aPlayerBar, aCnt, anArray)
 				move(anArray[i].buffWdg, 2+(i-1)*tonumber(aPlayerBar.formSettings.buffSize), 3)
 			end
 		end
-		return true
+		return true, buffSlot
 	end
-	return false
+	return false, nil
 end
 
 local function PlayerRemoveBuffPositive(aBuffID, aPlayerBar)
-	if PlayerRemoveBuff(aBuffID, aPlayerBar, aPlayerBar.usedBuffSlotCnt, aPlayerBar.buffSlots) then
+	local wasRemoved, buffSlot = PlayerRemoveBuff(aBuffID, aPlayerBar, aPlayerBar.usedBuffSlotCnt, aPlayerBar.buffSlots)
+	if wasRemoved then
 		aPlayerBar.usedBuffSlotCnt = aPlayerBar.usedBuffSlotCnt - 1
 		if aPlayerBar.usedBuffSlotCnt < 0 then
 			aPlayerBar.usedBuffSlotCnt = 0
@@ -269,12 +270,13 @@ local function PlayerRemoveBuffPositive(aBuffID, aPlayerBar)
 end
 
 local function PlayerRemoveBuffNegative(aBuffID, aPlayerBar)
-	if PlayerRemoveBuff(aBuffID, aPlayerBar, aPlayerBar.usedBuffSlotNegCnt, aPlayerBar.buffSlotsNeg) then
-		aPlayerBar.usedBuffSlotNegCnt = aPlayerBar.usedBuffSlotNegCnt - 1
-		if aPlayerBar.usedBuffSlotNegCnt < 0 then
-			aPlayerBar.usedBuffSlotNegCnt = 0
+	local wasRemoved, buffSlot = PlayerRemoveBuff(aBuffID, aPlayerBar, aPlayerBar.usedBuffSlotNegCnt, aPlayerBar.buffSlotsNeg)
+	if wasRemoved then
+		aPlayerBar.usedBuffSlotNegCnt = math.max(aPlayerBar.usedBuffSlotNegCnt - 1, 0)
+		if buffSlot.cleanableBuff then
+			aPlayerBar.cleanableBuffCnt = math.max(aPlayerBar.cleanableBuffCnt - 1, 0)
 		end
-		if aPlayerBar.usedBuffSlotNegCnt == 0 and aPlayerBar.formSettings.raidBuffs.colorDebuffButton then
+		if aPlayerBar.cleanableBuffCnt == 0 and aPlayerBar.formSettings.raidBuffs.colorDebuffButton then
 			hide(aPlayerBar.clearBarWdg)
 		end
 	end
@@ -298,6 +300,7 @@ local function PlayerAddBuff(aBuffInfo, aPlayerBar, anArray, aCnt)
 		
 		buffSlot = anArray[newCnt]
 		buffSlot.buffID = aBuffInfo.id
+		buffSlot.cleanableBuff = aBuffInfo.cleanableBuff
 		buffSlot.buffWdg:Show(true)
 		buffSlot.buffIcon:SetBackgroundTexture(aBuffInfo.texture)
 		res = true
@@ -315,8 +318,11 @@ end
 local function PlayerAddBuffNegative(aBuffInfo, aPlayerBar)
 	if PlayerAddBuff(aBuffInfo, aPlayerBar, aPlayerBar.buffSlotsNeg, aPlayerBar.usedBuffSlotNegCnt) then
 		aPlayerBar.usedBuffSlotNegCnt = aPlayerBar.usedBuffSlotNegCnt + 1
+		if aBuffInfo.cleanableBuff then
+			aPlayerBar.cleanableBuffCnt = aPlayerBar.cleanableBuffCnt + 1
+		end
 		
-		if aPlayerBar.usedBuffSlotNegCnt == 1 and aPlayerBar.formSettings.raidBuffs.colorDebuffButton then
+		if aPlayerBar.cleanableBuffCnt == 1 and aPlayerBar.formSettings.raidBuffs.colorDebuffButton then
 			show(aPlayerBar.clearBarWdg)
 		end
 	end
@@ -357,6 +363,7 @@ function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettin
 	end
 	
 	aPlayerBar.usedBuffSlotNegCnt = 0
+	aPlayerBar.cleanableBuffCnt = 0
 	for i = 1, GetTableSize(aPlayerBar.buffSlotsNeg) do 
 		hide(aPlayerBar.buffSlotsNeg[i].buffWdg)
 		aPlayerBar.buffSlotsNeg[i].buffID = nil
@@ -415,6 +422,8 @@ function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettin
 	or m_emptyWStr
 	if userState == DEAD_STATE then
 		PlayerHPChanged(0, aPlayerBar)
+	else
+		PlayerHPChanged(100, aPlayerBar)
 	end
 
 	if aFormSettings.showServerNameButton then
@@ -470,6 +479,8 @@ function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettin
 		aPlayerBar.optimizeInfo.barColor = barColor
 		setBackgroundColor(aPlayerBar.barWdg, barColor)
 	end
+	
+	HideReadyStateInGUI(aPlayerBar)
 	
 	show(aPlayerBar.wdg)
 end
@@ -596,6 +607,7 @@ function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings)
 	
 	playerBar.buffSlotsNeg = {}
 	playerBar.usedBuffSlotNegCnt = 0
+	playerBar.cleanableBuffCnt = 0
 	setTemplateWidget(m_template)
 	
 	for i = 1, buffSlotCnt do
