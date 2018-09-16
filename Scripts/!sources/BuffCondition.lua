@@ -82,15 +82,27 @@ function BuffCondition:Check(aBuffInfo)
 	if not aBuffInfo.isPositive and 
 	(self.settings.autoDebuffModeButton or (self.settings.autoDebuffModeButtonUnk and aBuffInfo.ownerId and object.IsExist(aBuffInfo.ownerId) and object.IsFriend(aBuffInfo.ownerId))) 
 	then
+		local isCleanable = false
+		local isDebuffFound = false
 		for _, groupName in pairs(aBuffInfo.groups) do
 			if 	groupName == "magics" or
-				groupName == "diseases" or
-				groupName == "poisons" or 
 				groupName == "stackablemagics"
 			then
-				return true, nil, true
+				isCleanable = true
+				isDebuffFound = true
+			end
+			if 	groupName == "diseases" or
+				groupName == "poisons" 
+			then
+				isDebuffFound = true
+			end
+			if isCleanable and isDebuffFound then
+				break
 			end
 		end		
+		if isDebuffFound then
+			return true, nil, isCleanable
+		end
 	end
 	
 	if aBuffInfo.isPositive and 
