@@ -72,70 +72,68 @@ function BuffCondition:Check(aBuffInfo)
 	end
 	LogInfo("found aBuffInfo e")
 	]]
-
-	if self.showShopAndFood then
-		if self:CheckShop(aBuffInfo) then
-			return true
-		end
-	end
 	
-	if not aBuffInfo.isPositive and 
-	(self.settings.autoDebuffModeButton or (self.settings.autoDebuffModeButtonUnk and aBuffInfo.ownerId and object.IsExist(aBuffInfo.ownerId) and object.IsFriend(aBuffInfo.ownerId))) 
-	then
-		local isCleanable = false
-		local isDebuffFound = false
-		for _, groupName in pairs(aBuffInfo.groups) do
-			if 	groupName == "magics" or
-				groupName == "stackablemagics"
-			then
-				isCleanable = true
-				isDebuffFound = true
-			end
-			if 	groupName == "diseases" or
-				groupName == "poisons" 
-			then
-				isDebuffFound = true
-			end
-			if isCleanable and isDebuffFound then
-				break
-			end
-		end		
-		if isDebuffFound then
-			return true, nil, isCleanable
-		end
-	end
-	
-	if aBuffInfo.isPositive and 
-	(self.settings.checkEnemyCleanable or (self.settings.checkEnemyCleanableUnk and aBuffInfo.ownerId and object.IsExist(aBuffInfo.ownerId) and object.IsEnemy(aBuffInfo.ownerId))) 
-	then
-		for _, groupName in pairs(aBuffInfo.groups) do
-			if 	groupName == "magics" or 
-				groupName == "stackablemagics"
-			then
-				return true, nil, true
-			end
-		end					
-	end
-
-	if self.settings.checkControlsButton then
-		for _, groupName in pairs(aBuffInfo.groups) do
-			if 	groupName == "controls" or 
-				groupName == "stuns" or
-				groupName == "Disarms" or
-				groupName == "fears"
-			then
+	if aBuffInfo.isNeedVisualize then
+		if self.showShopAndFood then
+			if self:CheckShop(aBuffInfo) then
 				return true
 			end
-		end					
-	end
+		end
 	
-	if self.settings.checkMovementsButton and not aBuffInfo.isPositive then
-		for _, groupName in pairs(aBuffInfo.groups) do
-			if 	groupName == "movementimpairing"
-			then
-				return true
+		if not aBuffInfo.isPositive and 
+		(self.settings.autoDebuffModeButton 
+		or self.settings.checkFriendCleanableButton  
+		or (self.settings.autoDebuffModeButtonUnk and aBuffInfo.ownerId and object.IsExist(aBuffInfo.ownerId) and object.IsFriend(aBuffInfo.ownerId))) 
+		then
+			local isCleanable = false
+			
+			for _, groupName in pairs(aBuffInfo.groups) do
+				if 	groupName == "magics" or
+					groupName == "stackablemagics"
+				then
+					isCleanable = true
+					break
+				end
+			end		
+			if self.settings.autoDebuffModeButton then
+				return true, nil, isCleanable
+			else
+				return isCleanable, nil, isCleanable
 			end
-		end					
+		end
+		
+		if aBuffInfo.isPositive and 
+		(self.settings.checkEnemyCleanable or (self.settings.checkEnemyCleanableUnk and aBuffInfo.ownerId and object.IsExist(aBuffInfo.ownerId) and not object.IsFriend(aBuffInfo.ownerId))) 
+		then
+			for _, groupName in pairs(aBuffInfo.groups) do
+				if 	groupName == "magics" or 
+					groupName == "stackablemagics"
+				then
+					return true, nil, true
+				end
+			end					
+		end
+
+		if self.settings.checkControlsButton then
+			for _, groupName in pairs(aBuffInfo.groups) do
+				if 	groupName == "controls" or 
+					groupName == "stuns" or
+					groupName == "Disarms" or
+					groupName == "fears"
+				then
+					return true
+				end
+			end					
+		end
+		
+		if self.settings.checkMovementsButton and not aBuffInfo.isPositive then
+			for _, groupName in pairs(aBuffInfo.groups) do
+				if 	groupName == "movementimpairing"
+				then
+					return true
+				end
+			end					
+		end
 	end
 	
 	if self.treeCustomCreated then

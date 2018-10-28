@@ -58,11 +58,12 @@ function InitializeDefaultSetting()
 	raidFormSettings.distanceText = "0"
 	raidFormSettings.buffSize = "20"
 	raidFormSettings.raidBuffs = {}
-	raidFormSettings.raidBuffs.autoDebuffModeButton = true
+	raidFormSettings.raidBuffs.autoDebuffModeButton = false
 	raidFormSettings.raidBuffs.showImportantButton = true
 	raidFormSettings.raidBuffs.checkControlsButton = false
 	raidFormSettings.raidBuffs.checkMovementsButton = false
-	raidFormSettings.raidBuffs.colorDebuffButton = false
+	raidFormSettings.raidBuffs.colorDebuffButton = true
+	raidFormSettings.raidBuffs.checkFriendCleanableButton = true
 	raidFormSettings.raidBuffs.customBuffs = {}
 	
 	local targeterFormSettings = {}
@@ -83,6 +84,11 @@ function InitializeDefaultSetting()
 	targeterFormSettings.raidWidthText = "200"
 	targeterFormSettings.raidHeightText = "30"
 	targeterFormSettings.buffSize = "16"
+	targeterFormSettings.targetLimit = "12"
+	targeterFormSettings.sortByName = true
+	targeterFormSettings.sortByHP = false
+	targeterFormSettings.sortByClass = false
+	targeterFormSettings.sortByDead = false
 	targeterFormSettings.raidBuffs = {}
 	targeterFormSettings.raidBuffs.checkEnemyCleanable = false
 	targeterFormSettings.raidBuffs.checkControlsButton = false

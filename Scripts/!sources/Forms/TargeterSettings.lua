@@ -3,7 +3,7 @@ local m_template = nil
 
 
 function CreateTargeterSettingsForm()
-	local form=createWidget(nil, "targeterSettingsForm", "Form", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 980, 550, 200, 100)
+	local form=createWidget(nil, "targeterSettingsForm", "Form", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 980, 700, 200, 100)
 	hide(form)
 	priority(form, 5000)
 
@@ -51,14 +51,19 @@ function CreateTargeterSettingsForm()
 	createWidget(form, "separateBuffDebuff", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 300, 25, 20, 350)
 	createWidget(form, "twoColumnMode", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 300, 25, 20, 380)
 	
+	createWidget(form, "sortByName", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 300, 25, 20, 410)
+	createWidget(form, "sortByHP", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 300, 25, 20, 440)
+	createWidget(form, "sortByClass", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 300, 25, 20, 470)
+	createWidget(form, "sortByDead", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 300, 25, 20, 500)
 	
-	
-	setLocaleText(createWidget(form, "raidWidthText", "TextView", nil, nil, 200, 25, 20, 410))
-	setLocaleText(createWidget(form, "raidHeightText", "TextView", nil, nil, 200, 25, 20, 440))
-	setLocaleText(createWidget(form, "buffSizeText", "TextView", nil, nil, 200, 25, 20, 470))
-	createWidget(form, "targeterWidthEdit", "EditLine", nil, nil, 80, 25, 240, 410, nil, nil)
-	createWidget(form, "targeterHeightEdit", "EditLine", nil, nil, 80, 25, 240, 440, nil, nil)
-	createWidget(form, "buffSizeEdit", "EditLine", nil, nil, 80, 25, 240, 470, nil, nil)
+	setLocaleText(createWidget(form, "targetLimitText", "TextView", nil, nil, 200, 25, 20, 530))
+	setLocaleText(createWidget(form, "raidWidthText", "TextView", nil, nil, 200, 25, 20, 560))
+	setLocaleText(createWidget(form, "raidHeightText", "TextView", nil, nil, 200, 25, 20, 590))
+	setLocaleText(createWidget(form, "buffSizeText", "TextView", nil, nil, 200, 25, 20, 620))
+	createWidget(form, "targetLimitEdit", "EditLine", nil, nil, 80, 25, 240, 530, nil, nil)
+	createWidget(form, "targeterWidthEdit", "EditLine", nil, nil, 80, 25, 240, 560, nil, nil)
+	createWidget(form, "targeterHeightEdit", "EditLine", nil, nil, 80, 25, 240, 590, nil, nil)
+	createWidget(form, "buffSizeEdit", "EditLine", nil, nil, 80, 25, 240, 620, nil, nil)
 	
 	setLocaleText(createWidget(form, "raidBuffsButton", "TextView", nil, nil, 200, 25, 410, 50))
 	createWidget(form, "checkEnemyCleanable", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 300, 25, 340, 80)
@@ -99,10 +104,23 @@ function SaveTargeterFormSettings(aForm)
 	mySettings.hideUnselectableButton = getCheckBoxState(getChild(aForm, "hideUnselectableButton"))
 	mySettings.separateBuffDebuff = getCheckBoxState(getChild(aForm, "separateBuffDebuff"))
 	mySettings.twoColumnMode = getCheckBoxState(getChild(aForm, "twoColumnMode"))
+	mySettings.sortByName = getCheckBoxState(getChild(aForm, "sortByName"))
+	mySettings.sortByHP = getCheckBoxState(getChild(aForm, "sortByHP"))
+	mySettings.sortByClass = getCheckBoxState(getChild(aForm, "sortByClass"))
+	mySettings.sortByDead = getCheckBoxState(getChild(aForm, "sortByDead"))
 	
 	mySettings.raidWidthText = getTextString(getChild(aForm, "targeterWidthEdit"))
 	mySettings.raidHeightText = getTextString(getChild(aForm, "targeterHeightEdit"))
 	mySettings.buffSize = getTextString(getChild(aForm, "buffSizeEdit"))
+	mySettings.targetLimit = getTextString(getChild(aForm, "targetLimitEdit"))
+	local limit = tonumber(mySettings.targetLimit)
+	if limit > 30 then
+		mySettings.targetLimit = "30"
+	end
+	if limit < 1 then
+		mySettings.targetLimit = "1"
+	end
+	setText(getChild(aForm, "targetLimitEdit"), mySettings.targetLimit)
 
 	mySettings.raidBuffs.checkEnemyCleanable = getCheckBoxState(getChild(aForm, "checkEnemyCleanable"))
 	mySettings.raidBuffs.checkControlsButton = getCheckBoxState(getChild(aForm, "checkControlsButton"))
@@ -119,6 +137,11 @@ function LoadTargeterFormSettings(aForm)
 	local mySettings = profile.targeterFormSettings
 	if mySettings.separateBuffDebuff == nil then mySettings.separateBuffDebuff = false end
 	if mySettings.twoColumnMode == nil then mySettings.twoColumnMode = false end
+	if mySettings.sortByName == nil then mySettings.sortByName = true end
+	if mySettings.sortByHP == nil then mySettings.sortByHP = false end
+	if mySettings.sortByClass == nil then mySettings.sortByClass = false end
+	if mySettings.sortByDead == nil then mySettings.sortByDead = false end
+	if mySettings.targetLimit == nil then mySettings.targetLimit = "12" end
 	
 	setLocaleText(getChild(aForm, "classColorModeButton"), mySettings.classColorModeButton, true)
 	setLocaleText(getChild(aForm, "showServerNameButton"), mySettings.showServerNameButton, true)
@@ -133,10 +156,15 @@ function LoadTargeterFormSettings(aForm)
 	setLocaleText(getChild(aForm, "hideUnselectableButton"), mySettings.hideUnselectableButton, true)
 	setLocaleText(getChild(aForm, "separateBuffDebuff"), mySettings.separateBuffDebuff, true)
 	setLocaleText(getChild(aForm, "twoColumnMode"), mySettings.twoColumnMode, true)
+	setLocaleText(getChild(aForm, "sortByName"), mySettings.sortByName, true)
+	setLocaleText(getChild(aForm, "sortByHP"), mySettings.sortByHP, true)
+	setLocaleText(getChild(aForm, "sortByClass"), mySettings.sortByClass, true)
+	setLocaleText(getChild(aForm, "sortByDead"), mySettings.sortByDead, true)
 	
 	setText(getChild(aForm, "targeterWidthEdit"), mySettings.raidWidthText)
 	setText(getChild(aForm, "targeterHeightEdit"), mySettings.raidHeightText)
 	setText(getChild(aForm, "buffSizeEdit"), mySettings.buffSize)
+	setText(getChild(aForm, "targetLimitEdit"), mySettings.targetLimit)
 	
 	setLocaleText(getChild(aForm, "checkEnemyCleanable"), mySettings.raidBuffs.checkEnemyCleanable, true)
 	setLocaleText(getChild(aForm, "checkControlsButton"), mySettings.raidBuffs.checkControlsButton, true)

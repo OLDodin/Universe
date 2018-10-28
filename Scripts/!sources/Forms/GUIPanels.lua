@@ -1,3 +1,22 @@
+Global("FRIEND_PANEL", 1)
+Global("NEITRAL_PANEL", 2)
+Global("ENEMY_PANEL", 3)
+
+Global("g_classPriority", {
+	["WARRIOR"]		= 10,
+	["PALADIN"]		= 9,
+	["MAGE"]		= 8,
+	["DRUID"]		= 1,
+	["PSIONIC"]		= 6,
+	["STALKER"]		= 7,
+	["PRIEST"]		= 2,
+	["NECROMANCER"]	= 3,
+	["ENGINEER"]    = 5,
+	["BARD"]		= 4,
+	["WARLOCK"] 	= 11, 
+	["UNKNOWN"]		= 12
+})
+
 local m_template = createWidget(nil, "Template", "Template")
 
 local m_texIcons = {}
@@ -46,6 +65,12 @@ local m_classColors={
 	["UNKNOWN"]		= { r = 127/255; g = 127/255; b = 127/255; a = 0 }
 }
 
+local m_relationColors={
+	[FRIEND_PANEL]		= { r = 0.1; g = 0.8; b = 0; a = 1.0 },
+	[ENEMY_PANEL]		= { r = 208/255; g = 069/255; b = 075/255; a = 1 },
+	[NEITRAL_PANEL]		= { r = 0.8; g = 0.8; b = 0.1; a = 1 },
+}
+
 local m_manaColor = { r=0, g=0.3, b=1, a=1 }
 local m_energyColor =	{ r=1, g=0.3, b=0, a=1 }
 local m_emptyWStr = common.GetEmptyWString()
@@ -91,7 +116,7 @@ local function PlayerHPChanged(anInfo, aPlayerBar)
 
 	aPlayerBar.optimizeInfo.currHP = anInfo
 	local d = anInfo/100
-	local newPanelW = aPlayerBar.formSettings.raidWidthText * d-4
+	local newPanelW = tonumber(aPlayerBar.formSettings.raidWidthText) * d-4
 	newPanelW = math.max(newPanelW, 1)
 	resize(aPlayerBar.barWdg, newPanelW)
 	if aPlayerBar.formSettings.raidBuffs.colorDebuffButton then
@@ -107,7 +132,7 @@ local function PlayerShieldChanged(anInfo, aPlayerBar)
 		return
 	end
 	aPlayerBar.optimizeInfo.currShield = anInfo
-	local shieldWidth = anInfo/100 * aPlayerBar.formSettings.raidWidthText - 5
+	local shieldWidth = anInfo/100 * tonumber(aPlayerBar.formSettings.raidWidthText) - 5
 	resize(aPlayerBar.shieldBarWdg, shieldWidth)
 end
 
@@ -117,7 +142,7 @@ local function PlayerManaChanged(anInfo, aPlayerBar)
 	end
 
 	aPlayerBar.optimizeInfo.currMana = anInfo
-	local manaBarWidth = anInfo/100 * aPlayerBar.formSettings.raidWidthText - 5
+	local manaBarWidth = anInfo/100 * tonumber(aPlayerBar.formSettings.raidWidthText) - 5
 	resize(aPlayerBar.manaBarWdg, manaBarWidth)	
 end
 
@@ -348,13 +373,14 @@ local function PlayerRemoveImportantBuff(aBuffID, aPlayerBar)
 	end
 end
 
-function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettings)
+function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettings, aRelationType)
 	aPlayerBar.isUsed = true
 	aPlayerBar.playerID = aPlayerInfo.id
 	aPlayerBar.uniqueID = aPlayerInfo.uniqueId
 	aPlayerBar.formSettings = aFormSettings
 	aPlayerBar.optimizeInfo.canSelect = true
 	aPlayerBar.optimizeInfo.canSelectByDist = true
+	aPlayerBar.panelColorType = aRelationType
 	
 	aPlayerBar.usedBuffSlotCnt = 0
 	for i = 1, GetTableSize(aPlayerBar.buffSlots) do 
@@ -399,6 +425,10 @@ function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettin
 				barColor = copyTable(color)
 			end
 		end
+	end
+	
+	if isPlayerExist and not aFormSettings.classColorModeButton then
+		barColor = copyTable(m_relationColors[aPlayerBar.panelColorType])
 	end
 
 	if aPlayerInfo.state == RAID_MEMBER_STATE_OFFLINE or aPlayerInfo.state == RAID_MEMBER_STATE_FAR 
@@ -548,6 +578,7 @@ function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings)
 	playerBar.optimizeInfo.canSelectByDist = true
 	playerBar.isUsed = false
 	playerBar.wasVisible = false
+	playerBar.panelColorType = FRIEND_PANEL
 	
 	if aFormSettings.showClassIconButton then
 		move(playerBar.textWdg, 24, 0)
@@ -721,20 +752,13 @@ Global("FRIEND_MOBS_TARGETS", 7)
 Global("NEITRAL_MOBS_TARGETS", 8)
 Global("ENEMY_PETS_TARGETS", 9)
 Global("FRIEND_PETS_TARGETS", 10)
-Global("MY_SETTINGS_TARGETS", 11)
-Global("TARGETS_DISABLE", 12)
-Global("ALL_TARGETS_IN_COMBAT", 13)
-Global("ENEMY_TARGETS_IN_COMBAT", 14)
-Global("FRIEND_TARGETS_IN_COMBAT", 15)
-Global("ENEMY_PLAYERS_TARGETS_IN_COMBAT", 16)
-Global("FRIEND_PLAYERS_TARGETS_IN_COMBAT", 17)
-Global("NEITRAL_PLAYERS_TARGETS_IN_COMBAT", 18)
-Global("ENEMY_MOBS_TARGETS_IN_COMBAT", 19)
-Global("FRIEND_MOBS_TARGETS_IN_COMBAT", 20)
-Global("NEITRAL_MOBS_TARGETS_IN_COMBAT", 21)
-Global("ENEMY_PETS_TARGETS_IN_COMBAT", 22)
-Global("FRIEND_PETS_TARGETS_IN_COMBAT", 23)
-Global("MY_SETTINGS_TARGETS_IN_COMBAT", 24)
+Global("NOT_FRIENDS_TARGETS", 11)
+Global("NOT_FRIENDS_PLAYERS_TARGETS", 12)
+Global("MY_SETTINGS_TARGETS", 13)
+Global("TARGETS_DISABLE", 14)
+
+
+
 
 local m_targetSwitchArr = {}
 m_targetSwitchArr[ALL_TARGETS] = m_locale["ALL_TARGETS"]
@@ -750,6 +774,8 @@ m_targetSwitchArr[MY_SETTINGS_TARGETS] = m_locale["MY_SETTINGS_TARGETS"]
 m_targetSwitchArr[TARGETS_DISABLE] = m_locale["TARGETS_DISABLE"]
 m_targetSwitchArr[NEITRAL_PLAYERS_TARGETS] = m_locale["NEITRAL_PLAYERS_TARGETS"]
 m_targetSwitchArr[NEITRAL_MOBS_TARGETS] = m_locale["NEITRAL_MOBS_TARGETS"]
+m_targetSwitchArr[NOT_FRIENDS_TARGETS] = m_locale["NOT_FRIENDS_TARGETS"]
+m_targetSwitchArr[NOT_FRIENDS_PLAYERS_TARGETS] = m_locale["NOT_FRIENDS_PLAYERS_TARGETS"]
 
 function SwitchTargetsBtn(aNewTargetInd)
 	m_targetModeName:SetVal("Name", m_targetSwitchArr[aNewTargetInd])

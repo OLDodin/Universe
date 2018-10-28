@@ -729,7 +729,7 @@ local function BuildRaidGUI(aCurrentRaid)
 		playerInfo.state = GROUP_MEMBER_STATE_NEAR
 		playerInfo.className = unit.GetClass(playerInfo.id).className
 		m_raidPlayerPanelList[0][0].isUsed = true
-		SetBaseInfoPlayerPanel(m_raidPlayerPanelList[0][0], playerInfo, true, profile.raidFormSettings)
+		SetBaseInfoPlayerPanel(m_raidPlayerPanelList[0][0], playerInfo, true, profile.raidFormSettings, FRIEND_PANEL)
 		FabricMakeRaidPlayerInfo(playerInfo.id, m_raidPlayerPanelList[0][0])
 		ResizeRaidPanel(1, 1)
 	elseif aCurrentRaid.type == PARTY_TYPE then
@@ -739,7 +739,7 @@ local function BuildRaidGUI(aCurrentRaid)
 			if m_raidPartyButtons[1].active then
 				local playerBar = m_raidPlayerPanelList[0][i]
 				playerBar.isUsed = true
-				SetBaseInfoPlayerPanel(playerBar, playerInfo, (i == leaderInd),  profile.raidFormSettings)
+				SetBaseInfoPlayerPanel(playerBar, playerInfo, (i == leaderInd),  profile.raidFormSettings, FRIEND_PANEL)
 				if playerInfo.state == GROUP_MEMBER_STATE_OFFLINE then 
 					playerInfo.id = nil
 				end
@@ -764,7 +764,7 @@ local function BuildRaidGUI(aCurrentRaid)
 					local playerInfo = subParty[j]
 					local playerBar = m_raidPlayerPanelList[partyCnt][j]
 					playerBar.isUsed = true
-					SetBaseInfoPlayerPanel(playerBar, playerInfo, playerInfo.uniqueId:IsEqual(raidLeaderID),  profile.raidFormSettings)
+					SetBaseInfoPlayerPanel(playerBar, playerInfo, playerInfo.uniqueId:IsEqual(raidLeaderID),  profile.raidFormSettings, FRIEND_PANEL)
 					if playerInfo.state == RAID_MEMBER_STATE_OFFLINE then 
 						playerInfo.id = nil
 					end
@@ -924,16 +924,7 @@ local function EraseTarget(anObjID)
 	EraseTargetInListTarget(anObjID, FRIEND_PETS_TARGETS)
 	EraseTargetInListTarget(anObjID, MY_SETTINGS_TARGETS)
 	
-	EraseTargetInListTarget(anObjID, ENEMY_PLAYERS_TARGETS_IN_COMBAT)
-	EraseTargetInListTarget(anObjID, FRIEND_PLAYERS_TARGETS_IN_COMBAT)
-	EraseTargetInListTarget(anObjID, NEITRAL_PLAYERS_TARGETS_IN_COMBAT)
-	EraseTargetInListTarget(anObjID, ENEMY_MOBS_TARGETS_IN_COMBAT)
-	EraseTargetInListTarget(anObjID, FRIEND_MOBS_TARGETS_IN_COMBAT)
-	EraseTargetInListTarget(anObjID, NEITRAL_MOBS_TARGETS_IN_COMBAT)
-	EraseTargetInListTarget(anObjID, ENEMY_PETS_TARGETS_IN_COMBAT)
-	EraseTargetInListTarget(anObjID, FRIEND_PETS_TARGETS_IN_COMBAT)
-	EraseTargetInListTarget(anObjID, MY_SETTINGS_TARGETS_IN_COMBAT)
-	
+
 	m_targetUnselectable[anObjID] = nil
 end
 
@@ -957,16 +948,6 @@ local function FindTarget(anObjID)
 	res = res or FindInListTarget(anObjID, m_targetUnitsByType[FRIEND_PETS_TARGETS])
 	res = res or FindInListTarget(anObjID, m_targetUnitsByType[MY_SETTINGS_TARGETS])
 	
-	res = res or FindInListTarget(anObjID, m_targetUnitsByType[ENEMY_PLAYERS_TARGETS_IN_COMBAT])
-	res = res or FindInListTarget(anObjID, m_targetUnitsByType[FRIEND_PLAYERS_TARGETS_IN_COMBAT])
-	res = res or FindInListTarget(anObjID, m_targetUnitsByType[NEITRAL_PLAYERS_TARGETS_IN_COMBAT])
-	res = res or FindInListTarget(anObjID, m_targetUnitsByType[ENEMY_MOBS_TARGETS_IN_COMBAT])
-	res = res or FindInListTarget(anObjID, m_targetUnitsByType[FRIEND_MOBS_TARGETS_IN_COMBAT])
-	res = res or FindInListTarget(anObjID, m_targetUnitsByType[NEITRAL_MOBS_TARGETS_IN_COMBAT])
-	res = res or FindInListTarget(anObjID, m_targetUnitsByType[ENEMY_PETS_TARGETS_IN_COMBAT])
-	res = res or FindInListTarget(anObjID, m_targetUnitsByType[FRIEND_PETS_TARGETS_IN_COMBAT])
-	res = res or FindInListTarget(anObjID, m_targetUnitsByType[MY_SETTINGS_TARGETS_IN_COMBAT])
-	
 	return res
 end
 
@@ -974,25 +955,8 @@ local function AddTargetInList(aNewTargetInfo, anObjArr)
 	if not anObjArr then
 		return
 	end
-	local alreadyExist = FindInListTarget(aNewTargetInfo.objID, anObjArr)
-	if not alreadyExist then
-		local infoAdded = false
-		--минимизируем кол-во вызовов
-		if not aNewTargetInfo.objNameLower then
-			aNewTargetInfo.objName = object.GetName(aNewTargetInfo.objID)
-			aNewTargetInfo.objNameLower = toLowerString(aNewTargetInfo.objName)
-		end
-		for i=1, GetTableSize(anObjArr) do
-			if aNewTargetInfo.objNameLower < anObjArr[i].objNameLower then
-				table.insert(anObjArr, i, aNewTargetInfo)
-				infoAdded = true
-				break
-			end
-		end
-		if not infoAdded then
-			table.insert(anObjArr, aNewTargetInfo)
-		end
-	end
+	
+	table.insert(anObjArr, aNewTargetInfo)
 end
 
 local function SetNecessaryTargets(anObjID, anInCombat)
@@ -1009,77 +973,72 @@ local function SetNecessaryTargets(anObjID, anInCombat)
 	
 	local isEnemy = object.IsEnemy(anObjID)
 	local isFriend = isEnemy and false or object.IsFriend(anObjID)
+	local isNeitral = not isEnemy and not isFriend
 	
 	local newValue = {}
 	newValue.objID = anObjID
-	
+	newValue.inCombat = anInCombat
+
+	newValue.objName = object.GetName(newValue.objID)
+	newValue.objNameLower = toLowerString(newValue.objName)
+
+	if profile.targeterFormSettings.sortByClass then
+		newValue.className = unit.GetClass(anObjID).className
+		newValue.classPriority = g_classPriority[newValue.className] or g_classPriority["UNKNOWN"]
+	end
+	if profile.targeterFormSettings.sortByDead then
+		if object.IsDead(anObjID) then
+			newValue.isDead = 1
+		else
+			newValue.isDead = 0
+		end
+	end
+	if profile.targeterFormSettings.sortByHP then
+		local healthInfo = object.GetHealthInfo(anObjID)
+		newValue.hp = healthInfo and healthInfo.valuePercents
+	end
+	if isEnemy then
+		newValue.relationType = ENEMY_PANEL
+	elseif isFriend then
+		newValue.relationType = FRIEND_PANEL
+	else
+		newValue.relationType = NEITRAL_PANEL
+	end
+
 	local objArr = nil
 
 	if isPlayer then
-		if anInCombat then
-			if isEnemy then
-				objArr = m_targetUnitsByType[ENEMY_PLAYERS_TARGETS_IN_COMBAT]
-			elseif isFriend then
-				objArr = m_targetUnitsByType[FRIEND_PLAYERS_TARGETS_IN_COMBAT]
-			else
-				objArr = m_targetUnitsByType[NEITRAL_PLAYERS_TARGETS_IN_COMBAT]
-			end
+		if isEnemy then
+			objArr = m_targetUnitsByType[ENEMY_PLAYERS_TARGETS]
+		elseif isFriend then
+			objArr = m_targetUnitsByType[FRIEND_PLAYERS_TARGETS]
 		else
-			if isEnemy then
-				objArr = m_targetUnitsByType[ENEMY_PLAYERS_TARGETS]
-			elseif isFriend then
-				objArr = m_targetUnitsByType[FRIEND_PLAYERS_TARGETS]
-			else
-				objArr = m_targetUnitsByType[NEITRAL_PLAYERS_TARGETS]
-			end
+			objArr = m_targetUnitsByType[NEITRAL_PLAYERS_TARGETS]
 		end
 	end
 	AddTargetInList(newValue, objArr)
 	objArr = nil
 	if not isPlayer then
-		if anInCombat then
-			if isEnemy then
-				objArr = m_targetUnitsByType[ENEMY_MOBS_TARGETS_IN_COMBAT]
-			elseif isFriend then
-				objArr = m_targetUnitsByType[FRIEND_MOBS_TARGETS_IN_COMBAT]
-			else
-				objArr = m_targetUnitsByType[NEITRAL_MOBS_TARGETS_IN_COMBAT]
-			end
+		if isEnemy then
+			objArr = m_targetUnitsByType[ENEMY_MOBS_TARGETS]
+		elseif isFriend then
+			objArr = m_targetUnitsByType[FRIEND_MOBS_TARGETS]
 		else
-			if isEnemy then
-				objArr = m_targetUnitsByType[ENEMY_MOBS_TARGETS]
-			elseif isFriend then
-				objArr = m_targetUnitsByType[FRIEND_MOBS_TARGETS]
-			else
-				objArr = m_targetUnitsByType[NEITRAL_MOBS_TARGETS]
-			end
-
+			objArr = m_targetUnitsByType[NEITRAL_MOBS_TARGETS]
 		end
 	end
 	AddTargetInList(newValue, objArr)
 	objArr = nil
 	if isPet then
-		if anInCombat then
-			if isEnemy then
-				objArr = m_targetUnitsByType[ENEMY_PETS_TARGETS_IN_COMBAT]
-			elseif isFriend then
-				objArr = m_targetUnitsByType[FRIEND_PETS_TARGETS_IN_COMBAT]
-			end
-		else
-			if isEnemy then
-				objArr = m_targetUnitsByType[ENEMY_PETS_TARGETS]
-			elseif isFriend then
-				objArr = m_targetUnitsByType[FRIEND_PETS_TARGETS]
-			end
+		if isEnemy then
+			objArr = m_targetUnitsByType[ENEMY_PETS_TARGETS]
+		elseif isFriend then
+			objArr = m_targetUnitsByType[FRIEND_PETS_TARGETS]
 		end
 	end
 	AddTargetInList(newValue, objArr)
 	
-	if anInCombat then
-		objArr = m_targetUnitsByType[MY_SETTINGS_TARGETS_IN_COMBAT]
-	else
-		objArr = m_targetUnitsByType[MY_SETTINGS_TARGETS]
-	end
+	objArr = m_targetUnitsByType[MY_SETTINGS_TARGETS]
 	for _, targetsFromSettings in  ipairs(profile.targeterFormSettings.myTargets) do
 		if newValue.objNameLower == targetsFromSettings.nameLowerStr then
 			AddTargetInList(newValue, objArr)
@@ -1089,12 +1048,12 @@ end
 
 local function CreateTargeterPanelCache()
 	local profile = GetCurrentProfile()
-	if profile.targeterFormSettings.twoColumnMode then
-		TARGETS_LIMIT = 8
+	if profile.targeterFormSettings.targetLimit then
+		TARGETS_LIMIT = tonumber(profile.targeterFormSettings.targetLimit)
 	else
 		TARGETS_LIMIT = 12
 	end
-	
+		
 	for i = 0, TARGETS_LIMIT-1 do
 		local playerPanel = CreatePlayerPanel(m_targetPanel, 0, i, false, profile.targeterFormSettings)
 		m_targeterPlayerPanelList[i] = playerPanel
@@ -1138,16 +1097,7 @@ local function LoadTargeterData()
 	m_targetUnitsByType[ENEMY_PETS_TARGETS] = {}
 	m_targetUnitsByType[FRIEND_PETS_TARGETS] = {}
 	m_targetUnitsByType[MY_SETTINGS_TARGETS] = {}
-	
-	m_targetUnitsByType[ENEMY_PLAYERS_TARGETS_IN_COMBAT] = {}
-	m_targetUnitsByType[FRIEND_PLAYERS_TARGETS_IN_COMBAT] = {}
-	m_targetUnitsByType[NEITRAL_PLAYERS_TARGETS_IN_COMBAT] = {}
-	m_targetUnitsByType[ENEMY_MOBS_TARGETS_IN_COMBAT] = {}
-	m_targetUnitsByType[FRIEND_MOBS_TARGETS_IN_COMBAT] = {}
-	m_targetUnitsByType[NEITRAL_MOBS_TARGETS_IN_COMBAT] = {}
-	m_targetUnitsByType[ENEMY_PETS_TARGETS_IN_COMBAT] = {}
-	m_targetUnitsByType[FRIEND_PETS_TARGETS_IN_COMBAT] = {}
-	m_targetUnitsByType[MY_SETTINGS_TARGETS_IN_COMBAT] = {}
+
 	
 	local profile = GetCurrentProfile()
 	local isCombat = false
@@ -1206,7 +1156,9 @@ local function SeparateTargeterPanelList(anObjList, aPanelListShift)
 		local playerBar = m_targeterPlayerPanelList[i]
 		local found = false
 		for k = 1, GetTableSize(anObjList) do
-			if playerBar.playerID == anObjList[k].objID then
+			if playerBar.playerID == anObjList[k].objID
+			and (playerBar.formSettings.classColorModeButton or playerBar.panelColorType == anObjList[k].relationType)
+			then
 				finededList[playerBar.playerID] = playerBar
 				found = true
 				break
@@ -1219,6 +1171,66 @@ local function SeparateTargeterPanelList(anObjList, aPanelListShift)
 	return finededList, freeList
 end
 
+local function SortByName(A, B)
+	return A.objNameLower < B.objNameLower
+end
+
+local function SortByHP(A, B)
+	return A.hp < B.hp
+end
+
+local function SortByClass(A, B)
+	return A.classPriority < B.classPriority
+end
+
+local function SortByDead(A, B)
+	return A.isDead < B.isDead
+end
+
+local function SortByWeight(A, B)
+	return A.sortWeight < B.sortWeight
+end
+
+local function SortBySettings(anArr)
+	local profile = GetCurrentProfile()
+	
+	for i = 1, GetTableSize(anArr)  do
+		anArr[i].sortWeight = 0
+	end
+		
+	if profile.targeterFormSettings.sortByName then
+		table.sort(anArr, SortByName)
+		for i = 1, GetTableSize(anArr) do
+			anArr[i].sortWeight = i
+		end
+	end
+	
+	if profile.targeterFormSettings.sortByHP then
+		table.sort(anArr, SortByHP)
+		for i = 1, GetTableSize(anArr) do
+			anArr[i].sortWeight = anArr[i].sortWeight + anArr[i].hp * TARGETS_LIMIT
+		end
+	end
+	
+	if profile.targeterFormSettings.sortByClass then
+		local shiftMult = 100 * TARGETS_LIMIT
+		table.sort(anArr, SortByClass)
+		for i = 1, GetTableSize(anArr) do
+			anArr[i].sortWeight = anArr[i].sortWeight + anArr[i].classPriority * shiftMult
+		end
+	end
+	
+	if profile.targeterFormSettings.sortByDead then
+		local shiftMult = 100 * TARGETS_LIMIT * GetTableSize(g_classPriority)
+		table.sort(anArr, SortByDead)
+		for i = 1, GetTableSize(anArr) do
+			anArr[i].sortWeight = anArr[i].sortWeight + anArr[i].isDead * shiftMult
+		end
+	end
+	
+	table.sort(anArr, SortByWeight)
+end
+
 local function SortAndSetTarget(aTargetUnion, aPanelListShift, aPanelPosShift)
 	local cnt = 0
 	local listOfObjToUpdate = {}
@@ -1228,6 +1240,7 @@ local function SortAndSetTarget(aTargetUnion, aPanelListShift, aPanelPosShift)
 	local playerBar = nil
 	--формируем список для отображения
 	for _, unitsByType in ipairs(aTargetUnion) do
+		SortBySettings(unitsByType)
 		for _, targetInfo in pairs(unitsByType) do
 			local objID = targetInfo.objID
 			if cnt < TARGETS_LIMIT and isExist(objID) then
@@ -1254,6 +1267,7 @@ local function SortAndSetTarget(aTargetUnion, aPanelListShift, aPanelPosShift)
 			updateInfo.playerBar = playerBar
 			updateInfo.objID = objID
 			updateInfo.objName = targetInfo.objName
+			updateInfo.relationType = targetInfo.relationType
 			table.insert(listOfObjToUpdate, updateInfo)
 		end
 		playerBar.isUsed = true
@@ -1274,7 +1288,7 @@ local function SortAndSetTarget(aTargetUnion, aPanelListShift, aPanelPosShift)
 		playerInfo.id = updateInfo.objID
 		playerInfo.name = updateInfo.objName
 		playerInfo.state = GROUP_MEMBER_STATE_NEAR
-		SetBaseInfoPlayerPanel(updateInfo.playerBar, playerInfo, false,  profile.targeterFormSettings)
+		SetBaseInfoPlayerPanel(updateInfo.playerBar, playerInfo, false,  profile.targeterFormSettings, updateInfo.relationType)
 		FabricMakeTargetPlayerInfo(playerInfo.id, updateInfo.playerBar)
 	end
 
@@ -1293,6 +1307,46 @@ local function SortAndSetTarget(aTargetUnion, aPanelListShift, aPanelPosShift)
 	end
 	return cnt-aPanelListShift
 end
+
+local function GetArrByCombatStatus(aStatus, aType)
+	local objArr = m_targetUnitsByType[aType]
+	local resultArr = {}
+	for i=1, GetTableSize(objArr) do
+		if objArr[i].inCombat == aStatus then
+			table.insert(resultArr, objArr[i])
+		end
+	end
+	return resultArr
+end
+
+local function MakeTargetUnion(aType, aStatus)
+	local targetUnion = {}
+	if aType == ALL_TARGETS then
+		table.insert(targetUnion, GetArrByCombatStatus(aStatus, ENEMY_PLAYERS_TARGETS))
+		table.insert(targetUnion, GetArrByCombatStatus(aStatus, NEITRAL_PLAYERS_TARGETS))
+		table.insert(targetUnion, GetArrByCombatStatus(aStatus, FRIEND_PLAYERS_TARGETS))
+		table.insert(targetUnion, GetArrByCombatStatus(aStatus, ENEMY_MOBS_TARGETS))
+		table.insert(targetUnion, GetArrByCombatStatus(aStatus, NEITRAL_MOBS_TARGETS))
+		table.insert(targetUnion, GetArrByCombatStatus(aStatus, FRIEND_MOBS_TARGETS))
+	elseif aType == ENEMY_TARGETS then
+		table.insert(targetUnion, GetArrByCombatStatus(aStatus, ENEMY_PLAYERS_TARGETS))
+		table.insert(targetUnion, GetArrByCombatStatus(aStatus, ENEMY_MOBS_TARGETS))
+	elseif aType == FRIEND_TARGETS then
+		table.insert(targetUnion, GetArrByCombatStatus(aStatus, FRIEND_PLAYERS_TARGETS))
+		table.insert(targetUnion, GetArrByCombatStatus(aStatus, FRIEND_MOBS_TARGETS))
+	elseif aType == NOT_FRIENDS_TARGETS then
+		table.insert(targetUnion, GetArrByCombatStatus(aStatus, ENEMY_PLAYERS_TARGETS))
+		table.insert(targetUnion, GetArrByCombatStatus(aStatus, NEITRAL_PLAYERS_TARGETS))
+		table.insert(targetUnion, GetArrByCombatStatus(aStatus, ENEMY_MOBS_TARGETS))
+		table.insert(targetUnion, GetArrByCombatStatus(aStatus, NEITRAL_MOBS_TARGETS))
+	elseif aType == NOT_FRIENDS_PLAYERS_TARGETS then	
+		table.insert(targetUnion, GetArrByCombatStatus(aStatus, ENEMY_PLAYERS_TARGETS))
+		table.insert(targetUnion, GetArrByCombatStatus(aStatus, NEITRAL_PLAYERS_TARGETS))
+	else
+		table.insert(targetUnion, GetArrByCombatStatus(aStatus, aType))
+	end
+	return targetUnion
+end
 	
 function SetTargetType(aType, anIsTypeChanged)
 	if m_currTargetType == TARGETS_DISABLE then
@@ -1306,42 +1360,12 @@ function SetTargetType(aType, anIsTypeChanged)
 		m_targeterPlayerPanelList[i].isUsed = false
 	end
 	
-	local targetUnion = {}
-	if aType == ALL_TARGETS then
-		targetUnion[1] = m_targetUnitsByType[ENEMY_PLAYERS_TARGETS]
-		targetUnion[2] = m_targetUnitsByType[NEITRAL_PLAYERS_TARGETS]
-		targetUnion[3] = m_targetUnitsByType[FRIEND_PLAYERS_TARGETS]
-		targetUnion[4] = m_targetUnitsByType[ENEMY_MOBS_TARGETS]
-		targetUnion[5] = m_targetUnitsByType[NEITRAL_MOBS_TARGETS]
-		targetUnion[6] = m_targetUnitsByType[FRIEND_MOBS_TARGETS]
-	elseif aType == ENEMY_TARGETS then
-		targetUnion[1] = m_targetUnitsByType[ENEMY_PLAYERS_TARGETS]
-		targetUnion[2] = m_targetUnitsByType[ENEMY_MOBS_TARGETS]
-	elseif aType == FRIEND_TARGETS then
-		targetUnion[1] = m_targetUnitsByType[FRIEND_PLAYERS_TARGETS]
-		targetUnion[2] = m_targetUnitsByType[FRIEND_MOBS_TARGETS]
-	else
-		targetUnion[1] = m_targetUnitsByType[aType]
-	end
+	local targetUnion = MakeTargetUnion(aType, false)
+	
 	
 	local targetUnionCombat = {}
 	if profile.targeterFormSettings.twoColumnMode then
-		if aType == ALL_TARGETS then
-			table.insert(targetUnionCombat, m_targetUnitsByType[ENEMY_PLAYERS_TARGETS_IN_COMBAT])
-			table.insert(targetUnionCombat, m_targetUnitsByType[NEITRAL_PLAYERS_TARGETS_IN_COMBAT])
-			table.insert(targetUnionCombat, m_targetUnitsByType[FRIEND_PLAYERS_TARGETS_IN_COMBAT])
-			table.insert(targetUnionCombat, m_targetUnitsByType[ENEMY_MOBS_TARGETS_IN_COMBAT])
-			table.insert(targetUnionCombat, m_targetUnitsByType[NEITRAL_MOBS_TARGETS_IN_COMBAT])
-			table.insert(targetUnionCombat, m_targetUnitsByType[FRIEND_MOBS_TARGETS_IN_COMBAT])
-		elseif aType == ENEMY_TARGETS then
-			table.insert(targetUnionCombat, m_targetUnitsByType[ENEMY_PLAYERS_TARGETS_IN_COMBAT])
-			table.insert(targetUnionCombat, m_targetUnitsByType[ENEMY_MOBS_TARGETS_IN_COMBAT])
-		elseif aType == FRIEND_TARGETS then
-			table.insert(targetUnionCombat, m_targetUnitsByType[FRIEND_PLAYERS_TARGETS_IN_COMBAT])
-			table.insert(targetUnionCombat, m_targetUnitsByType[FRIEND_MOBS_TARGETS_IN_COMBAT])
-		else
-			table.insert(targetUnionCombat, m_targetUnitsByType[aType+13])
-		end
+		targetUnionCombat = MakeTargetUnion(aType, true)
 	end
 	
 	local cntSimple = 0

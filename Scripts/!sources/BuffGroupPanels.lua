@@ -326,6 +326,10 @@ function GetAboveHeadSettings()
 	end
 end
 
+local function CheckEnemy(anEnemyButton, anObjID)
+	return anEnemyButton and not object.IsFriend(anObjID)
+end
+
 function UnitsChangedForAboveHead(aSpawnedUnitList, aDespawnedUnitList)
 	local profile = GetCurrentProfile()
 	local aboveHeadPanel = nil
@@ -346,7 +350,7 @@ function UnitsChangedForAboveHead(aSpawnedUnitList, aDespawnedUnitList)
 	
 	for _, objID in pairs(aSpawnedUnitList) do
 		if objID and unit.IsPlayer(objID) then
-			if not aboveHeadSettings.isEnemyButton or (aboveHeadSettings.isEnemyButton and object.IsEnemy(objID)) then
+			if not aboveHeadSettings.isEnemyButton or CheckEnemy(aboveHeadSettings.isEnemyButton, objID) then
 				priority = NORMAL_PRIORITY_PANELS
 				if objID == myID then
 					priority = HIGH_PRIORITY_PANELS
@@ -378,14 +382,14 @@ function RelationChangedForAboveHead(anUnitID)
 	end
 	
 	if anUnitID and reallyExist and unit.IsPlayer(anUnitID) then
-		if not aboveHeadSettings.isEnemyButton or (aboveHeadSettings.isEnemyButton and object.IsEnemy(anUnitID)) then
+		if not aboveHeadSettings.isEnemyButton or CheckEnemy(aboveHeadSettings.isEnemyButton, anUnitID) then
 			if not IsExistAboveHeadPanel(anUnitID) then
 				aboveHeadPanel = GetAboveHeadPanel(anUnitID, NORMAL_PRIORITY_PANELS)
 				if aboveHeadPanel then
 					FabricMakeAboveHeadPlayerInfo(anUnitID, aboveHeadPanel)
 				end
 			end
-		elseif aboveHeadSettings.isEnemyButton and not object.IsEnemy(anUnitID) then
+		elseif aboveHeadSettings.isEnemyButton and object.IsFriend(anUnitID) then
 			RemovePanelAboveHead(anUnitID)
 			UnsubscribeAboveHeadListeners(anUnitID)
 		end
@@ -402,7 +406,7 @@ function ChangedTargetForAboveHead(aTargetID)
 	if not unit.IsPlayer(aTargetID) then
 		return
 	end
-	if not aboveHeadSettings.isEnemyButton or (aboveHeadSettings.isEnemyButton and object.IsEnemy(aTargetID)) then
+	if not aboveHeadSettings.isEnemyButton or CheckEnemy(aboveHeadSettings.isEnemyButton, aTargetID) then
 		SetPriorityAboveHeadPanel(m_lastTargetID, NORMAL_PRIORITY_PANELS)
 		if  not IsExistAboveHeadPanel(aTargetID) then
 			local aboveHeadPanel = GetAboveHeadPanel(aTargetID, HIGH_PRIORITY_PANELS)
