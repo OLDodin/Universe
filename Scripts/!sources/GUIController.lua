@@ -902,6 +902,7 @@ function StartMove(anUniqueID)
 	ShowMoveIfNeeded()
 end
 
+
 local function EraseTargetInListTarget(anObjID, aType)
 	local objArr = m_targetUnitsByType[aType]
 	for i=1, GetTableSize(objArr) do
@@ -1428,6 +1429,39 @@ local function InitTargeterData()
 	ApplyTargetSettingsToGUI(m_targetPanel)
 end
 
+local function UnitHPChanged(aParams)
+	local playerID = aParams.unitId or aParams.id
+	if isExist(playerID) then
+		local profile = GetCurrentProfile()
+		-- пока не получили EVENT_UNITS_CHANGED данные по могут быть невалидными
+		if FindTarget(playerID) then
+			EraseTarget(playerID)
+			local isCombat = false
+			if profile.targeterFormSettings.twoColumnMode then
+				isCombat = object.IsInCombat(playerID)
+			end
+			SetNecessaryTargets(playerID, isCombat)
+			SetTargetType(m_currTargetType)
+		end
+	end
+end
+
+local function UnitDeadChanged(aParams)
+	if isExist(aParams.unitId) then
+		local profile = GetCurrentProfile()
+		-- пока не получили EVENT_UNITS_CHANGED данные по могут быть невалидными
+		if FindTarget(aParams.unitId) then
+			EraseTarget(aParams.unitId)
+			local isCombat = false
+			if profile.targeterFormSettings.twoColumnMode then
+				isCombat = object.IsInCombat(aParams.unitId)
+			end
+			SetNecessaryTargets(aParams.unitId, isCombat)
+			SetTargetType(m_currTargetType)
+		end
+	end
+end
+
 local function UnitChanged(aParams)
 	if m_buffGroupSubSystemLoaded then
 		UnitsChangedForAboveHead(aParams.spawned, aParams.despawned)
@@ -1851,6 +1885,14 @@ function GUIControllerInit()
 	common.RegisterEventHandler(RelationChanged, "EVENT_UNIT_PVP_FLAG_CHANGED")
 	common.RegisterEventHandler(RelationChanged, "EVENT_UNIT_RELATION_CHANGED")
 	common.RegisterEventHandler(RelationChanged, "EVENT_OBJECT_COMBAT_STATUS_CHANGED")
+	
+	if profile.targeterFormSettings.sortByHP then
+		common.RegisterEventHandler(UnitHPChanged, "EVENT_UNIT_HEALTH_CHANGED")
+		common.RegisterEventHandler(UnitHPChanged, "EVENT_OBJECT_HEALTH_CHANGED")
+	end
+	if profile.targeterFormSettings.sortByDead then
+		common.RegisterEventHandler(UnitDeadChanged, "EVENT_UNIT_DEAD_CHANGED")
+	end
 	
 	--из-за лимита в 500 подписок на события какие не требуют привязки по ID вынесены из PlayerInfo
 	common.RegisterEventHandler(AfkChanged, "EVENT_AFK_STATE_CHANGED")
