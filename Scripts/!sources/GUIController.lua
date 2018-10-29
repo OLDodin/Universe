@@ -1214,7 +1214,7 @@ local function SortBySettings(anArr)
 	end
 	
 	if profile.targeterFormSettings.sortByClass then
-		local shiftMult = 100 * TARGETS_LIMIT
+		local shiftMult = 101 * TARGETS_LIMIT
 		table.sort(anArr, SortByClass)
 		for i = 1, GetTableSize(anArr) do
 			anArr[i].sortWeight = anArr[i].sortWeight + anArr[i].classPriority * shiftMult
@@ -1222,7 +1222,7 @@ local function SortBySettings(anArr)
 	end
 	
 	if profile.targeterFormSettings.sortByDead then
-		local shiftMult = 100 * TARGETS_LIMIT * GetTableSize(g_classPriority)
+		local shiftMult = 101 * TARGETS_LIMIT * (GetTableSize(g_classPriority) + 1)
 		table.sort(anArr, SortByDead)
 		for i = 1, GetTableSize(anArr) do
 			anArr[i].sortWeight = anArr[i].sortWeight + anArr[i].isDead * shiftMult
@@ -1430,9 +1430,12 @@ local function InitTargeterData()
 end
 
 local function UnitHPChanged(aParams)
+	local profile = GetCurrentProfile()
+	if not profile.targeterFormSettings.sortByHP then
+		return
+	end
 	local playerID = aParams.unitId or aParams.id
 	if isExist(playerID) then
-		local profile = GetCurrentProfile()
 		-- пока не получили EVENT_UNITS_CHANGED данные по могут быть невалидными
 		if FindTarget(playerID) then
 			EraseTarget(playerID)
@@ -1447,8 +1450,11 @@ local function UnitHPChanged(aParams)
 end
 
 local function UnitDeadChanged(aParams)
+	local profile = GetCurrentProfile()
+	if not profile.targeterFormSettings.sortByDead then
+		return
+	end
 	if isExist(aParams.unitId) then
-		local profile = GetCurrentProfile()
 		-- пока не получили EVENT_UNITS_CHANGED данные по могут быть невалидными
 		if FindTarget(aParams.unitId) then
 			EraseTarget(aParams.unitId)
@@ -1886,13 +1892,13 @@ function GUIControllerInit()
 	common.RegisterEventHandler(RelationChanged, "EVENT_UNIT_RELATION_CHANGED")
 	common.RegisterEventHandler(RelationChanged, "EVENT_OBJECT_COMBAT_STATUS_CHANGED")
 	
-	if profile.targeterFormSettings.sortByHP then
-		common.RegisterEventHandler(UnitHPChanged, "EVENT_UNIT_HEALTH_CHANGED")
-		common.RegisterEventHandler(UnitHPChanged, "EVENT_OBJECT_HEALTH_CHANGED")
-	end
-	if profile.targeterFormSettings.sortByDead then
-		common.RegisterEventHandler(UnitDeadChanged, "EVENT_UNIT_DEAD_CHANGED")
-	end
+	
+	common.RegisterEventHandler(UnitHPChanged, "EVENT_UNIT_HEALTH_CHANGED")
+	common.RegisterEventHandler(UnitHPChanged, "EVENT_OBJECT_HEALTH_CHANGED")
+
+	
+	common.RegisterEventHandler(UnitDeadChanged, "EVENT_UNIT_DEAD_CHANGED")
+	
 	
 	--из-за лимита в 500 подписок на события какие не требуют привязки по ID вынесены из PlayerInfo
 	common.RegisterEventHandler(AfkChanged, "EVENT_AFK_STATE_CHANGED")
