@@ -10,10 +10,14 @@
 	<realHeight>20</realHeight>
 	<disableLODControl>false</disableLODControl>
 	<alphaTex>true</alphaTex>
-	<binaryFileSize>409</binaryFileSize>
-	<binaryFile href="Necromancer.(UITexture).bin" />
-	<sourceFile href="Necromancer.tga" />
-	<sourceFileCRC>-511324576</sourceFileCRC>
+	<binaryFileSize>361</binaryFileSize>
+	<binaryFile href="necromancer.(UITexture).bin" />
+	<binaryFileSize2>0</binaryFileSize2>
+	<binaryFile2 href="" />
+	<sourceFile href="necromancer.tga" />
+	<sourceFileCRC>-865808281</sourceFileCRC>
 	<wrap>false</wrap>
 	<LocalizationInfo />
+	<atlasPart>true</atlasPart>
+	<pool>UNDEFINED</pool>
 </UITexture>

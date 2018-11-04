@@ -10,10 +10,14 @@
 	<realHeight>20</realHeight>
 	<disableLODControl>false</disableLODControl>
 	<alphaTex>true</alphaTex>
-	<binaryFileSize>399</binaryFileSize>
-	<binaryFile href="Warrior.(UITexture).bin" />
-	<sourceFile href="Warrior.tga" />
-	<sourceFileCRC>-577791522</sourceFileCRC>
+	<binaryFileSize>283</binaryFileSize>
+	<binaryFile href="warrior.(UITexture).bin" />
+	<binaryFileSize2>0</binaryFileSize2>
+	<binaryFile2 href="" />
+	<sourceFile href="warrior.tga" />
+	<sourceFileCRC>15796155</sourceFileCRC>
 	<wrap>false</wrap>
 	<LocalizationInfo />
+	<atlasPart>true</atlasPart>
+	<pool>UNDEFINED</pool>
 </UITexture>

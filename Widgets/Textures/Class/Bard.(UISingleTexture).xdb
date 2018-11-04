@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <UISingleTexture>
-	<singleTexture href="Bard.(UITexture).xdb#xpointer(/UITexture)" />
+	<singleTexture href="bard.(UITexture).xdb#xpointer(/UITexture)" />
 	<permanentCache>0</permanentCache>
+	<sourceFile href="bard.tga" />
+	<sourceFileCRC>-85435884</sourceFileCRC>
 </UISingleTexture>

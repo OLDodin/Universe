@@ -6,11 +6,18 @@
 	<type>DXT5</type>
 	<width>32</width>
 	<height>32</height>
-	<realWidth>32</realWidth>
-	<realHeight>32</realHeight>
+	<realWidth>20</realWidth>
+	<realHeight>20</realHeight>
 	<disableLODControl>false</disableLODControl>
 	<alphaTex>true</alphaTex>
-	<binaryFileSize>517</binaryFileSize>
-	<binaryFile href="Bard.(UITexture).bin" />
+	<binaryFileSize>328</binaryFileSize>
+	<binaryFile href="bard.(UITexture).bin" />
+	<binaryFileSize2>0</binaryFileSize2>
+	<binaryFile2 href="" />
+	<sourceFile href="bard.tga" />
+	<sourceFileCRC>-85435884</sourceFileCRC>
 	<wrap>false</wrap>
+	<LocalizationInfo />
+	<atlasPart>true</atlasPart>
+	<pool>UNDEFINED</pool>
 </UITexture>

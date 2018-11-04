@@ -10,10 +10,14 @@
 	<realHeight>20</realHeight>
 	<disableLODControl>false</disableLODControl>
 	<alphaTex>true</alphaTex>
-	<binaryFileSize>436</binaryFileSize>
-	<binaryFile href="Psionic.(UITexture).bin" />
-	<sourceFile href="Psionic.tga" />
-	<sourceFileCRC>-1173038218</sourceFileCRC>
+	<binaryFileSize>354</binaryFileSize>
+	<binaryFile href="psionic.(UITexture).bin" />
+	<binaryFileSize2>0</binaryFileSize2>
+	<binaryFile2 href="" />
+	<sourceFile href="psionic.tga" />
+	<sourceFileCRC>-1599629590</sourceFileCRC>
 	<wrap>false</wrap>
 	<LocalizationInfo />
+	<atlasPart>true</atlasPart>
+	<pool>UNDEFINED</pool>
 </UITexture>

@@ -10,10 +10,14 @@
 	<realHeight>20</realHeight>
 	<disableLODControl>false</disableLODControl>
 	<alphaTex>true</alphaTex>
-	<binaryFileSize>429</binaryFileSize>
-	<binaryFile href="Paladin.(UITexture).bin" />
-	<sourceFile href="Paladin.tga" />
-	<sourceFileCRC>650090289</sourceFileCRC>
+	<binaryFileSize>376</binaryFileSize>
+	<binaryFile href="paladin.(UITexture).bin" />
+	<binaryFileSize2>0</binaryFileSize2>
+	<binaryFile2 href="" />
+	<sourceFile href="paladin.tga" />
+	<sourceFileCRC>2146841259</sourceFileCRC>
 	<wrap>false</wrap>
 	<LocalizationInfo />
+	<atlasPart>true</atlasPart>
+	<pool>UNDEFINED</pool>
 </UITexture>

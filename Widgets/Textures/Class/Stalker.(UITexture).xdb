@@ -10,10 +10,14 @@
 	<realHeight>20</realHeight>
 	<disableLODControl>false</disableLODControl>
 	<alphaTex>true</alphaTex>
-	<binaryFileSize>446</binaryFileSize>
-	<binaryFile href="Stalker.(UITexture).bin" />
-	<sourceFile href="Stalker.tga" />
-	<sourceFileCRC>1508658141</sourceFileCRC>
+	<binaryFileSize>257</binaryFileSize>
+	<binaryFile href="stalker.(UITexture).bin" />
+	<binaryFileSize2>0</binaryFileSize2>
+	<binaryFile2 href="" />
+	<sourceFile href="stalker.tga" />
+	<sourceFileCRC>-353700816</sourceFileCRC>
 	<wrap>false</wrap>
 	<LocalizationInfo />
+	<atlasPart>true</atlasPart>
+	<pool>UNDEFINED</pool>
 </UITexture>

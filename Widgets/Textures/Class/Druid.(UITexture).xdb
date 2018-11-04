@@ -10,10 +10,14 @@
 	<realHeight>20</realHeight>
 	<disableLODControl>false</disableLODControl>
 	<alphaTex>true</alphaTex>
-	<binaryFileSize>435</binaryFileSize>
-	<binaryFile href="Druid.(UITexture).bin" />
-	<sourceFile href="Druid.tga" />
-	<sourceFileCRC>2037664810</sourceFileCRC>
+	<binaryFileSize>380</binaryFileSize>
+	<binaryFile href="druid.(UITexture).bin" />
+	<binaryFileSize2>0</binaryFileSize2>
+	<binaryFile2 href="" />
+	<sourceFile href="druid.tga" />
+	<sourceFileCRC>-700602117</sourceFileCRC>
 	<wrap>false</wrap>
 	<LocalizationInfo />
+	<atlasPart>true</atlasPart>
+	<pool>UNDEFINED</pool>
 </UITexture>

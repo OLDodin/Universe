@@ -10,10 +10,14 @@
 	<realHeight>20</realHeight>
 	<disableLODControl>false</disableLODControl>
 	<alphaTex>true</alphaTex>
-	<binaryFileSize>424</binaryFileSize>
-	<binaryFile href="Mage.(UITexture).bin" />
-	<sourceFile href="Mage.tga" />
-	<sourceFileCRC>1581070020</sourceFileCRC>
+	<binaryFileSize>288</binaryFileSize>
+	<binaryFile href="mage.(UITexture).bin" />
+	<binaryFileSize2>0</binaryFileSize2>
+	<binaryFile2 href="" />
+	<sourceFile href="mage.tga" />
+	<sourceFileCRC>1931214642</sourceFileCRC>
 	<wrap>false</wrap>
 	<LocalizationInfo />
+	<atlasPart>true</atlasPart>
+	<pool>UNDEFINED</pool>
 </UITexture>

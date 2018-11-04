@@ -67,7 +67,7 @@ local m_classColors={
 
 local m_relationColors={
 	[FRIEND_PANEL]		= { r = 0.1; g = 0.8; b = 0; a = 1.0 },
-	[ENEMY_PANEL]		= { r = 208/255; g = 069/255; b = 075/255; a = 1 },
+	[ENEMY_PANEL]		= { r = 1; g = 0; b = 0; a = 1 },
 	[NEITRAL_PANEL]		= { r = 0.8; g = 0.8; b = 0.1; a = 1 },
 }
 

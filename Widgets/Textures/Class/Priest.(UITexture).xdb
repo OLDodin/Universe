@@ -10,10 +10,14 @@
 	<realHeight>20</realHeight>
 	<disableLODControl>false</disableLODControl>
 	<alphaTex>true</alphaTex>
-	<binaryFileSize>475</binaryFileSize>
-	<binaryFile href="Priest.(UITexture).bin" />
-	<sourceFile href="Priest.tga" />
-	<sourceFileCRC>714331529</sourceFileCRC>
+	<binaryFileSize>339</binaryFileSize>
+	<binaryFile href="priest.(UITexture).bin" />
+	<binaryFileSize2>0</binaryFileSize2>
+	<binaryFile2 href="" />
+	<sourceFile href="priest.tga" />
+	<sourceFileCRC>-1631154842</sourceFileCRC>
 	<wrap>false</wrap>
 	<LocalizationInfo />
+	<atlasPart>true</atlasPart>
+	<pool>UNDEFINED</pool>
 </UITexture>
