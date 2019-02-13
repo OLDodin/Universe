@@ -511,7 +511,7 @@ function getItemIdFromName(name)
 	
 	local cachedItemID = cacheItemId[name]
 	if cachedItemID then
-		if type(cachedItemID)=="userdata" then
+		if type(cachedItemID)=="number" then
 			if itemLib.IsItem(cachedItemID) then return cachedItemID end
 		else
 			return nil
@@ -520,7 +520,7 @@ function getItemIdFromName(name)
 
 	local inventory = avatar.GetInventoryItemIds()
 	if not inventory then return nil end
-	
+
 	for i, itemId in pairs(inventory) do
 		local itemInfo = itemId and itemLib.GetItemInfo(itemId)
 		if itemInfo then
@@ -533,7 +533,6 @@ function getItemIdFromName(name)
 	end
 	
 	cacheItemId[name] = NOT_FOUND
-
 	return nil
 end
 
@@ -619,16 +618,17 @@ function useItem(name, targetId)
 			return false
 		end
 	end
-	
 	local itemId=name and getItemIdFromName(name)
 	if not itemId then return nil end
 
 	if not avatar.CheckCanUseItem( itemId, false ) then
 		return false
 	end
+
 	if targetId then
 		selectTarget(targetId)
 	end
+
 	avatar.UseItem(itemId)
 	return true
 end
