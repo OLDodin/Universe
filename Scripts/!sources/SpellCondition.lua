@@ -3,7 +3,6 @@ Global( "SpellCondition", {} )
 function SpellCondition:Init(aSettings)
 	self.settings = aSettings
 	self.avlCustomTree  = GetAVLWStrTree()
-	self.treeCustomCreated = GetTableSize(self.settings.customSpells)~=0
 	for _, element in ipairs(self.settings.customSpells) do
 		if element.name then
 			self.avlCustomTree:add(element)
@@ -13,18 +12,16 @@ function SpellCondition:Init(aSettings)
 end
 
 function SpellCondition:HasCondtion()
-	return self.treeCustomCreated
+	return not self.avlCustomTree:isEmpty()
 end
 
 function SpellCondition:Check(aSpellInfo)
-	if self.treeCustomCreated then
-		local searchRes = self.avlCustomTree:get(aSpellInfo)
+	local searchRes = self.avlCustomTree:find(aSpellInfo)
 
-		if searchRes ~= nil then
-			--LogInfo("search = ", aSpellInfo.name)
-			--LogInfo("searchRes = ", searchRes)
-			return true, searchRes
-		end
+	if searchRes ~= nil then
+		--LogInfo("search = ", aSpellInfo.name)
+		--LogInfo("searchRes = ", searchRes)
+		return true, searchRes
 	end
 
 	return false

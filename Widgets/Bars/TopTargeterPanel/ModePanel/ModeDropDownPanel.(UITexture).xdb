@@ -10,11 +10,14 @@
 	<realHeight>22</realHeight>
 	<disableLODControl>false</disableLODControl>
 	<alphaTex>true</alphaTex>
-	<binaryFileSize>431</binaryFileSize>
+	<binaryFileSize>284</binaryFileSize>
 	<binaryFile href="ModeDropDownPanel.(UITexture).bin" />
+	<binaryFileSize2>0</binaryFileSize2>
+	<binaryFile2 href="" />
 	<sourceFile href="ModeDropDownPanel.tga" />
-	<sourceFileCRC>-1232578197</sourceFileCRC>
+	<sourceFileCRC>-35735451</sourceFileCRC>
 	<wrap>false</wrap>
 	<LocalizationInfo />
-	<inheritedSourceFile href="" />
+	<atlasPart>true</atlasPart>
+	<pool>UNDEFINED</pool>
 </UITexture>

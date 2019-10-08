@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<UITexture>
+	<mipSW>-1</mipSW>
+	<mipsNumber>1</mipsNumber>
+	<generateMipChain>false</generateMipChain>
+	<type>DXT1</type>
+	<width>32</width>
+	<height>64</height>
+	<realWidth>32</realWidth>
+	<realHeight>64</realHeight>
+	<disableLODControl>false</disableLODControl>
+	<alphaTex>false</alphaTex>
+	<binaryFileSize>59</binaryFileSize>
+	<binaryFile href="ButtonSliderHighlight.(UITexture).bin" />
+	<binaryFileSize2>0</binaryFileSize2>
+	<binaryFile2 href="" />
+	<sourceFile href="ButtonSliderHighlight.tga" />
+	<sourceFileCRC>531665592</sourceFileCRC>
+	<wrap>false</wrap>
+	<LocalizationInfo />
+</UITexture>

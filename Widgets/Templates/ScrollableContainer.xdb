@@ -2,6 +2,6 @@
 <WidgetScrollableContainer>
 	<Name>ScrollableContainer</Name>
 	<border href="Scroll/Border.(WidgetPanel).xdb#xpointer(/WidgetPanel)" />
-	<scrollBar href="Scroll/Scroll.(WidgetGlideScrollBar).xdb#xpointer(/WidgetGlideScrollBar)" />
+	<scrollBar href="Scroll/ScrollRight.(WidgetGlideScrollBar).xdb#xpointer(/WidgetGlideScrollBar)" />
 	<elementsInterval>2</elementsInterval>
 </WidgetScrollableContainer>

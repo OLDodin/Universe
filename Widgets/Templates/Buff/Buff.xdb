@@ -3,6 +3,7 @@
 	<Priority>1</Priority>
 	<Name>BuffTemplate</Name>
 	<Children>
+		<Item href="DotHighlight.xdb#xpointer(/WidgetPanel)"/>
 		<Item href="DotIcon.xdb#xpointer(/WidgetPanel)"/>
 		<Item href="DotStackText.xdb#xpointer(/WidgetTextView)"/>
 	</Children>

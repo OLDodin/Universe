@@ -393,6 +393,7 @@ end
 
 local template=createWidget(nil, "Template", "Template")
 local timers={}
+local m_loopEffects={}
 
 function timer(params)
 	if not params.effectType == ET_FADE then return end
@@ -443,6 +444,43 @@ function destroyTimer(name)
 	if timers[name] then destroy(timers[name].widget) end
 	timers[name]=nil
 end
+
+function effectDone(aParams)
+	local findedWdg = nil
+	for _, v in pairs(m_loopEffects) do
+		if v and equals(aParams.wtOwner, v.widget) then
+			findedWdg = v
+			break
+		end
+	end
+	if not findedWdg then return end
+
+	if findedWdg.widget then
+		findedWdg.widget:PlayFadeEffect( 0.0, 1.0, findedWdg.speed*1000, EA_SYMMETRIC_FLASH )
+	end
+end
+
+function startLoopBlink(aWdg, aSpeed)
+	local obj = {}
+	obj.widget = aWdg
+	obj.speed = aSpeed
+	table.insert(m_loopEffects, obj)
+	
+	
+	aWdg:PlayFadeEffect( 0.0, 1.0, aSpeed*1000, EA_SYMMETRIC_FLASH )
+end
+
+function stopLoopBlink(aWdg)
+	for i, v in pairs(m_loopEffects) do
+		if v and equals(aWdg, v.widget) then
+			table.remove(m_loopEffects, i)
+			break
+		end
+	end
+	
+	aWdg:FinishFadeEffect()
+end
+
 
 --------------------------------------------------------------------------------
 -- Locales functions

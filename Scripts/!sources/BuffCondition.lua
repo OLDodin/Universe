@@ -5,8 +5,16 @@ Global( "BuffCondition", {} )
 function BuffCondition:Init(aSettings)
 	self.settings = aSettings
 	self.showShopAndFood = false
+	--для работы подсветки для автообнаруженных бафов (при дублировании их в списке бафов)
+	self.needCheckAllBuffsByList = false
+	for _, element in pairs(self.settings.customBuffs) do
+		if element.name and element.useHighlightBuff then
+			self.needCheckAllBuffsByList = true
+			break
+		end
+	end
+	
 	self.avlCustomTree  = GetAVLWStrTree()
-	self.treeCustomCreated = GetTableSize(self.settings.customBuffs)~=0
 	for _, element in pairs(self.settings.customBuffs) do
 		if element.name then
 			self.avlCustomTree:add(element)
@@ -72,11 +80,21 @@ function BuffCondition:Check(aBuffInfo)
 	end
 	LogInfo("found aBuffInfo e")
 	]]
-	
+	local searchRes = nil
 	if aBuffInfo.isNeedVisualize then
+		if self.needCheckAllBuffsByList then
+			searchRes = self.avlCustomTree:find(aBuffInfo)
+
+			if searchRes ~= nil and searchRes.castByMe then
+				if not (aBuffInfo.producer and g_myAvatarID == aBuffInfo.producer.casterId) then
+					searchRes = nil
+				end
+			end
+		end
+		
 		if self.showShopAndFood then
 			if self:CheckShop(aBuffInfo) then
-				return true
+				return true, searchRes
 			end
 		end
 	
@@ -96,9 +114,9 @@ function BuffCondition:Check(aBuffInfo)
 				end
 			end		
 			if self.settings.autoDebuffModeButton then
-				return true, nil, isCleanable
+				return true, searchRes, isCleanable
 			else
-				return isCleanable, nil, isCleanable
+				return isCleanable, searchRes, isCleanable
 			end
 		end
 		
@@ -109,7 +127,7 @@ function BuffCondition:Check(aBuffInfo)
 				if 	groupName == "magics" or 
 					groupName == "stackablemagics"
 				then
-					return true, nil, true
+					return true, searchRes, true
 				end
 			end					
 		end
@@ -121,7 +139,7 @@ function BuffCondition:Check(aBuffInfo)
 					groupName == "Disarms" or
 					groupName == "fears"
 				then
-					return true
+					return true, searchRes
 				end
 			end					
 		end
@@ -130,14 +148,14 @@ function BuffCondition:Check(aBuffInfo)
 			for _, groupName in pairs(aBuffInfo.groups) do
 				if 	groupName == "movementimpairing"
 				then
-					return true
+					return true, searchRes
 				end
 			end					
 		end
 	end
-	
-	if self.treeCustomCreated then
-		local searchRes = self.avlCustomTree:get(aBuffInfo)
+
+	if not self.needCheckAllBuffsByList then
+		local searchRes = self.avlCustomTree:find(aBuffInfo)
 
 		if searchRes ~= nil then
 			if searchRes.castByMe then 
@@ -148,6 +166,8 @@ function BuffCondition:Check(aBuffInfo)
 			end
 			return true, searchRes
 		end
+	else
+		return searchRes~=nil, searchRes
 	end
 
 	return false

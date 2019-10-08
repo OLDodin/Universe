@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<WidgetEditBox>
+  <Name>EditBox</Name>
+  <Priority>1</Priority>
+  <Placement>
+    <X>
+      <Align>WIDGET_ALIGN_LOW</Align>
+      <Pos>5</Pos>
+      <Size>350</Size>
+    </X>
+    <Y>
+      <Align>WIDGET_ALIGN_LOW</Align>
+      <Pos>0</Pos>
+      <Size>280</Size>
+    </Y>
+  </Placement>
+  <BackLayer href="EditBox\textures\TextBox.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)" />
+  <Visible>true</Visible>
+  <Enabled>true</Enabled>
+  <TabOrder>0</TabOrder>
+  <bindSections />
+  <TransparentInput>false</TransparentInput>
+  <PickChildrenOnly>false</PickChildrenOnly>
+  <IgnoreDblClick>false</IgnoreDblClick>
+  <fade>1</fade>
+  <Cursor1Layer href="EditBox\textures\Cursor.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)"/>
+  <Cursor2Layer href="EditBox\TransparentLayer.(WidgetLayerSimpleTexture).xdb#xpointer(/WidgetLayerSimpleTexture)" />
+  <CursorWidth>2</CursorWidth>
+  <CursorChangeTimeMs>500</CursorChangeTimeMs>
+  <ReactionEsc></ReactionEsc>
+  <ReactionEnter></ReactionEnter>
+  <TextStyle>
+    <multiline>true</multiline>
+    <wrapText>true</wrapText>
+    <showClippedSymbol>false</showClippedSymbol>
+    <showClippedLine>true</showClippedLine>
+    <lineSpacing>0</lineSpacing>
+    <ellipsis>true</ellipsis>
+    <Align>ALIGNY_DEFAULT</Align>
+  </TextStyle>
+  <isPassword>false</isPassword>
+  <maxSymbolsCount>-1</maxSymbolsCount>
+  <globalClassName />
+  <selectionClassName />
+  <selectionLayer href="EditBox\textures\TextBoxSel.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)" />
+  <scrollBar href="Scroll/ScrollRight.(WidgetGlideScrollBar).xdb#xpointer(/WidgetGlideScrollBar)" />
+</WidgetEditBox>

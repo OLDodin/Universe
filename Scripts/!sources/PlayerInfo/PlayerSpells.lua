@@ -83,7 +83,7 @@ function PlayerSpells:CallListenerIfNeeded(aSpellID, aListener, aCondition, anIg
 			spellInfo.spellID = aSpellID
 			local searchResult, findedObj = aCondition:Check(spellInfo)
 			if searchResult then
-				aListener.listenerSpellChanged(spellInfo, aListener, findedObj and findedObj.ind or nil)
+				aListener.listenerSpellChanged(spellInfo, aListener, findedObj)
 			else
 				anIgnoreBuffsList[spellInfo.objectId] = true
 			end

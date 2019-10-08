@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<WidgetPanel>
+	<BackLayer href="Textures/DiscreteSlider.(WidgetLayerTiledTexture).xdb#xpointer(WidgetLayerTiledTexture)" />
+	<Placement>
+		<X>
+			<Align>WIDGET_ALIGN_BOTH</Align>
+		</X>
+		<Y>
+			<Align>WIDGET_ALIGN_CENTER</Align>
+			<Size>20</Size>
+		</Y>
+	</Placement>
+</WidgetPanel>

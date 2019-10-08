@@ -28,17 +28,20 @@ local function FindBufSlot(aGroupBuffBar, aBuffID)
 	end
 end
 
-local function PlayerAddBuff(aBuffInfo, aGroupBuffBar, aPosInPlateIndex)
---LogInfo("PlayerAddBuff = ", aBuffInfo.name, " ind ", aPosInPlateIndex)
+local function PlayerAddBuff(aBuffInfo, aGroupBuffBar, anInfoObj)
+	local posInPlateIndex = anInfoObj and anInfoObj.ind or nil
+--LogInfo("PlayerAddBuff = ", aBuffInfo.name, " ind ", posInPlateIndex)
+	
+	
 	if not aBuffInfo.texture then
 		return
 	end
 	local buffSlot = FindBufSlot(aGroupBuffBar, aBuffInfo.id)
 	if aGroupBuffBar.fixedInsidePanel then
-		if not aPosInPlateIndex then
-			aPosInPlateIndex = 1
+		if not posInPlateIndex then
+			posInPlateIndex = 1
 		end
-		buffSlot = aGroupBuffBar.buffList[aPosInPlateIndex]
+		buffSlot = aGroupBuffBar.buffList[posInPlateIndex]
 		if buffSlot then
 			if not buffSlot.buffWdg:IsVisible() then
 				buffSlot.buffWdg:Show(true)
@@ -83,6 +86,17 @@ local function PlayerAddBuff(aBuffInfo, aGroupBuffBar, aPosInPlateIndex)
 		show(buffSlot.info.buffTimerWdg)
 	else
 		hide(buffSlot.info.buffTimerWdg)
+	end
+	
+	if anInfoObj and anInfoObj.useHighlightBuff then 
+		show(buffSlot.info.buffHighlight)
+		setBackgroundColor(buffSlot.info.buffHighlight, anInfoObj.highlightColor)
+		if anInfoObj.blinkHighlight then
+			startLoopBlink(buffSlot.info.buffHighlight, 0.5)
+		end
+	else
+		hide(buffSlot.info.buffHighlight)
+		stopLoopBlink(buffSlot.info.buffHighlight)
 	end
 	
 	return buffSlot
@@ -133,7 +147,7 @@ local function UpdateTick(aGroupBuffBar)
 	end
 end
 
-local function SpellChanged(aSpellInfo, aGroupBuffBar, aPosInPlateIndex)
+local function SpellChanged(aSpellInfo, aGroupBuffBar, anInfoObj)
 	local spellCooldown = spellLib.GetCooldown(aSpellInfo.spellID)
 	if spellCooldown then
 		aSpellInfo.remainingMs = spellCooldown.remainingMs
@@ -144,7 +158,7 @@ local function SpellChanged(aSpellInfo, aGroupBuffBar, aPosInPlateIndex)
 	aSpellInfo.texture = GetSpellTextureFromCache(aSpellInfo.spellID)
 	aSpellInfo.id = aSpellInfo.objectId
 	
-	local buffSlot = PlayerAddBuff(aSpellInfo, aGroupBuffBar, aPosInPlateIndex)
+	local buffSlot = PlayerAddBuff(aSpellInfo, aGroupBuffBar, anInfoObj)
 	if buffSlot and aSpellInfo.remainingMs > 0 then
 		setFade(buffSlot.info.buffIcon, 0.4)
 	end
@@ -208,6 +222,7 @@ function CreateGroupBuffPanel(aForm, aSettings, anIsAboveHead, aPosInPlateIndex)
 		if aSettings.flipBuffsButton then
 			buffAlign = WIDGET_ALIGN_HIGH
 			align(groupBuffTopPanel, WIDGET_ALIGN_HIGH)
+			align(groupBuffPanel.panelWdg, WIDGET_ALIGN_HIGH)
 		end
 		if anIsAboveHead then
 			--buffAlign = WIDGET_ALIGN_CENTER
@@ -228,7 +243,9 @@ function CreateGroupBuffPanel(aForm, aSettings, anIsAboveHead, aPosInPlateIndex)
 			resize(currBuff.buffWdg, size, size)
 			resize(getChild(currBuff.buffWdg, "DotText"), size, round(size/2.4))
 			resize(getChild(currBuff.buffWdg, "DotStackText"), size, GetTextSizeByBuffSize(size))
+						
 			currBuff.info.buffIcon = getChild(currBuff.buffWdg, "DotIcon")
+			currBuff.info.buffHighlight = getChild(currBuff.buffWdg, "DotHighlight")
 			currBuff.info.buffTimerWdg = getChild(currBuff.buffWdg, "DotText")
 			currBuff.info.buffStackCntWdg = getChild(currBuff.buffWdg, "DotStackText")
 			currBuff.info.buffSize = size

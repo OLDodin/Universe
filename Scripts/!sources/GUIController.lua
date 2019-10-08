@@ -36,6 +36,9 @@ local m_targetPanel = nil
 local m_raidPartyButtons = nil
 local m_buffsGroupParentForm=nil
 local m_bindSettingsForm  = nil
+local m_exportProfileForm = nil
+local m_importProfileForm = nil
+local m_colorForm = nil
 
 local m_raidPlayerPanelList = {}
 local m_targeterPlayerPanelList = {}
@@ -81,6 +84,7 @@ local function GenerateWidgetForTable(aTable, aContainer, anIndex)
 	local containerParentName = getName(getParent(aContainer))
 	
 	if find(containerParentName, "profiles") then
+		setText(createWidget(panel, "exportProfileButton", "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 50, 15, 140), "Export") 
 		if anIndex ~= GetCurrentProfileInd() then 
 			setText(createWidget(panel, "loadProfileButton", "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 50, 15, 30), "Load") 
 		else
@@ -106,6 +110,15 @@ local function GenerateWidgetForTable(aTable, aContainer, anIndex)
 		setText(cdWidget, aTable.time)
 		setBackgroundTexture(cdWidget, nil)
 		setBackgroundColor(cdWidget, nil)	
+		
+		setLocaleText(createWidget(panel, "setHighlightColorButton"..containerParentName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 30, 25, 190))
+	end
+	
+	if find(containerParentName, "raidSettingsForm") then
+		setLocaleText(createWidget(panel, "setHighlightColorButton"..containerParentName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 30, 25, 30))
+	end
+	if find(containerParentName, "targeterSettingsForm") then
+		setLocaleText(createWidget(panel, "setHighlightColorButton"..containerParentName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 30, 25, 30))
 	end
 	
 	if containerParentName then
@@ -164,15 +177,20 @@ function UpdateTableValuesFromContainer(aTable, aForm, aContainer)
 	end
 end
 
-function AddElementFromForm(aTable, aForm, aTextedit, aContainer)
-	if not aTextedit then aTextedit="EditLine1" end
-	local text = getText(getChild(aForm, aTextedit))
+function AddElementFromFormWithText(aTable, aForm, aText, aContainer)
+	local text = aText
 	local textLowerStr = toLowerString(text)
 	if not aTable or not text or common.IsEmptyWString(text) then 
 		return nil 
 	end
 	table.insert(aTable, { name=text, nameLowerStr=textLowerStr } )
 	ShowValuesFromTable(aTable, aForm, aContainer)
+end
+
+function AddElementFromForm(aTable, aForm, aTextedit, aContainer)
+	if not aTextedit then aTextedit="EditLine1" end
+	local text = getText(getChild(aForm, aTextedit))
+	AddElementFromFormWithText(aTable, aForm, text, aContainer)
 end
 
 
@@ -276,6 +294,35 @@ function SaveAllAndApply()
 	ReloadAll()
 end
 
+function ExportProfile(aWdg)
+	local index = GetIndexForWidget(aWdg)
+	
+	SetEditText(m_exportProfileForm, ExportProfileByIndex(index+1))
+end
+
+function ImportProfile()
+	local importedProfile = StartDeserialize(GetImportText(m_importProfileForm))
+	if not importedProfile then
+		ShowImportError()
+		return
+	else
+		importedProfile.name = ConcatWString(toWString(importedProfile.name), userMods.ToWString("-import"))
+	--	LogInfo(StartSerialize(importedProfile))
+		local allProfiles = GetAllProfiles()
+		
+		AddElementFromFormWithText(allProfiles, m_profilesForm, importedProfile.name)
+		
+		allProfiles[GetTableSize(allProfiles)] = importedProfile
+		SaveProfiles(allProfiles)
+		
+		hide(m_importProfileForm)
+	end
+end
+
+function ShowImportProfile(aWdg)
+	show(m_importProfileForm)
+end
+
 function LoadForms()
 	LoadMainFormSettings(m_mainSettingForm)
 	LoadProfilesFormSettings()
@@ -284,11 +331,41 @@ function LoadForms()
 	LoadTargeterFormSettings(m_targeterSettingsForm)
 	LoadBuffFormSettings(m_buffSettingsForm)
 	hide(m_configGroupBuffForm)
+	DestroyColorForm()
 end
 
 function UndoAll()
 	LoadForms()
 end
+
+function DestroyColorForm()
+	if m_colorForm then
+		DnD.Remove(m_colorForm)
+		destroy(m_colorForm)
+	end
+	m_colorForm = nil
+end
+
+function SetColorBuffGroup(aWdg)
+	SetColorBuffHighlight(aWdg, GROUP_COLOR_TYPE)
+end
+
+function SetColorBuffRaid(aWdg)
+	SetColorBuffHighlight(aWdg, RAID_COLOR_TYPE)
+end
+
+function SetColorBuffTargeter(aWdg)
+	SetColorBuffHighlight(aWdg, TARGET_COLOR_TYPE)
+end
+
+function SetColorBuffHighlight(aWdg, aSaveLoadType)
+	DestroyColorForm()
+	local index = GetIndexForWidget(aWdg)
+	m_colorForm = CreateColorSettingsForm(aSaveLoadType, GetConfigGroupBuffsActiveNum(), index+1)
+	show(m_colorForm)
+end
+
+
 
 function AddRaidBuffButton(aWdg)
 	local profile = GetCurrentProfile()
@@ -660,7 +737,7 @@ local function CreateRaidPanelCache()
 	end
 end
 
-local function ResizePanelForm(aGroupsCnt, aMaxPeopleCnt, aFormSettings, aForm, aLastSize)
+local function ResizePanelForm(aGroupsCnt, aMaxPeopleCnt, aFormSettings, aForm, aLastSize, aFormReacting)
 	local panelWidth = tonumber(aFormSettings.raidWidthText)
 	local panelHeight = tonumber(aFormSettings.raidHeightText)
 	local width = 0
@@ -673,20 +750,26 @@ local function ResizePanelForm(aGroupsCnt, aMaxPeopleCnt, aFormSettings, aForm, 
 		height = height + aMaxPeopleCnt*panelHeight
 	end
 	if aLastSize.w ~= width or aLastSize.h ~= height then
-		resize(aForm, math.max(200, width), height)
 		aLastSize.w = width
 		aLastSize.h = height
+		
+		width = math.max(200, width)
+		height = math.max(370, height)
+		resize(aForm, width, height)
+		DnD.Remove(aForm)
+		DnD.Init(aForm, aFormReacting, true, true, {0,-(width-200),-(height-60),0})
+		
 	end
 end
 
 local function ResizeTargetPanel(aGroupsCnt, aMaxPeopleCnt)
 	local profile = GetCurrentProfile()
-	ResizePanelForm(aGroupsCnt, aMaxPeopleCnt, profile.targeterFormSettings, m_targetPanel, m_lastTargetPanelSize)
+	ResizePanelForm(aGroupsCnt, aMaxPeopleCnt, profile.targeterFormSettings, m_targetPanel, m_lastTargetPanelSize, getChild(m_targetPanel, "TopTargeterPanel"))
 end
 
 local function ResizeRaidPanel(aGroupsCnt, aMaxPeopleCnt)
 	local profile = GetCurrentProfile()
-	ResizePanelForm(aGroupsCnt, aMaxPeopleCnt, profile.raidFormSettings, m_raidPanel, m_lastRaidPanelSize)
+	ResizePanelForm(aGroupsCnt, aMaxPeopleCnt, profile.raidFormSettings, m_raidPanel, m_lastRaidPanelSize, getChild(m_raidPanel, "TopPanel"))
 end
 
 local function ShowMoveIfNeeded()
@@ -915,6 +998,9 @@ local function EraseTargetInListTarget(anObjID, aType)
 end
 
 local function EraseTarget(anObjID)
+	if not anObjID then
+		return
+	end
 	EraseTargetInListTarget(anObjID, ENEMY_PLAYERS_TARGETS)
 	EraseTargetInListTarget(anObjID, FRIEND_PLAYERS_TARGETS)
 	EraseTargetInListTarget(anObjID, NEITRAL_PLAYERS_TARGETS)
@@ -1123,6 +1209,9 @@ local function TargetWorkSwitch()
 		SwitchTargetsBtn(TARGETS_DISABLE)
 		ClearTargetPanels()
 		
+		local selectPanelWdg = GetTargetModeSelectPanel()
+		hide(selectPanelWdg)
+		
 		profile.targeterFormSettings.lastTargetType = m_lastTargetType
 		profile.targeterFormSettings.lastTargetWasActive = false
 		SaveAll()
@@ -1135,6 +1224,35 @@ local function TargetWorkSwitch()
 	end
 end
 
+local function SelectTargetTypePressed(aParams)
+	local selectPanelWdg = GetTargetModeSelectPanel()
+	hide(selectPanelWdg)
+	
+	if m_currTargetType == TARGETS_DISABLE then
+		return
+	end
+	
+	local pressedWdgName = getName(aParams.widget)
+	local prefixStr = "modeBtn"
+	local indexStr = pressedWdgName:sub(prefixStr:len()+1, pressedWdgName:len())
+	
+	m_currTargetType = tonumber(indexStr)
+	SetTargetType(m_currTargetType, true)
+	local profile = GetCurrentProfile()
+	profile.targeterFormSettings.lastTargetType = m_currTargetType
+	SaveAll()
+end
+
+local function ShowSelectTargetTypePanel()
+	if m_currTargetType == TARGETS_DISABLE then
+		return
+	end
+	
+	local selectPanelWdg = GetTargetModeSelectPanel()
+	swap(selectPanelWdg)
+end
+
+--[[
 local function TargetTypeChanged()
 	if m_currTargetType == TARGETS_DISABLE then
 		return
@@ -1148,7 +1266,7 @@ local function TargetTypeChanged()
 	local profile = GetCurrentProfile()
 	profile.targeterFormSettings.lastTargetType = m_currTargetType
 	SaveAll()
-end	
+end	]]
 
 local function SeparateTargeterPanelList(anObjList, aPanelListShift)
 	local finededList = {} 
@@ -1558,6 +1676,8 @@ local function GUIInit()
 	m_buffSettingsForm = CreateBuffSettingsForm()
 	m_configGroupBuffForm = CreateConfigGroupBuffsForm()
 	m_buffsGroupParentForm = CreateGroupsParentForm()
+	m_exportProfileForm = CreateExportProfilesForm()
+	m_importProfileForm = CreateImportProfilesForm()
 
 	m_raidPanel = CreateRaidPanel()
 	m_targetPanel = CreateTargeterPanel()
@@ -1711,6 +1831,7 @@ function UnloadRaidSubSystem()
 	common.UnRegisterEventHandler(ReadyCheckChanged, "EVENT_READY_CHECK_INFO_CHANGED")
 	common.UnRegisterEventHandler(ReadyCheckEnded, "EVENT_READY_CHECK_ENDED")
 	
+	DestroyColorForm()
 	UnsubscribeRaidListeners()
 	FabricDestroyUnused()
 	StopMove()
@@ -1749,7 +1870,7 @@ function UnloadTargeterSubSystem()
 	end
 	m_targetSubSystemLoaded = false
 	
-
+	DestroyColorForm()
 	ClearTargetPanels()
 	m_targeterPlayerPanelList = {}
 	hide(m_targetPanel)
@@ -1780,6 +1901,7 @@ function UnloadGroupBuffSubSystem()
 	
 	common.UnRegisterEventHandler(CannotAttachPanelAboveHead, "EVENT_CANNOT_ATTACH_WIDGET_3D")
 	
+	DestroyColorForm()
 	UnsubscribeGroupBuffListeners()
 	DestroyGroupBuffPanels()
 	m_buffGroupSubSystemLoaded = false
@@ -1821,11 +1943,16 @@ function GUIControllerInit()
 	AddReaction("closeButton", function (aWdg) swap(getParent(aWdg)) end)
 	AddReaction("UniverseButton", UniverseBtnPressed)
 	AddReaction("okButton", function (aWdg) swap(getParent(aWdg)) SaveAllAndApply() end)
+	AddReaction("closeExprotBtn", function (aWdg) swap(getParent(aWdg)) end)
+	AddReaction("closeButtonOK", function (aWdg) swap(getParent(aWdg)) end)
 	AddReaction("profilesButton", function () swap(m_profilesForm) end)
 	AddReaction("deleteButtonconfigProfilesForm", DeleteProfile)
 	AddReaction("saveAsProfileButton", SaveProfileAs)
 	AddReaction("loadProfileButton", LoadProfile)
 	AddReaction("saveProfileButton", SaveProfile)
+	AddReaction("exportProfileButton", ExportProfile)
+	AddReaction("importProfileButton", ShowImportProfile)
+	AddReaction("importBtn", ImportProfile)
 	AddReaction("raidButton", function () swap(m_raidSettingsForm) end)
 	AddReaction("saveButton", function (aWdg) swap(getParent(aWdg)) SaveAllAndApply() end)
 	AddReaction("targeterButton", function () swap(m_targeterSettingsForm) end)
@@ -1858,6 +1985,10 @@ function GUIControllerInit()
 	AddReaction("actionRightSwitchTargetShift", SwitchActionBtn)
 	AddReaction("actionRightSwitchTargetAlt", SwitchActionBtn)
 	AddReaction("actionRightSwitchTargetCtrl", SwitchActionBtn)
+	AddReaction("setHighlightColorButtonconfigGroupBuffsForm", SetColorBuffGroup)
+	AddReaction("setHighlightColorButtonraidSettingsForm", SetColorBuffRaid)
+	AddReaction("setHighlightColorButtontargeterSettingsForm", SetColorBuffTargeter)
+	AddReaction("setColorButton", function (aWdg) swap(getParent(aWdg)) SaveBuffColorHighlight(m_colorForm) DestroyColorForm() end)
 	
 	local profile = GetCurrentProfile()
 	if profile.mainFormSettings.useRaidSubSystem then
@@ -1899,6 +2030,8 @@ function GUIControllerInit()
 	
 	common.RegisterEventHandler(UnitDeadChanged, "EVENT_UNIT_DEAD_CHANGED")
 	
+	common.RegisterEventHandler(effectDone, "EVENT_EFFECT_FINISHED")
+	
 	
 	--из-за лимита в 500 подписок на события какие не требуют привязки по ID вынесены из PlayerInfo
 	common.RegisterEventHandler(AfkChanged, "EVENT_AFK_STATE_CHANGED")
@@ -1908,7 +2041,9 @@ function GUIControllerInit()
 	common.RegisterReactionHandler(OnLeftClick, "OnLeftClick")
 	common.RegisterReactionHandler(OnRightClick, "OnRightClick" )
 	common.RegisterReactionHandler(MoveModeClick, "addClick")
-	common.RegisterReactionHandler(TargetTypeChanged, "GetModeBtnReaction")
+--	common.RegisterReactionHandler(TargetTypeChanged, "GetModeBtnReaction")
+	common.RegisterReactionHandler(ShowSelectTargetTypePanel, "GetModeBtnReaction")
+	common.RegisterReactionHandler(SelectTargetTypePressed, "SelectModeBtnReaction")
 	common.RegisterReactionHandler(TargetWorkSwitch, "GetModeBtnRightClick")
 	common.RegisterReactionHandler(TargetLockChanged, "OnTargetLockChanged")
 	common.RegisterReactionHandler(function () swap(m_raidSettingsForm) end, "OnConfigRaidChange")

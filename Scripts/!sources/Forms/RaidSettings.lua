@@ -67,7 +67,7 @@ function CreateRaidSettingsForm()
 	createWidget(form, "checkControlsButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 350, 25, 340, 200)
 	createWidget(form, "checkMovementsButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 350, 25, 340, 230)
 	setLocaleText(createWidget(form, "raidBuffsList", "TextView", nil, nil, 200, 25, 410, 260))
-	createWidget(form, "container", "ScrollableContainer", nil, nil, 360, 250, 340, 280)
+	createWidget(form, "container", "ScrollableContainer", nil, nil, 350, 245, 340, 280)
 	setLocaleText(createWidget(form, "addRaidBuffButton", "Button", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 130, 25, 560, 530))
 	createWidget(form, "EditLine1", "EditLine", nil, nil, 210, 25, 340, 530)
 	

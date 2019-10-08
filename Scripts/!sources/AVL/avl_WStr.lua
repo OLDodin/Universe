@@ -111,7 +111,6 @@ b.peek = function(self,side)
 	end
 end
 
--- Find given element and return it
 b.get = function(self,a)
 	if self then
 		local resCmp = common.CompareWString(a.name, self.value.name)
@@ -124,6 +123,21 @@ b.get = function(self,a)
 		end
 	end
 end
+
+-- Find given element and return it
+b.find = function(self,a)
+	if b.isEmpty(self) then
+		return nil
+	end
+	return b.get(self,a)
+end 
+
+b.isEmpty = function(self)
+	if self and self.value then
+		return false
+	end
+	return true
+end 
 
 local traverse
 traverse = function(node,a,b)

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <WidgetPanel>
 	<Name>TopTargeterPanel</Name>
+	<Priority>101</Priority>
 	<Children>
 		<Item href="ConfigButton.xdb#xpointer(/WidgetButton)"/>
 		<Item href="ButtonLocker.xdb#xpointer(/WidgetButton)"/>

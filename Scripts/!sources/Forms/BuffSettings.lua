@@ -106,15 +106,15 @@ function CreateConfigGroupBuffsForm()
 	setLocaleText(createWidget(form, "addBuffsButton", "Button", WIDGET_ALIGN_LOW, WIDGET_ALIGN_HIGH, 130, 25, 843, 60))
 	createWidget(form, "EditLine5", "EditLine", WIDGET_ALIGN_LOW, WIDGET_ALIGN_HIGH, 390, 25, 433, 60)
 
-	setLocaleText(createWidget(form, "configGroupBuffsId", "TextView",  WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 30, 25, 513, 50))
-	setLocaleText(createWidget(form, "configGroupBuffsName", "TextView",  WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 220, 25, 293, 50))
+	setLocaleText(createWidget(form, "configGroupBuffsId", "TextView",  WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 30, 25, 533, 50))
+	setLocaleText(createWidget(form, "configGroupBuffsName", "TextView",  WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 220, 25, 313, 50))
 	--setLocaleText(createWidget(form, "configGroupBuffsTime", "TextView",  WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 130, 25, 233, 50))
 	--setLocaleText(createWidget(form, "configGroupBuffsCD", "TextView",  WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 40, 25, 203, 50))
-	setLocaleText(createWidget(form, "configGroupBuffsBuff", "TextView",  WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 50, 25, 153, 50))
-	setLocaleText(createWidget(form, "castByMe", "TextView",  WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 50, 25, 103, 50))
-	setLocaleText(createWidget(form, "isSpell", "TextView",  WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 100, 25, 0, 50))
+	setLocaleText(createWidget(form, "configGroupBuffsBuff", "TextView",  WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 50, 25, 173, 50))
+	setLocaleText(createWidget(form, "castByMe", "TextView",  WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 50, 25, 123, 50))
+	setLocaleText(createWidget(form, "isSpell", "TextView",  WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 100, 25, 20, 50))
 
-	createWidget(form, "container", "ScrollableContainer", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_HIGH, 560, 450, 15, 78)
+	createWidget(form, "container", "ScrollableContainer", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_HIGH, 545, 450, 25, 85)
 
 	DnD:Init(form, panel, true)
 	return form
@@ -140,6 +140,9 @@ function SaveConfigGroupBuffsForm(aForm, aClose)
 	mySettings.buffGroups[m_loadedWndInd].buffOnTarget = getCheckBoxState(getChild(aForm, "buffOnTarget"))
 	mySettings.buffGroups[m_loadedWndInd].fixed = getCheckBoxState(getChild(aForm, "buffsFixButton"))
 	mySettings.buffGroups[m_loadedWndInd].fixedInsidePanel = getCheckBoxState(getChild(aForm, "buffsFixInsidePanelButton"))
+	if mySettings.buffGroups[m_loadedWndInd].flipBuffsButton ~= getCheckBoxState(getChild(aForm, "flipBuffsButton")) then
+		mySettings.buffGroups[m_loadedWndInd].fixed = false
+	end
 	mySettings.buffGroups[m_loadedWndInd].flipBuffsButton = getCheckBoxState(getChild(aForm, "flipBuffsButton"))
 	mySettings.buffGroups[m_loadedWndInd].aboveHeadButton = getCheckBoxState(getChild(aForm, "aboveHeadButton"))
 	mySettings.buffGroups[m_loadedWndInd].isEnemyButton = getCheckBoxState(getChild(aForm, "isEnemyButton"))

@@ -12,6 +12,9 @@
 		<Item href="Timer.xdb#xpointer(/WidgetPanel)" />
 		<Item href="Buff/Buff.xdb#xpointer(/WidgetPanel)" />
 		<Item href="ModePanel/ModeDropDownPanel.(WidgetPanel).xdb#xpointer(/WidgetPanel)" />
+		<Item href="EditBox.xdb#xpointer(/WidgetEditBox)" />
+		<Item href="SliderPanel/SliderPanel.(WidgetPanel).xdb" />
+		<Item href="ImageBox/ImageBox.xdb#xpointer(/WidgetPanel)" />
 	</Children>
 	<PickChildrenOnly>true</PickChildrenOnly>
 </WidgetForm>

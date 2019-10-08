@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<WidgetPanel>
+	<Name>SliderPanel</Name>
+	<BackLayer href="OptionFrame.(WidgetLayerSimpleTexture).xdb#xpointer(/WidgetLayerSimpleTexture)" />
+	<Children>
+		<Item href="Description.(WidgetTextView).xdb#xpointer(/WidgetTextView)" />
+		<Item href="Value.(WidgetTextView).xdb#xpointer(/WidgetTextView)" />
+		<Item href="DiscreteSlider.(WidgetDiscreteSlider).xdb#xpointer(/WidgetDiscreteSlider)" />
+	</Children>
+	<Placement>
+		<X>
+			<Align>WIDGET_ALIGN_BOTH</Align>
+		</X>
+		<Y>	
+			<Pos>0</Pos>
+			<Size>32</Size>
+		</Y>
+	</Placement>
+	<Visible>true</Visible>
+</WidgetPanel>

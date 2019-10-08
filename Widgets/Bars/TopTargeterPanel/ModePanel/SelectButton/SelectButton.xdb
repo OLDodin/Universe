@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<WidgetButton>
+	<Name>SelectButton</Name>
+	<Priority>1</Priority>
+	<Placement>
+		<X>
+			<Align>WIDGET_ALIGN_BOTH</Align>
+		</X>
+		<Y>
+			<Size>24</Size>
+		</Y>
+	</Placement>
+	<IgnoreDblClick>true</IgnoreDblClick>
+	<TextTag>button_label</TextTag>
+	<Variants>
+		<Item>
+			<TextFileRef href="" />
+			<LayerHighlight href="ButtonRegularHighlighted.(WidgetLayerTiledTexture).xdb" />
+			<StateNormal>
+				<LayerMain href="ButtonRegularNormal.(WidgetLayerTiledTexture).xdb" />
+				<FormatFileRef href="ButtonFormatNormal.txt" />
+			</StateNormal>
+			<ReactionOnUp>false</ReactionOnUp>
+			<Reaction>SelectModeBtnReaction</Reaction>
+		</Item>
+	</Variants>
+	<TextStyle>
+		<Align>ALIGNY_MIDDLE</Align>
+	</TextStyle>
+	<Visible>false</Visible>
+</WidgetButton>

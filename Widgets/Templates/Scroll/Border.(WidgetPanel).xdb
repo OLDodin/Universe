@@ -3,8 +3,8 @@
 	<Placement>		
 		<X>
 			<Align>WIDGET_ALIGN_BOTH</Align>			
-			<Pos>30</Pos>
-			<HighPos>10</HighPos>
+			<Pos>5</Pos>
+			<HighPos>30</HighPos>
 		</X>
 		<Y>
 			<Align>WIDGET_ALIGN_BOTH</Align>

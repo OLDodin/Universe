@@ -52,6 +52,7 @@
 		<Item href="Scripts/BuffCondition.lua"/>
 		<Item href="Scripts/SpellCondition.lua"/>
 		<Item href="Scripts/PlayerInfoCache.lua"/>
+		<Item href="Scripts/ScriptSerialization.lua"/>
 		<Item href="Scripts/Settings.lua"/>
 		<Item href="Scripts/Forms/MainSettings.lua"/>
 		<Item href="Scripts/Forms/Profiles.lua"/>
@@ -61,6 +62,10 @@
 		<Item href="Scripts/Forms/GUIPanelRaidMove.lua"/>
 		<Item href="Scripts/Forms/GUIPanels.lua"/>
 		<Item href="Scripts/Forms/BindSettings.lua"/>
+		<Item href="Scripts/Forms/ExportForm.lua"/>
+		<Item href="Scripts/Forms/ImportForm.lua"/>
+		<Item href="Scripts/Forms/Slider.lua"/>
+		<Item href="Scripts/Forms/ColorSettingsForm.lua"/>
 		<Item href="Scripts/AboveHead.lua"/>
 		<Item href="Scripts/BuffGroupPanels.lua"/>
 		<Item href="Scripts/GUIController.lua"/>

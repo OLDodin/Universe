@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<UITexture>
+	<mipSW>-1</mipSW>
+	<mipsNumber>1</mipsNumber>
+	<generateMipChain>false</generateMipChain>
+	<type>DXT1</type>
+	<width>4</width>
+	<height>4</height>
+	<realWidth>4</realWidth>
+	<realHeight>4</realHeight>
+	<disableLODControl>false</disableLODControl>
+	<alphaTex>false</alphaTex>
+	<binaryFileSize>21</binaryFileSize>
+	<binaryFile href="Cursor.(UITexture).bin" />
+	<sourceFile href="Cursor.tga" />
+	<sourceFileCRC>-46066477</sourceFileCRC>
+	<wrap>false</wrap>
+	<LocalizationInfo />
+	<inheritedSourceFile href="" />
+</UITexture>

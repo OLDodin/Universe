@@ -178,3 +178,9 @@ end
 function GetAllProfiles()
 	return userMods.GetGlobalConfigSection("TR_ProfilesArr")
 end
+
+function ExportProfileByIndex(anInd)
+	local allProfiles = userMods.GetGlobalConfigSection("TR_ProfilesArr")
+	return StartSerialize(allProfiles[anInd])
+end
+

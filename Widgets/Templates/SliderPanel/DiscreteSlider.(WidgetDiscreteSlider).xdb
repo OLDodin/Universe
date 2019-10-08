@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<WidgetDiscreteSlider>
+	<Header>
+		<Prototype href="DiscreteSlider/DiscreteSlider.Prototype.(WidgetDiscreteSlider).xdb#xpointer(/WidgetDiscreteSlider)" />
+	</Header>
+	<Name>DiscreteSlider</Name>	
+</WidgetDiscreteSlider>

@@ -311,7 +311,7 @@ local function GetTextSizeByBuffSize(aSize)
 	return math.floor(aSize/1.6)
 end
 
-local function PlayerAddBuff(aBuffInfo, aPlayerBar, anArray, aCnt)
+local function PlayerAddBuff(aBuffInfo, aPlayerBar, anArray, aCnt, anInfoObj)
 	if not aBuffInfo.texture then
 		return false
 	end
@@ -337,11 +337,22 @@ local function PlayerAddBuff(aBuffInfo, aPlayerBar, anArray, aCnt)
 		setText(buffSlot.buffStackCnt, aBuffInfo.stackCount, nil, "right", GetTextSizeByBuffSize(tonumber(aPlayerBar.formSettings.buffSize)))
 	end
 	
+	if anInfoObj and anInfoObj.useHighlightBuff then 
+		show(buffSlot.buffHighlight)
+		setBackgroundColor(buffSlot.buffHighlight, anInfoObj.highlightColor)
+		if anInfoObj.blinkHighlight then
+			startLoopBlink(buffSlot.buffHighlight, 0.5)
+		end
+	else
+		hide(buffSlot.buffHighlight)
+		stopLoopBlink(buffSlot.buffHighlight)
+	end
+	
 	return res
 end
 
-local function PlayerAddBuffNegative(aBuffInfo, aPlayerBar)
-	if PlayerAddBuff(aBuffInfo, aPlayerBar, aPlayerBar.buffSlotsNeg, aPlayerBar.usedBuffSlotNegCnt) then
+local function PlayerAddBuffNegative(aBuffInfo, aPlayerBar, anInfoObj)
+	if PlayerAddBuff(aBuffInfo, aPlayerBar, aPlayerBar.buffSlotsNeg, aPlayerBar.usedBuffSlotNegCnt, anInfoObj) then
 		aPlayerBar.usedBuffSlotNegCnt = aPlayerBar.usedBuffSlotNegCnt + 1
 		if aBuffInfo.cleanableBuff then
 			aPlayerBar.cleanableBuffCnt = aPlayerBar.cleanableBuffCnt + 1
@@ -353,8 +364,8 @@ local function PlayerAddBuffNegative(aBuffInfo, aPlayerBar)
 	end
 end
 
-local function PlayerAddBuffPositive(aBuffInfo, aPlayerBar)
-	if PlayerAddBuff(aBuffInfo, aPlayerBar, aPlayerBar.buffSlots, aPlayerBar.usedBuffSlotCnt) then
+local function PlayerAddBuffPositive(aBuffInfo, aPlayerBar, anInfoObj)
+	if PlayerAddBuff(aBuffInfo, aPlayerBar, aPlayerBar.buffSlots, aPlayerBar.usedBuffSlotCnt, anInfoObj) then
 		aPlayerBar.usedBuffSlotCnt = aPlayerBar.usedBuffSlotCnt + 1
 	end
 end
@@ -674,11 +685,14 @@ function CreateBuffSlot(aParent, aBuffSize, anResArray, anIndex, anAlign)
 	local buffSlot = {}
 	buffSlot.buffWdg = createWidget(aParent, "mybuff"..anIndex, "BuffTemplate", anAlign, anAlign, aBuffSize, aBuffSize, 2+(anIndex-1)*aBuffSize, 3)
 	buffSlot.buffIcon = getChild(buffSlot.buffWdg, "DotIcon")
+	buffSlot.buffHighlight = getChild(buffSlot.buffWdg, "DotHighlight")
 	buffSlot.buffStackCnt = getChild(buffSlot.buffWdg, "DotStackText")
 	align(buffSlot.buffStackCnt, WIDGET_ALIGN_HIGH, WIDGET_ALIGN_HIGH)
 	resize(buffSlot.buffStackCnt, aBuffSize, GetTextSizeByBuffSize(aBuffSize))
 	resize(buffSlot.buffIcon, aBuffSize, aBuffSize)
 	show(buffSlot.buffIcon)
+	resize(buffSlot.buffHighlight, aBuffSize, aBuffSize)
+
 	if anResArray then
 		table.insert(anResArray, buffSlot)	
 	end
@@ -740,6 +754,7 @@ local m_locale = getLocale()
 local m_modeBtn = nil
 local m_lockBtn = nil
 local m_targetModeName = nil
+local m_modeSelectPanel = nil
 
 Global("ALL_TARGETS", 0)
 Global("ENEMY_TARGETS", 1)
@@ -777,6 +792,10 @@ m_targetSwitchArr[NEITRAL_MOBS_TARGETS] = m_locale["NEITRAL_MOBS_TARGETS"]
 m_targetSwitchArr[NOT_FRIENDS_TARGETS] = m_locale["NOT_FRIENDS_TARGETS"]
 m_targetSwitchArr[NOT_FRIENDS_PLAYERS_TARGETS] = m_locale["NOT_FRIENDS_PLAYERS_TARGETS"]
 
+function GetTargetModeSelectPanel()
+	return m_modeSelectPanel
+end
+
 function SwitchTargetsBtn(aNewTargetInd)
 	m_targetModeName:SetVal("Name", m_targetSwitchArr[aNewTargetInd])
 end
@@ -793,11 +812,11 @@ end
 function ApplyTargetSettingsToGUI(aTopPanelForm)
 	local profile = GetCurrentProfile()
 	local wtTopPanel = getChild(aTopPanelForm, "TopTargeterPanel")
-	if profile.targeterFormSettings.twoColumnMode then
+	--[[if profile.targeterFormSettings.twoColumnMode then
 		align(wtTopPanel, WIDGET_ALIGN_HIGH)
 	else
 		align(wtTopPanel, WIDGET_ALIGN_LOW)
-	end
+	end]]
 end
 
 function CreateTargeterPanel()
@@ -805,10 +824,8 @@ function CreateTargeterPanel()
 	local targeterPanel = common.AddonCreateChildForm("TargetPanel")
 	move(targeterPanel, 500, 380)
 	local wtTopPanel = getChild(targeterPanel, "TopTargeterPanel")
-	DnD:Init(targeterPanel, wtTopPanel, true)
+	DnD.Init(targeterPanel, wtTopPanel, true, true, {0,-50,-50,0})
 	resize(wtTopPanel, 200, nil)
-	
-	
 
 	local modePanel = getChild(wtTopPanel, "ModePanel")
 	m_targetModeName = getChild(modePanel, "ModeNameTextView")
@@ -819,5 +836,20 @@ function CreateTargeterPanel()
 	
 	TargetLockBtn(targeterPanel)
 	hide(targeterPanel)
+	
+	
+	m_modeSelectPanel = getChild(targeterPanel, "ModeSelectPanel")	
+	move(m_modeSelectPanel, 23, 26)
+	resize(m_modeSelectPanel, 170, 24*(MY_SETTINGS_TARGETS+1))
+	hide(m_modeSelectPanel)
+	setTemplateWidget(m_modeSelectPanel)
+	for i = ALL_TARGETS, MY_SETTINGS_TARGETS do
+		local btn = createWidget(m_modeSelectPanel, "modeBtn"..tostring(i), "SelectButton", WIDGET_ALIGN_BOTH, WIDGET_ALIGN_LOW, nil, 25, 0, 24*i)
+		setText(btn, m_targetSwitchArr[i])
+		btn:SetTextColor(nil,  { a = 1, r = 1, g = 1, b = 1 })
+		show(btn)
+	end
+	
+	setTemplateWidget(m_template)
 	return targeterPanel
 end

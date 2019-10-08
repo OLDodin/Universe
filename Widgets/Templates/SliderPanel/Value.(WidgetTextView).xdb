@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<WidgetTextView>
+	<Name>Value</Name>
+	<Placement>
+		<X>
+			<Align>WIDGET_ALIGN_HIGH</Align>
+			<Sizing>WIDGET_SIZING_INTERNAL</Sizing>
+			<HighPos>172</HighPos>
+		</X>
+		<Y>	
+			<Align>WIDGET_ALIGN_CENTER</Align>
+			<Sizing>WIDGET_SIZING_INTERNAL</Sizing>
+		</Y>
+	</Placement>
+	<FormatFileRef href="Value.txt" />
+</WidgetTextView>

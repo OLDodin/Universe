@@ -23,7 +23,7 @@
 			</StateNormal>
 			<StatePushed>
 				<LayerMain href="checkbox.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)" />
-				<<FormatFileRef href="ButtonExecute.txt" />
+				<FormatFileRef href="ButtonExecute.txt" />
 			</StatePushed>
 			<ReactionOnUp>true</ReactionOnUp>
 			<Reaction>execute</Reaction>

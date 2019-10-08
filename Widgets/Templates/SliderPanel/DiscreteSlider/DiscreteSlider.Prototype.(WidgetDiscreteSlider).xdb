@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<WidgetDiscreteSlider>
+	<Header>
+		<isPrototype>true</isPrototype>
+	</Header>
+	<BackLayer href="DiscreteSliderFrame.(WidgetLayerSimpleTexture).xdb#xpointer(WidgetLayerSimpleTexture)" />
+	<Placement>
+		<X>
+			<Align>WIDGET_ALIGN_HIGH</Align>
+			<HighPos>8</HighPos>
+			<Size>160</Size>
+		</X>
+		<Y>
+			<Align>WIDGET_ALIGN_CENTER</Align>
+			<Size>12</Size>
+		</Y>
+	</Placement>
+	<clipContent>false</clipContent>
+	<sliderButton href="ButtonSlider.(WidgetButton).xdb#xpointer(/WidgetButton)" />
+	<moveArrangement>WIDGETS_ARRANGEMENT_L2R</moveArrangement>
+	<reactionChanged>discrete_slider_changed</reactionChanged>
+	<stepsCount>10</stepsCount>
+</WidgetDiscreteSlider>

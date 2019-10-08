@@ -107,12 +107,12 @@ function PlayerBuffs:CallListenerIfNeeded(aBuffID, aListener, aCondition, aRaidT
 				buffInfo.cleanableBuff = cleanableBuff
 				if aRaidType then
 					if buffInfo.isPositive then
-						aListener.listenerChangeBuff(buffInfo, aListener)
+						aListener.listenerChangeBuff(buffInfo, aListener, findedObj)
 					else
-						aListener.listenerChangeBuffNegative(buffInfo, aListener)
+						aListener.listenerChangeBuffNegative(buffInfo, aListener, findedObj)
 					end
 				else
-					aListener.listenerChangeBuffNegative(buffInfo, aListener, findedObj and findedObj.ind or nil)
+					aListener.listenerChangeBuffNegative(buffInfo, aListener, findedObj)
 				end
 			else
 				anIgnoreBuffsList[aBuffID] = true
