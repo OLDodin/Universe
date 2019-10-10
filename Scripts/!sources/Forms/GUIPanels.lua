@@ -807,6 +807,7 @@ function TargetLockBtn(aTopPanelForm)
 	
 	local wtTopPanel = getChild(aTopPanelForm, "TopTargeterPanel")
 	DnD:Enable(wtTopPanel, activeNum==0)
+	hide(m_modeSelectPanel)
 end
 
 function ApplyTargetSettingsToGUI(aTopPanelForm)
