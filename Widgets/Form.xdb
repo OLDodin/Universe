@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <WidgetForm>
 	<Name>Universe</Name>
-	<Priority>4550</Priority>
+	<Priority>5400</Priority>
 	<BackLayer href="" />
 	<FrontLayer href="" />
 	<Placement>
