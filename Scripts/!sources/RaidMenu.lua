@@ -34,8 +34,9 @@ function MoveTo(aPartyNum, anUniqueID, aMyUniqueID)
 	end
 end
 
-function SwapPlayers(anUniqueID1, anUniqueID2)
-	if isRaid() and raid.IsLeader() then
+function SwapPlayers(anUniqueID1, anUniqueID2, aMyUniqueID)
+	local iamHelper = CheckHelper(aMyUniqueID)
+	if isRaid() and (raid.IsLeader() or iamHelper) then
 		if anUniqueID1 and anUniqueID2 then 
 			raid.SwapMembers(anUniqueID1, anUniqueID2) 
 		end

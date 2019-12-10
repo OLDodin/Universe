@@ -690,7 +690,7 @@ local function OnPlayerSelect(aParams, aLeftClick)
 				end
 			--end
 		else
-			SwapPlayers(m_movingUniqueID, playerBar.uniqueID)
+			SwapPlayers(m_movingUniqueID, playerBar.uniqueID, FindMyUniqueIDInRaid())
 			StopMove()
 		end
 		return
