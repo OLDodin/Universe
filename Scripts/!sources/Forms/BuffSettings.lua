@@ -124,6 +124,10 @@ function GetConfigGroupBuffsActiveNum()
 	return m_loadedWndInd
 end
 
+function ResetConfigGroupBuffsActiveNum()
+	m_loadedWndInd = 0
+end
+
 function SaveConfigGroupBuffsForm(aForm, aClose)
 	local mySettings = {}
 	

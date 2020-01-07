@@ -461,11 +461,17 @@ function effectDone(aParams)
 end
 
 function startLoopBlink(aWdg, aSpeed)
+	for i, v in pairs(m_loopEffects) do
+		if v and equals(aWdg, v.widget) then
+			v.speed = aSpeed
+			return
+		end
+	end
+	
 	local obj = {}
 	obj.widget = aWdg
 	obj.speed = aSpeed
 	table.insert(m_loopEffects, obj)
-	
 	
 	aWdg:PlayFadeEffect( 0.0, 1.0, aSpeed*1000, EA_SYMMETRIC_FLASH )
 end

@@ -270,6 +270,7 @@ local function PlayerRemoveBuff(aBuffID, aPlayerBar, aCnt, anArray)
 	local buffSlot, removeIndex = FindBuffSlot(aPlayerBar, aBuffID, nil, aCnt, anArray)
 	if buffSlot then
 		hide(buffSlot.buffWdg)
+		stopLoopBlink(buffSlot.buffHighlight)
 		if removeIndex ~= GetTableSize(anArray) then
 			for i = removeIndex, aCnt do
 				anArray[i] = anArray[i+1]

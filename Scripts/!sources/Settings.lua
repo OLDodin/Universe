@@ -147,16 +147,15 @@ end
 
 function ProfileWasDeleted(anInd)
 	local lastUsedProfiles = userMods.GetGlobalConfigSection("TR_LastProfileArr")
-	for i, index in ipairs(lastUsedProfiles) do
+	for i, index in pairs(lastUsedProfiles) do
 		if index == anInd then
 			lastUsedProfiles[i] = 0 
 		elseif index > anInd and index > 0 then
 			lastUsedProfiles[i] = index - 1 
 		end
 	end
-	if anInd == m_currentProfileInd then
-		LoadLastUsedSetting()
-	end
+	userMods.SetGlobalConfigSection("TR_LastProfileArr", lastUsedProfiles)
+	LoadLastUsedSetting()
 end
 
 function SaveProfile(aProfile)

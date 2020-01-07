@@ -81,6 +81,12 @@ function BuffCondition:Check(aBuffInfo)
 	LogInfo("found aBuffInfo e")
 	]]
 	local searchRes = nil
+	--[[
+	-- test show all buffs
+	if aBuffInfo.isNeedVisualize then
+		return true, self.avlCustomTree.value, true
+	end]]
+	
 	if aBuffInfo.isNeedVisualize then
 		if self.needCheckAllBuffsByList then
 			searchRes = self.avlCustomTree:find(aBuffInfo)

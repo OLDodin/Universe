@@ -206,7 +206,9 @@ function DeleteProfile(aWdg)
 	local allProfiles = GetAllProfiles()
 	DeleteContainer(allProfiles, aWdg, m_profilesForm)
 	SaveProfiles(allProfiles)
-	ProfileWasDeleted(index)
+	ProfileWasDeleted(index+1)
+	LoadForms()
+	ReloadAll()
 end
 
 function LoadProfilesFormSettings()
@@ -225,10 +227,11 @@ local function SaveProfileByIndex(anIndex, aList)
 	aList[anIndex].buffFormSettings = SaveBuffFormSettings(m_buffSettingsForm)
 	aList[anIndex].buffFormSettings = SaveConfigGroupBuffsForm(m_configGroupBuffForm, true)
 	aList[anIndex].bindFormSettings = SaveBindFormSettings(m_bindSettingsForm)
+	
 	SaveProfiles(aList)
 end
 
-local function ReloadAll()
+function ReloadAll()
 	LoadLastUsedSetting()
 	
 	FabricClearAll()
@@ -305,9 +308,8 @@ function ImportProfile()
 	if not importedProfile then
 		ShowImportError()
 		return
-	else
+	else	
 		importedProfile.name = ConcatWString(toWString(importedProfile.name), userMods.ToWString("-import"))
-	--	LogInfo(StartSerialize(importedProfile))
 		local allProfiles = GetAllProfiles()
 		
 		AddElementFromFormWithText(allProfiles, m_profilesForm, importedProfile.name)
@@ -331,6 +333,7 @@ function LoadForms()
 	LoadTargeterFormSettings(m_targeterSettingsForm)
 	LoadBuffFormSettings(m_buffSettingsForm)
 	hide(m_configGroupBuffForm)
+	ResetConfigGroupBuffsActiveNum()
 	DestroyColorForm()
 end
 

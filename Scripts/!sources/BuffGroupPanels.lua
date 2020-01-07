@@ -107,8 +107,10 @@ local function PlayerRemoveBuff(aBuffID, aGroupBuffBar)
 	if buffSlot then
 		if aGroupBuffBar.fixedInsidePanel then	
 			hide(buffSlot.buffWdg)
+			stopLoopBlink(buffSlot.info.buffHighlight)
 		else
 			hide(buffSlot.buffWdg)
+			stopLoopBlink(buffSlot.info.buffHighlight)
 			if removeIndex ~= GetTableSize(aGroupBuffBar.buffList) then
 				for i = removeIndex, aGroupBuffBar.usedBuffSlotCnt do
 					aGroupBuffBar.buffList[i] = aGroupBuffBar.buffList[i+1]
