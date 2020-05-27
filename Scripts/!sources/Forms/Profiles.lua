@@ -15,7 +15,7 @@ function CreateProfilesForm()
 	createWidget(form, "EditLine1", "EditLine", nil, nil, 210, 25, 360, 200)
 
 
-	DnD:Init(form, panel, true)
+	DnD.Init(form, panel, true)
 
 	return form
 end

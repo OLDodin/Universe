@@ -100,7 +100,7 @@ function CreateColorSettingsForm(aSaveLoadType, aGroupBuffsNum, aBuffInd)
 	--m_alphaWdg:Set(sliderParams)
 	
 
-	DnD:Init(form, configPanel, true)
+	DnD.Init(form, configPanel, true)
 	m_colorPreview:SetBackgroundColor(GetColorFromColorSettingsForm())
 	
 	return form

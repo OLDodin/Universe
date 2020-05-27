@@ -11,7 +11,7 @@ function CreateExportProfilesForm()
 	createWidget(form, "EditBox1", "EditBox", nil, nil, 560, 180, 20, 50)
 	
 
-	DnD:Init(form, panel, true)
+	DnD.Init(form, panel, true)
 
 	return form
 end

@@ -24,6 +24,7 @@ local m_raidSubSystemLoaded = false
 local m_targetSubSystemLoaded = false
 local m_buffGroupSubSystemLoaded = false
 local m_bindSubSystemLoaded = false
+local m_castSubSystemLoaded = false
 
 local m_mainSettingForm = nil
 local m_profilesForm = nil
@@ -31,7 +32,9 @@ local m_raidSettingsForm = nil
 local m_targeterSettingsForm = nil
 local m_buffSettingsForm = nil
 local m_configGroupBuffForm = nil
+local m_progressCastSettingsForm = nil
 local m_raidPanel = nil
+local m_progressCastPanel = nil
 local m_targetPanel = nil
 local m_raidPartyButtons = nil
 local m_buffsGroupParentForm=nil
@@ -40,12 +43,14 @@ local m_exportProfileForm = nil
 local m_importProfileForm = nil
 local m_colorForm = nil
 
+local m_progressCastPanelList = {}
 local m_raidPlayerPanelList = {}
 local m_targeterPlayerPanelList = {}
 local m_moveMode = false
 local m_movingUniqueID = nil
 local m_lastRaidPanelSize = {}
 local m_lastTargetPanelSize = {}
+local m_usedProgressCastPanelCnt = 0
 Global("RAID_TYPE", 1)
 Global("PARTY_TYPE", 2)
 Global("SOLO_TYPE", 3)
@@ -227,6 +232,8 @@ local function SaveProfileByIndex(anIndex, aList)
 	aList[anIndex].buffFormSettings = SaveBuffFormSettings(m_buffSettingsForm)
 	aList[anIndex].buffFormSettings = SaveConfigGroupBuffsForm(m_configGroupBuffForm, true)
 	aList[anIndex].bindFormSettings = SaveBindFormSettings(m_bindSettingsForm)
+	aList[anIndex].castFormSettings = SaveProgressCastFormSettings(m_progressCastSettingsForm)
+	aList[anIndex].version = GetSettingsVersion()
 	
 	SaveProfiles(aList)
 end
@@ -259,6 +266,11 @@ function ReloadAll()
 		InitBindSubSystem()
 	else
 		UnloadBindSubSystem()
+	end
+	if profile.mainFormSettings.useCastSubSystem then
+		InitCastSubSystem()
+	else
+		UnloadCastSubSystem()
 	end
 	
 	
@@ -330,6 +342,7 @@ function LoadForms()
 	LoadProfilesFormSettings()
 	LoadRaidFormSettings(m_raidSettingsForm)
 	LoadBindFormSettings(m_bindSettingsForm)
+	LoadProgressCastFormSettings(m_progressCastSettingsForm)
 	LoadTargeterFormSettings(m_targeterSettingsForm)
 	LoadBuffFormSettings(m_buffSettingsForm)
 	hide(m_configGroupBuffForm)
@@ -729,6 +742,52 @@ function Reload()
 	common.StateLoadManagedAddon( "UserAddon/TotalRaid" )
 end
 
+local function CreateProgressCastCache()
+	for i = 0, PROGRESS_PANELS_LIMIT do
+		m_progressCastPanelList[i] = CreateProgressCastPanel(m_progressCastPanel, i)
+	end
+end
+
+local function UpdatePositionProgressCastPanels()
+	local profile = GetCurrentProfile()
+	local panelHeight = tonumber(profile.castFormSettings.panelHeightText)
+	
+	local cnt = 0
+	for i = 0, PROGRESS_PANELS_LIMIT do
+		if m_progressCastPanelList[i].isUsed then
+			local posY = cnt*(panelHeight+1)
+			move(m_progressCastPanelList[i].wdg, 0, posY)
+			cnt = cnt + 1
+		end
+	end
+end
+
+local function GetProgressCastPanel(anID)
+	for i = 0, PROGRESS_PANELS_LIMIT do
+		if m_progressCastPanelList[i].isUsed and m_progressCastPanelList[i].playerID == anID then
+			return m_progressCastPanelList[i]
+		end
+	end
+end
+
+local function GetFreeProgressCastPanel()
+	for i = 0, PROGRESS_PANELS_LIMIT do
+		if not m_progressCastPanelList[i].isUsed then
+			return m_progressCastPanelList[i]
+		end
+	end
+end
+
+local function ClearProgressPanelOnEndAnimation(aParams)
+	for i = 0, PROGRESS_PANELS_LIMIT do
+		if m_progressCastPanelList[i].isUsed and equals(aParams.wtOwner, m_progressCastPanelList[i].barWdg) then
+			ClearProgressCastPanel(m_progressCastPanelList[i])
+			UpdatePositionProgressCastPanels()
+			break
+		end
+	end
+end
+
 local function CreateRaidPanelCache()
 	local profile = GetCurrentProfile()
 	for i = 0, 3 do
@@ -768,6 +827,7 @@ end
 local function ResizeTargetPanel(aGroupsCnt, aMaxPeopleCnt)
 	local profile = GetCurrentProfile()
 	ResizePanelForm(aGroupsCnt, aMaxPeopleCnt, profile.targeterFormSettings, m_targetPanel, m_lastTargetPanelSize, getChild(m_targetPanel, "TopTargeterPanel"))
+	ApplyTargetSettingsToGUI(m_targetPanel)
 end
 
 local function ResizeRaidPanel(aGroupsCnt, aMaxPeopleCnt)
@@ -1547,7 +1607,6 @@ local function InitTargeterData()
 	end
 	
 	SwitchTargetsBtn(m_currTargetType)
-	ApplyTargetSettingsToGUI(m_targetPanel)
 end
 
 local function UnitHPChanged(aParams)
@@ -1622,6 +1681,27 @@ local function UnitChanged(aParams)
 	end
 end
 
+local function BuffProgressStart(aParams)
+	local panel = GetProgressCastPanel(aParams.objectId or aParams.id)
+	if panel then 
+		SetBaseInfoProgressCastPanel(panel, aParams)
+	else
+		panel = GetFreeProgressCastPanel()
+		if panel then 
+			SetBaseInfoProgressCastPanel(panel, aParams)
+			UpdatePositionProgressCastPanels()
+		end	
+	end
+end
+
+local function BuffProgressEnd(aParams)
+	local panel = GetProgressCastPanel(aParams.objectId or aParams.id)
+	if panel then 
+		ClearProgressCastPanel(panel)
+		UpdatePositionProgressCastPanels()
+	end
+end
+
 local function SwitchPartyGUIToRaidGUI()
 	options.Update()
 	local pageIds = options.GetPageIds()
@@ -1681,10 +1761,12 @@ local function GUIInit()
 	m_buffsGroupParentForm = CreateGroupsParentForm()
 	m_exportProfileForm = CreateExportProfilesForm()
 	m_importProfileForm = CreateImportProfilesForm()
+	m_progressCastSettingsForm = CreateProgressCastSettingsForm()
 
 	m_raidPanel = CreateRaidPanel()
 	m_targetPanel = CreateTargeterPanel()
 	m_raidPartyButtons = CreateRaidPartyBtn(m_raidPanel)
+	m_progressCastPanel = CreateProgressPanel()
 end
 
 local function OnEventSecondTimer()
@@ -1843,6 +1925,7 @@ function UnloadRaidSubSystem()
 		for j=0, GetTableSize(subParty)-1 do
 			local playerBar = subParty[j]
 			hide(playerBar.wdg)
+			destroy(playerBar.wdg)
 		end
 	end
 	m_raidPlayerPanelList = {}
@@ -1875,6 +1958,9 @@ function UnloadTargeterSubSystem()
 	
 	DestroyColorForm()
 	ClearTargetPanels()
+	for i = 0, GetTableSize(m_targeterPlayerPanelList)-1 do
+		destroy(m_targeterPlayerPanelList[i].wdg)
+	end
 	m_targeterPlayerPanelList = {}
 	hide(m_targetPanel)
 end
@@ -1923,6 +2009,48 @@ function UnloadBindSubSystem()
 	m_bindSubSystemLoaded = false
 end
 
+function InitCastSubSystem()
+	if m_castSubSystemLoaded then
+		UnloadCastSubSystem()
+	end
+	m_castSubSystemLoaded = true
+	
+	CreateProgressCastCache()
+	local profile = GetCurrentProfile()
+	resize(m_progressCastPanel, tonumber(profile.castFormSettings.panelWidthText), tonumber(profile.castFormSettings.panelHeightText)*PROGRESS_PANELS_LIMIT)
+	show(m_progressCastPanel)
+	
+	-- эти события приходят очень редко и только для единичных юнитов (слушать всех юнитов по одиночке через PlayerInfo не даст выгоды) 
+	-- и к тому же для EVENT_OBJECT_BUFF_PROGRESS_ADDED невозможно узнать если уже на юните такой бафф (если бафф повесился до spawn-а юнита у нас)
+	common.RegisterEventHandler(BuffProgressStart, "EVENT_MOB_ACTION_PROGRESS_START")
+	common.RegisterEventHandler(BuffProgressEnd, "EVENT_MOB_ACTION_PROGRESS_FINISH")
+	common.RegisterEventHandler(BuffProgressStart, "EVENT_OBJECT_BUFF_PROGRESS_ADDED")
+	common.RegisterEventHandler(BuffProgressEnd, "EVENT_OBJECT_BUFF_PROGRESS_REMOVED")
+	common.RegisterEventHandler(ClearProgressPanelOnEndAnimation, "EVENT_EFFECT_FINISHED")
+end
+
+function UnloadCastSubSystem()
+	if not m_castSubSystemLoaded then
+		return
+	end
+	m_castSubSystemLoaded = false
+	
+	for i = 0, PROGRESS_PANELS_LIMIT do
+		hide(m_progressCastPanelList[i].wdg)
+		destroy(m_progressCastPanelList[i].wdg)
+	end
+	m_progressCastPanelList = {}
+	
+	hide(m_progressCastPanel)
+	
+	common.UnRegisterEventHandler(BuffProgressStart, "EVENT_MOB_ACTION_PROGRESS_START")
+	common.UnRegisterEventHandler(BuffProgressEnd, "EVENT_MOB_ACTION_PROGRESS_FINISH")
+	common.UnRegisterEventHandler(BuffProgressStart, "EVENT_OBJECT_BUFF_PROGRESS_ADDED")
+	common.UnRegisterEventHandler(BuffProgressEnd, "EVENT_OBJECT_BUFF_PROGRESS_REMOVED")
+	common.UnRegisterEventHandler(ClearProgressPanelOnEndAnimation, "EVENT_EFFECT_FINISHED")
+end
+
+
 function UniverseBtnPressed()
 	swap(m_mainSettingForm)
 end
@@ -1960,6 +2088,7 @@ function GUIControllerInit()
 	AddReaction("saveButton", function (aWdg) swap(getParent(aWdg)) SaveAllAndApply() end)
 	AddReaction("targeterButton", function () swap(m_targeterSettingsForm) end)
 	AddReaction("bindButton", function () swap(m_bindSettingsForm) end)
+	AddReaction("progressCastButton", function () swap(m_progressCastSettingsForm) end)
 	AddReaction("closeSomeSettingsButton", function (aWdg) swap(getParent(aWdg)) UndoAll() end)
 	AddReaction("addRaidBuffButton", AddRaidBuffButton)
 	AddReaction("addTargeterBuffButton", AddTargetBuffButton)
@@ -2006,6 +2135,9 @@ function GUIControllerInit()
 	if profile.mainFormSettings.useBindSubSystem then
 		InitBindSubSystem()
 	end
+	if profile.mainFormSettings.useCastSubSystem then
+		InitCastSubSystem()
+	end
 	
 	TargetChanged()
 	
@@ -2032,8 +2164,10 @@ function GUIControllerInit()
 
 	
 	common.RegisterEventHandler(UnitDeadChanged, "EVENT_UNIT_DEAD_CHANGED")
+
 	
 	common.RegisterEventHandler(effectDone, "EVENT_EFFECT_FINISHED")
+	
 	
 	
 	--из-за лимита в 500 подписок на события какие не требуют привязки по ID вынесены из PlayerInfo

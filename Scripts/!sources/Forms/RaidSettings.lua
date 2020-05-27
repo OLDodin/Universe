@@ -1,5 +1,3 @@
-local m_template = nil
-
 function CreateRaidSettingsForm()
 	local form=createWidget(nil, "raidSettingsForm", "Form", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 720, 620, 200, 100)
 	hide(form)
@@ -74,7 +72,7 @@ function CreateRaidSettingsForm()
 	
 	setLocaleText(createWidget(form, "saveButton", "Button", WIDGET_ALIGN_CENTER, WIDGET_ALIGN_HIGH, 200, 30, nil, 20))
 	
-	DnD:Init(form, panel, true)
+	DnD.Init(form, panel, true)
 		
 	return form
 end

@@ -15,6 +15,10 @@
 			<Form href="Widgets/Bars/FormTargeter.xdb#xpointer(/WidgetForm)"/>
 		</Item>
 		<Item>
+			<Id>ProgressPanel</Id>
+			<Form href="Widgets/Bars/FormProgress.xdb#xpointer(/WidgetForm)"/>
+		</Item>
+		<Item>
 			<Id>Buff</Id>
 			<Form href="Widgets/Buffs/Form.xdb#xpointer(/WidgetForm)"/>
 		</Item>
@@ -59,8 +63,10 @@
 		<Item href="Scripts/Forms/RaidSettings.lua"/>
 		<Item href="Scripts/Forms/TargeterSettings.lua"/>
 		<Item href="Scripts/Forms/BuffSettings.lua"/>
+		<Item href="Scripts/Forms/ProgressCastSettings.lua"/>
 		<Item href="Scripts/Forms/GUIPanelRaidMove.lua"/>
 		<Item href="Scripts/Forms/GUIPanels.lua"/>
+		<Item href="Scripts/Forms/GUIProgressPanels.lua"/>
 		<Item href="Scripts/Forms/BindSettings.lua"/>
 		<Item href="Scripts/Forms/ExportForm.lua"/>
 		<Item href="Scripts/Forms/ImportForm.lua"/>

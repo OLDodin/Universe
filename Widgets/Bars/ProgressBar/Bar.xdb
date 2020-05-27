@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<WidgetButton>
+	<Priority>50</Priority>
+	<Name>ProgressBar</Name>
+	<Children>
+		<Item href="BackgroundBar.xdb#xpointer(/WidgetPanel)"/>
+		<Item href="TimeBar.xdb#xpointer(/WidgetPanel)"/>
+		<Item href="ProgressIcon.xdb#xpointer(/WidgetPanel)"/>
+		<Item href="NameProgress.xdb#xpointer(/WidgetTextView)"/>
+		<Item href="NameMob.xdb#xpointer(/WidgetTextView)"/>
+	</Children>
+	<Variants>
+		<Item>
+			<Reaction>OnLeftClick</Reaction>
+			<ReactionRightClick>OnRightClick</ReactionRightClick>
+		</Item>
+	</Variants>
+	<reactionOnPointing>OnPointing</reactionOnPointing>
+	<BackLayer href="" />
+</WidgetButton>

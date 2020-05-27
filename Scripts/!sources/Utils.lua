@@ -842,3 +842,17 @@ function copyTable(t)
   return result
 end
 
+local m_spellTextureCache = {}
+function getSpellTextureFromCache(aSpellID)
+	for _, spellTexInfo in pairs(m_spellTextureCache) do
+		if spellTexInfo.spellID:IsEqual(aSpellID) then
+			return spellTexInfo.texture
+		end
+	end
+	local newSpellTexInfo = {}
+	newSpellTexInfo.spellID = aSpellID
+	newSpellTexInfo.texture = spellLib.GetIcon(aSpellID)
+	table.insert(m_spellTextureCache, newSpellTexInfo)
+	
+	return newSpellTexInfo.texture
+end

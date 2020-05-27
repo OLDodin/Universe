@@ -38,6 +38,7 @@ function InitializeDefaultSetting()
 	mainFormSettings.useTargeterSubSystem = true
 	mainFormSettings.useBuffMngSubSystem = true
 	mainFormSettings.useBindSubSystem = false
+	mainFormSettings.useCastSubSystem = true
 	
 	
 	local raidFormSettings = {}
@@ -117,6 +118,15 @@ function InitializeDefaultSetting()
 	bindFormSettings.actionRightSwitchTargetShift = DISABLE_CLICK
 	bindFormSettings.actionRightSwitchTargetAlt = DISABLE_CLICK
 	bindFormSettings.actionRightSwitchTargetCtrl = DISABLE_CLICK
+	
+	local castFormSettings = {}
+	castFormSettings.showImportantCasts = true
+	castFormSettings.showImportantBuffs = true
+	castFormSettings.panelWidthText = "250"
+	castFormSettings.panelHeightText = "40"
+	castFormSettings.selectable = false
+	castFormSettings.fixed = true
+	
 		
 	defaultProfile.name = "default"
 	defaultProfile.mainFormSettings = mainFormSettings
@@ -124,8 +134,9 @@ function InitializeDefaultSetting()
 	defaultProfile.targeterFormSettings = targeterFormSettings
 	defaultProfile.buffFormSettings = buffFormSettings
 	defaultProfile.bindFormSettings = bindFormSettings
+	defaultProfile.castFormSettings = castFormSettings
 	
-	defaultProfile.version = 1
+	defaultProfile.version = GetSettingsVersion()
 	
 	table.insert(allProfiles, defaultProfile)
 	userMods.SetGlobalConfigSection("TR_ProfilesArr", allProfiles)	
@@ -143,6 +154,19 @@ function LoadSettings(aProfileInd)
 	m_currentProfileInd = aProfileInd
 
 	SetCurrentProfileInd(aProfileInd)
+
+	if m_currentProfile.version == 1 then
+		local castFormSettings = {}
+		castFormSettings.showImportantCasts = true
+		castFormSettings.showImportantBuffs = true
+		castFormSettings.panelWidthText = "200"
+		castFormSettings.panelHeightText = "40"
+		castFormSettings.selectable = false
+		castFormSettings.fixed = true
+		
+		m_currentProfile.castFormSettings = castFormSettings
+		m_currentProfile.mainFormSettings.useCastSubSystem = true
+	end
 end
 
 function ProfileWasDeleted(anInd)
@@ -156,10 +180,6 @@ function ProfileWasDeleted(anInd)
 	end
 	userMods.SetGlobalConfigSection("TR_LastProfileArr", lastUsedProfiles)
 	LoadLastUsedSetting()
-end
-
-function SaveProfile(aProfile)
-	
 end
 
 function SaveProfiles(aProfileList)
@@ -183,3 +203,6 @@ function ExportProfileByIndex(anInd)
 	return StartSerialize(allProfiles[anInd])
 end
 
+function GetSettingsVersion()
+	return 2;
+end

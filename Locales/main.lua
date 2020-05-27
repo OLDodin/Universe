@@ -14,11 +14,16 @@ Locales["rus"]["targeterButton"]=			"Настройки таргетера"
 Locales["rus"]["targeterButton"]=			"Настройки таргетера"
 Locales["rus"]["buffsButton"]=				"Настройки баффов"
 Locales["rus"]["bindButton"]=				"Настройки макросов"
+Locales["rus"]["progressCastButton"]=		"Настройки кастов"
+Locales["rus"]["helpButton"]=				"Справка"
 Locales["rus"]["okButton"]=					"OK"
 Locales["rus"]["useRaidSubSystem"]=			"Включить рейдовую подсистему"
 Locales["rus"]["useTargeterSubSystem"]=		"Включить таргетер"
 Locales["rus"]["useBuffMngSubSystem"]=		"Включить бафф менеджер"
 Locales["rus"]["useBindSubSystem"]=			"Включить макросы (не работают в ПВП)"
+Locales["rus"]["useCastSubSystem"]=			"Включить подсистему важных кастов"
+Locales["rus"]["panelWidthText"]=			"Ширина панели"
+Locales["rus"]["panelHeightText"]=			"Высота панели"
 Locales["rus"]["raidBuffsButton"]=			"Отображаемые баффы"
 Locales["rus"]["raidWidthText"]=			"Ширина панели"
 Locales["rus"]["raidHeightText"]=			"Высота панели"
@@ -198,6 +203,13 @@ Locales["rus"]["configGroupBuffsTime"]=		"Время отката"
 Locales["rus"]["configGroupBuffsCD"]  =		"КД"
 Locales["rus"]["configGroupBuffsBuff"] =	"Бафф"
 
+Locales["rus"]["showImportantCasts"] =		"Показывать важные касты мобов:"
+Locales["rus"]["showImportantBuffs"] =		"Показывать важные баффы мобов:"
+Locales["rus"]["selectablePanel"] =			"Панели реагируют на нажатия:"
+Locales["rus"]["fixedPanel"] =				"Режим перемещения панели:"
+Locales["rus"]["castSettingsFormHeader"] =	"Настройки кастов"
+
+
 
 Locales["rus"]["allShop"]=			{"Эссенция стремительности", "Эссенция силы крит. урона", "Эссенция шанса крит. урона", "Эссенция беспощадности", "Эссенция мастерства", "Эссенция двойной атаки","Эссенция решимости", 
 										"Эссенция физического урона","Эссенция стихийного урона","Эссенция божественного урона","Эссенция природного урона",
@@ -209,7 +221,7 @@ Locales["rus"]["allShop"]=			{"Эссенция стремительности", "Эссенция силы крит. у
 										"Экстракт стойкости", "Экстракт воли", "Экстракт кровожадности","Экстракт живучести","Экстракт незыблимости","Экстракт осторожности","Экстракт сосредоточенности",
 										"Экстракт физической защиты","Экстракт стихийной защиты","Экстракт божественной защиты","Экстракт природной защиты",
 										"Мощная эссенция стойкости", "Мощная эссенция воли", "Мощная эссенция кровожадности","Мощная эссенция живучести","Мощная эссенция незыблимости","Мощная эссенция осторожности","Мощная эссенция сосредоточенности", "Мощная эссенция физической защиты","Мощная эссенция стихийной защиты","Мощная эссенция божественной защиты","Мощная эссенция природной защиты",
-										"Демоническое снадобье мастерства", "Демоническое снадобье беспощадности", "Демоническое снадобье решимости", 
+										"Драконье снадобье мастерства", "Драконье снадобье беспощадности", "Драконье снадобье решимости", 
 										"Снадобье физического урона", "Снадобье стихийного урона", "Снадобье божественного урона", "Снадобье природного урона", 
 										"Горькая настойка", "Воля", "Решимость", "Живучесть", "Доблесть поединщика"}
 
@@ -250,12 +262,17 @@ Locales["eng"]["raidButton"]=				"Raid settings"
 Locales["eng"]["targeterButton"]=			"Targeter settings"
 Locales["eng"]["buffsButton"]=				"Buff settings"
 Locales["eng"]["bindButton"]=				"Macros settings"
+Locales["eng"]["progressCastButton"]=		"Cast settings"
+Locales["eng"]["helpButton"]=				"Help"
 Locales["eng"]["okButton"]=					"OK"
 Locales["eng"]["useRaidSubSystem"]=			"Enable raid subsystem"
 Locales["eng"]["useTargeterSubSystem"]=		"Enable targeter subsystem"
 Locales["eng"]["useBuffMngSubSystem"]=		"Enable buff plates subsystem"
 Locales["eng"]["useBindSubSystem"]=			"Enable macros subsystem"
+Locales["eng"]["useCastSubSystem"]=			"Enable important casts subsystem"
 Locales["eng"]["raidBuffsButton"]=			"Displayed buffs"
+Locales["eng"]["panelWidthText"]=			"Panel width"
+Locales["eng"]["panelHeightText"]=			"Panel height"
 Locales["eng"]["raidWidthText"]=			"Panel width"
 Locales["eng"]["raidHeightText"]=			"Panel height"
 Locales["eng"]["raidSettingsFormHeader"]=	"Raid settings"
@@ -472,3 +489,8 @@ Locales["eng"]["headerColor"]="Select buff highlight:"
 Locales["eng"]["setColorButton"]="OK"
 Locales["eng"]["useHighlightBuffCheckBox"]="Enable buff highlight"
 Locales["eng"]["blinkHighlightCheckBox"]="Flickering backlight"
+Locales["eng"]["showImportantCasts"] =		"Show important casts:"
+Locales["eng"]["showImportantBuffs"] =		"Show important buffs:"
+Locales["eng"]["selectablePanel"] =			"Panels respond to clicks:"
+Locales["eng"]["fixedPanel"] =				"Panel move mode:"
+Locales["eng"]["castSettingsFormHeader"] =	"Cast settings"

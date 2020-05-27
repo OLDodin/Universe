@@ -1,23 +1,8 @@
 local m_groupBuffPanels = {}
 local m_lastTargetID = nil
-local m_spellTextureCache = {}
 
 local function GetTextSizeByBuffSize(aSize)
 	return math.floor(aSize/2.5)
-end
-
-local function GetSpellTextureFromCache(aSpellID)
-	for _, spellTexInfo in pairs(m_spellTextureCache) do
-		if spellTexInfo.spellID:IsEqual(aSpellID) then
-			return spellTexInfo.texture
-		end
-	end
-	local newSpellTexInfo = {}
-	newSpellTexInfo.spellID = aSpellID
-	newSpellTexInfo.texture = spellLib.GetIcon(aSpellID)
-	table.insert(m_spellTextureCache, newSpellTexInfo)
-	
-	return newSpellTexInfo.texture
 end
 
 local function FindBufSlot(aGroupBuffBar, aBuffID)
@@ -157,7 +142,7 @@ local function SpellChanged(aSpellInfo, aGroupBuffBar, anInfoObj)
 		aSpellInfo.remainingMs = 0
 	end
 	aSpellInfo.stackCount = 0
-	aSpellInfo.texture = GetSpellTextureFromCache(aSpellInfo.spellID)
+	aSpellInfo.texture = getSpellTextureFromCache(aSpellInfo.spellID)
 	aSpellInfo.id = aSpellInfo.objectId
 	
 	local buffSlot = PlayerAddBuff(aSpellInfo, aGroupBuffBar, anInfoObj)
@@ -229,7 +214,7 @@ function CreateGroupBuffPanel(aForm, aSettings, anIsAboveHead, aPosInPlateIndex)
 		if anIsAboveHead then
 			--buffAlign = WIDGET_ALIGN_CENTER
 		else
-			DnD:Init(groupBuffPanel.panelWdg, groupBuffTopPanel, true)
+			DnD.Init(groupBuffPanel.panelWdg, groupBuffTopPanel, true)
 		end
 			
 		setTemplateWidget(getChild(aForm, "BuffGroup"))

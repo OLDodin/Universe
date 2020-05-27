@@ -726,7 +726,7 @@ function CreateRaidPanel()
 	setTemplateWidget(m_template)
 	local raidPanel = common.AddonCreateChildForm("RaidPanel")
 	local wtTopPanel = getChild(raidPanel, "TopPanel")
-	DnD:Init(raidPanel, wtTopPanel, true)
+	DnD.Init(raidPanel, wtTopPanel, true)
 	
 	resize(wtTopPanel, 200, nil)
 	hide(raidPanel)
@@ -807,14 +807,21 @@ function TargetLockBtn(aTopPanelForm)
 	m_modeBtn:SetVariant(activeNum)
 	
 	local wtTopPanel = getChild(aTopPanelForm, "TopTargeterPanel")
-	DnD:Enable(wtTopPanel, activeNum==0)
+	DnD.Enable(wtTopPanel, activeNum==0)
 	hide(m_modeSelectPanel)
 end
 
 function ApplyTargetSettingsToGUI(aTopPanelForm)
-	local profile = GetCurrentProfile()
+	local activeNum = m_lockBtn:GetVariant() == 1 and 1 or 0
+	m_lockBtn:SetVariant(activeNum)
+	m_modeBtn:SetVariant(activeNum)
+	
 	local wtTopPanel = getChild(aTopPanelForm, "TopTargeterPanel")
-	--[[if profile.targeterFormSettings.twoColumnMode then
+	DnD.Enable(wtTopPanel, activeNum==0)
+	hide(m_modeSelectPanel)
+	--[[local profile = GetCurrentProfile()
+	local wtTopPanel = getChild(aTopPanelForm, "TopTargeterPanel")
+	if profile.targeterFormSettings.twoColumnMode then
 		align(wtTopPanel, WIDGET_ALIGN_HIGH)
 	else
 		align(wtTopPanel, WIDGET_ALIGN_LOW)
@@ -853,5 +860,6 @@ function CreateTargeterPanel()
 	end
 	
 	setTemplateWidget(m_template)
+	
 	return targeterPanel
 end

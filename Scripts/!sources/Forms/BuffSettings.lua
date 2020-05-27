@@ -14,7 +14,7 @@ function CreateBuffSettingsForm()
 
 	setLocaleText(createWidget(form, "saveButton", "Button", WIDGET_ALIGN_CENTER, WIDGET_ALIGN_HIGH, 200, 30, nil, 20))
 	
-	DnD:Init(form, panel, true)
+	DnD.Init(form, panel, true)
 
 	return form
 end
@@ -116,7 +116,7 @@ function CreateConfigGroupBuffsForm()
 
 	createWidget(form, "container", "ScrollableContainer", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_HIGH, 545, 450, 25, 85)
 
-	DnD:Init(form, panel, true)
+	DnD.Init(form, panel, true)
 	return form
 end
 

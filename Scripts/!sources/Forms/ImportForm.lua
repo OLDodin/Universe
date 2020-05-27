@@ -11,7 +11,7 @@ function CreateImportProfilesForm()
 	createWidget(form, "EditBox1", "EditBox", nil, nil, 560, 180, 20, 50)
 	
 
-	DnD:Init(form, panel, true)
+	DnD.Init(form, panel, true)
 
 	return form
 end
@@ -26,7 +26,7 @@ function ShowImportError()
 
 	setLocaleText(createWidget(form, "closeButtonOK", "Button", WIDGET_ALIGN_CENTER, WIDGET_ALIGN_HIGH, 150, 25, 0, 10))
 
-	DnD:Init(form, panel, true)
+	DnD.Init(form, panel, true)
 
 	show(form)
 end
