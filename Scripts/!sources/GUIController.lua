@@ -54,6 +54,11 @@ local m_usedProgressCastPanelCnt = 0
 Global("RAID_TYPE", 1)
 Global("PARTY_TYPE", 2)
 Global("SOLO_TYPE", 3)
+
+Global("RAID_CLICK", 1)
+Global("TARGETER_CLICK", 2)
+Global("PROGRESSCAST_CLICK", 3)
+
 local m_currentRaid = {}
 
 local TARGETS_LIMIT = 12
@@ -381,6 +386,9 @@ function SetColorBuffHighlight(aWdg, aSaveLoadType)
 	show(m_colorForm)
 end
 
+function ResetGroupBuffPanelPos(aWdg)
+	ResetPanelPos(GetConfigGroupBuffsActiveNum())
+end
 
 
 function AddRaidBuffButton(aWdg)
@@ -487,7 +495,16 @@ local function OnShopChange()
 end
 
 local function OnAssertChange(aParams)
-	SetPanelFixed(getParent(aParams.widget, 2))
+	local alreadyHandled = false
+	if m_castSubSystemLoaded and m_progressCastPanel:IsEqual(getParent(aParams.widget, 2)) then
+		local profile = GetCurrentProfile()
+		profile.castFormSettings.fixed = true
+		LoadProgressCastFormSettings(m_progressCastSettingsForm)
+		alreadyHandled = true
+	end
+	if not alreadyHandled then
+		SetPanelFixed(getParent(aParams.widget, 2))
+	end
 	SaveAllAndApply()
 end
 
@@ -515,6 +532,15 @@ end
 
 local function ReadyCheckStarted()
 	ReadyCheckChanged()
+end
+
+local function FindClickedInProgressCast(anWdg)
+	for i=0, GetTableSize(m_progressCastPanelList)-1 do
+		local playerBar = m_progressCastPanelList[i]
+		if playerBar.isUsed and anWdg:IsEqual(playerBar.wdg) then
+			return playerBar
+		end
+	end
 end
 
 local function FindClickedInTarget(anWdg)
@@ -599,13 +625,13 @@ local function MoveModeClick(aParams)
 	StopMove()
 end
 
-local function MakeBindAction(aParams, aPlayerBar, aLeftClick, aRaidBind)
+local function MakeBindAction(aParams, aPlayerBar, aLeftClick, aTypeBind)
 	local profile = GetCurrentProfile()
 	local isCtrl, isAlt, isShift = getModFromFlags(aParams.kbFlags)
 	
 	local actionType = DISABLE_CLICK
 	local bindAction = nil
-	if aRaidBind then
+	if aTypeBind == RAID_CLICK then
 		if aLeftClick then
 			if isShift then
 				actionType = profile.bindFormSettings.actionLeftSwitchRaidShift
@@ -635,7 +661,7 @@ local function MakeBindAction(aParams, aPlayerBar, aLeftClick, aRaidBind)
 				bindAction = profile.bindFormSettings.actionRightRaidSimpleBind
 			end
 		end
-	else
+	elseif aTypeBind == TARGETER_CLICK then
 		if aLeftClick then
 			if isShift then
 				actionType = profile.bindFormSettings.actionLeftSwitchTargetShift
@@ -665,6 +691,8 @@ local function MakeBindAction(aParams, aPlayerBar, aLeftClick, aRaidBind)
 				bindAction = profile.bindFormSettings.actionRightTargetSimpleBind
 			end
 		end
+	elseif aTypeBind == PROGRESSCAST_CLICK then
+		
 	end
 	
 	if actionType == DISABLE_CLICK then
@@ -696,7 +724,7 @@ local function OnPlayerSelect(aParams, aLeftClick)
 		if not m_moveMode then
 			--if playerBar.playerID then
 				if m_bindSubSystemLoaded then
-					MakeBindAction(aParams, playerBar, aLeftClick, true)
+					MakeBindAction(aParams, playerBar, aLeftClick, RAID_CLICK)
 				else	
 					if aLeftClick then
 						selectTarget(playerBar.playerID)
@@ -711,11 +739,17 @@ local function OnPlayerSelect(aParams, aLeftClick)
 		end
 		return
 	end
+
 	if aLeftClick or m_bindSubSystemLoaded then
+		local typeBind = TARGETER_CLICK
 		playerBar = FindClickedInTarget(aParams.widget)
+		if not playerBar then
+			playerBar = FindClickedInProgressCast(aParams.widget)
+			typeBind = PROGRESSCAST_CLICK
+		end
 		if playerBar then
 			if m_bindSubSystemLoaded then
-				MakeBindAction(aParams, playerBar, aLeftClick, false)
+				MakeBindAction(aParams, playerBar, aLeftClick, typeBind)
 			else
 				selectTarget(playerBar.playerID)
 			end
@@ -743,8 +777,14 @@ function Reload()
 end
 
 local function CreateProgressCastCache()
+	local profile = GetCurrentProfile()
 	for i = 0, PROGRESS_PANELS_LIMIT do
 		m_progressCastPanelList[i] = CreateProgressCastPanel(m_progressCastPanel, i)
+		if profile.castFormSettings.selectable then
+			m_progressCastPanelList[i].wdg:SetTransparentInput(false)
+		else
+			m_progressCastPanelList[i].wdg:SetTransparentInput(true)
+		end
 	end
 end
 
@@ -755,7 +795,7 @@ local function UpdatePositionProgressCastPanels()
 	local cnt = 0
 	for i = 0, PROGRESS_PANELS_LIMIT do
 		if m_progressCastPanelList[i].isUsed then
-			local posY = cnt*(panelHeight+1)
+			local posY = 40 + cnt*(panelHeight+1)
 			move(m_progressCastPanelList[i].wdg, 0, posY)
 			cnt = cnt + 1
 		end
@@ -2018,7 +2058,23 @@ function InitCastSubSystem()
 	CreateProgressCastCache()
 	local profile = GetCurrentProfile()
 	resize(m_progressCastPanel, tonumber(profile.castFormSettings.panelWidthText), tonumber(profile.castFormSettings.panelHeightText)*PROGRESS_PANELS_LIMIT)
+	if profile.castFormSettings.fixed then
+		hide(getChild(m_progressCastPanel, "MoveModePanel"))
+	else
+		show(getChild(m_progressCastPanel, "MoveModePanel"))
+	end
 	show(m_progressCastPanel)
+	
+	local unitList = avatar.GetUnitList()
+	for _, objID in pairs(unitList) do
+		if object.IsUnit(objID) and not unit.IsPlayer(objID) then
+			local mobActionProgressInfo = unit.GetMobActionProgress(objID)
+			if mobActionProgressInfo then
+				mobActionProgressInfo.id = objID
+				BuffProgressStart(mobActionProgressInfo)
+			end
+		end
+	end
 	
 	-- эти события приходят очень редко и только для единичных юнитов (слушать всех юнитов по одиночке через PlayerInfo не даст выгоды) 
 	-- и к тому же для EVENT_OBJECT_BUFF_PROGRESS_ADDED невозможно узнать если уже на юните такой бафф (если бафф повесился до spawn-а юнита у нас)
@@ -2121,6 +2177,7 @@ function GUIControllerInit()
 	AddReaction("setHighlightColorButtonraidSettingsForm", SetColorBuffRaid)
 	AddReaction("setHighlightColorButtontargeterSettingsForm", SetColorBuffTargeter)
 	AddReaction("setColorButton", function (aWdg) swap(getParent(aWdg)) SaveBuffColorHighlight(m_colorForm) DestroyColorForm() end)
+	AddReaction("resetPanelBuffPosButton", ResetGroupBuffPanelPos)
 	
 	local profile = GetCurrentProfile()
 	if profile.mainFormSettings.useRaidSubSystem then

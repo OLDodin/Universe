@@ -3,6 +3,7 @@
 	<Name>UniverseProgress</Name>
 	<Priority>4551</Priority>
 	<Children>
+		<Item href="../Buffs/Group/TopPanel/Panel.xdb#xpointer(/WidgetPanel)"/>
 		<Item href="ProgressBar/Bar.xdb#xpointer(/WidgetButton)"/>
 	</Children>
 	<BackLayer href="" />

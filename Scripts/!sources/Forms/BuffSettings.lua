@@ -93,6 +93,7 @@ function CreateConfigGroupBuffsForm()
 	
 	
 	setLocaleText(createWidget(form, "saveButton", "Button", WIDGET_ALIGN_CENTER, WIDGET_ALIGN_HIGH, 200, 30, nil, 20))
+	setLocaleText(createWidget(form, "resetPanelBuffPosButton", "Button", WIDGET_ALIGN_LOW, WIDGET_ALIGN_HIGH, 200, 30, 15, 20))
 	
 	setLocaleText(createWidget(form, "raidBuffsButton", "TextView", nil, nil, 400, 25, 20, 360))
 	setLocaleText(createWidget(form, "autoDebuffModeButtonUnk", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 400, 25, 20, 390), true)
@@ -142,7 +143,7 @@ function SaveConfigGroupBuffsForm(aForm, aClose)
 	mySettings.buffGroups[m_loadedWndInd].size = tonumber(getTextString(getChild(aForm, "EditLine3")))
 	mySettings.buffGroups[m_loadedWndInd].buffOnMe = getCheckBoxState(getChild(aForm, "buffOnMe"))
 	mySettings.buffGroups[m_loadedWndInd].buffOnTarget = getCheckBoxState(getChild(aForm, "buffOnTarget"))
-	mySettings.buffGroups[m_loadedWndInd].fixed = getCheckBoxState(getChild(aForm, "buffsFixButton"))
+	mySettings.buffGroups[m_loadedWndInd].fixed = not getCheckBoxState(getChild(aForm, "buffsFixButton"))
 	mySettings.buffGroups[m_loadedWndInd].fixedInsidePanel = getCheckBoxState(getChild(aForm, "buffsFixInsidePanelButton"))
 	if mySettings.buffGroups[m_loadedWndInd].flipBuffsButton ~= getCheckBoxState(getChild(aForm, "flipBuffsButton")) then
 		mySettings.buffGroups[m_loadedWndInd].fixed = false
@@ -219,7 +220,7 @@ function LoadConfigGroupBuffsForm(aForm, anIndex)
 	end
 	setCheckBox(getChild(aForm, "buffOnMe"), info.buffOnMe)
 	setCheckBox(getChild(aForm, "buffOnTarget"), info.buffOnTarget)
-	setCheckBox(getChild(aForm, "buffsFixButton"), info.fixed)
+	setCheckBox(getChild(aForm, "buffsFixButton"), not info.fixed)
 	setCheckBox(getChild(aForm, "buffsFixInsidePanelButton"), info.fixedInsidePanel)
 	setCheckBox(getChild(aForm, "flipBuffsButton"), info.flipBuffsButton)
 	setCheckBox(getChild(aForm, "aboveHeadButton"), info.aboveHeadButton)

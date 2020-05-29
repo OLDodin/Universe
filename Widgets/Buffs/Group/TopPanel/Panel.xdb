@@ -1,22 +1,24 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <WidgetPanel>
-	<Name>BuffPanel</Name>
+	<Name>MoveModePanel</Name>
 	<Children>
+		<Item href="TopPanel.xdb#xpointer(/WidgetPanel)"/>
 		<Item href="AssertButton.xdb#xpointer(/WidgetButton)"/>
+		<Item href="PanelName.xdb#xpointer(/WidgetTextView)"/>
 	</Children>
-	<BackLayer href="Textures/TopPanel.xdb#xpointer(/WidgetLayerTiledTexture)" />
+	<BackLayer href="" />
 	<Placement>
 		<X>
 			<Align>WIDGET_ALIGN_LOW</Align>
-			<Size>120</Size>
+			<Size>220</Size>
 			<Pos>0</Pos>
 		</X>
 		<Y>
 			<Align>WIDGET_ALIGN_LOW</Align>
-			<Size>26</Size>
+			<Size>40</Size>
 			<Pos>0</Pos>
 		</Y>
 	</Placement>
 	<IgnoreDblClick>true</IgnoreDblClick>
-	<reactionOnPointing>ShowBuffPanel</reactionOnPointing>
+	<reactionOnPointing>ShowMoveModeTopPanel</reactionOnPointing>
 </WidgetPanel>

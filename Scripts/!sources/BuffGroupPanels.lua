@@ -1,5 +1,6 @@
 local m_groupBuffPanels = {}
 local m_lastTargetID = nil
+local m_minGroupPanelWidth = 220
 
 local function GetTextSizeByBuffSize(aSize)
 	return math.floor(aSize/2.5)
@@ -45,7 +46,7 @@ local function PlayerAddBuff(aBuffInfo, aGroupBuffBar, anInfoObj)
 				buffSlot.buffWdg:Show(true)
 				buffSlot.info.buffIcon:SetBackgroundTexture(aBuffInfo.texture)
 				
-				resize(aGroupBuffBar.panelWdg, math.max(buffSlot.info.buffSize*math.min(aGroupBuffBar.panelWidthBuffCnt, aGroupBuffBar.usedBuffSlotCnt), 120), buffSlot.info.buffSize*math.min(aGroupBuffBar.panelHeightBuffCnt, math.ceil(aGroupBuffBar.usedBuffSlotCnt/aGroupBuffBar.panelWidthBuffCnt))+30)
+				resize(aGroupBuffBar.panelWdg, math.max(buffSlot.info.buffSize*math.min(aGroupBuffBar.panelWidthBuffCnt, aGroupBuffBar.usedBuffSlotCnt), m_minGroupPanelWidth), buffSlot.info.buffSize*math.min(aGroupBuffBar.panelHeightBuffCnt, math.ceil(aGroupBuffBar.usedBuffSlotCnt/aGroupBuffBar.panelWidthBuffCnt))+30)
 			end
 		end
 	end
@@ -112,7 +113,7 @@ local function PlayerRemoveBuff(aBuffID, aGroupBuffBar)
 				aGroupBuffBar.usedBuffSlotCnt = 0
 			end
 			
-			resize(aGroupBuffBar.panelWdg, math.max(buffSlot.info.buffSize*math.min(aGroupBuffBar.panelWidthBuffCnt, aGroupBuffBar.usedBuffSlotCnt), 120), buffSlot.info.buffSize*math.min(aGroupBuffBar.panelHeightBuffCnt, math.ceil(aGroupBuffBar.usedBuffSlotCnt/aGroupBuffBar.panelWidthBuffCnt))+30)
+			resize(aGroupBuffBar.panelWdg, math.max(buffSlot.info.buffSize*math.min(aGroupBuffBar.panelWidthBuffCnt, aGroupBuffBar.usedBuffSlotCnt), m_minGroupPanelWidth), buffSlot.info.buffSize*math.min(aGroupBuffBar.panelHeightBuffCnt, math.ceil(aGroupBuffBar.usedBuffSlotCnt/aGroupBuffBar.panelWidthBuffCnt))+30)
 		end
 	end
 end
@@ -195,15 +196,16 @@ function CreateGroupBuffPanel(aForm, aSettings, anIsAboveHead, aPosInPlateIndex)
 		else
 			groupBuffPanel.panelWdg = createWidget(aForm, "BuffGroup"..tostring(aPosInPlateIndex), "BuffGroup")
 		end
-		resize(groupBuffPanel.panelWdg, math.max(size*math.min(w, num), 120), size*math.min(h, math.ceil(num/w))+30)
+		resize(groupBuffPanel.panelWdg, math.max(size*math.min(w, num), m_minGroupPanelWidth), size*math.min(h, math.ceil(num/w))+30)
 
-		local groupBuffTopPanel = getChild(groupBuffPanel.panelWdg, "BuffPanel", true)
+		local groupBuffTopPanel = getChild(groupBuffPanel.panelWdg, "MoveModePanel", true)
 		if aSettings.fixed or anIsAboveHead then
 			hide(groupBuffTopPanel)
 		else
 			show(groupBuffTopPanel)
+			setText(getChild(groupBuffTopPanel, "PanelNameText"), aSettings.name, "ColorWhite", "center", 17, true, true)
 		end
-		setFade(groupBuffTopPanel, 0.3)
+		setFade(groupBuffTopPanel, 0.7)
 		
 		local buffAlign = WIDGET_ALIGN_LOW
 		if aSettings.flipBuffsButton then
@@ -214,7 +216,7 @@ function CreateGroupBuffPanel(aForm, aSettings, anIsAboveHead, aPosInPlateIndex)
 		if anIsAboveHead then
 			--buffAlign = WIDGET_ALIGN_CENTER
 		else
-			DnD.Init(groupBuffPanel.panelWdg, groupBuffTopPanel, true)
+			DnD.Init(groupBuffPanel.panelWdg, groupBuffTopPanel, true, false)
 		end
 			
 		setTemplateWidget(getChild(aForm, "BuffGroup"))
@@ -252,6 +254,13 @@ function CreateGroupBuffPanels(aForm)
 			m_groupBuffPanels[i] = CreateGroupBuffPanel(aForm, group, false, i)
 		end
 	end
+	
+end
+
+function ResetPanelPos(aInd)
+	DnD.Remove(m_groupBuffPanels[aInd].panelWdg)
+	SetConfig("DnD:"..DnD.GetWidgetTreePath(m_groupBuffPanels[aInd].panelWdg), {posX = 500, posY = 400, highPosX = 0, highPosY = 0})
+	DnD.Init(m_groupBuffPanels[aInd].panelWdg, getChild(m_groupBuffPanels[aInd].panelWdg, "MoveModePanel"), true, false)
 	
 end
 

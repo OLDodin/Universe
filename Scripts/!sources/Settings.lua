@@ -125,7 +125,7 @@ function InitializeDefaultSetting()
 	castFormSettings.panelWidthText = "250"
 	castFormSettings.panelHeightText = "40"
 	castFormSettings.selectable = false
-	castFormSettings.fixed = true
+	castFormSettings.fixed = false
 	
 		
 	defaultProfile.name = "default"
@@ -159,10 +159,10 @@ function LoadSettings(aProfileInd)
 		local castFormSettings = {}
 		castFormSettings.showImportantCasts = true
 		castFormSettings.showImportantBuffs = true
-		castFormSettings.panelWidthText = "200"
+		castFormSettings.panelWidthText = "250"
 		castFormSettings.panelHeightText = "40"
 		castFormSettings.selectable = false
-		castFormSettings.fixed = true
+		castFormSettings.fixed = false
 		
 		m_currentProfile.castFormSettings = castFormSettings
 		m_currentProfile.mainFormSettings.useCastSubSystem = true

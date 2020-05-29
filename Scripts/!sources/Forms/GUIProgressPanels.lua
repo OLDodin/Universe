@@ -7,9 +7,11 @@ local m_panelWidth = 0
 function CreateProgressPanel()
 	setTemplateWidget(m_template)
 	local progressPanel = common.AddonCreateChildForm("ProgressPanel")
-	--move(progressPanel, 500, 380)
-
-	resize(progressPanel, 200, 40)
+	local topPanel = getChild(progressPanel, "MoveModePanel")
+	
+	setText(getChild(topPanel, "PanelNameText"), getLocale()["progressPanelName"], "ColorWhite", "center", 16, true, true)
+	
+	DnD.Init(progressPanel, topPanel, true, false)
 	
 	return progressPanel
 end
