@@ -1,5 +1,5 @@
 function CreateProgressCastSettingsForm()
-	local form=createWidget(nil, "raidSettingsForm", "Form", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 400, 360, 200, 100)
+	local form=createWidget(nil, "raidSettingsForm", "Form", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 400, 380, 200, 100)
 	hide(form)
 	priority(form, 5000)
 	
@@ -7,6 +7,7 @@ function CreateProgressCastSettingsForm()
 	setText(createWidget(form, "closeSomeSettingsButton", "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 20, 20, 20, 20), "x")
 
 	setLocaleText(createWidget(form, "castSettingsFormHeader", "TextView",  WIDGET_ALIGN_CENTER, nil, 150, 20, nil, 16))
+	
 	setLocaleText(createWidget(form, "saveButton", "Button", WIDGET_ALIGN_CENTER, WIDGET_ALIGN_HIGH, 200, 30, nil, 20))
 	
 	createWidget(form, "showImportantCasts", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 330, 25, 20, 80)
@@ -19,6 +20,8 @@ function CreateProgressCastSettingsForm()
 	
 	setLocaleText(createWidget(form, "panelHeightText", "TextView", nil, nil, 200, 25, 20, 230))
 	createWidget(form, "panelHeightEdit", "EditLine", nil, nil, 80, 25, 270, 230)
+	
+	setLocaleText(createWidget(form, "resetPanelCastPosButton", "Button", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 200, 30, 20, 260))
 	
 	DnD.Init(form, panel, true)
 		

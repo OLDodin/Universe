@@ -119,6 +119,15 @@ function InitializeDefaultSetting()
 	bindFormSettings.actionRightSwitchTargetAlt = DISABLE_CLICK
 	bindFormSettings.actionRightSwitchTargetCtrl = DISABLE_CLICK
 	
+	bindFormSettings.actionLeftSwitchProgressCastSimple = SELECT_CLICK
+	bindFormSettings.actionLeftSwitchProgressCastShift = DISABLE_CLICK
+	bindFormSettings.actionLeftSwitchProgressCastAlt = DISABLE_CLICK
+	bindFormSettings.actionLeftSwitchProgressCastCtrl = DISABLE_CLICK
+	bindFormSettings.actionRightSwitchProgressCastSimple = DISABLE_CLICK
+	bindFormSettings.actionRightSwitchProgressCastShift = DISABLE_CLICK
+	bindFormSettings.actionRightSwitchProgressCastAlt = DISABLE_CLICK
+	bindFormSettings.actionRightSwitchProgressCastCtrl = DISABLE_CLICK
+	
 	local castFormSettings = {}
 	castFormSettings.showImportantCasts = true
 	castFormSettings.showImportantBuffs = true
@@ -166,6 +175,15 @@ function LoadSettings(aProfileInd)
 		
 		m_currentProfile.castFormSettings = castFormSettings
 		m_currentProfile.mainFormSettings.useCastSubSystem = true
+		
+		m_currentProfile.bindFormSettings.actionLeftSwitchProgressCastSimple = SELECT_CLICK
+		m_currentProfile.bindFormSettings.actionLeftSwitchProgressCastShift = DISABLE_CLICK
+		m_currentProfile.bindFormSettings.actionLeftSwitchProgressCastAlt = DISABLE_CLICK
+		m_currentProfile.bindFormSettings.actionLeftSwitchProgressCastCtrl = DISABLE_CLICK
+		m_currentProfile.bindFormSettings.actionRightSwitchProgressCastSimple = DISABLE_CLICK
+		m_currentProfile.bindFormSettings.actionRightSwitchProgressCastShift = DISABLE_CLICK
+		m_currentProfile.bindFormSettings.actionRightSwitchProgressCastAlt = DISABLE_CLICK
+		m_currentProfile.bindFormSettings.actionRightSwitchProgressCastCtrl = DISABLE_CLICK
 	end
 end
 

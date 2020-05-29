@@ -90,3 +90,9 @@ function ClearProgressCastPanel(aBar)
 	hide(aBar.wdg)
 	aBar.barWdg:FinishFadeEffect()
 end
+
+function ResetPanelPos(aInd)
+	DnD.Remove(m_groupBuffPanels[aInd].panelWdg)
+	SetConfig("DnD:"..DnD.GetWidgetTreePath(m_groupBuffPanels[aInd].panelWdg), {posX = 500, posY = 400, highPosX = 0, highPosY = 0})
+	DnD.Init(m_groupBuffPanels[aInd].panelWdg, getChild(m_groupBuffPanels[aInd].panelWdg, "MoveModePanel"), true, false)
+end

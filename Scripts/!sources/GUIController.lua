@@ -390,6 +390,12 @@ function ResetGroupBuffPanelPos(aWdg)
 	ResetPanelPos(GetConfigGroupBuffsActiveNum())
 end
 
+function ResetProgressCastPanelPos(aWdg)
+	DnD.Remove(m_progressCastPanel)
+	SetConfig("DnD:"..DnD.GetWidgetTreePath(m_progressCastPanel), {posX = 300, posY = 200, highPosX = 0, highPosY = 0})
+	DnD.Init(m_progressCastPanel, getChild(m_progressCastPanel, "MoveModePanel"), true, false)
+end
+
 
 function AddRaidBuffButton(aWdg)
 	local profile = GetCurrentProfile()
@@ -692,7 +698,35 @@ local function MakeBindAction(aParams, aPlayerBar, aLeftClick, aTypeBind)
 			end
 		end
 	elseif aTypeBind == PROGRESSCAST_CLICK then
-		
+		if aLeftClick then
+			if isShift then
+				actionType = profile.bindFormSettings.actionLeftSwitchProgressCastShift
+				bindAction = profile.bindFormSettings.actionLeftProgressCastShiftBind
+			elseif isAlt then
+				actionType = profile.bindFormSettings.actionLeftSwitchProgressCastAlt
+				bindAction = profile.bindFormSettings.actionLeftProgressCastAltBind
+			elseif isCtrl then
+				actionType = profile.bindFormSettings.actionLeftSwitchProgressCastCtrl
+				bindAction = profile.bindFormSettings.actionLeftProgressCastCtrlBind
+			else
+				actionType = profile.bindFormSettings.actionRightSwitchProgressCastSimple
+				bindAction = profile.bindFormSettings.actionLeftProgressCastSimpleBind
+			end
+		else
+			if isShift then
+				actionType = profile.bindFormSettings.actionRightSwitchProgressCastShift
+				bindAction = profile.bindFormSettings.actionRightProgressCastShiftBind
+			elseif isAlt then
+				actionType = profile.bindFormSettings.actionRightSwitchProgressCastAlt
+				bindAction = profile.bindFormSettings.actionRightProgressCastAltBind
+			elseif isCtrl then
+				actionType = profile.bindFormSettings.actionRightSwitchProgressCastCtrl
+				bindAction = profile.bindFormSettings.actionRightProgressCastCtrlBind
+			else
+				actionType = profile.bindFormSettings.actionRightSwitchProgressCastSimple
+				bindAction = profile.bindFormSettings.actionRightProgressCastSimpleBind
+			end
+		end
 	end
 	
 	if actionType == DISABLE_CLICK then
@@ -1354,22 +1388,6 @@ local function ShowSelectTargetTypePanel()
 	local selectPanelWdg = GetTargetModeSelectPanel()
 	swap(selectPanelWdg)
 end
-
---[[
-local function TargetTypeChanged()
-	if m_currTargetType == TARGETS_DISABLE then
-		return
-	end
-	
-	m_currTargetType = m_currTargetType + 1
-	if m_currTargetType > MY_SETTINGS_TARGETS then
-		m_currTargetType = ALL_TARGETS
-	end
-	SetTargetType(m_currTargetType, true)
-	local profile = GetCurrentProfile()
-	profile.targeterFormSettings.lastTargetType = m_currTargetType
-	SaveAll()
-end	]]
 
 local function SeparateTargeterPanelList(anObjList, aPanelListShift)
 	local finededList = {} 
@@ -2067,7 +2085,7 @@ function InitCastSubSystem()
 	
 	local unitList = avatar.GetUnitList()
 	for _, objID in pairs(unitList) do
-		if object.IsUnit(objID) and not unit.IsPlayer(objID) then
+		if not unit.IsPlayer(objID) then
 			local mobActionProgressInfo = unit.GetMobActionProgress(objID)
 			if mobActionProgressInfo then
 				mobActionProgressInfo.id = objID
@@ -2173,11 +2191,20 @@ function GUIControllerInit()
 	AddReaction("actionRightSwitchTargetShift", SwitchActionBtn)
 	AddReaction("actionRightSwitchTargetAlt", SwitchActionBtn)
 	AddReaction("actionRightSwitchTargetCtrl", SwitchActionBtn)
+	AddReaction("actionLeftSwitchProgressCastSimple", SwitchActionBtn)
+	AddReaction("actionLeftSwitchProgressCastShift", SwitchActionBtn)
+	AddReaction("actionLeftSwitchProgressCastAlt", SwitchActionBtn)
+	AddReaction("actionLeftSwitchProgressCastCtrl", SwitchActionBtn)
+	AddReaction("actionRightSwitchProgressCastSimple", SwitchActionBtn)
+	AddReaction("actionRightSwitchProgressCastShift", SwitchActionBtn)
+	AddReaction("actionRightSwitchProgressCastAlt", SwitchActionBtn)
+	AddReaction("actionRightSwitchProgressCastCtrl", SwitchActionBtn)
 	AddReaction("setHighlightColorButtonconfigGroupBuffsForm", SetColorBuffGroup)
 	AddReaction("setHighlightColorButtonraidSettingsForm", SetColorBuffRaid)
 	AddReaction("setHighlightColorButtontargeterSettingsForm", SetColorBuffTargeter)
 	AddReaction("setColorButton", function (aWdg) swap(getParent(aWdg)) SaveBuffColorHighlight(m_colorForm) DestroyColorForm() end)
 	AddReaction("resetPanelBuffPosButton", ResetGroupBuffPanelPos)
+	AddReaction("resetPanelCastPosButton", ResetProgressCastPanelPos)
 	
 	local profile = GetCurrentProfile()
 	if profile.mainFormSettings.useRaidSubSystem then
@@ -2235,7 +2262,6 @@ function GUIControllerInit()
 	common.RegisterReactionHandler(OnLeftClick, "OnLeftClick")
 	common.RegisterReactionHandler(OnRightClick, "OnRightClick" )
 	common.RegisterReactionHandler(MoveModeClick, "addClick")
---	common.RegisterReactionHandler(TargetTypeChanged, "GetModeBtnReaction")
 	common.RegisterReactionHandler(ShowSelectTargetTypePanel, "GetModeBtnReaction")
 	common.RegisterReactionHandler(SelectTargetTypePressed, "SelectModeBtnReaction")
 	common.RegisterReactionHandler(TargetWorkSwitch, "GetModeBtnRightClick")
