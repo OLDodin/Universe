@@ -1,5 +1,5 @@
 function CreateProgressCastSettingsForm()
-	local form=createWidget(nil, "raidSettingsForm", "Form", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 400, 380, 200, 100)
+	local form=createWidget(nil, "castSettingsForm", "Form", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 400, 380, 200, 100)
 	hide(form)
 	priority(form, 5000)
 	

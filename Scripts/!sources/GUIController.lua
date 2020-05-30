@@ -33,6 +33,7 @@ local m_targeterSettingsForm = nil
 local m_buffSettingsForm = nil
 local m_configGroupBuffForm = nil
 local m_progressCastSettingsForm = nil
+local m_helpForm = nil
 local m_raidPanel = nil
 local m_progressCastPanel = nil
 local m_targetPanel = nil
@@ -387,7 +388,9 @@ function SetColorBuffHighlight(aWdg, aSaveLoadType)
 end
 
 function ResetGroupBuffPanelPos(aWdg)
-	ResetPanelPos(GetConfigGroupBuffsActiveNum())
+	if m_buffGroupSubSystemLoaded then
+		ResetPanelPos(GetConfigGroupBuffsActiveNum())
+	end
 end
 
 function ResetProgressCastPanelPos(aWdg)
@@ -1820,6 +1823,7 @@ local function GUIInit()
 	m_exportProfileForm = CreateExportProfilesForm()
 	m_importProfileForm = CreateImportProfilesForm()
 	m_progressCastSettingsForm = CreateProgressCastSettingsForm()
+	m_helpForm = CreateHelpForm()
 
 	m_raidPanel = CreateRaidPanel()
 	m_targetPanel = CreateTargeterPanel()
@@ -2163,6 +2167,7 @@ function GUIControllerInit()
 	AddReaction("targeterButton", function () swap(m_targeterSettingsForm) end)
 	AddReaction("bindButton", function () swap(m_bindSettingsForm) end)
 	AddReaction("progressCastButton", function () swap(m_progressCastSettingsForm) end)
+	AddReaction("helpButton", function () swap(m_helpForm) end)
 	AddReaction("closeSomeSettingsButton", function (aWdg) swap(getParent(aWdg)) UndoAll() end)
 	AddReaction("addRaidBuffButton", AddRaidBuffButton)
 	AddReaction("addTargeterBuffButton", AddTargetBuffButton)
@@ -2205,6 +2210,8 @@ function GUIControllerInit()
 	AddReaction("setColorButton", function (aWdg) swap(getParent(aWdg)) SaveBuffColorHighlight(m_colorForm) DestroyColorForm() end)
 	AddReaction("resetPanelBuffPosButton", ResetGroupBuffPanelPos)
 	AddReaction("resetPanelCastPosButton", ResetProgressCastPanelPos)
+	AddReaction("nextHelpBtn", NextHelp)
+	AddReaction("prevHelpBtn", PrevHelp)
 	
 	local profile = GetCurrentProfile()
 	if profile.mainFormSettings.useRaidSubSystem then

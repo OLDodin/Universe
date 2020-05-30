@@ -818,7 +818,7 @@ function ApplyTargetSettingsToGUI(aTopPanelForm)
 	
 	local wtTopPanel = getChild(aTopPanelForm, "TopTargeterPanel")
 	DnD.Enable(wtTopPanel, activeNum==0)
-	hide(m_modeSelectPanel)
+	
 	--[[local profile = GetCurrentProfile()
 	local wtTopPanel = getChild(aTopPanelForm, "TopTargeterPanel")
 	if profile.targeterFormSettings.twoColumnMode then

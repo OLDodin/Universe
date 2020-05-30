@@ -80,5 +80,14 @@
 			<name>Unknown</name>
 			<textureItem href="Check/Unknown.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
 		</Item>
+		
+		<Item>
+			<name>help1</name>
+			<textureItem href="Help/U1.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
+		</Item>
+		<Item>
+			<name>help2</name>
+			<textureItem href="Help/U2.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
+		</Item>
 	</Items>
 </UIRelatedTextures>

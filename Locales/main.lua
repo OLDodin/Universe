@@ -256,6 +256,9 @@ Locales["rus"]["resetPanelBuffPosButton"] =		"Сброс позиции панели"
 Locales["rus"]["resetPanelCastPosButton"] =		"Сброс позиции панели"
 Locales["rus"]["progressPanelName"] =			"Важные касты/баффы мобов"
 Locales["rus"]["spellHeader"] =					"Умение"
+Locales["rus"]["helpHeader"] =					"Ответы на часто задаваемые вопросы"
+Locales["rus"]["nextHelpBtn"] =					"Далее"
+Locales["rus"]["prevHelpBtn"] =					"Назад"
 
 --------------------------------------------------------------------------------
 -- English
@@ -503,4 +506,7 @@ Locales["eng"]["castSettingsFormHeader"] =	"Cast settings"
 Locales["eng"]["resetPanelBuffPosButton"] =		"Reset Panel Position"
 Locales["eng"]["resetPanelCastPosButton"] =		"Reset Panel Position"
 Locales["eng"]["progressPanelName"] =			"Important casts/buffs"
-Locales["eng"]["spellHeader"] =			"Spell"
+Locales["eng"]["spellHeader"] =					"Spell"
+Locales["eng"]["helpHeader"] =					"FAQ"
+Locales["eng"]["nextHelpBtn"] =					"Next"
+Locales["eng"]["prevHelpBtn"] =					"Prev"

@@ -72,6 +72,7 @@
 		<Item href="Scripts/Forms/ImportForm.lua"/>
 		<Item href="Scripts/Forms/Slider.lua"/>
 		<Item href="Scripts/Forms/ColorSettingsForm.lua"/>
+		<Item href="Scripts/Forms/HelpForm.lua"/>
 		<Item href="Scripts/AboveHead.lua"/>
 		<Item href="Scripts/BuffGroupPanels.lua"/>
 		<Item href="Scripts/GUIController.lua"/>

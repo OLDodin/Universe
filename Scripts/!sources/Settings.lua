@@ -164,7 +164,7 @@ function LoadSettings(aProfileInd)
 
 	SetCurrentProfileInd(aProfileInd)
 
-	if m_currentProfile.version == 1 then
+	if m_currentProfile.version == 1 or m_currentProfile.version == nil then
 		local castFormSettings = {}
 		castFormSettings.showImportantCasts = true
 		castFormSettings.showImportantBuffs = true
