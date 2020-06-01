@@ -1709,6 +1709,27 @@ local function UnitDeadChanged(aParams)
 	end
 end
 
+local function BuffProgressStart(aParams)
+	local panel = GetProgressCastPanel(aParams.objectId or aParams.id)
+	if panel then 
+		SetBaseInfoProgressCastPanel(panel, aParams)
+	else
+		panel = GetFreeProgressCastPanel()
+		if panel then 
+			SetBaseInfoProgressCastPanel(panel, aParams)
+			UpdatePositionProgressCastPanels()
+		end	
+	end
+end
+
+local function BuffProgressEnd(aParams)
+	local panel = GetProgressCastPanel(aParams.objectId or aParams.id)
+	if panel then 
+		ClearProgressCastPanel(panel)
+		UpdatePositionProgressCastPanels()
+	end
+end
+
 local function UnitChanged(aParams)
 	if m_buffGroupSubSystemLoaded then
 		UnitsChangedForAboveHead(aParams.spawned, aParams.despawned)
@@ -1740,26 +1761,22 @@ local function UnitChanged(aParams)
 			
 		SetTargetType(m_currTargetType)
 	end
-end
-
-local function BuffProgressStart(aParams)
-	local panel = GetProgressCastPanel(aParams.objectId or aParams.id)
-	if panel then 
-		SetBaseInfoProgressCastPanel(panel, aParams)
-	else
-		panel = GetFreeProgressCastPanel()
-		if panel then 
-			SetBaseInfoProgressCastPanel(panel, aParams)
-			UpdatePositionProgressCastPanels()
-		end	
-	end
-end
-
-local function BuffProgressEnd(aParams)
-	local panel = GetProgressCastPanel(aParams.objectId or aParams.id)
-	if panel then 
-		ClearProgressCastPanel(panel)
-		UpdatePositionProgressCastPanels()
+	
+	if m_castSubSystemLoaded then
+		for i=0, GetTableSize(aParams.spawned)-1 do
+			if aParams.spawned[i] and not unit.IsPlayer(aParams.spawned[i]) then
+				local mobActionProgressInfo = unit.GetMobActionProgress(aParams.spawned[i])
+				if mobActionProgressInfo then
+					mobActionProgressInfo.id = aParams.spawned[i]
+					BuffProgressStart(mobActionProgressInfo)
+				end
+			end
+		end
+		for i=0, GetTableSize(aParams.despawned)-1 do
+			if aParams.despawned[i] then
+				BuffProgressEnd({id = aParams.despawned[i]})
+			end
+		end
 	end
 end
 

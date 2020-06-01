@@ -131,7 +131,7 @@ function InitializeDefaultSetting()
 	local castFormSettings = {}
 	castFormSettings.showImportantCasts = true
 	castFormSettings.showImportantBuffs = true
-	castFormSettings.panelWidthText = "250"
+	castFormSettings.panelWidthText = "270"
 	castFormSettings.panelHeightText = "40"
 	castFormSettings.selectable = false
 	castFormSettings.fixed = false
@@ -168,7 +168,7 @@ function LoadSettings(aProfileInd)
 		local castFormSettings = {}
 		castFormSettings.showImportantCasts = true
 		castFormSettings.showImportantBuffs = true
-		castFormSettings.panelWidthText = "250"
+		castFormSettings.panelWidthText = "270"
 		castFormSettings.panelHeightText = "40"
 		castFormSettings.selectable = false
 		castFormSettings.fixed = false
