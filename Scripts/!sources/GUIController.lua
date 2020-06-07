@@ -1710,6 +1710,13 @@ local function UnitDeadChanged(aParams)
 end
 
 local function BuffProgressStart(aParams)
+	local profile = GetCurrentProfile()
+	if not profile.castFormSettings.showImportantCasts and aParams.id then 
+		return
+	end
+	if not profile.castFormSettings.showImportantBuffs and aParams.objectId then 
+		return
+	end
 	local panel = GetProgressCastPanel(aParams.objectId or aParams.id)
 	if panel then 
 		SetBaseInfoProgressCastPanel(panel, aParams)
@@ -1735,11 +1742,12 @@ local function UnitChanged(aParams)
 		UnitsChangedForAboveHead(aParams.spawned, aParams.despawned)
 	end
 	
+	local profile = GetCurrentProfile()
+	
 	if m_targetSubSystemLoaded then
 		if m_currTargetType == TARGETS_DISABLE then
 			return
 		end
-		local profile = GetCurrentProfile()
 		
 		for i=0, GetTableSize(aParams.spawned)-1 do
 			if aParams.spawned[i] then
@@ -1762,7 +1770,7 @@ local function UnitChanged(aParams)
 		SetTargetType(m_currTargetType)
 	end
 	
-	if m_castSubSystemLoaded then
+	if m_castSubSystemLoaded and profile.castFormSettings.showImportantCasts then
 		for i=0, GetTableSize(aParams.spawned)-1 do
 			if aParams.spawned[i] and not unit.IsPlayer(aParams.spawned[i]) then
 				local mobActionProgressInfo = unit.GetMobActionProgress(aParams.spawned[i])
@@ -2104,13 +2112,15 @@ function InitCastSubSystem()
 	end
 	show(m_progressCastPanel)
 	
-	local unitList = avatar.GetUnitList()
-	for _, objID in pairs(unitList) do
-		if not unit.IsPlayer(objID) then
-			local mobActionProgressInfo = unit.GetMobActionProgress(objID)
-			if mobActionProgressInfo then
-				mobActionProgressInfo.id = objID
-				BuffProgressStart(mobActionProgressInfo)
+	if profile.castFormSettings.showImportantCasts then
+		local unitList = avatar.GetUnitList()
+		for _, objID in pairs(unitList) do
+			if not unit.IsPlayer(objID) then
+				local mobActionProgressInfo = unit.GetMobActionProgress(objID)
+				if mobActionProgressInfo then
+					mobActionProgressInfo.id = objID
+					BuffProgressStart(mobActionProgressInfo)
+				end
 			end
 		end
 	end
