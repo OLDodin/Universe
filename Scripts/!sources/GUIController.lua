@@ -1717,6 +1717,9 @@ local function BuffProgressStart(aParams)
 	if not profile.castFormSettings.showImportantBuffs and aParams.objectId then 
 		return
 	end
+	if aParams.objectId and unit.IsPlayer(aParams.objectId) then
+		return
+	end
 	local panel = GetProgressCastPanel(aParams.objectId or aParams.id)
 	if panel then 
 		SetBaseInfoProgressCastPanel(panel, aParams)
