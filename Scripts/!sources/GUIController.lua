@@ -1791,6 +1791,15 @@ local function UnitChanged(aParams)
 	end
 end
 
+local function UnitNameChanged(aParams)
+	--LogInfo("UnitNameChanged ", aParams.id, "   ", object.GetName(aParams.id))
+	local param = {}
+	param.spawned = {}
+	param.spawned[0] = aParams.id
+	param.despawned = {}
+	UnitChanged(param)
+end
+
 local function SwitchPartyGUIToRaidGUI()
 	options.Update()
 	local pageIds = options.GetPageIds()
@@ -2271,6 +2280,7 @@ function GUIControllerInit()
 	common.RegisterEventHandler(TargetChanged, "EVENT_AVATAR_TARGET_CHANGED")
 	common.RegisterEventHandler(BuffsChanged, "EVENT_OBJECT_BUFFS_ELEMENT_CHANGED")
 	common.RegisterEventHandler(UnitChanged, "EVENT_UNITS_CHANGED")
+	common.RegisterEventHandler(UnitNameChanged, "EVENT_OBJECT_NAME_CHANGED")
 	common.RegisterEventHandler(clearSpellCache, "EVENT_SPELLBOOK_CHANGED")
 	common.RegisterEventHandler(clearItemsCache, "EVENT_INVENTORY_CHANGED")
 	
