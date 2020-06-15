@@ -1797,7 +1797,9 @@ local function UnitNameChanged(aParams)
 	param.spawned = {}
 	param.spawned[0] = aParams.id
 	param.despawned = {}
-	UnitChanged(param)
+	if isExist(aParams.id) then
+		UnitChanged(param)
+	end
 end
 
 local function SwitchPartyGUIToRaidGUI()
