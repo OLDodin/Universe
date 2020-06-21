@@ -609,13 +609,13 @@ function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings)
 	hide(playerBar.checkIconWdg)
 	move(playerBar.checkIconWdg, 2, 10)
 	resize(playerBar.barBackgroundWdg, panelWidth, panelHeight)
-	resize(playerBar.farBarBackgroundWdg, panelWidth-4, panelHeight-6)
-	resize(playerBar.barWdg, panelWidth-4, panelHeight-6)
-	resize(playerBar.clearBarWdg, panelWidth-4, panelHeight-6)
+	resize(playerBar.farBarBackgroundWdg, panelWidth-4, panelHeight-4)
+	resize(playerBar.barWdg, panelWidth-4, panelHeight-4)
+	resize(playerBar.clearBarWdg, panelWidth-4, panelHeight-4)
 	resize(playerBar.buffPanelWdg, panelWidth, panelHeight)
 	resize(playerBar.buffPanelNegativeWdg, panelWidth, panelHeight)
 
-	move(playerBar.barWdg, 2, 3)
+	move(playerBar.barWdg, 2, 2)
 	local shieldBarColor = { r=1, g=1, b=1, a=0.8 }
 	setBackgroundColor(playerBar.shieldBarWdg, shieldBarColor)
 	
@@ -633,7 +633,7 @@ function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings)
 	show(playerBar.woundsTextWdg)
 	
 	align(playerBar.farBarBackgroundWdg, WIDGET_ALIGN_LOW, WIDGET_ALIGN_HIGH)
-	move(playerBar.farBarBackgroundWdg, 2, 3)
+	move(playerBar.farBarBackgroundWdg, 2, 2)
 	hide(playerBar.farBarBackgroundWdg)
 	
 	barColor = { r = 0; g = 0; b = 0; a = 1.0 }
