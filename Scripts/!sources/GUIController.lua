@@ -1187,6 +1187,9 @@ local function AddTargetInList(aNewTargetInfo, anObjArr)
 end
 
 local function SetNecessaryTargets(anObjID, anInCombat)
+	if not object.IsExist(anObjID) then
+		return
+	end
 	local profile = GetCurrentProfile()
 	local isPlayer = unit.IsPlayer(anObjID)
 	local isPet = isPlayer and false or unit.IsPet(anObjID)
@@ -1717,7 +1720,7 @@ local function BuffProgressStart(aParams)
 	if not profile.castFormSettings.showImportantBuffs and aParams.objectId then 
 		return
 	end
-	if aParams.objectId and unit.IsPlayer(aParams.objectId) then
+	if isExist(aParams.objectId) and unit.IsPlayer(aParams.objectId) then
 		return
 	end
 	local panel = GetProgressCastPanel(aParams.objectId or aParams.id)
@@ -1753,7 +1756,7 @@ local function UnitChanged(aParams)
 		end
 		
 		for i=0, GetTableSize(aParams.spawned)-1 do
-			if aParams.spawned[i] then
+			if isExist(aParams.spawned[i]) then
 				local isCombat = false
 				if profile.targeterFormSettings.twoColumnMode then
 					isCombat = object.IsInCombat(aParams.spawned[i])
@@ -1775,7 +1778,7 @@ local function UnitChanged(aParams)
 	
 	if m_castSubSystemLoaded and profile.castFormSettings.showImportantCasts then
 		for i=0, GetTableSize(aParams.spawned)-1 do
-			if aParams.spawned[i] and not unit.IsPlayer(aParams.spawned[i]) then
+			if isExist(aParams.spawned[i]) and not unit.IsPlayer(aParams.spawned[i]) then
 				local mobActionProgressInfo = unit.GetMobActionProgress(aParams.spawned[i])
 				if mobActionProgressInfo then
 					mobActionProgressInfo.id = aParams.spawned[i]
@@ -1920,7 +1923,7 @@ local function UpdateUnselectable()
 			local profile = GetCurrentProfile()
 			for _, objID in pairs(unitList) do
 				if objID and m_targetUnselectable[objID] then
-					if unit.CanSelectTarget(objID) then
+					if object.IsExist(objID) and unit.CanSelectTarget(objID) then
 						local isCombat = false
 						if profile.targeterFormSettings.twoColumnMode then
 							isCombat = object.IsInCombat(objID)
@@ -2129,7 +2132,7 @@ function InitCastSubSystem()
 	if profile.castFormSettings.showImportantCasts then
 		local unitList = avatar.GetUnitList()
 		for _, objID in pairs(unitList) do
-			if not unit.IsPlayer(objID) then
+			if isExist(objID) and not unit.IsPlayer(objID) then
 				local mobActionProgressInfo = unit.GetMobActionProgress(objID)
 				if mobActionProgressInfo then
 					mobActionProgressInfo.id = objID

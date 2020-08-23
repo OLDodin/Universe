@@ -367,7 +367,7 @@ function UnitsChangedForAboveHead(aSpawnedUnitList, aDespawnedUnitList)
 	FabricDestroyUnused()
 	
 	for _, objID in pairs(aSpawnedUnitList) do
-		if objID and unit.IsPlayer(objID) then
+		if objID and object.IsExist(objID) and unit.IsPlayer(objID) then
 			if not aboveHeadSettings.isEnemyButton or CheckEnemy(aboveHeadSettings.isEnemyButton, objID) then
 				priority = NORMAL_PRIORITY_PANELS
 				if objID == myID then

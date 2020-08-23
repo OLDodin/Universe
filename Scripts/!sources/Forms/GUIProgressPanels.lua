@@ -51,6 +51,18 @@ function CreateProgressCastPanel(aParentPanel, aY)
 end
 
 function SetBaseInfoProgressCastPanel(aBar, aInfo)
+	local correctInfo = false
+	local buffInfo = aInfo.buffId and object.GetBuffInfo(aInfo.buffId)
+	if buffInfo and buffInfo.remainingMs > 0 then
+		correctInfo = true
+	end
+	if aInfo.spellId and aInfo.duration - aInfo.progress > 0 then
+		correctInfo = true
+	end
+	
+	if not correctInfo then
+		return
+	end
 	aBar.playerID = aInfo.objectId or aInfo.id 
 	aBar.isUsed = true
 
@@ -64,10 +76,11 @@ function SetBaseInfoProgressCastPanel(aBar, aInfo)
 		setText(aBar.nameMobWdg, object.GetName(aBar.playerID), "ColorWhite", "left", 14*aBar.fontScale)
 	end
 
-	local buffInfo = aInfo.buffId and object.GetBuffInfo(aInfo.buffId)
+	
 	if buffInfo then
 		setBackgroundTexture(aBar.iconWdg, buffInfo.texture)
 		resize(aBar.barWdg, fromPlacement.sizeX * (buffInfo.remainingMs / buffInfo.durationMs))
+		fromPlacement = aBar.barWdg:GetPlacementPlain()
 		aBar.barWdg:FinishFadeEffect()
 		aBar.barWdg:PlayResizeEffect( fromPlacement, toPlacement, buffInfo.remainingMs, EA_MONOTONOUS_INCREASE )
 		setBackgroundColor(aBar.barWdg, { r = 0.8; g = 0.8; b = 0; a = 0.8 }) 
@@ -76,6 +89,7 @@ function SetBaseInfoProgressCastPanel(aBar, aInfo)
 	if aInfo.spellId then
 		setBackgroundTexture(aBar.iconWdg, getSpellTextureFromCache(aInfo.spellId))
 		resize(aBar.barWdg, fromPlacement.sizeX * ((aInfo.duration - aInfo.progress) / aInfo.duration))
+		fromPlacement = aBar.barWdg:GetPlacementPlain()
 		aBar.barWdg:FinishFadeEffect()
 		aBar.barWdg:PlayResizeEffect( fromPlacement, toPlacement, aInfo.duration - aInfo.progress, EA_MONOTONOUS_INCREASE )
 		setBackgroundColor(aBar.barWdg, { r = 1.0; g = 0; b = 0; a = 0.8 })
