@@ -184,7 +184,8 @@ function UpdateTableValuesFromContainer(aTable, aForm, aContainer)
 		return nil 
 	end
 	for i, j in ipairs(aTable) do
-		j.name=getText(getChild(container, "Name"..tostring(i), true))
+		j.name = getText(getChild(container, "Name"..tostring(i), true))
+		j.nameLowerStr = toLowerString(j.name)
 	end
 end
 
