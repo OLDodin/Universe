@@ -68,6 +68,7 @@ local m_lastTargetType = ALL_TARGETS
 local m_targetUnitsByType = {}
 local m_targetUnselectable = {}
 
+
 function GetIndexForWidget(anWidget)
 	local parent = getParent(anWidget)
 	local container = getParent(getParent(getParent(parent)))
@@ -627,6 +628,9 @@ function TargetChanged()
 	if m_buffGroupSubSystemLoaded then
 		SetGroupBuffPanelsInfoForTarget(targetID)
 	end
+	if m_castSubSystemLoaded then
+		ShowProgressBuffForTarget(targetID)
+	end
 end
 
 local function MoveModeClick(aParams)
@@ -809,11 +813,6 @@ local function TargetLockChanged(aParams)
 	TargetLockBtn(m_targetPanel)
 end
 
-function Reload()
-	common.StateUnloadManagedAddon( "UserAddon/TotalRaid" )
-	common.StateLoadManagedAddon( "UserAddon/TotalRaid" )
-end
-
 local function CreateProgressCastCache()
 	local profile = GetCurrentProfile()
 	for i = 0, PROGRESS_PANELS_LIMIT do
@@ -833,16 +832,18 @@ local function UpdatePositionProgressCastPanels()
 	local cnt = 0
 	for i = 0, PROGRESS_PANELS_LIMIT do
 		if m_progressCastPanelList[i].isUsed then
-			local posY = 40 + cnt*(panelHeight+1)
-			move(m_progressCastPanelList[i].wdg, 0, posY)
-			cnt = cnt + 1
+			if not profile.castFormSettings.showOnlyMyTarget or IsProgressCastPanelVisible(m_progressCastPanelList[i]) then
+				local posY = 40 + cnt*(panelHeight+1)
+				move(m_progressCastPanelList[i].wdg, 0, posY)
+				cnt = cnt + 1
+			end
 		end
 	end
 end
 
-local function GetProgressCastPanel(anID)
+local function GetProgressCastPanel(anID, aType)
 	for i = 0, PROGRESS_PANELS_LIMIT do
-		if m_progressCastPanelList[i].isUsed and m_progressCastPanelList[i].playerID == anID then
+		if m_progressCastPanelList[i].isUsed and m_progressCastPanelList[i].playerID == anID and m_progressCastPanelList[i].actionType == aType then
 			return m_progressCastPanelList[i]
 		end
 	end
@@ -857,6 +858,9 @@ local function GetFreeProgressCastPanel()
 end
 
 local function ClearProgressPanelOnEndAnimation(aParams)
+	if aParams.effectType ~= ET_RESIZE then
+		return
+	end
 	for i = 0, PROGRESS_PANELS_LIMIT do
 		if m_progressCastPanelList[i].isUsed and equals(aParams.wtOwner, m_progressCastPanelList[i].barWdg) then
 			ClearProgressCastPanel(m_progressCastPanelList[i])
@@ -864,6 +868,23 @@ local function ClearProgressPanelOnEndAnimation(aParams)
 			break
 		end
 	end
+end
+
+function ShowProgressBuffForTarget(aTargetID)
+	local profile = GetCurrentProfile()
+	if not profile.castFormSettings.showOnlyMyTarget then
+		return
+	end
+	for i = 0, PROGRESS_PANELS_LIMIT do
+		if m_progressCastPanelList[i].isUsed then
+			if m_progressCastPanelList[i].playerID == aTargetID then
+				SetProgressCastPanelVisible(m_progressCastPanelList[i], true)
+			else
+				SetProgressCastPanelVisible(m_progressCastPanelList[i], false)
+			end
+		end
+	end
+	UpdatePositionProgressCastPanels()
 end
 
 local function CreateRaidPanelCache()
@@ -1004,6 +1025,9 @@ local function BuildRaidGUI(aCurrentRaid)
 end
 
 local function FindMemberStateByUniqueID(aList, anUnuqueID)
+	if not anUnuqueID then
+		return nil
+	end
 	for i = 0, GetTableSize(aList) do
 		if anUnuqueID:IsEqual(aList[i].uniqueId) then
 			return aList[i].state
@@ -1713,8 +1737,30 @@ local function UnitDeadChanged(aParams)
 	end
 end
 
+local function GetProgressActionType(aParams)
+	local actionType = nil
+	if aParams.id then
+		actionType = ACTION_PROGRESS
+	end
+	if aParams.objectId then
+		actionType = BUFF_PROGRESS
+	end
+	return actionType
+end
+
+local function CheckProgressCastPanelForMyTarget(aPanel)
+	local profile = GetCurrentProfile()
+	if aPanel and profile.castFormSettings.showOnlyMyTarget then
+		local targetID = avatar.GetTarget()
+		if aPanel.playerID ~= targetID then
+			SetProgressCastPanelVisible(aPanel, false)
+		end
+	end
+end
+
 local function BuffProgressStart(aParams)
 	local profile = GetCurrentProfile()
+	local actionType = GetProgressActionType(aParams)
 	if not profile.castFormSettings.showImportantCasts and aParams.id then 
 		return
 	end
@@ -1724,23 +1770,38 @@ local function BuffProgressStart(aParams)
 	if isExist(aParams.objectId) and unit.IsPlayer(aParams.objectId) then
 		return
 	end
-	local panel = GetProgressCastPanel(aParams.objectId or aParams.id)
+	local panel = GetProgressCastPanel(aParams.objectId or aParams.id, actionType)
 	if panel then 
-		SetBaseInfoProgressCastPanel(panel, aParams)
+		SetBaseInfoProgressCastPanel(panel, aParams, actionType)
+		CheckProgressCastPanelForMyTarget(panel)
 	else
 		panel = GetFreeProgressCastPanel()
 		if panel then 
-			SetBaseInfoProgressCastPanel(panel, aParams)
+			SetBaseInfoProgressCastPanel(panel, aParams, actionType)
+			CheckProgressCastPanelForMyTarget(panel)
 			UpdatePositionProgressCastPanels()
 		end	
 	end
 end
 
-local function BuffProgressEnd(aParams)
-	local panel = GetProgressCastPanel(aParams.objectId or aParams.id)
-	if panel then 
-		ClearProgressCastPanel(panel)
+local function StopShowBuffProgressForPanel(aPanel)
+	if aPanel then 
+		ClearProgressCastPanel(aPanel)
 		UpdatePositionProgressCastPanels()
+	end
+end
+
+local function StopShowBuffProgressNow(anObjID)
+	StopShowBuffProgressForPanel(GetProgressCastPanel(anObjID, ACTION_PROGRESS))
+	StopShowBuffProgressForPanel(GetProgressCastPanel(anObjID, BUFF_PROGRESS))
+end
+
+local function BuffProgressEnd(aParams)
+	local actionType = GetProgressActionType(aParams)
+	local panel = GetProgressCastPanel(aParams.objectId or aParams.id, actionType)
+	--несколько длительных контролей на цели, отображаем (а значит и удаляем) только последний
+	if panel and panel.buffID == aParams.buffId then
+		StopShowBuffProgressForPanel(panel)
 	end
 end
 
@@ -1789,7 +1850,7 @@ local function UnitChanged(aParams)
 		end
 		for i=0, GetTableSize(aParams.despawned)-1 do
 			if aParams.despawned[i] then
-				BuffProgressEnd({id = aParams.despawned[i]})
+				StopShowBuffProgressNow(aParams.despawned[i])
 			end
 		end
 	end
@@ -2279,8 +2340,7 @@ function GUIControllerInit()
 	
 	
 	
-	startTimer("updateTimer", "EVENT_UPDATE_TIMER", 0.1)
-	common.RegisterEventHandler(Update, "EVENT_UPDATE_TIMER")
+	startTimer("updateTimer", Update, 0.1)
 	common.RegisterEventHandler(OnEventSecondTimer, "EVENT_SECOND_TIMER")
 	
 	common.RegisterEventHandler(TargetChanged, "EVENT_AVATAR_TARGET_CHANGED")

@@ -1,5 +1,8 @@
 Global("PROGRESS_PANELS_LIMIT", 15)
 
+Global("ACTION_PROGRESS", 2)
+Global("BUFF_PROGRESS", 3)
+
 local m_template = createWidget(nil, "Template", "Template")
 local m_defaultPanelHeight = 40
 local m_panelWidth = 0
@@ -50,7 +53,7 @@ function CreateProgressCastPanel(aParentPanel, aY)
 	return progressBar
 end
 
-function SetBaseInfoProgressCastPanel(aBar, aInfo)
+function SetBaseInfoProgressCastPanel(aBar, aInfo, aType)
 	local correctInfo = false
 	local buffInfo = aInfo.buffId and object.GetBuffInfo(aInfo.buffId)
 	if buffInfo and buffInfo.remainingMs > 0 then
@@ -64,7 +67,9 @@ function SetBaseInfoProgressCastPanel(aBar, aInfo)
 		return
 	end
 	aBar.playerID = aInfo.objectId or aInfo.id 
+	aBar.actionType = aType
 	aBar.isUsed = true
+	aBar.buffID = aInfo.buffId
 
 	local fromPlacement = aBar.barWdg:GetPlacementPlain()
 	fromPlacement.sizeX = m_panelWidth
@@ -81,7 +86,7 @@ function SetBaseInfoProgressCastPanel(aBar, aInfo)
 		setBackgroundTexture(aBar.iconWdg, buffInfo.texture)
 		resize(aBar.barWdg, fromPlacement.sizeX * (buffInfo.remainingMs / buffInfo.durationMs))
 		fromPlacement = aBar.barWdg:GetPlacementPlain()
-		aBar.barWdg:FinishFadeEffect()
+		aBar.barWdg:FinishResizeEffect()
 		aBar.barWdg:PlayResizeEffect( fromPlacement, toPlacement, buffInfo.remainingMs, EA_MONOTONOUS_INCREASE )
 		setBackgroundColor(aBar.barWdg, { r = 0.8; g = 0.8; b = 0; a = 0.8 }) 
 	end
@@ -90,19 +95,33 @@ function SetBaseInfoProgressCastPanel(aBar, aInfo)
 		setBackgroundTexture(aBar.iconWdg, getSpellTextureFromCache(aInfo.spellId))
 		resize(aBar.barWdg, fromPlacement.sizeX * ((aInfo.duration - aInfo.progress) / aInfo.duration))
 		fromPlacement = aBar.barWdg:GetPlacementPlain()
-		aBar.barWdg:FinishFadeEffect()
+		aBar.barWdg:FinishResizeEffect()
 		aBar.barWdg:PlayResizeEffect( fromPlacement, toPlacement, aInfo.duration - aInfo.progress, EA_MONOTONOUS_INCREASE )
 		setBackgroundColor(aBar.barWdg, { r = 1.0; g = 0; b = 0; a = 0.8 })
 	end
 
-
 	show(aBar.wdg)
 end
 
+function IsProgressCastPanelVisible(aBar)
+	return aBar.wdg:IsVisible()
+end
+
+function SetProgressCastPanelVisible(aBar, aVisible)
+	if aVisible then
+		show(aBar.wdg)
+	else
+		hide(aBar.wdg)
+	end
+end
+
 function ClearProgressCastPanel(aBar)
+	aBar.actionType = nil
+	aBar.playerID = nil
 	aBar.isUsed = false
+	aBar.buffID = nil
 	hide(aBar.wdg)
-	aBar.barWdg:FinishFadeEffect()
+	aBar.barWdg:FinishResizeEffect()
 end
 
 function ResetPanelPos(aInd)

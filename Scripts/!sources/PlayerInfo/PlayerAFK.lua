@@ -56,7 +56,7 @@ end
 function PlayerAFK:GetEventFunc()
 	return function(aParams)
 		self.isAfk = aParams.isAfk
-		if aParams.isAfk == nil and aParams.unitId and isExist(aParams.unitId) and object.IsUnit(aParams.unitId) and unit.IsPlayer(aParams.unitId) then
+		if aParams.isAfk == nil and aParams.unitId and isExist(aParams.unitId) and unit.IsPlayer(aParams.unitId) then
 			self.isAfk = unit.IsAfk(aParams.unitId)
 		end
 	end

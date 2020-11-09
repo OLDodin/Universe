@@ -209,6 +209,7 @@ Locales["rus"]["showImportantBuffs"] =		"Показывать важные баффы мобов:"
 Locales["rus"]["selectablePanel"] =			"Панели реагируют на нажатия:"
 Locales["rus"]["fixedPanel"] =				"Режим перемещения панели:"
 Locales["rus"]["castSettingsFormHeader"] =	"Настройки кастов"
+Locales["rus"]["showOnlyMyTarget"] =		"Показывать только для моей цели:"
 
 
 
@@ -503,6 +504,7 @@ Locales["eng"]["showImportantBuffs"] =		"Show important buffs:"
 Locales["eng"]["selectablePanel"] =			"Panels respond to clicks:"
 Locales["eng"]["fixedPanel"] =				"Panel move mode:"
 Locales["eng"]["castSettingsFormHeader"] =	"Cast settings"
+Locales["eng"]["showOnlyMyTarget"] =		"Show only for my target:"
 Locales["eng"]["resetPanelBuffPosButton"] =		"Reset Panel Position"
 Locales["eng"]["resetPanelCastPosButton"] =		"Reset Panel Position"
 Locales["eng"]["progressPanelName"] =			"Important casts/buffs"

@@ -470,7 +470,7 @@ function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettin
 
 	if aFormSettings.showServerNameButton then
 		local shardName = m_emptyWStr
-		if --[[cartographer.IsOnCommon() and ]]aPlayerInfo.id and isPlayerExist and object.IsUnit(aPlayerInfo.id) and unit.IsPlayer(aPlayerInfo.id) then
+		if --[[cartographer.IsOnCommon() and ]]aPlayerInfo.id and isPlayerExist and unit.IsPlayer(aPlayerInfo.id) then
 			shardName = unit.GetPlayerShardName(aPlayerInfo.id)
 			if shardName then 
 				shardName = common.GetShortString(shardName)

@@ -410,17 +410,18 @@ function timer(params)
 		if timers[name].widget and not timers[name].one then
 			timers[name].widget:PlayFadeEffect( 1.0, 1.0, timers[name].speed*1000, EA_MONOTONOUS_INCREASE )
 		end
-		userMods.SendEvent( timers[name].event, {sender = common.GetAddonName()} )
+		--userMods.SendEvent( timers[name].event, {sender = common.GetAddonName()} )
+		timers[name].callback()
 	end
 end
 
-function startTimer(name, eventname, speed, one)
+function startTimer(name, callback, speed, one)
 	if name and timers[name] then destroy(timers[name].widget) end
 	setTemplateWidget(template)
 	local timerWidget=createWidget(mainForm, name, "Timer")
-	if not timerWidget or not name or not eventname then return nil end
+	if not timerWidget or not name or not callback then return nil end
 	timers[name]={}
-	timers[name].event=eventname
+	timers[name].callback=callback
 	timers[name].widget=timerWidget
 	timers[name].one=one
 	timers[name].speed=tonumber(speed) or 1
@@ -446,6 +447,10 @@ function destroyTimer(name)
 end
 
 function effectDone(aParams)
+	if aParams.effectType ~= ET_FADE then 
+		return 
+	end
+
 	local findedWdg = nil
 	for _, v in pairs(m_loopEffects) do
 		if v and equals(aParams.wtOwner, v.widget) then
@@ -591,7 +596,7 @@ end
 
 function isExist(targetId)
 	if targetId then
-		return object.IsExist(targetId)
+		return object.IsExist(targetId) and object.IsUnit(targetId)
 	end
 	return false
 end

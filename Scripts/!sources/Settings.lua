@@ -135,6 +135,7 @@ function InitializeDefaultSetting()
 	castFormSettings.panelHeightText = "40"
 	castFormSettings.selectable = false
 	castFormSettings.fixed = false
+	castFormSettings.showOnlyMyTarget = false
 	
 		
 	defaultProfile.name = "default"
@@ -172,6 +173,7 @@ function LoadSettings(aProfileInd)
 		castFormSettings.panelHeightText = "40"
 		castFormSettings.selectable = false
 		castFormSettings.fixed = false
+		castFormSettings.showOnlyMyTarget = false
 		
 		m_currentProfile.castFormSettings = castFormSettings
 		m_currentProfile.mainFormSettings.useCastSubSystem = true
