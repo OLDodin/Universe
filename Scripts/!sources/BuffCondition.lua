@@ -119,10 +119,8 @@ function BuffCondition:Check(aBuffInfo)
 					break
 				end
 			end		
-			if self.settings.autoDebuffModeButton then
+			if self.settings.autoDebuffModeButton or isCleanable then
 				return true, searchRes, isCleanable
-			else
-				return isCleanable, searchRes, isCleanable
 			end
 		end
 		

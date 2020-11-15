@@ -204,6 +204,7 @@ function AddElementFromForm(aTable, aForm, aTextedit, aContainer)
 	if not aTextedit then aTextedit="EditLine1" end
 	local text = getText(getChild(aForm, aTextedit))
 	AddElementFromFormWithText(aTable, aForm, text, aContainer)
+	setText(getChild(aForm, aTextedit), "")
 end
 
 
