@@ -2,4 +2,5 @@
 <WidgetPanel>
 	<Name>BuffPanel</Name>
 	<Priority>140</Priority>
+	<TransparentInput>true</TransparentInput>
 </WidgetPanel>

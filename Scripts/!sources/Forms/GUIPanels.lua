@@ -1,7 +1,3 @@
-Global("FRIEND_PANEL", 1)
-Global("NEITRAL_PANEL", 2)
-Global("ENEMY_PANEL", 3)
-
 Global("g_classPriority", {
 	["WARRIOR"]		= 10,
 	["PALADIN"]		= 9,
@@ -19,57 +15,6 @@ Global("g_classPriority", {
 
 local m_template = createWidget(nil, "Template", "Template")
 
-local m_texIcons = {}
-local m_texCheckState = {}
-local m_texParty = {} 
-function InitClassIconsTexture()
-	m_texIcons["DRUID"] = common.GetAddonRelatedTexture("DruidIcon")
-	m_texIcons["MAGE"] = common.GetAddonRelatedTexture("MageIcon")
-	m_texIcons["PALADIN"] = common.GetAddonRelatedTexture("PaladinIcon")
-	m_texIcons["PRIEST"] = common.GetAddonRelatedTexture("PriestIcon")
-	m_texIcons["PSIONIC"] = common.GetAddonRelatedTexture("PsionicIcon")
-	m_texIcons["STALKER"] = common.GetAddonRelatedTexture("StalkerIcon")
-	m_texIcons["WARRIOR"] = common.GetAddonRelatedTexture("WarriorIcon")
-	m_texIcons["NECROMANCER"] = common.GetAddonRelatedTexture("NecromancerIcon")
-	m_texIcons["ENGINEER"] = common.GetAddonRelatedTexture("EngineerIcon")
-	m_texIcons["BARD"] = common.GetAddonRelatedTexture("BardIcon")
-	m_texIcons["WARLOCK"] = common.GetAddonRelatedTexture("WarlockIcon")
-	m_texIcons["UNKNOWN"] = common.GetAddonRelatedTexture("UnknownIcon")
-end
-
-function InitButtonTextures()
-	m_texParty[1] = common.GetAddonRelatedTexture("Party1")
-	m_texParty[2] = common.GetAddonRelatedTexture("Party2")
-	m_texParty[3] = common.GetAddonRelatedTexture("Party3")
-	m_texParty[4] = common.GetAddonRelatedTexture("Party4")
-end
-
-function InitCheckTextures()
-	m_texCheckState[READY_CHECK_READY_STATE_UNKNOWN] = common.GetAddonRelatedTexture("Unknown")
-	m_texCheckState[READY_CHECK_READY_STATE_READY] = common.GetAddonRelatedTexture("True")
-	m_texCheckState[READY_CHECK_READY_STATE_NOT_READY] = common.GetAddonRelatedTexture("False")
-end
-
-local m_classColors={
-	["WARRIOR"]		= { r = 143/255; g = 119/255; b = 075/255; a = 1 },
-	["PALADIN"]		= { r = 207/255; g = 220/255; b = 155/255; a = 1 },
-	["MAGE"]		= { r = 126/255; g = 159/255; b = 255/255; a = 1 },
-	["DRUID"]		= { r = 255/255; g = 118/255; b = 060/255; a = 1 },
-	["PSIONIC"]		= { r = 221/255; g = 123/255; b = 245/255; a = 1 },
-	["STALKER"]		= { r = 150/255; g = 204/255; b = 086/255; a = 1 },
-	["PRIEST"]		= { r = 255/255; g = 207/255; b = 123/255; a = 1 },
-	["NECROMANCER"]	= { r = 208/255; g = 069/255; b = 075/255; a = 1 },
-	["ENGINEER"]    = { r = 127/255; g = 128/255; b = 178/255; a = 1 },
-	["BARD"]		= { r = 51/255;  g = 230/255; b = 230/255; a = 1 },
-	["WARLOCK"] 	= { r = 125/255; g = 101/255; b = 219/255; a = 1 }, 
-	["UNKNOWN"]		= { r = 127/255; g = 127/255; b = 127/255; a = 0 }
-}
-
-local m_relationColors={
-	[FRIEND_PANEL]		= { r = 0.1; g = 0.8; b = 0; a = 1.0 },
-	[ENEMY_PANEL]		= { r = 1; g = 0; b = 0; a = 1 },
-	[NEITRAL_PANEL]		= { r = 0.8; g = 0.8; b = 0.1; a = 1 },
-}
 
 local m_manaColor = { r=0, g=0.3, b=1, a=1 }
 local m_energyColor =	{ r=1, g=0.3, b=0, a=1 }
@@ -430,9 +375,9 @@ function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettin
 				end
 			end
 			if aFormSettings.classColorModeButton then
-				local color = m_classColors[playerClass.className]
+				local color = g_classColors[playerClass.className]
 				if not color then
-					color = m_classColors["UNKNOWN"]
+					color = g_classColors["UNKNOWN"]
 				end
 				barColor = copyTable(color)
 			end
@@ -440,7 +385,7 @@ function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettin
 	end
 	
 	if isPlayerExist and not aFormSettings.classColorModeButton then
-		barColor = copyTable(m_relationColors[aPlayerBar.panelColorType])
+		barColor = copyTable(g_relationColors[aPlayerBar.panelColorType])
 	end
 
 	if aPlayerInfo.state == RAID_MEMBER_STATE_OFFLINE or aPlayerInfo.state == RAID_MEMBER_STATE_FAR 
@@ -513,7 +458,7 @@ function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettin
 		local textureIndexForIcon = aPlayerInfo.className or "UNKNOWN"
 		if aPlayerBar.optimizeInfo.textureIndexForIcon ~= textureIndexForIcon then
 			aPlayerBar.optimizeInfo.textureIndexForIcon = textureIndexForIcon
-			setBackgroundTexture(aPlayerBar.classIconWdg, m_texIcons[textureIndexForIcon])
+			setBackgroundTexture(aPlayerBar.classIconWdg, g_texIcons[textureIndexForIcon])
 		end
 	end
 
@@ -717,7 +662,7 @@ function ShowReadyStateInGUI(aPlayerBar, aPlayerReadyState)
 	end
 	aPlayerBar.optimizeInfo.readyCheckShowed = true 
 	if aPlayerBar.optimizeInfo.readyCheckState ~= aPlayerReadyState then
-		setBackgroundTexture(aPlayerBar.checkIconWdg, m_texCheckState[aPlayerReadyState])
+		setBackgroundTexture(aPlayerBar.checkIconWdg, g_texCheckState[aPlayerReadyState])
 		aPlayerBar.optimizeInfo.readyCheckState = aPlayerReadyState
 	end
 end
@@ -744,7 +689,7 @@ function CreateRaidPartyBtn(aRaidPanel)
 		raidPartyButtons[i].wdg = createWidget(wtTopPanel, nil, "PartyButton", nil, nil, nil, nil, (i-1)*20+37, nil, nil, nil)
 		raidPartyButtons[i].active = true
 		raidPartyButtons[i].showed = false
-		setBackgroundTexture(raidPartyButtons[i].wdg, m_texParty[i])
+		setBackgroundTexture(raidPartyButtons[i].wdg, g_texParty[i])
 		hide(raidPartyButtons[i].wdg) 
 	end
 	

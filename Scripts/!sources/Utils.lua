@@ -630,12 +630,19 @@ function isGroup()
 	return group.IsExist()
 end
 
-function cast(name, targetId)
+function isPvpZoneNow()
 	if matchMaking.CanUseMatchMaking() and matchMaking.IsEventProgressExist() then
 		local battleInfo = matchMaking.GetCurrentBattleInfo()
 		if battleInfo and not battleInfo.isPvE  then
-			return false
+			return true
 		end
+	end
+	return false
+end
+
+function cast(name, targetId)
+	if isPvpZoneNow() then
+		return false
 	end
 	
 	local spellId=name and getSpellIdFromName(name)

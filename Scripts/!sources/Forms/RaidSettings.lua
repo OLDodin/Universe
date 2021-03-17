@@ -36,7 +36,7 @@ function CreateRaidSettingsForm()
 	createWidget(form, "showStandartRaidButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 300, 25, 20, 50)
 	
 	createWidget(form, "gorisontalModeButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 300, 25, 20, 80)
-	createWidget(form, "highlightSelectedButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 300, 25, 20, 110)
+	createWidget(form, "showRollOverInfoButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 300, 25, 20, 110)
 	
 	createWidget(form, "showServerNameButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 300, 25, 20, 140)
 	createWidget(form, "classColorModeButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 300, 25, 20, 170)
@@ -93,7 +93,7 @@ function SaveRaidFormSettings(aForm)
 	mySettings.showArrowButton = getCheckBoxState(getChild(aForm, "showArrowButton"))
 	mySettings.gorisontalModeButton = getCheckBoxState(getChild(aForm, "gorisontalModeButton"))
 	mySettings.woundsShowButton = getCheckBoxState(getChild(aForm, "woundsShowButton"))
-	mySettings.highlightSelectedButton = getCheckBoxState(getChild(aForm, "highlightSelectedButton"))
+	mySettings.showRollOverInfo = getCheckBoxState(getChild(aForm, "showRollOverInfoButton"))
 
 	
 	mySettings.raidWidthText = getTextString(getChild(aForm, "raidWidthEdit"))
@@ -131,7 +131,7 @@ function LoadRaidFormSettings(aForm)
 	setLocaleText(getChild(aForm, "showArrowButton"), mySettings.showArrowButton, true)
 	setLocaleText(getChild(aForm, "gorisontalModeButton"), mySettings.gorisontalModeButton, true)
 	setLocaleText(getChild(aForm, "woundsShowButton"), mySettings.woundsShowButton, true)
-	setLocaleText(getChild(aForm, "highlightSelectedButton"), mySettings.highlightSelectedButton, true)
+	setLocaleText(getChild(aForm, "showRollOverInfoButton"), mySettings.showRollOverInfo, true)
 	
 	setText(getChild(aForm, "raidWidthEdit"), mySettings.raidWidthText)
 	setText(getChild(aForm, "raidHeightEdit"), mySettings.raidHeightText)

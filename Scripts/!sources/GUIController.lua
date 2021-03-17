@@ -34,6 +34,7 @@ local m_buffSettingsForm = nil
 local m_configGroupBuffForm = nil
 local m_progressCastSettingsForm = nil
 local m_helpForm = nil
+local m_playerShortInfoForm = nil
 local m_raidPanel = nil
 local m_progressCastPanel = nil
 local m_targetPanel = nil
@@ -808,6 +809,30 @@ end
 
 local function OnRightClick(aParams)
 	OnPlayerSelect(aParams, false)
+end
+
+local function OnPlayerBarPointing(aParams)
+	local profile = GetCurrentProfile()
+	if not profile.raidFormSettings.showRollOverInfo and not profile.targeterFormSettings.showRollOverInfo then
+		return
+	end
+	
+	if not aParams.active then
+		hide(m_playerShortInfoForm)
+		return
+	end
+	
+	local playerBar = nil
+	if profile.raidFormSettings.showRollOverInfo then
+		playerBar = FindClickedInRaid(aParams.widget)
+	end
+	if not playerBar and profile.targeterFormSettings.showRollOverInfo then
+		playerBar = FindClickedInTarget(aParams.widget)
+	end
+	if playerBar and not m_moveMode then
+		InitPlayerShortInfoForm(playerBar.playerID)
+		show(m_playerShortInfoForm)
+	end
 end
 
 local function TargetLockChanged(aParams)
@@ -1929,6 +1954,7 @@ local function GUIInit()
 	m_importProfileForm = CreateImportProfilesForm()
 	m_progressCastSettingsForm = CreateProgressCastSettingsForm()
 	m_helpForm = CreateHelpForm()
+	m_playerShortInfoForm = CreatePlayerShortInfoForm()
 
 	m_raidPanel = CreateRaidPanel()
 	m_targetPanel = CreateTargeterPanel()
@@ -2375,6 +2401,7 @@ function GUIControllerInit()
 	
 	common.RegisterReactionHandler(OnLeftClick, "OnLeftClick")
 	common.RegisterReactionHandler(OnRightClick, "OnRightClick" )
+	common.RegisterReactionHandler(OnPlayerBarPointing, "OnPlayerBarPointing" )
 	common.RegisterReactionHandler(MoveModeClick, "addClick")
 	common.RegisterReactionHandler(ShowSelectTargetTypePanel, "GetModeBtnReaction")
 	common.RegisterReactionHandler(SelectTargetTypePressed, "SelectModeBtnReaction")

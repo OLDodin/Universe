@@ -17,7 +17,5 @@
 			<Pos>0</Pos>
 		</Y>
 	</Placement>
-	<reactionWheelUp>OnWheelUp</reactionWheelUp>
-	<reactionWheelDown>OnWheelDown</reactionWheelDown>
-	<!-- <TransparentInput>true</TransparentInput> -->
+	<TransparentInput>true</TransparentInput>
 </WidgetPanel>

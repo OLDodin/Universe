@@ -96,11 +96,11 @@ function GenerateMenuInfos(aPlayerBar, aMyUniqueID)
 			if quality==ITEM_QUALITY_RELIC	 			then AddToMenu("relicLootMenuButton", function () if isLeader then loot.SetMinItemQualityForLootScheme(ITEM_QUALITY_JUNK) CloseMenu() end end) end
 		end
 	end
-
+--[[
 	if not isAvatar and playerID ~= nil then
 		AddToMenu("inspectButton", function () if avatar.IsInspectAllowed() then avatar.StartInspect(playerID) end CloseMenu() end)
 	end
-
+]]
 	if canWhisper then
 		AddToMenu("whisperMenuButton", function ()
 			local chat=stateMainForm:GetChildUnchecked("ChatInput", false)

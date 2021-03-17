@@ -2,4 +2,5 @@
 <WidgetPanel>
 	<Name>BuffPanelNegative</Name>
 	<Priority>141</Priority>
+	<TransparentInput>true</TransparentInput>
 </WidgetPanel>

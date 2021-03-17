@@ -27,6 +27,6 @@
 			<ReactionRightClick>OnRightClick</ReactionRightClick>
 		</Item>
 	</Variants>
-	<reactionOnPointing>OnPointing</reactionOnPointing>
+	<reactionOnPointing>OnPlayerBarPointing</reactionOnPointing>
 	<BackLayer href="" />
 </WidgetButton>

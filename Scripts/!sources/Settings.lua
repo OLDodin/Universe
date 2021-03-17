@@ -54,6 +54,7 @@ function InitializeDefaultSetting()
 	raidFormSettings.woundsShowButton = false
 	raidFormSettings.showServerNameButton = true
 	raidFormSettings.highlightSelectedButton = true
+	raidFormSettings.showRollOverInfo = true
 	raidFormSettings.raidWidthText = "160"
 	raidFormSettings.raidHeightText = "50"
 	raidFormSettings.distanceText = "0"
@@ -77,6 +78,7 @@ function InitializeDefaultSetting()
 	targeterFormSettings.woundsShowButton = false
 	targeterFormSettings.showServerNameButton = true
 	targeterFormSettings.highlightSelectedButton = true
+	targeterFormSettings.showRollOverInfo = true
 	targeterFormSettings.hideUnselectableButton = true
 	targeterFormSettings.lastTargetType = ALL_TARGETS
 	targeterFormSettings.lastTargetWasActive = true
@@ -187,6 +189,10 @@ function LoadSettings(aProfileInd)
 		m_currentProfile.bindFormSettings.actionRightSwitchProgressCastAlt = DISABLE_CLICK
 		m_currentProfile.bindFormSettings.actionRightSwitchProgressCastCtrl = DISABLE_CLICK
 	end
+	if m_currentProfile.version < 2.2 or m_currentProfile.version == nil then
+		m_currentProfile.raidFormSettings.showRollOverInfo = true
+		m_currentProfile.targeterFormSettings.showRollOverInfo = true
+	end
 end
 
 function ProfileWasDeleted(anInd)
@@ -224,5 +230,5 @@ function ExportProfileByIndex(anInd)
 end
 
 function GetSettingsVersion()
-	return 2;
+	return 2.2;
 end
