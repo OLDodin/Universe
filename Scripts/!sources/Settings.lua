@@ -192,6 +192,9 @@ function LoadSettings(aProfileInd)
 	if m_currentProfile.version < 2.2 or m_currentProfile.version == nil then
 		m_currentProfile.raidFormSettings.showRollOverInfo = true
 		m_currentProfile.targeterFormSettings.showRollOverInfo = true
+		
+		m_currentProfile.raidFormSettings.highlightSelectedButton = true
+		m_currentProfile.targeterFormSettings.highlightSelectedButton = true
 	end
 end
 
