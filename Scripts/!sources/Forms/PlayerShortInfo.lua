@@ -52,14 +52,15 @@ function InitPlayerShortInfoForm(aPlayerID)
 
 	local factionID = unit.GetFactionId(aPlayerID)
 	local factionStr = factionID and factionID:GetInfo().name or m_emptyWStr
-	local guildInfo
-	local title
-	local soulLvl
+	local guildStr = m_emptyWStr
+	local title = nil
+	local soulLvl = nil
 	if isPlayer then
 		if not isPvpZoneNow() then
 			soulLvl = unit.GetPlayerSoulLevel(aPlayerID)
 		end
-		guildInfo = unit.GetGuildInfo(aPlayerID)		
+		local guildInfo = unit.GetGuildInfo(aPlayerID)
+		guildStr = guildInfo and guildInfo.name or m_emptyWStr		
 		title = unit.GetPlayerTitle(aPlayerID)
 	
 		local sex = unit.GetSex(aPlayerID)
@@ -74,6 +75,12 @@ function InitPlayerShortInfoForm(aPlayerID)
 			end
 		end
 	else
+		if unit.IsPet(aPlayerID) then
+			local masterID = unit.GetFollowerMaster(aPlayerID)
+			if isExist(masterID) then
+				guildStr = getLocale()["petOwner"]..toString(object.GetName(masterID))
+			end
+		end
 		local race = unit.GetRace(aPlayerID)
 		if race then
 			infoStr = getLocale()[race.sysCreatureRace]..", "
@@ -81,7 +88,7 @@ function InitPlayerShortInfoForm(aPlayerID)
 		title = {}
 		title.name = unit.GetTitle(aPlayerID)
 	end
-	local guildStr = guildInfo and guildInfo.name or m_emptyWStr
+	
 	local titulStr = title and title.name or m_emptyWStr
 
 	local lvl = unit.GetLevel(aPlayerID)
