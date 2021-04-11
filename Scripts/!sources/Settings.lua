@@ -138,6 +138,7 @@ function InitializeDefaultSetting()
 	castFormSettings.selectable = false
 	castFormSettings.fixed = false
 	castFormSettings.showOnlyMyTarget = false
+	castFormSettings.ignoreList = {}
 	
 		
 	defaultProfile.name = "default"
@@ -196,6 +197,9 @@ function LoadSettings(aProfileInd)
 		m_currentProfile.raidFormSettings.highlightSelectedButton = true
 		m_currentProfile.targeterFormSettings.highlightSelectedButton = true
 	end
+	if m_currentProfile.version < 2.3 or m_currentProfile.version == nil then
+		m_currentProfile.castFormSettings.ignoreList = {}
+	end
 end
 
 function ProfileWasDeleted(anInd)
@@ -233,5 +237,5 @@ function ExportProfileByIndex(anInd)
 end
 
 function GetSettingsVersion()
-	return 2.2;
+	return 2.3;
 end

@@ -1,5 +1,5 @@
 function CreateProgressCastSettingsForm()
-	local form=createWidget(nil, "castSettingsForm", "Form", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 400, 410, 200, 100)
+	local form=createWidget(nil, "castSettingsForm", "Form", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 700, 410, 200, 100)
 	hide(form)
 	priority(form, 5000)
 	
@@ -24,6 +24,11 @@ function CreateProgressCastSettingsForm()
 	
 	setLocaleText(createWidget(form, "resetPanelCastPosButton", "Button", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 200, 30, 20, 290))
 	
+	setLocaleText(createWidget(form, "ignoreListTxt", "TextView", nil, nil, 200, 25, 370, 50))
+	createWidget(form, "container1", "ScrollableContainer", nil, nil, 310, 215, 370, 70)
+	setLocaleText(createWidget(form, "addIgnoreCastsButton", "Button", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 110, 25, 570, 290))
+	createWidget(form, "EditLine1", "EditLine", nil, nil, 200, 25, 360, 290)
+	
 	DnD.Init(form, panel, true)
 		
 	return form
@@ -42,6 +47,8 @@ function SaveProgressCastFormSettings(aForm)
 	
 	mySettings.panelWidthText = getTextString(getChild(aForm, "panelWidthEdit"))
 	mySettings.panelHeightText = getTextString(getChild(aForm, "panelHeightEdit"))
+	
+	UpdateTableValuesFromContainer(mySettings.ignoreList, aForm, getChild(aForm, "container1"))
 	
 	return mySettings
 end
@@ -64,4 +71,5 @@ function LoadProgressCastFormSettings(aForm)
 	setText(getChild(aForm, "panelWidthEdit"), mySettings.panelWidthText)
 	setText(getChild(aForm, "panelHeightEdit"), mySettings.panelHeightText)
 	
+	ShowValuesFromTable(mySettings.ignoreList, aForm, getChild(aForm, "container1"))
 end

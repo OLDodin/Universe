@@ -431,6 +431,16 @@ function AddBuffsInsideGroupButton(aWdg)
 	AddElementFromForm(profile.buffFormSettings.buffGroups[GetConfigGroupBuffsActiveNum()].buffs, m_configGroupBuffForm, "EditLine5", getChild(m_configGroupBuffForm, "container") ) 
 end
 
+function AddIgnoreCastsButton(aWdg)
+	local profile = GetCurrentProfile()
+	AddElementFromForm(profile.castFormSettings.ignoreList, m_progressCastSettingsForm, "EditLine1", getChild(m_progressCastSettingsForm, "container1") ) 
+end
+
+function DeleteIgnoreCastElement(aWdg)
+	local profile = GetCurrentProfile()
+	DeleteContainer(profile.castFormSettings.ignoreList, aWdg, m_progressCastSettingsForm)
+end
+
 function DeleteRaidBuffElement(aWdg)
 	local profile = GetCurrentProfile()
 	DeleteContainer(profile.raidFormSettings.raidBuffs.customBuffs, aWdg, m_raidSettingsForm)
@@ -1055,7 +1065,7 @@ local function FindMemberStateByUniqueID(aList, anUnuqueID)
 		return nil
 	end
 	for i = 0, GetTableSize(aList) do
-		if anUnuqueID:IsEqual(aList[i].uniqueId) then
+		if aList[i] and anUnuqueID:IsEqual(aList[i].uniqueId) then
 			return aList[i].state
 		end
 	end
@@ -1796,6 +1806,13 @@ local function BuffProgressStart(aParams)
 	if isExist(aParams.objectId) and unit.IsPlayer(aParams.objectId) then
 		return
 	end
+	
+	local progressName = aParams.buffName or aParams.name
+	for _, ignoreObj in pairs(profile.castFormSettings.ignoreList) do
+		if common.CompareWString(progressName, ignoreObj.name) == 0 then
+			return
+		end
+	end
 	local panel = GetProgressCastPanel(aParams.objectId or aParams.id, actionType)
 	if panel then 
 		SetBaseInfoProgressCastPanel(panel, aParams, actionType)
@@ -2306,6 +2323,8 @@ function GUIControllerInit()
 	AddReaction("addTargeterBuffButton", AddTargetBuffButton)
 	AddReaction("addTargetButton", AddTargetButton)
 	AddReaction("addGroupBuffsButton", AddBuffsGroupButton)
+	AddReaction("addIgnoreCastsButton", AddIgnoreCastsButton)
+	AddReaction("deleteButtoncastSettingsForm", DeleteIgnoreCastElement)
 	AddReaction("deleteButtontargeterSettingsForm", DeleteTargetWndElement)
 	AddReaction("deleteButtonraidSettingsForm", DeleteRaidBuffElement)
 	AddReaction("buffsButton", function () swap(m_buffSettingsForm) end)
