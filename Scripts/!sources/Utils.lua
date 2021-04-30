@@ -657,13 +657,16 @@ function cast(name, targetId)
 	local state=spellLib.GetState(spellId)
 	if not state.prepared and duration and duration > 1 then selectTarget(targetId) end
 
-	local targetType=properties.targetType and properties.targetType==SPELL_TYPE_SELF
-	if targetId and object.IsExist(targetId) and not targetType then
-		avatar.RunTargetSpell(spellId, targetId)
+	if avatar.RunTargetSpell then
+		local targetType=properties.targetType and properties.targetType==SPELL_TYPE_SELF
+		if targetId and object.IsExist(targetId) and not targetType then
+			avatar.RunTargetSpell(spellId, targetId)
+		else
+			avatar.RunSpell(spellId)
+		end
 	else
 		avatar.RunSpell(spellId)
 	end
-
 	return true
 end
 
