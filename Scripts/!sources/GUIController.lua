@@ -1331,7 +1331,7 @@ local function SetNecessaryTargets(anObjID, anInCombat)
 	
 	objArr = m_targetUnitsByType[MY_SETTINGS_TARGETS]
 	for _, targetsFromSettings in  ipairs(profile.targeterFormSettings.myTargets) do
-		if newValue.objNameLower == targetsFromSettings.nameLowerStr then
+		if not FindInListTarget(anObjID, objArr) and newValue.objNameLower == targetsFromSettings.nameLowerStr then
 			AddTargetInList(newValue, objArr)
 		end
 	end
