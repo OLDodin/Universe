@@ -329,11 +329,18 @@ function getForm(widget)
 end
 
 function createWidget(parent, widgetName, templateName, alignX, alignY, width, height, posX, posY, noParent)
-	local desc=getDesc(templateName)
-	if not desc and parent then return nil end
+	local widget = nil
 	local owner=getForm(parent)
-	local widget=owner and owner:CreateWidgetByDesc(desc) or common.AddonCreateChildForm(templateName)
-	if parent and widget and not noParent then parent:AddChild(widget) end --
+	
+	if templateName == "Form" then
+		widget = common.AddonCreateChildForm(templateName)
+	else
+		local desc = getDesc(templateName)
+		if not desc and parent then return nil end
+		widget = owner and owner:CreateWidgetByDesc(desc) or common.AddonCreateChildForm(templateName)
+	end
+	
+	if parent and widget and not noParent then parent:AddChild(widget) end
 	setName(widget, widgetName)
 	align(widget, alignX, alignY)
 	move(widget, posX, posY)
@@ -361,7 +368,8 @@ end
 function changeCheckBox(widget)
 	if not widget or not widget.GetVariantCount then return end
 	if not widget.GetVariant or not widget.SetVariant then return end
-
+	if widget:GetVariantCount()<2 then return end
+	
 	if 0==widget:GetVariant() then 	widget:SetVariant(1)
 	else 							widget:SetVariant(0) end
 end
