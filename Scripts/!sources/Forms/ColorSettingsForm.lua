@@ -68,9 +68,7 @@ function CreateColorSettingsForm(aSaveLoadType, aGroupBuffsNum, aBuffInd)
 	setLocaleText(createWidget(form, "headerColor", "TextView", WIDGET_ALIGN_CENTER, WIDGET_ALIGN_LOW, 250, 25, 20, 15))
 	setText(createWidget(form, "buffName", "TextView", WIDGET_ALIGN_BOTH, WIDGET_ALIGN_LOW, nil, 25, 20, 40), info.name, "ColorYellow", "center", 18)
 	
-	m_colorPreview = createWidget(form, "colorPreview", "ImageBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 75, 75, 280, 70)
-	m_colorPreview:SetBackgroundTexture(nil)
-	
+	m_colorPreview = createWidget(form, "colorPreview", "ImageBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 75, 75, 280, 70)	
 	
 	m_redWdg = CreateSlider(form, "redSlider", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 250, 25, 10, 70, 120)
 	m_greenWdg = CreateSlider(form, "greenSlider", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 250, 25, 10, 95, 120)

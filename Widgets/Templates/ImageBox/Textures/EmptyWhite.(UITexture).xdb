@@ -4,18 +4,18 @@
 	<mipsNumber>1</mipsNumber>
 	<generateMipChain>false</generateMipChain>
 	<type>DXT1</type>
-	<width>32</width>
-	<height>32</height>
-	<realWidth>64</realWidth>
-	<realHeight>64</realHeight>
+	<width>4</width>
+	<height>4</height>
+	<realWidth>4</realWidth>
+	<realHeight>4</realHeight>
 	<disableLODControl>false</disableLODControl>
-	<alphaTex>true</alphaTex>
-	<binaryFileSize>31</binaryFileSize>
-	<binaryFile href="Empty.(UITexture).bin" />
+	<alphaTex>false</alphaTex>
+	<binaryFileSize>19</binaryFileSize>
+	<binaryFile href="EmptyWhite.(UITexture).bin" />
 	<binaryFileSize2>0</binaryFileSize2>
 	<binaryFile2 href="" />
-	<sourceFile href="Empty.tga" />
-	<sourceFileCRC>-982515541</sourceFileCRC>
+	<sourceFile href="EmptyWhite.tga" />
+	<sourceFileCRC>-1095495113</sourceFileCRC>
 	<wrap>false</wrap>
 	<LocalizationInfo />
 	<atlasPart>true</atlasPart>

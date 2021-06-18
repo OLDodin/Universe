@@ -6,14 +6,18 @@
 	<type>DXT5</type>
 	<width>128</width>
 	<height>32</height>
-	<realWidth>120</realWidth>
+	<realWidth>128</realWidth>
 	<realHeight>20</realHeight>
 	<disableLODControl>false</disableLODControl>
 	<alphaTex>true</alphaTex>
-	<binaryFileSize>380</binaryFileSize>
+	<binaryFileSize>174</binaryFileSize>
 	<binaryFile href="Background.(UITexture).bin" />
+	<binaryFileSize2>0</binaryFileSize2>
+	<binaryFile2 href="" />
 	<sourceFile href="Background.tga" />
-	<sourceFileCRC>529730071</sourceFileCRC>
+	<sourceFileCRC>-1621139616</sourceFileCRC>
 	<wrap>false</wrap>
 	<LocalizationInfo />
+	<atlasPart>true</atlasPart>
+	<pool>UNDEFINED</pool>
 </UITexture>

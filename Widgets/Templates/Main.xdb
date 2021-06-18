@@ -3,6 +3,7 @@
 	<Children>
 		<Item href="Panel.xdb#xpointer(/WidgetPanel)" />
 		<Item href="EditLine.xdb#xpointer(/WidgetEditLine)" />
+		<Item href="EditLineTransparent.xdb#xpointer(/WidgetEditLine)" />
 		<Item href="Button.xdb#xpointer(/WidgetButton)" />
 		<Item href="CheckBox.xdb#xpointer(/WidgetButton)" />
 		<Item href="TextView.xdb#xpointer(/WidgetTextView)" />

@@ -502,9 +502,6 @@ function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings)
 	if aRaidMode then
 		local raidMoveBar = createWidget(aParentPanel, nil, "AddBar", nil, nil, panelWidth, panelHeight, posX, posY)
 		resize(getChild(raidMoveBar, "HealthBarBackground"), panelWidth, panelHeight)
-		setBackgroundTexture(raidMoveBar, nil)
-		local addBarColor = {r=0.8, g=1, b=0.5, a=0.8}
-		setBackgroundColor(raidMoveBar, addBarColor)
 		hide(raidMoveBar)
 		playerBar.raidMoveWdg = raidMoveBar
 	end

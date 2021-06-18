@@ -12,5 +12,4 @@
 			<ReactionRightClick>addClick</ReactionRightClick>
 		</Item>
 	</Variants>
-	<BackLayer href="Textures/Background.xdb#xpointer(/WidgetLayerTiledTexture)" />
 </WidgetButton>

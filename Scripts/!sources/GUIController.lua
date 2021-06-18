@@ -89,10 +89,8 @@ local function GenerateWidgetForTable(aTable, aContainer, anIndex)
 	setBackgroundColor(panel, {r=1, g=1, b=1, a=0.5})
 	setText(createWidget(panel, "Id", "TextView", WIDGET_ALIGN_LOW, WIDGET_ALIGN_CENTER, 30, 20, 10), anIndex)
 	if aTable.name then
-		local nameWidget=createWidget(panel, "Name"..tostring(anIndex), "EditLine", WIDGET_ALIGN_LOW, WIDGET_ALIGN_CENTER, 200, 20, 35)
+		local nameWidget=createWidget(panel, "Name"..tostring(anIndex), "EditLineTransparent", WIDGET_ALIGN_LOW, WIDGET_ALIGN_CENTER, 150, 20, 35)
 		setText(nameWidget, aTable.name)
-		setBackgroundTexture(nameWidget, nil)
-		setBackgroundColor(nameWidget, nil)
 	end
 	local containerParentName = getName(getParent(aContainer))
 	
@@ -118,11 +116,9 @@ local function GenerateWidgetForTable(aTable, aContainer, anIndex)
 		setCheckBox(createWidget(panel, "isBuff"..tostring(anIndex), "CheckBox", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 25, 25, 140), aTable.isBuff)
 		setCheckBox(createWidget(panel, "castByMe"..tostring(anIndex), "CheckBox", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 25, 25, 90), aTable.castByMe)
 		setCheckBox(createWidget(panel, "isSpell"..tostring(anIndex), "CheckBox", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 25, 25, 40), aTable.isSpell)
-		cdWidget = createWidget(panel, "CD"..tostring(anIndex), "EditLine", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 80, 20, 220)
+		cdWidget = createWidget(panel, "CD"..tostring(anIndex), "EditLineTransparent", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 80, 20, 220)
 		hide(cdWidget)
 		setText(cdWidget, aTable.time)
-		setBackgroundTexture(cdWidget, nil)
-		setBackgroundColor(cdWidget, nil)	
 		
 		setLocaleText(createWidget(panel, "setHighlightColorButton"..containerParentName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 30, 25, 190))
 	end
@@ -2432,4 +2428,5 @@ function GUIControllerInit()
 	common.RegisterReactionHandler(OnRaidFilter, "OnRaidFilter")
 	common.RegisterReactionHandler(OnShopChange, "OnShopChange")
 	common.RegisterReactionHandler(OnAssertChange, "OnAssertChange")
+	
 end

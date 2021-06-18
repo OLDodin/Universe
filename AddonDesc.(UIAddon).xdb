@@ -65,7 +65,6 @@
 		<Item href="Scripts/Forms/TargeterSettings.lua"/>
 		<Item href="Scripts/Forms/BuffSettings.lua"/>
 		<Item href="Scripts/Forms/ProgressCastSettings.lua"/>
-		<Item href="Scripts/Forms/GUIPanelRaidMove.lua"/>
 		<Item href="Scripts/Forms/GUIPanels.lua"/>
 		<Item href="Scripts/Forms/GUIProgressPanels.lua"/>
 		<Item href="Scripts/Forms/BindSettings.lua"/>
