@@ -2,7 +2,7 @@
 <WidgetPanel>
 	<Priority>130</Priority>
 	<Name>AddIcon</Name>
-	<BackLayer href="Textures/Add.xdb#xpointer(/WidgetLayerTiledTexture)" />
+	<BackLayer href="Textures/Add.(WidgetLayerSimpleTexture).xdb" />
 	<Placement>
 		<X>
 			<Align>WIDGET_ALIGN_CENTER</Align>

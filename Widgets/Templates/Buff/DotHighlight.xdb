@@ -3,7 +3,7 @@
 	<Priority>110</Priority>
 	<Name>DotHighlight</Name>
 	<Visible>false</Visible>
-	<BackLayer href="Textures/highlight.xdb#xpointer(/WidgetLayerTiledTexture)" />
+	<BackLayer href="Textures/highlight.xdb#xpointer(/WidgetLayerSimpleTexture)" />
 	<Placement>
 		<X>
 			<Align>WIDGET_ALIGN_BOTH</Align>

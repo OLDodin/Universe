@@ -5,7 +5,7 @@
 	<BlendEffect>BLEND_EFFECT_ALPHABLND</BlendEffect>
 	<flatPlacement>false</flatPlacement>
 	<lazyLoad>false</lazyLoad>
-	<textureItem href="highlight.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
+	<textureItem href="Unlocked.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
 	<textureMask href="" />
 	<Scaling>true</Scaling>
 </WidgetLayerSimpleTexture>

@@ -10,12 +10,12 @@
 	<realHeight>48</realHeight>
 	<disableLODControl>false</disableLODControl>
 	<alphaTex>true</alphaTex>
-	<binaryFileSize>641</binaryFileSize>
+	<binaryFileSize>627</binaryFileSize>
 	<binaryFile href="Add.(UITexture).bin" />
 	<binaryFileSize2>0</binaryFileSize2>
 	<binaryFile2 href="" />
 	<sourceFile href="Add.tga" />
-	<sourceFileCRC>941181008</sourceFileCRC>
+	<sourceFileCRC>-1655688237</sourceFileCRC>
 	<wrap>false</wrap>
 	<LocalizationInfo />
 	<atlasPart>true</atlasPart>

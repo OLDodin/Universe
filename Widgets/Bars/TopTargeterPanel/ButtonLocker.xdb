@@ -21,14 +21,14 @@
 	<Variants>
 		<Item>
 			<StateNormal>
-				<LayerMain href="ButtonLock/Unlocked.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)" />
+				<LayerMain href="ButtonLock/Unlocked.xdb#xpointer(/WidgetLayerSimpleTexture)" />
 			</StateNormal>
 			<ReactionOnUp>true</ReactionOnUp>
 			<Reaction>OnTargetLockChanged</Reaction>
 		</Item>
 		<Item>
 			<StateNormal>
-				<LayerMain href="ButtonLock/Locked.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)" />
+				<LayerMain href="ButtonLock/Locked.xdb#xpointer(/WidgetLayerSimpleTexture)" />
 			</StateNormal>
 			<ReactionOnUp>true</ReactionOnUp>
 			<Reaction>OnTargetLockChanged</Reaction>

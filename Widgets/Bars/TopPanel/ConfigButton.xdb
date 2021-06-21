@@ -20,10 +20,10 @@
 	<TransparentInput>false</TransparentInput>
 	<Variants>
 		<Item>
-			<LayerHighlight href="Textures/SettingsLight.xdb#xpointer(/WidgetLayerTiledTexture)" />
+			<LayerHighlight href="Textures/SettingsLight.xdb#xpointer(/WidgetLayerSimpleTexture)" />
 			<PushedOffset x="-1" y="1" />
 			<StateNormal>
-				<LayerMain href="Textures/Settings.xdb#xpointer(/WidgetLayerTiledTexture)" />
+				<LayerMain href="Textures/Settings.xdb#xpointer(/WidgetLayerSimpleTexture)" />
 			</StateNormal>
 			<ReactionOnUp>true</ReactionOnUp>
 			<Reaction>OnConfigRaidChange</Reaction>
