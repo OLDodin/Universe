@@ -70,6 +70,8 @@ function SetBaseInfoProgressCastPanel(aBar, aInfo, aType)
 	aBar.actionType = aType
 	aBar.isUsed = true
 	aBar.buffID = aInfo.buffId
+	aBar.castedByMe = false
+	
 
 	local fromPlacement = aBar.barWdg:GetPlacementPlain()
 	fromPlacement.sizeX = m_panelWidth
@@ -83,6 +85,8 @@ function SetBaseInfoProgressCastPanel(aBar, aInfo, aType)
 
 	
 	if buffInfo then
+		local buffCreatorID = buffInfo.producer and buffInfo.producer.casterId or nil
+		aBar.castedByMe = g_myAvatarID == buffCreatorID
 		setBackgroundTexture(aBar.iconWdg, buffInfo.texture)
 		resize(aBar.barWdg, fromPlacement.sizeX * (buffInfo.remainingMs / buffInfo.durationMs))
 		fromPlacement = aBar.barWdg:GetPlacementPlain()
@@ -120,6 +124,7 @@ function ClearProgressCastPanel(aBar)
 	aBar.playerID = nil
 	aBar.isUsed = false
 	aBar.buffID = nil
+	aBar.castedByMe = false
 	hide(aBar.wdg)
 	aBar.barWdg:FinishResizeEffect()
 end

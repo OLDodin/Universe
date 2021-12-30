@@ -857,13 +857,32 @@ local function CreateProgressCastCache()
 	end
 end
 
-local function UpdatePositionProgressCastPanels()
+local function GetProgressCastPanelCastedByMe()
 	local profile = GetCurrentProfile()
 	local panelHeight = tonumber(profile.castFormSettings.panelHeightText)
 	
 	local cnt = 0
 	for i = 0, PROGRESS_PANELS_LIMIT do
-		if m_progressCastPanelList[i].isUsed then
+		if m_progressCastPanelList[i].isUsed and m_progressCastPanelList[i].castedByMe then
+			if not profile.castFormSettings.showOnlyMyTarget or IsProgressCastPanelVisible(m_progressCastPanelList[i]) then
+				return m_progressCastPanelList[i]
+			end
+		end
+	end
+end
+
+local function UpdatePositionProgressCastPanels()
+	local profile = GetCurrentProfile()
+	local panelHeight = tonumber(profile.castFormSettings.panelHeightText)
+	
+	local cnt = 0
+	local panelCastedByMe = GetProgressCastPanelCastedByMe()
+	if panelCastedByMe then
+		move(panelCastedByMe.wdg, 0, 40)
+		cnt = 1
+	end
+	for i = 0, PROGRESS_PANELS_LIMIT do
+		if m_progressCastPanelList[i].isUsed and not m_progressCastPanelList[i].castedByMe then
 			if not profile.castFormSettings.showOnlyMyTarget or IsProgressCastPanelVisible(m_progressCastPanelList[i]) then
 				local posY = 40 + cnt*(panelHeight+1)
 				move(m_progressCastPanelList[i].wdg, 0, posY)
