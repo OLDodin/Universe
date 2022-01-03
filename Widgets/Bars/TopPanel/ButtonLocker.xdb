@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<WidgetButton>
+	<Priority>200</Priority>
+	<Name>ButtonLocker</Name>
+	<IgnoreDblClick>true</IgnoreDblClick>
+	<Children>
+	</Children>
+	<Placement>
+		<X>
+			<Align>WIDGET_ALIGN_HIGH</Align>
+			<Size>16</Size>
+			<HighPos>64</HighPos>
+		</X>
+		<Y>
+			<Align>WIDGET_ALIGN_LOW</Align>
+			<Size>20</Size>
+			<Pos>1</Pos>
+		</Y>
+	</Placement>
+	<TransparentInput>false</TransparentInput>
+	<Variants>
+		<Item>
+			<StateNormal>
+				<LayerMain href="../TopTargeterPanel/ButtonLock/Unlocked.xdb#xpointer(/WidgetLayerSimpleTexture)" />
+			</StateNormal>
+			<ReactionOnUp>true</ReactionOnUp>
+			<Reaction>OnRaidLockChanged</Reaction>
+		</Item>
+		<Item>
+			<StateNormal>
+				<LayerMain href="../TopTargeterPanel/ButtonLock/Locked.xdb#xpointer(/WidgetLayerSimpleTexture)" />
+			</StateNormal>
+			<ReactionOnUp>true</ReactionOnUp>
+			<Reaction>OnRaidLockChanged</Reaction>
+		</Item>
+	</Variants>
+</WidgetButton>

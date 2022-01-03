@@ -983,6 +983,7 @@ end
 local function ResizeRaidPanel(aGroupsCnt, aMaxPeopleCnt)
 	local profile = GetCurrentProfile()
 	ResizePanelForm(aGroupsCnt, aMaxPeopleCnt, profile.raidFormSettings, m_raidPanel, m_lastRaidPanelSize, getChild(m_raidPanel, "TopPanel"))
+	ApplyRaidSettingsToGUI(m_raidPanel)
 end
 
 local function ShowMoveIfNeeded()
@@ -2441,6 +2442,7 @@ function GUIControllerInit()
 	common.RegisterReactionHandler(SelectTargetTypePressed, "SelectModeBtnReaction")
 	common.RegisterReactionHandler(TargetWorkSwitch, "GetModeBtnRightClick")
 	common.RegisterReactionHandler(TargetLockChanged, "OnTargetLockChanged")
+	common.RegisterReactionHandler(function () RaidLockBtn(m_raidPanel) end, "OnRaidLockChanged")
 	common.RegisterReactionHandler(function () swap(m_raidSettingsForm) end, "OnConfigRaidChange")
 	common.RegisterReactionHandler(function () swap(m_targeterSettingsForm) end, "OnConfigTargeterChange")
 	common.RegisterReactionHandler(OnCheckChange, "OnCheckChange")

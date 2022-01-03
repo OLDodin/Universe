@@ -27,6 +27,7 @@ local AFK_STATE = 0
 local OFF_STATE = 2
 local DEAD_STATE = 3
 local NORMAL_STATE = 4
+local m_raidLockBtn = nil
 
 local function SetArrowAngle(anArrowIcon, anAngle)
 	if anAngle and anArrowIcon then
@@ -664,6 +665,20 @@ function ShowReadyStateInGUI(aPlayerBar, aPlayerReadyState)
 	end
 end
 
+function RaidLockBtn(aTopPanelForm)
+	local activeNum = m_raidLockBtn:GetVariant() == 1 and 0 or 1
+	m_raidLockBtn:SetVariant(activeNum)
+	
+	local wtTopPanel = getChild(aTopPanelForm, "TopPanel")
+	DnD.Enable(wtTopPanel, activeNum==0)
+end
+
+function ApplyRaidSettingsToGUI(aTopPanelForm)
+	local activeNum = m_raidLockBtn:GetVariant() == 1 and 1 or 0
+	local wtTopPanel = getChild(aTopPanelForm, "TopPanel")
+	DnD.Enable(wtTopPanel, activeNum==0)
+end
+
 function CreateRaidPanel()
 	setTemplateWidget(m_template)
 	local raidPanel = common.AddonCreateChildForm("RaidPanel")
@@ -672,6 +687,9 @@ function CreateRaidPanel()
 	
 	resize(wtTopPanel, 200, nil)
 	hide(raidPanel)
+	
+	m_raidLockBtn = getChild(wtTopPanel, "ButtonLocker")
+	RaidLockBtn(raidPanel)
 	
 	hide(getChild(wtTopPanel, "PartyButton"))
 	return raidPanel
@@ -695,7 +713,7 @@ end
 
 local m_locale = getLocale()
 local m_modeBtn = nil
-local m_lockBtn = nil
+local m_targetLockBtn = nil
 local m_targetModeName = nil
 local m_modeSelectPanel = nil
 
@@ -744,8 +762,8 @@ function SwitchTargetsBtn(aNewTargetInd)
 end
 
 function TargetLockBtn(aTopPanelForm)
-	local activeNum = m_lockBtn:GetVariant() == 1 and 0 or 1
-	m_lockBtn:SetVariant(activeNum)
+	local activeNum = m_targetLockBtn:GetVariant() == 1 and 0 or 1
+	m_targetLockBtn:SetVariant(activeNum)
 	m_modeBtn:SetVariant(activeNum)
 	
 	local wtTopPanel = getChild(aTopPanelForm, "TopTargeterPanel")
@@ -754,8 +772,8 @@ function TargetLockBtn(aTopPanelForm)
 end
 
 function ApplyTargetSettingsToGUI(aTopPanelForm)
-	local activeNum = m_lockBtn:GetVariant() == 1 and 1 or 0
-	m_lockBtn:SetVariant(activeNum)
+	local activeNum = m_targetLockBtn:GetVariant() == 1 and 1 or 0
+	m_targetLockBtn:SetVariant(activeNum)
 	m_modeBtn:SetVariant(activeNum)
 	
 	local wtTopPanel = getChild(aTopPanelForm, "TopTargeterPanel")
@@ -780,7 +798,7 @@ function CreateTargeterPanel()
 
 	local modePanel = getChild(wtTopPanel, "ModePanel")
 	m_targetModeName = getChild(modePanel, "ModeNameTextView")
-	m_lockBtn = getChild(wtTopPanel, "ButtonLocker")
+	m_targetLockBtn = getChild(wtTopPanel, "ButtonLocker")
 	move(modePanel, 25, 3)
 	resize(modePanel, 130, 20)
 	m_modeBtn = getChild(modePanel, "GetModeBtn")

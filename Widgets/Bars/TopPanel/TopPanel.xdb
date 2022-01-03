@@ -6,6 +6,7 @@
 		<Item href="CheckButton.xdb#xpointer(/WidgetButton)"/>
 		<Item href="ShopButton.xdb#xpointer(/WidgetButton)"/>
 		<Item href="ConfigButton.xdb#xpointer(/WidgetButton)"/>
+		<Item href="ButtonLocker.xdb#xpointer(/WidgetButton)"/>
 	</Children>
 	<BackLayer href="Textures/TopPanel.xdb#xpointer(/WidgetLayerTiledTexture)" />
 	<Placement>
