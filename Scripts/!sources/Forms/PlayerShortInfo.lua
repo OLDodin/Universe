@@ -6,6 +6,12 @@ local m_factionWdg = nil
 local m_titulWdg = nil
 local m_form = nil
 local m_emptyWStr = common.GetEmptyWString()
+local m_shardBeginWStr = userMods.ToWString("[")
+local m_shardEndWStr = userMods.ToWString("]")
+local m_commaWStr = userMods.ToWString(", ")
+local m_spaceWStr = userMods.ToWString(" ")
+local m_bracketBeginWStr = userMods.ToWString("(")
+local m_bracketEndWStr = userMods.ToWString(")")
 
 function CreatePlayerShortInfoForm()
 	local form=createWidget(nil, "playerShortInfoForm", "Form", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_HIGH, 350, 130, 100, 120)
@@ -39,7 +45,7 @@ function InitPlayerShortInfoForm(aPlayerID)
 	if isPlayer then
 		shardName = unit.GetPlayerShardName(aPlayerID)
 		shardName = shardName and common.GetShortString(shardName) or m_emptyWStr
-		nameStr = "["..toString(shardName).."]"..toString(object.GetName(aPlayerID))
+		nameStr = ConcatWString(m_shardBeginWStr, shardName, m_shardEndWStr, object.GetName(aPlayerID))
 	else
 		nameStr = object.GetName(aPlayerID)
 	end
@@ -65,25 +71,26 @@ function InitPlayerShortInfoForm(aPlayerID)
 	
 		local sex = unit.GetSex(aPlayerID)
 		if sex then
-			infoStr = toString(sex.raceSexName)..", "
+			infoStr = ConcatWString(sex.raceSexName, m_commaWStr)
 		end
 		if playerClass then
 			if unit.IsGreat(aPlayerID) then
-				infoStr = infoStr.." "..toString(playerClass.greatName)
+				infoStr = ConcatWString(infoStr, m_spaceWStr, playerClass.greatName)
+				
 			else
-				infoStr = infoStr.." "..toString(playerClass.raceClassName)
+				infoStr = ConcatWString(infoStr, m_spaceWStr, playerClass.raceClassName)
 			end
 		end
 	else
 		if unit.IsPet(aPlayerID) then
 			local masterID = unit.GetFollowerMaster(aPlayerID)
 			if isExist(masterID) then
-				guildStr = getLocale()["petOwner"]..toString(object.GetName(masterID))
+				guildStr = ConcatWString(getLocale()["petOwner"], object.GetName(masterID))
 			end
 		end
 		local race = unit.GetRace(aPlayerID)
 		if race then
-			infoStr = getLocale()[race.sysCreatureRace]..", "
+			infoStr = ConcatWString(getLocale()[race.sysCreatureRace], m_commaWStr)
 		end
 		title = {}
 		title.name = unit.GetTitle(aPlayerID)
@@ -93,10 +100,10 @@ function InitPlayerShortInfoForm(aPlayerID)
 
 	local lvl = unit.GetLevel(aPlayerID)
 	if lvl then
-		infoStr = infoStr.." "..tostring(lvl)
+		infoStr = ConcatWString(infoStr, m_spaceWStr, toWString(lvl))
 	end
 	if soulLvl then 
-		infoStr = infoStr.."("..tostring(soulLvl)..")"
+		infoStr = ConcatWString(infoStr, m_bracketBeginWStr, toWString(soulLvl), m_bracketEndWStr)
 	end
 	
 	setText(m_infoWdg, infoStr)

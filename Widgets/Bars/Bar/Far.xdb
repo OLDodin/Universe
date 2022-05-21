@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <WidgetPanel>
-	<Priority>122</Priority>
+	<Priority>123</Priority>
 	<Name>FarBarBackground</Name>
 	<Children>
 	</Children>

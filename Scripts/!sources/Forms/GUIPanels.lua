@@ -23,6 +23,8 @@ local m_leaderWStr = userMods.ToWString("(*)")
 local m_afkWStr = userMods.ToWString("[AFK]")
 local m_offWStr = userMods.ToWString("[Off]")
 local m_deadWStr = userMods.ToWString("[Dead]")
+local m_shardBeginWStr = userMods.ToWString("[")
+local m_shardEndWStr = userMods.ToWString("] ")
 local AFK_STATE = 0
 local OFF_STATE = 2
 local DEAD_STATE = 3
@@ -43,9 +45,20 @@ local function ChangeSelectable(anInfo, aPlayerBar)
 	if anInfo then
 		barColor.a = 1
 		hide(aPlayerBar.farBarBackgroundWdg)
+		hide(aPlayerBar.farColoredBarWdg)
 	else
 		barColor.a = 0.8
-		show(aPlayerBar.farBarBackgroundWdg)
+		if aPlayerBar.formSettings.showFrameStripOnDistanceButton then
+			show(aPlayerBar.farBarBackgroundWdg)
+		end
+		if aPlayerBar.formSettings.showGrayOnDistanceButton then
+			show(aPlayerBar.farColoredBarWdg)
+		end
+		--targeter
+		if aPlayerBar.formSettings.showFrameStripOnDistanceButton == nil then
+			show(aPlayerBar.farBarBackgroundWdg)
+			show(aPlayerBar.farColoredBarWdg)
+		end
 	end
 	
 	if not compareColor(aPlayerBar.optimizeInfo.barColor, barColor) then
@@ -118,7 +131,7 @@ local function PlayerDistanceChanged(anInfo, aPlayerBar)
 	if not anInfo.needShow then
 		return
 	end
-	
+
 	if aPlayerBar.optimizeInfo.currDist ~= anInfo.dist then
 		if aPlayerBar.formSettings.showDistanceButton then
 			setText(aPlayerBar.distTextWdg, anInfo.dist, "LogColorYellow")
@@ -338,7 +351,9 @@ function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettin
 	aPlayerBar.formSettings = aFormSettings
 	aPlayerBar.optimizeInfo.canSelect = true
 	aPlayerBar.optimizeInfo.canSelectByDist = true
+	aPlayerBar.optimizeInfo.currDist = -1
 	aPlayerBar.panelColorType = aRelationType
+	
 	
 	aPlayerBar.usedBuffSlotCnt = 0
 	for i = 1, GetTableSize(aPlayerBar.buffSlots) do 
@@ -394,8 +409,10 @@ function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettin
 	or (aPlayerInfo.state == GROUP_MEMBER_STATE_MERC and aPlayerInfo.id==nil) then
 		barColor.a = 0.8
 		show(aPlayerBar.farBarBackgroundWdg)
+		show(aPlayerBar.farColoredBarWdg)
 	else
 		hide(aPlayerBar.farBarBackgroundWdg)
+		hide(aPlayerBar.farColoredBarWdg)
 	end
 	
 	local leaderWStr = anIsLeader and m_leaderWStr or m_emptyWStr
@@ -429,7 +446,7 @@ function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettin
 		if common.CompareWString(aPlayerBar.optimizeInfo.shardName, shardName)~=0 then
 			aPlayerBar.optimizeInfo.shardName = shardName
 			if not common.IsEmptyWString(shardName) then
-				shardName = "["..toString(shardName).."] "
+				shardName = ConcatWString(m_shardBeginWStr, shardName, m_shardEndWStr)
 			end
 			aPlayerBar.textWdg:SetVal("Server", shardName)
 		end
@@ -523,6 +540,7 @@ function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings)
 	playerBar.buffPanelImportantWdg = getChild(playerBar.wdg, "BuffPanelImportant")
 	playerBar.farBarBackgroundWdg = getChild(playerBar.wdg, "FarBarBackground")
 	playerBar.clearBarWdg = getChild(playerBar.wdg, "ClearBar")
+	playerBar.farColoredBarWdg = getChild(playerBar.wdg, "FarColored")
 	playerBar.optimizeInfo = {}
 	playerBar.optimizeInfo.name = m_emptyWStr
 	playerBar.optimizeInfo.shardName = m_emptyWStr
@@ -553,13 +571,14 @@ function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings)
 	move(playerBar.checkIconWdg, 2, 10)
 	resize(playerBar.barBackgroundWdg, panelWidth, panelHeight)
 	resize(playerBar.farBarBackgroundWdg, panelWidth-4, panelHeight-4)
+	resize(playerBar.farColoredBarWdg, panelWidth-4, panelHeight-4)
 	resize(playerBar.barWdg, panelWidth-4, panelHeight-4)
 	resize(playerBar.clearBarWdg, panelWidth-4, panelHeight-4)
 	resize(playerBar.buffPanelWdg, panelWidth, panelHeight)
 	resize(playerBar.buffPanelNegativeWdg, panelWidth, panelHeight)
 
 	move(playerBar.barWdg, 2, 2)
-	local shieldBarColor = { r=1, g=1, b=1, a=0.8 }
+	local shieldBarColor = { r=1, g=1, b=1, a=1.0 }
 	setBackgroundColor(playerBar.shieldBarWdg, shieldBarColor)
 	
 	setBackgroundColor(playerBar.barWdg, barColor) 
@@ -578,6 +597,10 @@ function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings)
 	align(playerBar.farBarBackgroundWdg, WIDGET_ALIGN_LOW, WIDGET_ALIGN_HIGH)
 	move(playerBar.farBarBackgroundWdg, 2, 2)
 	hide(playerBar.farBarBackgroundWdg)
+	align(playerBar.farColoredBarWdg, WIDGET_ALIGN_LOW, WIDGET_ALIGN_HIGH)
+	move(playerBar.farColoredBarWdg, 2, 2)
+	setBackgroundColor(playerBar.farColoredBarWdg, { r = 0.3; g = 0.3; b = 0.3; a = 0.7 }) 
+	hide(playerBar.farColoredBarWdg)
 	
 	barColor = { r = 0; g = 0; b = 0; a = 1.0 }
 	setBackgroundColor(playerBar.clearBarWdg, barColor) 
@@ -627,7 +650,7 @@ end
 
 function CreateBuffSlot(aParent, aBuffSize, anResArray, anIndex, anAlign)
 	local buffSlot = {}
-	buffSlot.buffWdg = createWidget(aParent, "mybuff"..anIndex, "BuffTemplate", anAlign, anAlign, aBuffSize, aBuffSize, 2+(anIndex-1)*aBuffSize, 3)
+	buffSlot.buffWdg = createWidget(aParent, "mybuff"..anIndex, "BuffTemplate", anAlign, anAlign, aBuffSize, aBuffSize, 2+(anIndex-1)*aBuffSize, 4)
 	buffSlot.buffIcon = getChild(buffSlot.buffWdg, "DotIcon")
 	buffSlot.buffHighlight = getChild(buffSlot.buffWdg, "DotHighlight")
 	buffSlot.buffStackCnt = getChild(buffSlot.buffWdg, "DotStackText")

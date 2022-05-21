@@ -1,3 +1,5 @@
+local m_distanceSettingsForm = nil
+
 function CreateRaidSettingsForm()
 	local form=createWidget(nil, "raidSettingsForm", "Form", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 720, 620, 200, 100)
 	hide(form)
@@ -50,12 +52,11 @@ function CreateRaidSettingsForm()
 		
 	setLocaleText(createWidget(form, "raidWidthText", "TextView", nil, nil, 200, 25, 20, 440))
 	setLocaleText(createWidget(form, "raidHeightText", "TextView", nil, nil, 200, 25, 20, 470))
-	setLocaleText(createWidget(form, "distanceText", "TextView", nil, nil, 200, 25, 20, 500))
-	setLocaleText(createWidget(form, "buffSizeText", "TextView", nil, nil, 200, 25, 20, 530))
+	setLocaleText(createWidget(form, "buffSizeText", "TextView", nil, nil, 200, 25, 20, 500))
 	createWidget(form, "raidWidthEdit", "EditLine", nil, nil, 80, 25, 240, 440, nil, nil)
 	createWidget(form, "raidHeightEdit", "EditLine", nil, nil, 80, 25, 240, 470, nil, nil)
-	createWidget(form, "distanceEdit", "EditLine", nil, nil, 80, 25, 240, 500, nil, nil)
-	createWidget(form, "buffSizeEdit", "EditLine", nil, nil, 80, 25, 240, 530, nil, nil)
+	createWidget(form, "buffSizeEdit", "EditLine", nil, nil, 80, 25, 240, 500, nil, nil)
+	setLocaleText(createWidget(form, "distanceButton", "Button", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 200, 25, 60, 530))
 	
 	setLocaleText(createWidget(form, "raidBuffsButton", "TextView", nil, nil, 200, 25, 410, 50))
 	createWidget(form, "autoDebuffModeButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 350, 25, 340, 80)
@@ -73,8 +74,14 @@ function CreateRaidSettingsForm()
 	setLocaleText(createWidget(form, "saveButton", "Button", WIDGET_ALIGN_CENTER, WIDGET_ALIGN_HIGH, 200, 30, nil, 20))
 	
 	DnD.Init(form, panel, true)
-		
+	
+	m_distanceSettingsForm = CreateDistanceSettingsForm()	
+	
 	return form
+end
+
+function DistanceBtnPressed()
+	show(m_distanceSettingsForm)
 end
 
 function SaveRaidFormSettings(aForm)
@@ -98,7 +105,6 @@ function SaveRaidFormSettings(aForm)
 	
 	mySettings.raidWidthText = getTextString(getChild(aForm, "raidWidthEdit"))
 	mySettings.raidHeightText = getTextString(getChild(aForm, "raidHeightEdit"))
-	mySettings.distanceText = getTextString(getChild(aForm, "distanceEdit"))
 	mySettings.buffSize = getTextString(getChild(aForm, "buffSizeEdit"))
 
 	mySettings.raidBuffs.autoDebuffModeButton = getCheckBoxState(getChild(aForm, "autoDebuffModeButton"))
@@ -110,6 +116,8 @@ function SaveRaidFormSettings(aForm)
 
 	
 	UpdateTableValuesFromContainer(mySettings.raidBuffs.customBuffs, aForm)
+	
+	SaveDistanceFormSettings(m_distanceSettingsForm, mySettings)
 	
 	return mySettings
 end
@@ -135,7 +143,6 @@ function LoadRaidFormSettings(aForm)
 	
 	setText(getChild(aForm, "raidWidthEdit"), mySettings.raidWidthText)
 	setText(getChild(aForm, "raidHeightEdit"), mySettings.raidHeightText)
-	setText(getChild(aForm, "distanceEdit"), mySettings.distanceText)
 	setText(getChild(aForm, "buffSizeEdit"), mySettings.buffSize)
 	
 	setLocaleText(getChild(aForm, "autoDebuffModeButton"), mySettings.raidBuffs.autoDebuffModeButton, true)
@@ -146,4 +153,6 @@ function LoadRaidFormSettings(aForm)
 	setLocaleText(getChild(aForm, "checkMovementsButton"), mySettings.raidBuffs.checkMovementsButton, true)
 	
 	ShowValuesFromTable(profile.raidFormSettings.raidBuffs.customBuffs, aForm)
+	
+	LoadDistanceFormSettings(m_distanceSettingsForm)
 end

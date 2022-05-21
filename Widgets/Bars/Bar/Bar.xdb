@@ -16,6 +16,7 @@
 		<Item href="WoundsText.xdb#xpointer(/WidgetTextView)"/>
 		<Item href="Far.xdb#xpointer(/WidgetPanel)"/>
 		<Item href="ClearBar.xdb#xpointer(/WidgetPanel)"/>
+		<Item href="FarColored.xdb#xpointer(/WidgetPanel)"/>
 
 		<Item href="BuffPanelNegative.xdb#xpointer(/WidgetPanel)"/>
 		<Item href="BuffPanel.xdb#xpointer(/WidgetPanel)"/>

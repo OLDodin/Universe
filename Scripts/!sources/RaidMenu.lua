@@ -108,7 +108,7 @@ function GenerateMenuInfos(aPlayerBar, aMyUniqueID)
 			m_whisperMode = true
 			show(chat)
 			getChild(chat, "Input", true):SetFocus(true)
-			mission.SetChatInputText((toWString("/whisper "..toString(name).." ")), 0)
+			mission.SetChatInputText(ConcatWString(toWString("/whisper "), name, toWString(" ")), 0)
 			CloseMenu() end)
 	end
 

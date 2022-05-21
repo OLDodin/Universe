@@ -200,6 +200,10 @@ function LoadSettings(aProfileInd)
 	if m_currentProfile.version < 2.3 or m_currentProfile.version == nil then
 		m_currentProfile.castFormSettings.ignoreList = {}
 	end
+	if m_currentProfile.version < 2.5 or m_currentProfile.version == nil then
+		m_currentProfile.raidFormSettings.showGrayOnDistanceButton = true
+		m_currentProfile.raidFormSettings.showFrameStripOnDistanceButton = true
+	end
 end
 
 function ProfileWasDeleted(anInd)
@@ -237,5 +241,5 @@ function ExportProfileByIndex(anInd)
 end
 
 function GetSettingsVersion()
-	return 2.3;
+	return 2.5;
 end

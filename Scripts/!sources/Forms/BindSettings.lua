@@ -290,7 +290,7 @@ end
 
 function GetSwitchIndexByName(anArr, aName)
 	for i, v in pairs(anArr) do
-		if v == aName then
+		if compareStrWithConvert(v, aName) then
 			return i
 		end
 	end
@@ -299,7 +299,7 @@ end
 
 function GetCurrentSwitchIndex(aWdg)
 	local txtWdg = getChild(aWdg, "ModeNameTextView")
-	local currValue = toString(common.ExtractWStringFromValuedText(txtWdg:GetValuedText()))
+	local currValue = common.ExtractWStringFromValuedText(txtWdg:GetValuedText())
 	return GetSwitchIndexByName(m_actionSwitch, currValue)
 end
 
@@ -307,6 +307,7 @@ function SetSwitchIndex(aWdg, anIndex)
 	if anIndex == nil then
 		anIndex = 0
 	end
+	
 	local txtWdg = getChild(aWdg, "ModeNameTextView")
 	txtWdg:SetVal("Name", m_actionSwitch[anIndex])
 end

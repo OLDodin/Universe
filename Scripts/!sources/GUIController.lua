@@ -2299,7 +2299,7 @@ function UniverseBtnPressed()
 	swap(m_mainSettingForm)
 end
 
-function GUIControllerInit()
+function GUIControllerInit()	
 	InitClassIconsTexture()
 	InitCheckTextures()
 	InitButtonTextures()
@@ -2380,6 +2380,8 @@ function GUIControllerInit()
 	AddReaction("resetPanelCastPosButton", ResetProgressCastPanelPos)
 	AddReaction("nextHelpBtn", NextHelp)
 	AddReaction("prevHelpBtn", PrevHelp)
+	AddReaction("distanceButton", DistanceBtnPressed)
+	AddReaction("closeDistanceFormButton", function (aWdg) swap(getParent(aWdg)) end)
 	
 	local profile = GetCurrentProfile()
 	if profile.mainFormSettings.useRaidSubSystem then

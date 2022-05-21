@@ -83,8 +83,45 @@ function findWord(text)
 	return pairs({toString(text)})
 end
 
+function ConcatWStringFromTable(aTable)
+	local vt = common.CreateValuedText()
+	
+	local valuedTxtFormatStr = "<rs class=\"class\">"
+	local i = 0
+    for k, v in pairs( aTable ) do
+        if v and common.IsWString(v) then
+			valuedTxtFormatStr = valuedTxtFormatStr.."<r name=\"obj"..i.."\"/>" 
+			i = i + 1
+        end
+    end
+	valuedTxtFormatStr = valuedTxtFormatStr.."</rs>"
+	
+	local tableFormat = {
+		format = userMods.ToWString(valuedTxtFormatStr),	
+	}
+	common.SetTextValues( vt, tableFormat )
+	
+	i = 0
+	for k, v in pairs( aTable ) do
+        if v and common.IsWString(v) then
+			vt:SetVal("obj"..i, v)
+			i = i + 1
+        end
+    end
+	
+	return common.ExtractWStringFromValuedText( vt )
+end 
+
+function ConcatWString(...)
+	local arg = { ... }
+	return ConcatWStringFromTable(arg)
+end 
+
 function formatText(text, align, fontSize, shadow, outline, fontName)
-	return "<body fontname='"..(toStringUtils(fontName) or "AllodsWest").."' alignx = '"..(toStringUtils(align) or "left").."' fontsize='"..(toStringUtils(fontSize) or "14").."' shadow='"..(toStringUtils(shadow) or "0").."' outline='"..(toStringUtils(outline) or "1").."'><rs class='color'>"..(toStringUtils(text) or "").."</rs></body>"
+	local firstPart = "<body fontname='"..(toStringUtils(fontName) or "AllodsWest").."' alignx = '"..(toStringUtils(align) or "left").."' fontsize='"..(toStringUtils(fontSize) or "14").."' shadow='"..(toStringUtils(shadow) or "0").."' outline='"..(toStringUtils(outline) or "1").."'><rs class='color'>"
+	local textMessage = toWString(text) or common.GetEmptyWString()
+	local secondPart = "</rs></body>"
+	return ConcatWString(toWString(firstPart), textMessage, toWString(secondPart))
 end
 
 function toValuedText(text, color, align, fontSize, shadow, outline, fontName)
@@ -528,77 +565,74 @@ Global("TYPE_ITEM", 1)
 Global("TYPE_NOT_DEFINED", 2)
 Global("NOT_FOUND", 100)
 
-local cacheSpellId={}
+local cacheSpellId=nil
 
-function getSpellIdFromName(name) 
-	if not name then return nil end
-
-	name = toString(name)
-	local cachedSpellID = cacheSpellId[name]
-	if cachedSpellID then
-		if type(cachedSpellID)=="userdata" then
-			if spellLib.CanRunAvatarEx(cachedSpellID) then return cachedSpellID end
-		else
-			return nil
-		end
-	end	
+function getSpellIdFromName(aName) 
+	if not aName then return nil end
 	
-	local spellbook = avatar.GetSpellBook()
-	if not spellbook then return nil end
+	if not cacheSpellId then
+		cacheSpellId = GetAVLWStrTree()
+		local spellbook = avatar.GetSpellBook()
+		if not spellbook then return nil end
 
-	for _, spellId in pairs(spellbook) do
-		local spellInfo = spellId and spellLib.GetDescription(spellId)
-		local spellNameFromLib = toString(spellInfo.name)
-		if spellInfo and spellNameFromLib == name then
-			cacheSpellId[name] = spellId
-			return spellId
-		end
-	end
-
-	cacheSpellId[name] = NOT_FOUND
-	
-	return nil
-end
-
-local cacheItemId={}
-
-function getItemIdFromName(name)
-	if not name then return nil end
-	name = toString(name)
-	
-	local cachedItemID = cacheItemId[name]
-	if cachedItemID then
-		if type(cachedItemID)=="number" then
-			if itemLib.IsItem(cachedItemID) then return cachedItemID end
-		else
-			return nil
-		end
-	end	
-
-	local inventory = avatar.GetInventoryItemIds()
-	if not inventory then return nil end
-
-	for i, itemId in pairs(inventory) do
-		local itemInfo = itemId and itemLib.GetItemInfo(itemId)
-		if itemInfo then
-			local itemNameFromLib = toString(itemInfo.name)
-			if itemNameFromLib == name then
-				cacheItemId[name] = itemId
-				return itemId
+		for _, spellId in pairs(spellbook) do
+			local spellInfo = spellId and spellLib.GetDescription(spellId)
+			if spellInfo then
+				cacheSpellId:add({name = spellInfo.name, id = spellId})
 			end
 		end
 	end
 	
-	cacheItemId[name] = NOT_FOUND
+	local objToFind = {name = aName}
+	local searchRes = cacheSpellId:find(objToFind)
+	if searchRes ~= nil then
+		if type(searchRes.id)=="userdata" then
+			if spellLib.CanRunAvatarEx(searchRes.id) then return searchRes.id end
+		else
+			return nil
+		end
+	end
+	
+	return nil
+end
+
+local cacheItemId=nil
+
+function getItemIdFromName(aName)
+	if not aName then return nil end
+	
+	if not cacheItemId then
+		cacheItemId = GetAVLWStrTree()
+		local inventory = avatar.GetInventoryItemIds()
+		if not inventory then return nil end
+
+		for i, itemId in pairs(inventory) do
+			local itemInfo = itemId and itemLib.GetItemInfo(itemId)
+			if itemInfo then
+				cacheItemId:add({name = itemInfo.name, id = itemId})
+			end
+		end
+	end
+	
+	local objToFind = {name = aName}
+	local searchRes = cacheItemId:find(objToFind)
+	if searchRes ~= nil then
+		if type(searchRes.id)=="number" then
+			if itemLib.IsItem(searchRes.id) then return searchRes.id end
+		else
+			return nil
+		end
+	end
+
 	return nil
 end
 
 function clearSpellCache()
-	cacheSpellId={}
+	cacheSpellId=nil
 end
 
 function clearItemsCache()
-	cacheItemId={}
+	cacheItemId=nil
 end
 
 
@@ -708,9 +742,15 @@ function testSpell(name, targetId)
 end
 
 function ressurect(targetId, ressurectName)
-	if not locale or not locale["defaultRessurectNames"] then return false end
-	for i, v in ipairs(locale["defaultRessurectNames"]) do
-		local name=v and v.name
+	local arrNames = {}
+	for i = 1, 4 do
+		local defaultName = getLocale()["defaultRessurectNames"..i]
+		if defaultName then
+			table.insert(arrNames, defaultName)
+		end
+	end
+	for i, v in ipairs(arrNames) do
+		local name=v
 		if testSpell(name, targetId) then
 			selectTarget(targetId)
 			cast(name, targetId)
@@ -878,4 +918,64 @@ function getSpellTextureFromCache(aSpellID)
 	table.insert(m_spellTextureCache, newSpellTexInfo)
 	
 	return newSpellTexInfo.texture
+end
+
+
+
+------------------------------------------------------------------
+------ Loging To Chat
+------------------------------------------------------------------
+local wtChat = nil
+local chatRows = 0 --- for clear buffer after show messages
+local valuedText = common.CreateValuedText()
+local formatVT = "<html fontname='AllodsSystem' shadow='1'><rs class='color'><r name='addon'/><r name='text'/></rs></html>"
+valuedText:SetFormat(userMods.ToWString(formatVT))
+
+wtGetNumParents = function(w, parents)
+	if parents > 0 and w.GetParent then
+		local pr = w:GetParent()
+		if pr then
+			return wtGetNumParents(pr, parents-1)
+		end
+	end
+	return w
+end
+
+function GetSysChatContainer()
+	local parents = 2
+	local w = stateMainForm:GetChildUnchecked("Chat", false)
+	if not w then
+		w = stateMainForm:GetChildUnchecked("Chat", true)
+	else
+		w = w:GetChildUnchecked("Chat", true)
+	end
+	if not w then ---- 2.0.06.13 [26.05.2011] 
+		w = stateMainForm:GetChildUnchecked("ChatLog", false)
+		w = w:GetChildUnchecked("Container", true)
+		if w then parents = 3 end
+	end
+	
+	return w, wtGetNumParents(w, parents)
+end
+
+function LogToChatVT(valuedText, name, toWW)
+	name = name or common.GetAddonName()
+
+
+	if not wtChat then wtChat = GetSysChatContainer() end
+	if wtChat and wtChat.PushFrontValuedText then
+		chatRows =  chatRows + 1
+		valuedText:SetVal( "addon", userMods.ToWString(name..": ") )
+		wtChat:PushFrontValuedText( valuedText )
+	end
+end
+
+function LogToChat(message, color, toWW)
+
+	valuedText:ClearValues() 
+	valuedText:SetClassVal( "color", color or "LogColorYellow" )
+	if not common.IsWString( message ) then	message = userMods.ToWString(message) end
+	valuedText:SetVal( "text", message )
+	LogToChatVT(valuedText, common.GetAddonName(), toWW)
+
 end

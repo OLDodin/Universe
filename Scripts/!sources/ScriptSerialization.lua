@@ -14,39 +14,7 @@ local sBooleanFalseChracter = "f"
 local sBooleanTrueCharacter = "t"
 local sWStringTypeCharacter = "?"
 
-function ConcatWStringFromTable(aTable)
-	local vt = common.CreateValuedText()
-	
-	local valuedTxtFormatStr = "<rs class=\"class\">"
-	local i = 0
-    for k, v in pairs( aTable ) do
-        if v and common.IsWString(v) then
-			valuedTxtFormatStr = valuedTxtFormatStr.."<r name=\"obj"..i.."\"/>" 
-			i = i + 1
-        end
-    end
-	valuedTxtFormatStr = valuedTxtFormatStr.."</rs>"
-	
-	local tableFormat = {
-		format = userMods.ToWString(valuedTxtFormatStr),	
-	}
-	common.SetTextValues( vt, tableFormat )
-	
-	i = 0
-	for k, v in pairs( aTable ) do
-        if v and common.IsWString(v) then
-			vt:SetVal("obj"..i, v)
-			i = i + 1
-        end
-    end
-	
-	return common.ExtractWStringFromValuedText( vt )
-end 
 
-function ConcatWString(...)
-	local arg = { ... }
-	return ConcatWStringFromTable(arg)
-end 
 
 
 

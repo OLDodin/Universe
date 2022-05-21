@@ -61,6 +61,7 @@
 		<Item href="Scripts/Forms/GUITexturesAndColors.lua"/>
 		<Item href="Scripts/Forms/MainSettings.lua"/>
 		<Item href="Scripts/Forms/Profiles.lua"/>
+		<Item href="Scripts/Forms/DistanceSettingsForm.lua"/>
 		<Item href="Scripts/Forms/RaidSettings.lua"/>
 		<Item href="Scripts/Forms/TargeterSettings.lua"/>
 		<Item href="Scripts/Forms/BuffSettings.lua"/>
@@ -79,7 +80,16 @@
 		<Item href="Scripts/GUIController.lua"/>
 		<Item href="Scripts/mainscript.lua"/>
 	</ScriptFileRefs>
-
+	<textsGroups>
+		<Item>
+			<groupName>rus</groupName>
+			<texts href="Locales/rus/Locale.(UIRelatedTexts).xdb#xpointer(/UIRelatedTexts)"/>
+		</Item>
+		<Item>
+			<groupName>eng</groupName>
+			<texts href="Locales/eng/Locale.(UIRelatedTexts).xdb#xpointer(/UIRelatedTexts)"/>
+		</Item>
+	</textsGroups>
   <texts href=""/>
   <textures href="Widgets/Textures/Textures.xdb#xpointer(/UIRelatedTextures)"/>
   <visObjects href=""/>

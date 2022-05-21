@@ -1,0 +1,1273 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<UIRelatedTexts>
+  <items>
+    <Item>
+      <name>distanceButton</name>
+      <resource href="distanceButton.txt"/>
+    </Item>
+    <Item>
+      <name>distanceSettingsFormHeader</name>
+      <resource href="distanceSettingsFormHeader.txt"/>
+    </Item>
+    <Item>
+      <name>closeDistanceFormButton</name>
+      <resource href="closeDistanceFormButton.txt"/>
+    </Item>
+    <Item>
+      <name>showGrayOnDistanceButton</name>
+      <resource href="showGrayOnDistanceButton.txt"/>
+    </Item>
+    <Item>
+      <name>showFrameStripOnDistanceButton</name>
+      <resource href="showFrameStripOnDistanceButton.txt"/>
+    </Item>
+    <Item>
+      <name>raidButton</name>
+      <resource href="raidButton.txt"/>
+    </Item>
+    <Item>
+      <name>targeterButton</name>
+      <resource href="targeterButton.txt"/>
+    </Item>
+    <Item>
+      <name>buffsButton</name>
+      <resource href="buffsButton.txt"/>
+    </Item>
+    <Item>
+      <name>bindButton</name>
+      <resource href="bindButton.txt"/>
+    </Item>
+    <Item>
+      <name>progressCastButton</name>
+      <resource href="progressCastButton.txt"/>
+    </Item>
+    <Item>
+      <name>helpButton</name>
+      <resource href="helpButton.txt"/>
+    </Item>
+    <Item>
+      <name>okButton</name>
+      <resource href="okButton.txt"/>
+    </Item>
+    <Item>
+      <name>useRaidSubSystem</name>
+      <resource href="useRaidSubSystem.txt"/>
+    </Item>
+    <Item>
+      <name>useTargeterSubSystem</name>
+      <resource href="useTargeterSubSystem.txt"/>
+    </Item>
+    <Item>
+      <name>useBuffMngSubSystem</name>
+      <resource href="useBuffMngSubSystem.txt"/>
+    </Item>
+    <Item>
+      <name>useBindSubSystem</name>
+      <resource href="useBindSubSystem.txt"/>
+    </Item>
+    <Item>
+      <name>useCastSubSystem</name>
+      <resource href="useCastSubSystem.txt"/>
+    </Item>
+    <Item>
+      <name>panelWidthText</name>
+      <resource href="panelWidthText.txt"/>
+    </Item>
+    <Item>
+      <name>panelHeightText</name>
+      <resource href="panelHeightText.txt"/>
+    </Item>
+    <Item>
+      <name>raidBuffsButton</name>
+      <resource href="raidBuffsButton.txt"/>
+    </Item>
+    <Item>
+      <name>raidWidthText</name>
+      <resource href="raidWidthText.txt"/>
+    </Item>
+    <Item>
+      <name>raidHeightText</name>
+      <resource href="raidHeightText.txt"/>
+    </Item>
+    <Item>
+      <name>raidSettingsFormHeader</name>
+      <resource href="raidSettingsFormHeader.txt"/>
+    </Item>
+    <Item>
+      <name>targeterSettingsFormHeader</name>
+      <resource href="targeterSettingsFormHeader.txt"/>
+    </Item>
+    <Item>
+      <name>targeterBuffsButton</name>
+      <resource href="targeterBuffsButton.txt"/>
+    </Item>
+    <Item>
+      <name>myTargetsButton</name>
+      <resource href="myTargetsButton.txt"/>
+    </Item>
+    <Item>
+      <name>raidBuffSettingsFormHeader</name>
+      <resource href="raidBuffSettingsFormHeader.txt"/>
+    </Item>
+    <Item>
+      <name>addRaidBuffButton</name>
+      <resource href="addRaidBuffButton.txt"/>
+    </Item>
+    <Item>
+      <name>raidBuffsList</name>
+      <resource href="raidBuffsList.txt"/>
+    </Item>
+    <Item>
+      <name>addTargeterBuffButton</name>
+      <resource href="addTargeterBuffButton.txt"/>
+    </Item>
+    <Item>
+      <name>addTargetButton</name>
+      <resource href="addTargetButton.txt"/>
+    </Item>
+    <Item>
+      <name>buffSizeText</name>
+      <resource href="buffSizeText.txt"/>
+    </Item>
+    <Item>
+      <name>showImportantButton</name>
+      <resource href="showImportantButton.txt"/>
+    </Item>
+    <Item>
+      <name>checkControlsButton</name>
+      <resource href="checkControlsButton.txt"/>
+    </Item>
+    <Item>
+      <name>checkMovementsButton</name>
+      <resource href="checkMovementsButton.txt"/>
+    </Item>
+    <Item>
+      <name>hideUnselectableButton</name>
+      <resource href="hideUnselectableButton.txt"/>
+    </Item>
+    <Item>
+      <name>buffsFixInsidePanelButton</name>
+      <resource href="buffsFixInsidePanelButton.txt"/>
+    </Item>
+    <Item>
+      <name>castByMe</name>
+      <resource href="castByMe.txt"/>
+    </Item>
+    <Item>
+      <name>flipBuffsButton</name>
+      <resource href="flipBuffsButton.txt"/>
+    </Item>
+    <Item>
+      <name>aboveHeadButton</name>
+      <resource href="aboveHeadButton.txt"/>
+    </Item>
+    <Item>
+      <name>isEnemyButton</name>
+      <resource href="isEnemyButton.txt"/>
+    </Item>
+    <Item>
+      <name>isSpell</name>
+      <resource href="isSpell.txt"/>
+    </Item>
+    <Item>
+      <name>bindSettingsFormHeader</name>
+      <resource href="bindSettingsFormHeader.txt"/>
+    </Item>
+    <Item>
+      <name>bindForRaidHeader</name>
+      <resource href="bindForRaidHeader.txt"/>
+    </Item>
+    <Item>
+      <name>bindForTargetHeader</name>
+      <resource href="bindForTargetHeader.txt"/>
+    </Item>
+    <Item>
+      <name>bindForCastHeader</name>
+      <resource href="bindForCastHeader.txt"/>
+    </Item>
+    <Item>
+      <name>raidBindSimpleButton</name>
+      <resource href="raidBindSimpleButton.txt"/>
+    </Item>
+    <Item>
+      <name>raidBindShiftButton</name>
+      <resource href="raidBindShiftButton.txt"/>
+    </Item>
+    <Item>
+      <name>raidBindAltButton</name>
+      <resource href="raidBindAltButton.txt"/>
+    </Item>
+    <Item>
+      <name>raidBindCtrlButton</name>
+      <resource href="raidBindCtrlButton.txt"/>
+    </Item>
+    <Item>
+      <name>targetBindSimpleButton</name>
+      <resource href="targetBindSimpleButton.txt"/>
+    </Item>
+    <Item>
+      <name>targetBindShiftButton</name>
+      <resource href="targetBindShiftButton.txt"/>
+    </Item>
+    <Item>
+      <name>targetBindAltButton</name>
+      <resource href="targetBindAltButton.txt"/>
+    </Item>
+    <Item>
+      <name>targetBindCtrlButton</name>
+      <resource href="targetBindCtrlButton.txt"/>
+    </Item>
+    <Item>
+      <name>separateBuffDebuff</name>
+      <resource href="separateBuffDebuff.txt"/>
+    </Item>
+    <Item>
+      <name>twoColumnMode</name>
+      <resource href="twoColumnMode.txt"/>
+    </Item>
+    <Item>
+      <name>checkFriendCleanableButton</name>
+      <resource href="checkFriendCleanableButton.txt"/>
+    </Item>
+    <Item>
+      <name>colorDebuffButton</name>
+      <resource href="colorDebuffButton.txt"/>
+    </Item>
+    <Item>
+      <name>sortByName</name>
+      <resource href="sortByName.txt"/>
+    </Item>
+    <Item>
+      <name>sortByHP</name>
+      <resource href="sortByHP.txt"/>
+    </Item>
+    <Item>
+      <name>sortByClass</name>
+      <resource href="sortByClass.txt"/>
+    </Item>
+    <Item>
+      <name>sortByDead</name>
+      <resource href="sortByDead.txt"/>
+    </Item>
+    <Item>
+      <name>targetLimitText</name>
+      <resource href="targetLimitText.txt"/>
+    </Item>
+    <Item>
+      <name>ALL_TARGETS</name>
+      <resource href="ALL_TARGETS.txt"/>
+    </Item>
+    <Item>
+      <name>ENEMY_TARGETS</name>
+      <resource href="ENEMY_TARGETS.txt"/>
+    </Item>
+    <Item>
+      <name>FRIEND_TARGETS</name>
+      <resource href="FRIEND_TARGETS.txt"/>
+    </Item>
+    <Item>
+      <name>ENEMY_PLAYERS_TARGETS</name>
+      <resource href="ENEMY_PLAYERS_TARGETS.txt"/>
+    </Item>
+    <Item>
+      <name>FRIEND_PLAYERS_TARGETS</name>
+      <resource href="FRIEND_PLAYERS_TARGETS.txt"/>
+    </Item>
+    <Item>
+      <name>NEITRAL_PLAYERS_TARGETS</name>
+      <resource href="NEITRAL_PLAYERS_TARGETS.txt"/>
+    </Item>
+    <Item>
+      <name>ENEMY_MOBS_TARGETS</name>
+      <resource href="ENEMY_MOBS_TARGETS.txt"/>
+    </Item>
+    <Item>
+      <name>FRIEND_MOBS_TARGETS</name>
+      <resource href="FRIEND_MOBS_TARGETS.txt"/>
+    </Item>
+    <Item>
+      <name>NEITRAL_MOBS_TARGETS</name>
+      <resource href="NEITRAL_MOBS_TARGETS.txt"/>
+    </Item>
+    <Item>
+      <name>ENEMY_PETS_TARGETS</name>
+      <resource href="ENEMY_PETS_TARGETS.txt"/>
+    </Item>
+    <Item>
+      <name>FRIEND_PETS_TARGETS</name>
+      <resource href="FRIEND_PETS_TARGETS.txt"/>
+    </Item>
+    <Item>
+      <name>NOT_FRIENDS_TARGETS</name>
+      <resource href="NOT_FRIENDS_TARGETS.txt"/>
+    </Item>
+    <Item>
+      <name>NOT_FRIENDS_PLAYERS_TARGETS</name>
+      <resource href="NOT_FRIENDS_PLAYERS_TARGETS.txt"/>
+    </Item>
+    <Item>
+      <name>MY_SETTINGS_TARGETS</name>
+      <resource href="MY_SETTINGS_TARGETS.txt"/>
+    </Item>
+    <Item>
+      <name>TARGETS_DISABLE</name>
+      <resource href="TARGETS_DISABLE.txt"/>
+    </Item>
+    <Item>
+      <name>LEFT_CLICK</name>
+      <resource href="LEFT_CLICK.txt"/>
+    </Item>
+    <Item>
+      <name>RIGHT_CLICK</name>
+      <resource href="RIGHT_CLICK.txt"/>
+    </Item>
+    <Item>
+      <name>DISABLE_CLICK</name>
+      <resource href="DISABLE_CLICK.txt"/>
+    </Item>
+    <Item>
+      <name>SELECT_CLICK</name>
+      <resource href="SELECT_CLICK.txt"/>
+    </Item>
+    <Item>
+      <name>MENU_CLICK</name>
+      <resource href="MENU_CLICK.txt"/>
+    </Item>
+    <Item>
+      <name>TARGET_CLICK</name>
+      <resource href="TARGET_CLICK.txt"/>
+    </Item>
+    <Item>
+      <name>RESSURECT_CLICK</name>
+      <resource href="RESSURECT_CLICK.txt"/>
+    </Item>
+    <Item>
+      <name>AUTOCAST_CLICK</name>
+      <resource href="AUTOCAST_CLICK.txt"/>
+    </Item>
+    <Item>
+      <name>mobsButton</name>
+      <resource href="mobsButton.txt"/>
+    </Item>
+    <Item>
+      <name>controlsButton</name>
+      <resource href="controlsButton.txt"/>
+    </Item>
+    <Item>
+      <name>debuffsButton</name>
+      <resource href="debuffsButton.txt"/>
+    </Item>
+    <Item>
+      <name>barsButton</name>
+      <resource href="barsButton.txt"/>
+    </Item>
+    <Item>
+      <name>saveButton</name>
+      <resource href="saveButton.txt"/>
+    </Item>
+    <Item>
+      <name>configHeader</name>
+      <resource href="configHeader.txt"/>
+    </Item>
+    <Item>
+      <name>leftClick</name>
+      <resource href="leftClick.txt"/>
+    </Item>
+    <Item>
+      <name>rightClick</name>
+      <resource href="rightClick.txt"/>
+    </Item>
+    <Item>
+      <name>testSpellNameText</name>
+      <resource href="testSpellNameText.txt"/>
+    </Item>
+    <Item>
+      <name>ressurectNameText</name>
+      <resource href="ressurectNameText.txt"/>
+    </Item>
+    <Item>
+      <name>configMobsHeader</name>
+      <resource href="configMobsHeader.txt"/>
+    </Item>
+    <Item>
+      <name>configDebuffsHeader</name>
+      <resource href="configDebuffsHeader.txt"/>
+    </Item>
+    <Item>
+      <name>configControlsHeader</name>
+      <resource href="configControlsHeader.txt"/>
+    </Item>
+    <Item>
+      <name>configBuffsHeader</name>
+      <resource href="configBuffsHeader.txt"/>
+    </Item>
+    <Item>
+      <name>configBarsHeader</name>
+      <resource href="configBarsHeader.txt"/>
+    </Item>
+    <Item>
+      <name>widthBuffCntText</name>
+      <resource href="widthBuffCntText.txt"/>
+    </Item>
+    <Item>
+      <name>heightBuffCntText</name>
+      <resource href="heightBuffCntText.txt"/>
+    </Item>
+    <Item>
+      <name>heightGroupText</name>
+      <resource href="heightGroupText.txt"/>
+    </Item>
+    <Item>
+      <name>widthGroupText</name>
+      <resource href="widthGroupText.txt"/>
+    </Item>
+    <Item>
+      <name>sizeBuffGroupText</name>
+      <resource href="sizeBuffGroupText.txt"/>
+    </Item>
+    <Item>
+      <name>buffOnMe</name>
+      <resource href="buffOnMe.txt"/>
+    </Item>
+    <Item>
+      <name>buffOnTarget</name>
+      <resource href="buffOnTarget.txt"/>
+    </Item>
+    <Item>
+      <name>configBuffsHeader2</name>
+      <resource href="configBuffsHeader2.txt"/>
+    </Item>
+    <Item>
+      <name>configGroupBuffsHeader</name>
+      <resource href="configGroupBuffsHeader.txt"/>
+    </Item>
+    <Item>
+      <name>editGroupBuffsButton</name>
+      <resource href="editGroupBuffsButton.txt"/>
+    </Item>
+    <Item>
+      <name>saveGroupBuffsButton</name>
+      <resource href="saveGroupBuffsButton.txt"/>
+    </Item>
+    <Item>
+      <name>addDebuffButton</name>
+      <resource href="addDebuffButton.txt"/>
+    </Item>
+    <Item>
+      <name>addMobsButton</name>
+      <resource href="addMobsButton.txt"/>
+    </Item>
+    <Item>
+      <name>addControlButton</name>
+      <resource href="addControlButton.txt"/>
+    </Item>
+    <Item>
+      <name>addGroupBuffsButton</name>
+      <resource href="addGroupBuffsButton.txt"/>
+    </Item>
+    <Item>
+      <name>addBuffsButton</name>
+      <resource href="addBuffsButton.txt"/>
+    </Item>
+    <Item>
+      <name>priorButton</name>
+      <resource href="priorButton.txt"/>
+    </Item>
+    <Item>
+      <name>autoDebuffModeButton</name>
+      <resource href="autoDebuffModeButton.txt"/>
+    </Item>
+    <Item>
+      <name>autoDebuffModeButtonUnk</name>
+      <resource href="autoDebuffModeButtonUnk.txt"/>
+    </Item>
+    <Item>
+      <name>woundsShowButton</name>
+      <resource href="woundsShowButton.txt"/>
+    </Item>
+    <Item>
+      <name>ignoreSysBuffs</name>
+      <resource href="ignoreSysBuffs.txt"/>
+    </Item>
+    <Item>
+      <name>checkEnemyCleanable</name>
+      <resource href="checkEnemyCleanable.txt"/>
+    </Item>
+    <Item>
+      <name>checkEnemyCleanableUnk</name>
+      <resource href="checkEnemyCleanableUnk.txt"/>
+    </Item>
+    <Item>
+      <name>shiftButton</name>
+      <resource href="shiftButton.txt"/>
+    </Item>
+    <Item>
+      <name>ctrlButton</name>
+      <resource href="ctrlButton.txt"/>
+    </Item>
+    <Item>
+      <name>altButton</name>
+      <resource href="altButton.txt"/>
+    </Item>
+    <Item>
+      <name>enemyButton</name>
+      <resource href="enemyButton.txt"/>
+    </Item>
+    <Item>
+      <name>targetButton</name>
+      <resource href="targetButton.txt"/>
+    </Item>
+    <Item>
+      <name>lastTargetButton</name>
+      <resource href="lastTargetButton.txt"/>
+    </Item>
+    <Item>
+      <name>classColorModeButton</name>
+      <resource href="classColorModeButton.txt"/>
+    </Item>
+    <Item>
+      <name>firstShowButton</name>
+      <resource href="firstShowButton.txt"/>
+    </Item>
+    <Item>
+      <name>selectModeButton</name>
+      <resource href="selectModeButton.txt"/>
+    </Item>
+    <Item>
+      <name>buffsFixButton</name>
+      <resource href="buffsFixButton.txt"/>
+    </Item>
+    <Item>
+      <name>showManaButton</name>
+      <resource href="showManaButton.txt"/>
+    </Item>
+    <Item>
+      <name>showShieldButton</name>
+      <resource href="showShieldButton.txt"/>
+    </Item>
+    <Item>
+      <name>showServerNameButton</name>
+      <resource href="showServerNameButton.txt"/>
+    </Item>
+    <Item>
+      <name>distanceText</name>
+      <resource href="distanceText.txt"/>
+    </Item>
+    <Item>
+      <name>highlightSelectedButton</name>
+      <resource href="highlightSelectedButton.txt"/>
+    </Item>
+    <Item>
+      <name>showRollOverInfoButton</name>
+      <resource href="showRollOverInfoButton.txt"/>
+    </Item>
+    <Item>
+      <name>showStandartRaidButton</name>
+      <resource href="showStandartRaidButton.txt"/>
+    </Item>
+    <Item>
+      <name>showClassIconButton</name>
+      <resource href="showClassIconButton.txt"/>
+    </Item>
+    <Item>
+      <name>showDistanceButton</name>
+      <resource href="showDistanceButton.txt"/>
+    </Item>
+    <Item>
+      <name>showProcentButton</name>
+      <resource href="showProcentButton.txt"/>
+    </Item>
+    <Item>
+      <name>showArrowButton</name>
+      <resource href="showArrowButton.txt"/>
+    </Item>
+    <Item>
+      <name>updateTimeBuffsButton</name>
+      <resource href="updateTimeBuffsButton.txt"/>
+    </Item>
+    <Item>
+      <name>configProfilesHeader</name>
+      <resource href="configProfilesHeader.txt"/>
+    </Item>
+    <Item>
+      <name>saveAsProfileButton</name>
+      <resource href="saveAsProfileButton.txt"/>
+    </Item>
+    <Item>
+      <name>profilesButton</name>
+      <resource href="profilesButton.txt"/>
+    </Item>
+    <Item>
+      <name>exportProfilesHeader</name>
+      <resource href="exportProfilesHeader.txt"/>
+    </Item>
+    <Item>
+      <name>closeExprotBtn</name>
+      <resource href="closeExprotBtn.txt"/>
+    </Item>
+    <Item>
+      <name>importProfileButton</name>
+      <resource href="importProfileButton.txt"/>
+    </Item>
+    <Item>
+      <name>importProfilesHeader</name>
+      <resource href="importProfilesHeader.txt"/>
+    </Item>
+    <Item>
+      <name>importBtn</name>
+      <resource href="importBtn.txt"/>
+    </Item>
+    <Item>
+      <name>closeButtonOK</name>
+      <resource href="closeButtonOK.txt"/>
+    </Item>
+    <Item>
+      <name>importErrorTxt</name>
+      <resource href="importErrorTxt.txt"/>
+    </Item>
+    <Item>
+      <name>inspectButton</name>
+      <resource href="inspectButton.txt"/>
+    </Item>
+    <Item>
+      <name>kickMenuButton</name>
+      <resource href="kickMenuButton.txt"/>
+    </Item>
+    <Item>
+      <name>closeMenuButton</name>
+      <resource href="closeMenuButton.txt"/>
+    </Item>
+    <Item>
+      <name>leaveMenuButton</name>
+      <resource href="leaveMenuButton.txt"/>
+    </Item>
+    <Item>
+      <name>raidLeaveMenuButton</name>
+      <resource href="raidLeaveMenuButton.txt"/>
+    </Item>
+    <Item>
+      <name>leaderMenuButton</name>
+      <resource href="leaderMenuButton.txt"/>
+    </Item>
+    <Item>
+      <name>freeLootMenuButton</name>
+      <resource href="freeLootMenuButton.txt"/>
+    </Item>
+    <Item>
+      <name>masterLootMenuButton</name>
+      <resource href="masterLootMenuButton.txt"/>
+    </Item>
+    <Item>
+      <name>groupLootMenuButton</name>
+      <resource href="groupLootMenuButton.txt"/>
+    </Item>
+    <Item>
+      <name>junkLootMenuButton</name>
+      <resource href="junkLootMenuButton.txt"/>
+    </Item>
+    <Item>
+      <name>goodsLootMenuButton</name>
+      <resource href="goodsLootMenuButton.txt"/>
+    </Item>
+    <Item>
+      <name>commonLootMenuButton</name>
+      <resource href="commonLootMenuButton.txt"/>
+    </Item>
+    <Item>
+      <name>uncommonLootMenuButton</name>
+      <resource href="uncommonLootMenuButton.txt"/>
+    </Item>
+    <Item>
+      <name>rareLootMenuButton</name>
+      <resource href="rareLootMenuButton.txt"/>
+    </Item>
+    <Item>
+      <name>epicLootMenuButton</name>
+      <resource href="epicLootMenuButton.txt"/>
+    </Item>
+    <Item>
+      <name>legendaryLootMenuButton</name>
+      <resource href="legendaryLootMenuButton.txt"/>
+    </Item>
+    <Item>
+      <name>relicLootMenuButton</name>
+      <resource href="relicLootMenuButton.txt"/>
+    </Item>
+    <Item>
+      <name>disbandMenuButton</name>
+      <resource href="disbandMenuButton.txt"/>
+    </Item>
+    <Item>
+      <name>inviteMenuButton</name>
+      <resource href="inviteMenuButton.txt"/>
+    </Item>
+    <Item>
+      <name>createRaidMenuButton</name>
+      <resource href="createRaidMenuButton.txt"/>
+    </Item>
+    <Item>
+      <name>createSmallRaidMenuButton</name>
+      <resource href="createSmallRaidMenuButton.txt"/>
+    </Item>
+    <Item>
+      <name>addLeaderHelperMenuButton</name>
+      <resource href="addLeaderHelperMenuButton.txt"/>
+    </Item>
+    <Item>
+      <name>addMasterLootMenuButton</name>
+      <resource href="addMasterLootMenuButton.txt"/>
+    </Item>
+    <Item>
+      <name>deleteLeaderHelperMenuButton</name>
+      <resource href="deleteLeaderHelperMenuButton.txt"/>
+    </Item>
+    <Item>
+      <name>deleteMasterLootMenuButton</name>
+      <resource href="deleteMasterLootMenuButton.txt"/>
+    </Item>
+    <Item>
+      <name>moveMenuButton</name>
+      <resource href="moveMenuButton.txt"/>
+    </Item>
+    <Item>
+      <name>whisperMenuButton</name>
+      <resource href="whisperMenuButton.txt"/>
+    </Item>
+    <Item>
+      <name>configGroupBuffsId</name>
+      <resource href="configGroupBuffsId.txt"/>
+    </Item>
+    <Item>
+      <name>configGroupBuffsName</name>
+      <resource href="configGroupBuffsName.txt"/>
+    </Item>
+    <Item>
+      <name>configGroupBuffsTime</name>
+      <resource href="configGroupBuffsTime.txt"/>
+    </Item>
+    <Item>
+      <name>configGroupBuffsCD</name>
+      <resource href="configGroupBuffsCD.txt"/>
+    </Item>
+    <Item>
+      <name>configGroupBuffsBuff</name>
+      <resource href="configGroupBuffsBuff.txt"/>
+    </Item>
+    <Item>
+      <name>showImportantCasts</name>
+      <resource href="showImportantCasts.txt"/>
+    </Item>
+    <Item>
+      <name>showImportantBuffs</name>
+      <resource href="showImportantBuffs.txt"/>
+    </Item>
+    <Item>
+      <name>selectablePanel</name>
+      <resource href="selectablePanel.txt"/>
+    </Item>
+    <Item>
+      <name>fixedPanel</name>
+      <resource href="fixedPanel.txt"/>
+    </Item>
+    <Item>
+      <name>castSettingsFormHeader</name>
+      <resource href="castSettingsFormHeader.txt"/>
+    </Item>
+    <Item>
+      <name>showOnlyMyTarget</name>
+      <resource href="showOnlyMyTarget.txt"/>
+    </Item>
+    <Item>
+      <name>loadedMessage</name>
+      <resource href="loadedMessage.txt"/>
+    </Item>
+    <Item>
+      <name>savedMessage</name>
+      <resource href="savedMessage.txt"/>
+    </Item>
+    <Item>
+      <name>savedAddMessage</name>
+      <resource href="savedAddMessage.txt"/>
+    </Item>
+    <Item>
+      <name>groupSavedMessage</name>
+      <resource href="groupSavedMessage.txt"/>
+    </Item>
+    <Item>
+      <name>build1Name</name>
+      <resource href="build1Name.txt"/>
+    </Item>
+    <Item>
+      <name>build2Name</name>
+      <resource href="build2Name.txt"/>
+    </Item>
+    <Item>
+      <name>gorisontalModeButton</name>
+      <resource href="gorisontalModeButton.txt"/>
+    </Item>
+    <Item>
+      <name>twoxtwoModeButton</name>
+      <resource href="twoxtwoModeButton.txt"/>
+    </Item>
+    <Item>
+      <name>setHighlightColorButtonconfigGroupBuffsForm</name>
+      <resource href="setHighlightColorButtonconfigGroupBuffsForm.txt"/>
+    </Item>
+    <Item>
+      <name>setHighlightColorButtonraidSettingsForm</name>
+      <resource href="setHighlightColorButtonraidSettingsForm.txt"/>
+    </Item>
+    <Item>
+      <name>setHighlightColorButtontargeterSettingsForm</name>
+      <resource href="setHighlightColorButtontargeterSettingsForm.txt"/>
+    </Item>
+    <Item>
+      <name>red</name>
+      <resource href="red.txt"/>
+    </Item>
+    <Item>
+      <name>green</name>
+      <resource href="green.txt"/>
+    </Item>
+    <Item>
+      <name>blue</name>
+      <resource href="blue.txt"/>
+    </Item>
+    <Item>
+      <name>alpha</name>
+      <resource href="alpha.txt"/>
+    </Item>
+    <Item>
+      <name>headerColor</name>
+      <resource href="headerColor.txt"/>
+    </Item>
+    <Item>
+      <name>setColorButton</name>
+      <resource href="setColorButton.txt"/>
+    </Item>
+    <Item>
+      <name>useHighlightBuffCheckBox</name>
+      <resource href="useHighlightBuffCheckBox.txt"/>
+    </Item>
+    <Item>
+      <name>blinkHighlightCheckBox</name>
+      <resource href="blinkHighlightCheckBox.txt"/>
+    </Item>
+    <Item>
+      <name>resetPanelBuffPosButton</name>
+      <resource href="resetPanelBuffPosButton.txt"/>
+    </Item>
+    <Item>
+      <name>resetPanelCastPosButton</name>
+      <resource href="resetPanelCastPosButton.txt"/>
+    </Item>
+    <Item>
+      <name>progressPanelName</name>
+      <resource href="progressPanelName.txt"/>
+    </Item>
+    <Item>
+      <name>spellHeader</name>
+      <resource href="spellHeader.txt"/>
+    </Item>
+    <Item>
+      <name>helpHeader</name>
+      <resource href="helpHeader.txt"/>
+    </Item>
+    <Item>
+      <name>nextHelpBtn</name>
+      <resource href="nextHelpBtn.txt"/>
+    </Item>
+    <Item>
+      <name>prevHelpBtn</name>
+      <resource href="prevHelpBtn.txt"/>
+    </Item>
+    <Item>
+      <name>petOwner</name>
+      <resource href="petOwner.txt"/>
+    </Item>
+    <Item>
+      <name>ignoreListTxt</name>
+      <resource href="ignoreListTxt.txt"/>
+    </Item>
+    <Item>
+      <name>addIgnoreCastsButton</name>
+      <resource href="addIgnoreCastsButton.txt"/>
+    </Item>
+    <Item>
+      <name>ENUM_CreatureRace_HUMANOID</name>
+      <resource href="ENUM_CreatureRace_HUMANOID.txt"/>
+    </Item>
+    <Item>
+      <name>ENUM_CreatureRace_BEAST</name>
+      <resource href="ENUM_CreatureRace_BEAST.txt"/>
+    </Item>
+    <Item>
+      <name>ENUM_CreatureRace_UNDEAD</name>
+      <resource href="ENUM_CreatureRace_UNDEAD.txt"/>
+    </Item>
+    <Item>
+      <name>ENUM_CreatureRace_GIANT</name>
+      <resource href="ENUM_CreatureRace_GIANT.txt"/>
+    </Item>
+    <Item>
+      <name>ENUM_CreatureRace_DRAGON</name>
+      <resource href="ENUM_CreatureRace_DRAGON.txt"/>
+    </Item>
+    <Item>
+      <name>ENUM_CreatureRace_ELEMENTAL</name>
+      <resource href="ENUM_CreatureRace_ELEMENTAL.txt"/>
+    </Item>
+    <Item>
+      <name>ENUM_CreatureRace_DEMON</name>
+      <resource href="ENUM_CreatureRace_DEMON.txt"/>
+    </Item>
+    <Item>
+      <name>ENUM_CreatureRace_ABERRATION</name>
+      <resource href="ENUM_CreatureRace_ABERRATION.txt"/>
+    </Item>
+    <Item>
+      <name>ENUM_CreatureRace_MECHANICAL</name>
+      <resource href="ENUM_CreatureRace_MECHANICAL.txt"/>
+    </Item>
+    <Item>
+      <name>ENUM_CreatureRace_GOBLIN</name>
+      <resource href="ENUM_CreatureRace_GOBLIN.txt"/>
+    </Item>
+    <Item>
+      <name>ENUM_CreatureRace_DIVINE</name>
+      <resource href="ENUM_CreatureRace_DIVINE.txt"/>
+    </Item>
+    <Item>
+      <name>ENUM_CreatureRace_KOBOLD</name>
+      <resource href="ENUM_CreatureRace_KOBOLD.txt"/>
+    </Item>
+    <Item>
+      <name>ENUM_CreatureRace_SPIRIT</name>
+      <resource href="ENUM_CreatureRace_SPIRIT.txt"/>
+    </Item>
+    <Item>
+      <name>defaultRessurectNames1</name>
+      <resource href="defaultRessurectNames1.txt"/>
+    </Item>
+    <Item>
+      <name>defaultRessurectNames2</name>
+      <resource href="defaultRessurectNames2.txt"/>
+    </Item>
+    <Item>
+      <name>defaultRessurectNames3</name>
+      <resource href="defaultRessurectNames3.txt"/>
+    </Item>
+    <Item>
+      <name>allShop1</name>
+      <resource href="allShop1.txt"/>
+    </Item>
+    <Item>
+      <name>allShop2</name>
+      <resource href="allShop2.txt"/>
+    </Item>
+    <Item>
+      <name>allShop3</name>
+      <resource href="allShop3.txt"/>
+    </Item>
+    <Item>
+      <name>allShop4</name>
+      <resource href="allShop4.txt"/>
+    </Item>
+    <Item>
+      <name>allShop5</name>
+      <resource href="allShop5.txt"/>
+    </Item>
+    <Item>
+      <name>allShop6</name>
+      <resource href="allShop6.txt"/>
+    </Item>
+    <Item>
+      <name>allShop7</name>
+      <resource href="allShop7.txt"/>
+    </Item>
+    <Item>
+      <name>allShop8</name>
+      <resource href="allShop8.txt"/>
+    </Item>
+    <Item>
+      <name>allShop9</name>
+      <resource href="allShop9.txt"/>
+    </Item>
+    <Item>
+      <name>allShop10</name>
+      <resource href="allShop10.txt"/>
+    </Item>
+    <Item>
+      <name>allShop11</name>
+      <resource href="allShop11.txt"/>
+    </Item>
+    <Item>
+      <name>allShop12</name>
+      <resource href="allShop12.txt"/>
+    </Item>
+    <Item>
+      <name>allShop13</name>
+      <resource href="allShop13.txt"/>
+    </Item>
+    <Item>
+      <name>allShop14</name>
+      <resource href="allShop14.txt"/>
+    </Item>
+    <Item>
+      <name>allShop15</name>
+      <resource href="allShop15.txt"/>
+    </Item>
+    <Item>
+      <name>allShop16</name>
+      <resource href="allShop16.txt"/>
+    </Item>
+    <Item>
+      <name>allShop17</name>
+      <resource href="allShop17.txt"/>
+    </Item>
+    <Item>
+      <name>allShop18</name>
+      <resource href="allShop18.txt"/>
+    </Item>
+    <Item>
+      <name>allShop19</name>
+      <resource href="allShop19.txt"/>
+    </Item>
+    <Item>
+      <name>allShop20</name>
+      <resource href="allShop20.txt"/>
+    </Item>
+    <Item>
+      <name>allShop21</name>
+      <resource href="allShop21.txt"/>
+    </Item>
+    <Item>
+      <name>allShop22</name>
+      <resource href="allShop22.txt"/>
+    </Item>
+    <Item>
+      <name>allShop23</name>
+      <resource href="allShop23.txt"/>
+    </Item>
+    <Item>
+      <name>allShop24</name>
+      <resource href="allShop24.txt"/>
+    </Item>
+    <Item>
+      <name>allShop25</name>
+      <resource href="allShop25.txt"/>
+    </Item>
+    <Item>
+      <name>allShop26</name>
+      <resource href="allShop26.txt"/>
+    </Item>
+    <Item>
+      <name>allShop27</name>
+      <resource href="allShop27.txt"/>
+    </Item>
+    <Item>
+      <name>allShop28</name>
+      <resource href="allShop28.txt"/>
+    </Item>
+    <Item>
+      <name>allShop29</name>
+      <resource href="allShop29.txt"/>
+    </Item>
+    <Item>
+      <name>allShop30</name>
+      <resource href="allShop30.txt"/>
+    </Item>
+    <Item>
+      <name>allShop31</name>
+      <resource href="allShop31.txt"/>
+    </Item>
+    <Item>
+      <name>allShop32</name>
+      <resource href="allShop32.txt"/>
+    </Item>
+    <Item>
+      <name>allShop33</name>
+      <resource href="allShop33.txt"/>
+    </Item>
+    <Item>
+      <name>allShop34</name>
+      <resource href="allShop34.txt"/>
+    </Item>
+    <Item>
+      <name>allShop35</name>
+      <resource href="allShop35.txt"/>
+    </Item>
+    <Item>
+      <name>allShop36</name>
+      <resource href="allShop36.txt"/>
+    </Item>
+    <Item>
+      <name>allShop37</name>
+      <resource href="allShop37.txt"/>
+    </Item>
+    <Item>
+      <name>allShop38</name>
+      <resource href="allShop38.txt"/>
+    </Item>
+    <Item>
+      <name>allShop39</name>
+      <resource href="allShop39.txt"/>
+    </Item>
+    <Item>
+      <name>allShop40</name>
+      <resource href="allShop40.txt"/>
+    </Item>
+    <Item>
+      <name>allShop41</name>
+      <resource href="allShop41.txt"/>
+    </Item>
+    <Item>
+      <name>allShop42</name>
+      <resource href="allShop42.txt"/>
+    </Item>
+    <Item>
+      <name>allShop43</name>
+      <resource href="allShop43.txt"/>
+    </Item>
+    <Item>
+      <name>allShop44</name>
+      <resource href="allShop44.txt"/>
+    </Item>
+    <Item>
+      <name>allShop45</name>
+      <resource href="allShop45.txt"/>
+    </Item>
+    <Item>
+      <name>allShop46</name>
+      <resource href="allShop46.txt"/>
+    </Item>
+    <Item>
+      <name>allShop47</name>
+      <resource href="allShop47.txt"/>
+    </Item>
+    <Item>
+      <name>allShop48</name>
+      <resource href="allShop48.txt"/>
+    </Item>
+    <Item>
+      <name>allShop49</name>
+      <resource href="allShop49.txt"/>
+    </Item>
+    <Item>
+      <name>allShop50</name>
+      <resource href="allShop50.txt"/>
+    </Item>
+    <Item>
+      <name>allShop51</name>
+      <resource href="allShop51.txt"/>
+    </Item>
+    <Item>
+      <name>allShop52</name>
+      <resource href="allShop52.txt"/>
+    </Item>
+    <Item>
+      <name>allShop53</name>
+      <resource href="allShop53.txt"/>
+    </Item>
+    <Item>
+      <name>allShop54</name>
+      <resource href="allShop54.txt"/>
+    </Item>
+    <Item>
+      <name>allShop55</name>
+      <resource href="allShop55.txt"/>
+    </Item>
+    <Item>
+      <name>allShop56</name>
+      <resource href="allShop56.txt"/>
+    </Item>
+    <Item>
+      <name>allShop57</name>
+      <resource href="allShop57.txt"/>
+    </Item>
+    <Item>
+      <name>allShop58</name>
+      <resource href="allShop58.txt"/>
+    </Item>
+    <Item>
+      <name>allShop59</name>
+      <resource href="allShop59.txt"/>
+    </Item>
+    <Item>
+      <name>allShop60</name>
+      <resource href="allShop60.txt"/>
+    </Item>
+    <Item>
+      <name>allShop61</name>
+      <resource href="allShop61.txt"/>
+    </Item>
+    <Item>
+      <name>allShop62</name>
+      <resource href="allShop62.txt"/>
+    </Item>
+    <Item>
+      <name>allShop63</name>
+      <resource href="allShop63.txt"/>
+    </Item>
+    <Item>
+      <name>allShop64</name>
+      <resource href="allShop64.txt"/>
+    </Item>
+    <Item>
+      <name>allShop65</name>
+      <resource href="allShop65.txt"/>
+    </Item>
+    <Item>
+      <name>allShop66</name>
+      <resource href="allShop66.txt"/>
+    </Item>
+    <Item>
+      <name>allShop67</name>
+      <resource href="allShop67.txt"/>
+    </Item>
+    <Item>
+      <name>allShop68</name>
+      <resource href="allShop68.txt"/>
+    </Item>
+    <Item>
+      <name>allShop69</name>
+      <resource href="allShop69.txt"/>
+    </Item>
+    <Item>
+      <name>allShop70</name>
+      <resource href="allShop70.txt"/>
+    </Item>
+    <Item>
+      <name>allShop71</name>
+      <resource href="allShop71.txt"/>
+    </Item>
+    <Item>
+      <name>allShop72</name>
+      <resource href="allShop72.txt"/>
+    </Item>
+    <Item>
+      <name>allShop73</name>
+      <resource href="allShop73.txt"/>
+    </Item>
+    <Item>
+      <name>allShop74</name>
+      <resource href="allShop74.txt"/>
+    </Item>
+    <Item>
+      <name>allShop75</name>
+      <resource href="allShop75.txt"/>
+    </Item>
+    <Item>
+      <name>allShop76</name>
+      <resource href="allShop76.txt"/>
+    </Item>
+    <Item>
+      <name>allShop77</name>
+      <resource href="allShop77.txt"/>
+    </Item>
+    <Item>
+      <name>allShop78</name>
+      <resource href="allShop78.txt"/>
+    </Item>
+  </items>
+</UIRelatedTexts>

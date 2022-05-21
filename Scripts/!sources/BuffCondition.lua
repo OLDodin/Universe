@@ -24,11 +24,18 @@ function BuffCondition:Init(aSettings)
 end
 
 function BuffCondition:InitShopShow()
-	local m_locale = getLocale()
+	local locale = getLocale()
 	self.avlShopTree  = GetAVLWStrTree()
-	self.treeShopCreated = GetTableSize(m_locale["allShop"])~=0
-	for _, element in pairs(m_locale["allShop"]) do
-		self.avlShopTree:add({name = userMods.ToWString(element)})
+	local shopsNames = {}
+	for i = 1, 100 do
+		local shopName = locale["allShop"..i]
+		if common.IsWString(shopName) then
+			table.insert(shopsNames, shopName)
+		end
+	end
+	self.treeShopCreated = GetTableSize(shopsNames)~=0
+	for _, element in pairs(shopsNames) do
+		self.avlShopTree:add({name = element})
 	end
 end
 
