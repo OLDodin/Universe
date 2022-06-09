@@ -14,7 +14,8 @@ function CreateHelpForm()
 	setLocaleText(createWidget(form, "closeButtonOK", "Button", WIDGET_ALIGN_CENTER, WIDGET_ALIGN_HIGH, 200, 30, nil, 20))
 
 	m_imagebox = createWidget(form, "colorPreview", "ImageBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 1260, 670, 10, 40)
-	m_imagebox:SetBackgroundTexture(common.GetAddonRelatedTexture("help1"))
+	
+	m_imagebox:SetBackgroundTexture(common.GetAddonRelatedTextureGroup("common"):GetTexture("help1"))
 	
 	DnD.Init(form, panel, true)
 
@@ -22,9 +23,9 @@ function CreateHelpForm()
 end
 
 function NextHelp()
-	m_imagebox:SetBackgroundTexture(common.GetAddonRelatedTexture("help2"))
+	m_imagebox:SetBackgroundTexture(common.GetAddonRelatedTextureGroup("common"):GetTexture("help2"))
 end
 
 function PrevHelp()
-	m_imagebox:SetBackgroundTexture(common.GetAddonRelatedTexture("help1"))
+	m_imagebox:SetBackgroundTexture(common.GetAddonRelatedTextureGroup("common"):GetTexture("help1"))
 end

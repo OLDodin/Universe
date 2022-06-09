@@ -90,8 +90,12 @@
 			<texts href="Locales/eng/Locale.(UIRelatedTexts).xdb#xpointer(/UIRelatedTexts)"/>
 		</Item>
 	</textsGroups>
-  <texts href=""/>
-  <textures href="Widgets/Textures/Textures.xdb#xpointer(/UIRelatedTextures)"/>
+	<texturesGroups>
+		<Item>
+			<groupName>common</groupName>
+			<textures href="Widgets/Textures/Textures.xdb#xpointer(/UIRelatedTextures)"/>
+		</Item>
+	</texturesGroups>
   <visObjects href=""/>
 	<addon_name>Universe</addon_name>
 </UIAddon>
