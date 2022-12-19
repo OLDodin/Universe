@@ -3,12 +3,10 @@ local m_template = nil
 
 
 function CreateTargeterSettingsForm()
-	local form=createWidget(nil, "targeterSettingsForm", "Form", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 980, 700, 200, 100)
+	local form=createWidget(mainForm, "targeterSettingsForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 980, 700, 200, 100)
 	hide(form)
-	priority(form, 5000)
+	priority(form, 5)
 
-	local panel=createWidget(form, "Panel", "Panel")
-	
 	local group1 = createWidget(form, "group1", "Panel")
 	align(group1, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)
 	resize(group1, 315, 211)
@@ -86,7 +84,7 @@ function CreateTargeterSettingsForm()
 	
 	setLocaleText(createWidget(form, "saveButton", "Button", WIDGET_ALIGN_CENTER, WIDGET_ALIGN_HIGH, 200, 30, nil, 20))
 	
-	DnD.Init(form, panel, true)
+	DnD.Init(form, form, true)
 		
 	return form
 end

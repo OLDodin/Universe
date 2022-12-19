@@ -1,11 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <WidgetPanel>
-	<Name>RaidPanel</Name>
-	<Priority>50</Priority>
+	<Name>ProgressActionPanel</Name>
+	<Priority>51</Priority>
 	<Children>
-		<Item href="TopPanel/TopPanel.xdb#xpointer(/WidgetButton)"/>
-		<Item href="Bar/Bar.xdb#xpointer(/WidgetButton)"/>
-		<Item href="AddBar/AddBar.xdb#xpointer(/WidgetButton)"/>
+		<Item href="../Buffs/Group/TopPanel/Panel.xdb#xpointer(/WidgetPanel)"/>
+		<Item href="ProgressBar/Bar.xdb#xpointer(/WidgetButton)"/>
 	</Children>
 	<BackLayer href="" />
 	<FrontLayer href="" />

@@ -13,7 +13,7 @@ Global("g_classPriority", {
 	["UNKNOWN"]		= 12
 })
 
-local m_template = createWidget(nil, "Template", "Template")
+local m_template = getChild(mainForm, "Template")
 
 
 local m_manaColor = { r=0, g=0.3, b=1, a=1 }
@@ -703,8 +703,7 @@ function ApplyRaidSettingsToGUI(aTopPanelForm)
 end
 
 function CreateRaidPanel()
-	setTemplateWidget(m_template)
-	local raidPanel = common.AddonCreateChildForm("RaidPanel")
+	local raidPanel = getChild(mainForm, "RaidPanel")
 	local wtTopPanel = getChild(raidPanel, "TopPanel")
 	DnD.Init(raidPanel, wtTopPanel, true)
 	
@@ -812,8 +811,7 @@ function ApplyTargetSettingsToGUI(aTopPanelForm)
 end
 
 function CreateTargeterPanel()
-	setTemplateWidget(m_template)
-	local targeterPanel = common.AddonCreateChildForm("TargetPanel")
+	local targeterPanel = getChild(mainForm, "TargetPanel")
 	move(targeterPanel, 500, 380)
 	local wtTopPanel = getChild(targeterPanel, "TopTargeterPanel")
 	DnD.Init(targeterPanel, wtTopPanel, true, true, {0,-50,-50,0})

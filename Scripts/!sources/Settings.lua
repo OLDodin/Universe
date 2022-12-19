@@ -204,6 +204,12 @@ function LoadSettings(aProfileInd)
 		m_currentProfile.raidFormSettings.showGrayOnDistanceButton = true
 		m_currentProfile.raidFormSettings.showFrameStripOnDistanceButton = true
 	end
+	if m_currentProfile.version < 2.6 or m_currentProfile.version == nil then
+		m_currentProfile.castFormSettings.fixed = false
+		for _, buffGroupSettings in pairs(m_currentProfile.buffFormSettings.buffGroups) do
+			buffGroupSettings.fixed = false
+		end
+	end
 end
 
 function ProfileWasDeleted(anInd)
@@ -241,5 +247,5 @@ function ExportProfileByIndex(anInd)
 end
 
 function GetSettingsVersion()
-	return 2.5;
+	return 2.6;
 end

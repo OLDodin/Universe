@@ -1,9 +1,8 @@
 function CreateBuffSettingsForm()
-	local form = createWidget(nil, "buffSettingsForm", "Form", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 550, 420, 350, 130)
-	priority(form, 5500)
+	local form = createWidget(mainForm, "buffSettingsForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 550, 420, 350, 130)
+	priority(form, 6)
 	hide(form)
 	
-	local panel=createWidget(form, nil, "Panel")
 	setLocaleText(createWidget(form, "configBuffsHeader", "TextView",  WIDGET_ALIGN_CENTER, nil, 250, 20, nil, 20))
 	setText(createWidget(form, "closeSomeSettingsButton", "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 20, 20, 20, 20), "x")
 
@@ -14,7 +13,7 @@ function CreateBuffSettingsForm()
 
 	setLocaleText(createWidget(form, "saveButton", "Button", WIDGET_ALIGN_CENTER, WIDGET_ALIGN_HIGH, 200, 30, nil, 20))
 	
-	DnD.Init(form, panel, true)
+	DnD.Init(form, form, true)
 
 	return form
 end
@@ -45,10 +44,9 @@ end
 local m_loadedWndInd = 0
 
 function CreateConfigGroupBuffsForm()
-	local form=createWidget(nil, "configGroupBuffsForm", "Form", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 1000, 600, 550, 130)
-	priority(form, 5500)
+	local form=createWidget(mainForm, "configGroupBuffsForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 1000, 600, 550, 130)
+	priority(form, 6)
 	hide(form)
-	local panel=createWidget(form, nil, "Panel")
 	
 	local group1 = createWidget(form, "group1", "Panel")
 	align(group1, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)
@@ -117,7 +115,7 @@ function CreateConfigGroupBuffsForm()
 
 	createWidget(form, "container", "ScrollableContainer", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_HIGH, 545, 450, 25, 85)
 
-	DnD.Init(form, panel, true)
+	DnD.Init(form, form, true)
 	return form
 end
 

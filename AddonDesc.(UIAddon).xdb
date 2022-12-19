@@ -6,30 +6,6 @@
 			<Id>Main</Id>
 			<Form href="Widgets/Form.xdb#xpointer(/WidgetForm)"/>
 		</Item>
-		<Item>
-			<Id>RaidPanel</Id>
-			<Form href="Widgets/Bars/Form.xdb#xpointer(/WidgetForm)"/>
-		</Item>
-		<Item>
-			<Id>TargetPanel</Id>
-			<Form href="Widgets/Bars/FormTargeter.xdb#xpointer(/WidgetForm)"/>
-		</Item>
-		<Item>
-			<Id>ProgressPanel</Id>
-			<Form href="Widgets/Bars/FormProgress.xdb#xpointer(/WidgetForm)"/>
-		</Item>
-		<Item>
-			<Id>Buff</Id>
-			<Form href="Widgets/Buffs/Form.xdb#xpointer(/WidgetForm)"/>
-		</Item>
-		<Item>
-			<Id>Template</Id>
-			<Form href="Widgets/Templates/Main.xdb#xpointer(/WidgetForm)"/>
-		</Item>
-		<Item>
-			<Id>Form</Id>
-			<Form href="Widgets/Templates/Form.xdb#xpointer(/WidgetForm)"/>
-		</Item>
 	</Forms>
 	<MainFormId>Main</MainFormId>
 	<Name>Universe</Name>

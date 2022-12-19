@@ -2,6 +2,14 @@
 <WidgetForm>
 	<Name>Universe</Name>
 	<Priority>5400</Priority>
+	<Children>
+		<Item href="Bars/FormProgressAction.xdb#xpointer(/WidgetPanel)"/>
+		<Item href="Bars/FormProgressBuff.xdb#xpointer(/WidgetPanel)"/>
+		<Item href="Bars/Form.xdb#xpointer(/WidgetPanel)"/>
+		<Item href="Bars/FormTargeter.xdb#xpointer(/WidgetPanel)"/>
+		<Item href="Buffs/Form.xdb#xpointer(/WidgetPanel)"/>
+		<Item href="Templates/Main.xdb#xpointer(/WidgetPanel)"/>
+	</Children>
 	<BackLayer href="" />
 	<FrontLayer href="" />
 	<Placement>

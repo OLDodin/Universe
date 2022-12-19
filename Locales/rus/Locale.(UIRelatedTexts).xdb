@@ -1269,5 +1269,13 @@
       <name>allShop78</name>
       <resource href="allShop78.txt"/>
     </Item>
+	<Item>
+      <name>ProgressBuffPanel</name>
+      <resource href="progressBuffPanelName.txt"/>
+    </Item>
+	<Item>
+      <name>ProgressActionPanel</name>
+      <resource href="progressActionPanelName.txt"/>
+    </Item>
   </items>
 </UIRelatedTexts>

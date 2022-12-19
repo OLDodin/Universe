@@ -1,11 +1,9 @@
 local m_distanceSettingsForm = nil
 
 function CreateRaidSettingsForm()
-	local form=createWidget(nil, "raidSettingsForm", "Form", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 720, 620, 200, 100)
+	local form=createWidget(mainForm, "raidSettingsForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 720, 620, 200, 100)
 	hide(form)
-	priority(form, 5000)
-
-	local panel=createWidget(form, "Panel", "Panel")
+	priority(form, 5)
 	
 	local group1 = createWidget(form, "group1", "Panel")
 	align(group1, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)
@@ -73,7 +71,7 @@ function CreateRaidSettingsForm()
 	
 	setLocaleText(createWidget(form, "saveButton", "Button", WIDGET_ALIGN_CENTER, WIDGET_ALIGN_HIGH, 200, 30, nil, 20))
 	
-	DnD.Init(form, panel, true)
+	DnD.Init(form, form, true)
 	
 	m_distanceSettingsForm = CreateDistanceSettingsForm()	
 	

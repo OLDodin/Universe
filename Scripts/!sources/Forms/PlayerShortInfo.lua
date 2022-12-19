@@ -14,10 +14,9 @@ local m_bracketBeginWStr = userMods.ToWString("(")
 local m_bracketEndWStr = userMods.ToWString(")")
 
 function CreatePlayerShortInfoForm()
-	local form=createWidget(nil, "playerShortInfoForm", "Form", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_HIGH, 350, 130, 100, 120)
-	priority(form, 5500)
+	local form=createWidget(mainForm, "playerShortInfoForm", "Panel", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_HIGH, 350, 130, 100, 120)
+	priority(form, 6)
 	hide(form)
-	local panel=createWidget(form, nil, "Panel")
 
 	m_nameWdg = createWidget(form, "name", "TextView",  WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 286, 20, 50, 10)
 	m_classImgWdg = createWidget(form, "classImg", "ImageBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 30, 30, 15, 10)

@@ -1,10 +1,10 @@
 local m_template = nil
 
 function CreateProfilesForm()
-	local form=createWidget(nil, "configProfilesForm", "Form", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 600, 280, 800, 450)
-	priority(form, 5500)
+	local form=createWidget(mainForm, "configProfilesForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 600, 280, 800, 450)
+	priority(form, 6)
 	hide(form)
-	local panel=createWidget(form, nil, "Panel")
+
 	setLocaleText(createWidget(form, "configProfilesHeader", "TextView",  WIDGET_ALIGN_CENTER, nil, 250, 20, nil, 20))
 	setText(createWidget(form, "closeButton", "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 20, 20, 20, 20), "x")
 
@@ -15,7 +15,7 @@ function CreateProfilesForm()
 	createWidget(form, "EditLine1", "EditLine", nil, nil, 210, 25, 360, 200)
 
 
-	DnD.Init(form, panel, true)
+	DnD.Init(form, form, true)
 
 	return form
 end

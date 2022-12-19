@@ -1,11 +1,9 @@
 local m_template = nil
 
 function CreateMainSettingsForm()
-	local form=createWidget(nil, "mainSettingsForm", "Form", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 600, 360, 200, 100)
+	local form=createWidget(mainForm, "mainSettingsForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 600, 360, 200, 100)
 	hide(form)
-	priority(form, 5000)
-
-	local configPanel=createWidget(form, "Panel", "Panel")
+	priority(form, 5)
 
 	setLocaleText(createWidget(form, "configHeader", "TextView",  WIDGET_ALIGN_CENTER, nil, 100, 20, nil, 20))
 	setText(createWidget(form, "closeButton", "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 20, 20, 20, 20), "x")
@@ -25,7 +23,7 @@ function CreateMainSettingsForm()
 	createWidget(form, "useBindSubSystem", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 330, 25, 20, 170)
 	createWidget(form, "useCastSubSystem", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 330, 25, 20, 200)
 	
-	DnD.Init(form, configPanel, true)
+	DnD.Init(form, form, true)
 		
 	return form
 end
@@ -57,7 +55,7 @@ end
 
 
 function CreateMainBtn()
-	m_template = createWidget(nil, "Template", "Template")
+	m_template = getChild(mainForm, "Template")
 	setTemplateWidget(m_template)
 		
 	local button=createWidget(mainForm, "UniverseButton", "Button", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 30, 25, 350, 120)

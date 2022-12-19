@@ -1,12 +1,10 @@
 
 
 function CreateDistanceSettingsForm()
-	local form=createWidget(nil, "distanceSettingsForm", "Form", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 350, 200, 200, 100)
+	local form=createWidget(mainForm, "distanceSettingsForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 350, 200, 200, 100)
 	hide(form)
-	priority(form, 5000)
-	
-	local panel=createWidget(form, "Panel", "Panel")
-	
+	priority(form, 5)
+		
 	setLocaleText(createWidget(form, "distanceSettingsFormHeader", "TextView",  WIDGET_ALIGN_CENTER, nil, 250, 20, nil, 16))
 	setText(createWidget(form, "closeDistanceFormButton", "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 20, 20, 20, 20), "x")
 	
@@ -18,7 +16,7 @@ function CreateDistanceSettingsForm()
 	
 	setLocaleText(createWidget(form, "closeDistanceFormButton", "Button", WIDGET_ALIGN_CENTER, WIDGET_ALIGN_HIGH, 200, 30, nil, 20))
 	
-	DnD.Init(form, panel, true)
+	DnD.Init(form, form, true)
 		
 	return form
 end

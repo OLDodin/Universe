@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<WidgetForm>
+<WidgetPanel>
 	<Name>BuffForm</Name>
 	<Priority>250</Priority>
 	<Children>
@@ -15,4 +15,5 @@
 		</Y>
 	</Placement>
 	<PickChildrenOnly>true</PickChildrenOnly>
-</WidgetForm>
+	<Visible>false</Visible>
+</WidgetPanel>

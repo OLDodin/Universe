@@ -1,8 +1,8 @@
 function CreateExportProfilesForm()
-	local form=createWidget(nil, "exportProfilesForm", "Form", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 600, 280, 800, 450)
-	priority(form, 5500)
+	local form=createWidget(mainForm, "exportProfilesForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 600, 280, 800, 450)
+	priority(form, 6)
 	hide(form)
-	local panel=createWidget(form, nil, "Panel")
+	
 	setLocaleText(createWidget(form, "exportProfilesHeader", "TextView",  WIDGET_ALIGN_CENTER, nil, 450, 20, nil, 20))
 	setText(createWidget(form, "closeButton", "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 20, 20, 20, 20), "x")
 
@@ -11,7 +11,7 @@ function CreateExportProfilesForm()
 	createWidget(form, "EditBox1", "EditBox", nil, nil, 560, 180, 20, 50)
 	
 
-	DnD.Init(form, panel, true)
+	DnD.Init(form, form, true)
 
 	return form
 end

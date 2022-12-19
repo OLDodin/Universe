@@ -6,7 +6,7 @@ local m_colorPreview = nil
 local m_loadedWndGroupBuffsNum = 0
 local m_loadedWndBuffInd = 0
 local m_loadedWndType = 0
-local m_template = createWidget(nil, "Template", "Template")
+local m_template = getChild(mainForm, "Template")
 
 
 Global("GROUP_COLOR_TYPE", 1)
@@ -54,12 +54,10 @@ function CreateColorSettingsForm(aSaveLoadType, aGroupBuffsNum, aBuffInd)
 	
 	setTemplateWidget(m_template)
 	
-	local form=createWidget(nil, "colorSettingsForm", "Form", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 400, 260, 200, 100)
-	priority(form, 5600)
+	local form=createWidget(mainForm, "colorSettingsForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 400, 260, 200, 100)
+	priority(form, 7)
 	hide(form)
 	
-	local configPanel=createWidget(form, "Panel", "Panel")
-
 	setLocaleText(createWidget(form, "useHighlightBuffCheckBox", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 345, 25, 10, 150), info.useHighlightBuff)
 	setLocaleText(createWidget(form, "blinkHighlightCheckBox", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 345, 25, 10, 180), info.blinkHighlight)
 	
@@ -98,7 +96,7 @@ function CreateColorSettingsForm(aSaveLoadType, aGroupBuffsNum, aBuffInd)
 	--m_alphaWdg:Set(sliderParams)
 	
 
-	DnD.Init(form, configPanel, true)
+	DnD.Init(form, form, true)
 	m_colorPreview:SetBackgroundColor(GetColorFromColorSettingsForm())
 	
 	return form

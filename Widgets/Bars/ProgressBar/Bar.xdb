@@ -8,6 +8,7 @@
 		<Item href="ProgressIcon.xdb#xpointer(/WidgetPanel)"/>
 		<Item href="NameProgress.xdb#xpointer(/WidgetTextView)"/>
 		<Item href="NameMob.xdb#xpointer(/WidgetTextView)"/>
+		<Item href="NameTarget.xdb#xpointer(/WidgetTextView)"/>
 	</Children>
 	<Variants>
 		<Item>

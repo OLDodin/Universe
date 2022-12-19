@@ -3,20 +3,28 @@ Global("PROGRESS_PANELS_LIMIT", 15)
 Global("ACTION_PROGRESS", 2)
 Global("BUFF_PROGRESS", 3)
 
-local m_template = createWidget(nil, "Template", "Template")
+local m_template = getChild(mainForm, "Template")
 local m_defaultPanelHeight = 40
 local m_panelWidth = 0
 
-function CreateProgressPanel()
-	setTemplateWidget(m_template)
-	local progressPanel = common.AddonCreateChildForm("ProgressPanel")
+local function CreateProgressPanel(aPanelName)
+	setTemplateWidget(mainForm)
+	local progressPanel = getChild(mainForm, aPanelName)
 	local topPanel = getChild(progressPanel, "MoveModePanel")
 	
-	setText(getChild(topPanel, "PanelNameText"), getLocale()["progressPanelName"], "ColorWhite", "center", 16, true, true)
+	setText(getChild(topPanel, "PanelNameText"), getLocale()[aPanelName], "ColorWhite", "center", 16, true, true)
 	hide(progressPanel)
 	DnD.Init(progressPanel, topPanel, true, false)
 	
 	return progressPanel
+end
+
+function CreateProgressActionPanel()
+	return CreateProgressPanel("ProgressActionPanel")
+end
+
+function CreateProgressBuffPanel()
+	return CreateProgressPanel("ProgressBuffPanel")
 end
 
 function CreateProgressCastPanel(aParentPanel, aY)
@@ -34,6 +42,7 @@ function CreateProgressCastPanel(aParentPanel, aY)
 	progressBar.backgroundWdg = getChild(progressBar.wdg, "BackgroundBar")
 	progressBar.iconWdg = getChild(progressBar.wdg, "ProgressIcon")
 	progressBar.nameMobWdg = getChild(progressBar.wdg, "NameMobText")
+	progressBar.nameTargetWdg = getChild(progressBar.wdg, "NameTargetText")
 	progressBar.nameProgressWdg = getChild(progressBar.wdg, "NameProgressText")
 	progressBar.fontScale = panelHeight / m_defaultPanelHeight
 	
@@ -44,8 +53,10 @@ function CreateProgressCastPanel(aParentPanel, aY)
 	resize(progressBar.iconWdg, panelHeight-10, panelHeight-10)
 	move(progressBar.iconWdg, 5, nil)
 	resize(progressBar.nameMobWdg, panelWidth-panelHeight, 16*progressBar.fontScale)
+	resize(progressBar.nameTargetWdg, panelWidth, 16*progressBar.fontScale)
 	resize(progressBar.nameProgressWdg, panelWidth-panelHeight, 20*progressBar.fontScale)
 	move(progressBar.nameMobWdg, panelHeight, 2)
+	move(progressBar.nameTargetWdg, 0, 2)
 	move(progressBar.nameProgressWdg, panelHeight, 0)
 	
 	hide(progressBar.wdg)
@@ -81,8 +92,11 @@ function SetBaseInfoProgressCastPanel(aBar, aInfo, aType)
 	setText(aBar.nameProgressWdg, aInfo.buffName or aInfo.name, "ColorWhite", "left", 18*aBar.fontScale)
 	if object.IsExist(aBar.playerID) then
 		setText(aBar.nameMobWdg, object.GetName(aBar.playerID), "ColorWhite", "left", 14*aBar.fontScale)
+	else
+		setText(aBar.nameMobWdg, "", "ColorWhite", "left", 14*aBar.fontScale)
 	end
 
+	setText(aBar.nameTargetWdg, "", "LogColorOrange", "right", 14*aBar.fontScale)
 	
 	if buffInfo then
 		local buffCreatorID = buffInfo.producer and buffInfo.producer.casterId or nil
@@ -93,6 +107,9 @@ function SetBaseInfoProgressCastPanel(aBar, aInfo, aType)
 		aBar.barWdg:FinishResizeEffect()
 		aBar.barWdg:PlayResizeEffect( fromPlacement, toPlacement, buffInfo.remainingMs, EA_MONOTONOUS_INCREASE )
 		setBackgroundColor(aBar.barWdg, { r = 0.8; g = 0.8; b = 0; a = 0.8 }) 
+		if buffCreatorID then 
+			setText(aBar.nameTargetWdg, object.GetName(buffCreatorID), "LogColorOrange", "right", 14*aBar.fontScale)
+		end
 	end
 	
 	if aInfo.spellId then
@@ -102,6 +119,13 @@ function SetBaseInfoProgressCastPanel(aBar, aInfo, aType)
 		aBar.barWdg:FinishResizeEffect()
 		aBar.barWdg:PlayResizeEffect( fromPlacement, toPlacement, aInfo.duration - aInfo.progress, EA_MONOTONOUS_INCREASE )
 		setBackgroundColor(aBar.barWdg, { r = 1.0; g = 0; b = 0; a = 0.8 })
+		if object.IsExist(aBar.playerID) then
+			local targetID = unit.GetTarget(aBar.playerID)
+			local myAvatarTargetID = avatar.GetTarget()
+			if myAvatarTargetID and targetID and myAvatarTargetID == aBar.playerID then
+				setText(aBar.nameTargetWdg, object.GetName(targetID), "LogColorOrange", "right", 14*aBar.fontScale)
+			end
+		end
 	end
 
 	show(aBar.wdg)
@@ -127,10 +151,4 @@ function ClearProgressCastPanel(aBar)
 	aBar.castedByMe = false
 	hide(aBar.wdg)
 	aBar.barWdg:FinishResizeEffect()
-end
-
-function ResetPanelPos(aInd)
-	DnD.Remove(m_groupBuffPanels[aInd].panelWdg)
-	SetConfig("DnD:"..DnD.GetWidgetTreePath(m_groupBuffPanels[aInd].panelWdg), {posX = 500, posY = 400, highPosX = 0, highPosY = 0})
-	DnD.Init(m_groupBuffPanels[aInd].panelWdg, getChild(m_groupBuffPanels[aInd].panelWdg, "MoveModePanel"), true, false)
 end

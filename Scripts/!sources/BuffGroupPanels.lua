@@ -172,7 +172,7 @@ function DestroyGroupBuffPanels()
 end
 
 function CreateGroupsParentForm()
-	return createWidget(nil, "BuffForm", "Buff")
+	return getChild(mainForm, "BuffForm")
 end
 
 function CreateGroupBuffPanel(aForm, aSettings, anIsAboveHead, aPosInPlateIndex)

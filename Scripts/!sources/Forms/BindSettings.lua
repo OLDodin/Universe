@@ -18,12 +18,10 @@ m_actionSwitch[RESSURECT_CLICK] = m_locale["RESSURECT_CLICK"]
 m_actionSwitch[AUTOCAST_CLICK] = m_locale["AUTOCAST_CLICK"]
 
 function CreateBindSettingsForm()
-	local form=createWidget(nil, "bindSettingsForm", "Form", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 1280, 620, 200, 100)
+	local form=createWidget(mainForm, "bindSettingsForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 1280, 620, 200, 100)
 	hide(form)
-	priority(form, 5000)
+	priority(form, 5)
 
-	local panel=createWidget(form, "Panel", "Panel")
-	
 	local group1 = createWidget(form, "group1", "Panel")
 	align(group1, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)
 	resize(group1, 415, 515)
@@ -156,7 +154,7 @@ function CreateBindSettingsForm()
 	
 	setLocaleText(createWidget(form, "saveButton", "Button", WIDGET_ALIGN_CENTER, WIDGET_ALIGN_HIGH, 200, 30, nil, 20))
 	
-	DnD.Init(form, panel, true)
+	DnD.Init(form, form, true)
 		
 	return form
 end

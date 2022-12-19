@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<WidgetForm>
-	<Name>UniverseProgress</Name>
-	<Priority>4551</Priority>
+<WidgetPanel>
+	<Name>ProgressBuffPanel</Name>
+	<Priority>51</Priority>
 	<Children>
 		<Item href="../Buffs/Group/TopPanel/Panel.xdb#xpointer(/WidgetPanel)"/>
 		<Item href="ProgressBar/Bar.xdb#xpointer(/WidgetButton)"/>
@@ -22,4 +22,5 @@
 		</Y>
 	</Placement>
 	<PickChildrenOnly>true</PickChildrenOnly>
-</WidgetForm>
+	<Visible>false</Visible>
+</WidgetPanel>

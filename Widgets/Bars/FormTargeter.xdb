@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<WidgetForm>
-	<Name>UniverseTargeter</Name>
-	<Priority>4551</Priority>
+<WidgetPanel>
+	<Name>TargetPanel</Name>
+	<Priority>51</Priority>
 	<Children>
 		<Item href="TopTargeterPanel/TopPanel.xdb#xpointer(/WidgetButton)"/>
 		<Item href="Bar/Bar.xdb#xpointer(/WidgetButton)"/>
@@ -23,4 +23,5 @@
 		</Y>
 	</Placement>
 	<PickChildrenOnly>true</PickChildrenOnly>
-</WidgetForm>
+	<Visible>false</Visible>
+</WidgetPanel>

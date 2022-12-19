@@ -117,6 +117,15 @@ function ConcatWString(...)
 	return ConcatWStringFromTable(arg)
 end 
 
+function LogAllCSSStyle()
+	local listCSS = common.GetCSSList()
+	for i = 0, GetTableSize(listCSS) do
+		if listCSS[i] then 
+			LogInfo(listCSS[i])
+		end
+	end
+end
+
 function formatText(text, align, fontSize, shadow, outline, fontName)
 	local firstPart = "<body fontname='"..(toStringUtils(fontName) or "AllodsWest").."' alignx = '"..(toStringUtils(align) or "left").."' fontsize='"..(toStringUtils(fontSize) or "14").."' shadow='"..(toStringUtils(shadow) or "0").."' outline='"..(toStringUtils(outline) or "1").."'><rs class='color'>"
 	local textMessage = toWString(text) or common.GetEmptyWString()
@@ -129,6 +138,7 @@ function toValuedText(text, color, align, fontSize, shadow, outline, fontName)
 	text=toWString(text)
 	if not valuedText or not text then return nil end
 	valuedText:SetFormat(toWString(formatText(text, align, fontSize, shadow, outline, fontName)))
+	
 	if color then
 		valuedText:SetClassVal( "color", color )
 	else
@@ -342,7 +352,6 @@ function setBackgroundColor(widget, color)
 end
 
 local templateWidget=nil
-local form=nil
 
 function getDesc(name)
 	local widget=templateWidget and name and templateWidget.GetChildUnchecked and templateWidget:GetChildUnchecked(name, false)
@@ -368,15 +377,10 @@ end
 function createWidget(parent, widgetName, templateName, alignX, alignY, width, height, posX, posY, noParent)
 	local widget = nil
 	local owner=getForm(parent)
-	
-	if templateName == "Form" then
-		widget = common.AddonCreateChildForm(templateName)
-	else
-		local desc = getDesc(templateName)
-		if not desc and parent then return nil end
-		widget = owner and owner:CreateWidgetByDesc(desc) or common.AddonCreateChildForm(templateName)
-	end
-	
+
+	local desc = getDesc(templateName)
+	if not desc and parent then return nil end
+	widget = owner and owner:CreateWidgetByDesc(desc)
 	if parent and widget and not noParent then parent:AddChild(widget) end
 	setName(widget, widgetName)
 	align(widget, alignX, alignY)
@@ -436,7 +440,10 @@ end
 -- Timers functions
 --------------------------------------------------------------------------------
 
-local template=createWidget(nil, "Template", "Template")
+
+
+local template=getChild(mainForm, "Template")
+
 local timers={}
 local m_loopEffects={}
 

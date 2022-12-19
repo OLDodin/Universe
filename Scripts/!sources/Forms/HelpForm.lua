@@ -1,11 +1,10 @@
 local m_imagebox = nil
 
 function CreateHelpForm()
-	local form=createWidget(nil, "helpForm", "Form", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 1280, 780, 800, 450)
-	priority(form, 5500)
+	local form=createWidget(mainForm, "helpForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 1280, 780, 800, 450)
+	priority(form, 6)
 	hide(form)
 	
-	local panel=createWidget(form, nil, "Panel")
 	setLocaleText(createWidget(form, "helpHeader", "TextView",  WIDGET_ALIGN_CENTER, nil, 300, 20, nil, 10))
 	setText(createWidget(form, "closeButton", "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 20, 20, 20, 10), "x")
 	
@@ -17,7 +16,7 @@ function CreateHelpForm()
 	
 	m_imagebox:SetBackgroundTexture(common.GetAddonRelatedTextureGroup("common"):GetTexture("help1"))
 	
-	DnD.Init(form, panel, true)
+	DnD.Init(form, form, true)
 
 	return form
 end
