@@ -549,9 +549,12 @@ end
 -- Locales functions
 --------------------------------------------------------------------------------
 
-local locale=getLocale()
+local locale=nil
 
 function setLocaleText(widget, checked)
+	if not locale then
+		locale=getLocale()
+	end
 	local name=getName(widget)
 	local text=name and locale[name]
 	if text then
