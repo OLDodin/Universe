@@ -1292,7 +1292,7 @@ local function SetNecessaryTargets(anObjID, anInCombat)
 		end
 	end
 	m_targetUnselectable[anObjID] = nil
-	
+	--object.CanAttack(
 	local isEnemy = object.IsEnemy(anObjID)
 	local isFriend = isEnemy and false or object.IsFriend(anObjID)
 	local isNeitral = not isEnemy and not isFriend

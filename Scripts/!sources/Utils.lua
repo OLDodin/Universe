@@ -551,19 +551,26 @@ end
 
 local locale=nil
 
-function setLocaleText(widget, checked)
+function setLocaleTextEx(widget, checked, color, align, fontSize, shadow, outline, fontName)
 	if not locale then
 		locale=getLocale()
 	end
 	local name=getName(widget)
 	local text=name and locale[name]
+	if not text then
+		text = name
+	end
 	if text then
 		if checked~=nil then
-			text=formatText(text, "left")
+			text=formatText(text, align)
 			setCheckBox(widget, checked)
 		end
-		setText(widget, text)
+		setText(widget, text, color, align, fontSize, shadow, outline, fontName)
 	end
+end
+
+function setLocaleText(widget, checked)
+	setLocaleTextEx(widget, checked, "ColorWhite",  "left")
 end
 
 --------------------------------------------------------------------------------

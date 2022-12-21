@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <WidgetPanel>
 	<Name>ProgressBuffPanel</Name>
-	<Priority>51</Priority>
+	<Priority>1</Priority>
 	<Children>
 		<Item href="../Buffs/Group/TopPanel/Panel.xdb#xpointer(/WidgetPanel)"/>
 		<Item href="ProgressBar/Bar.xdb#xpointer(/WidgetButton)"/>
