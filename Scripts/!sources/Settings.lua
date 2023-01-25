@@ -25,6 +25,35 @@ local function SetCurrentProfileInd(anInd)
 	userMods.SetGlobalConfigSection("TR_LastProfileArr", lastUsedProfiles)
 end
 
+local function GenerateAboveHeadGroup()
+	local correctAboveHeadSettings = {}
+	correctAboveHeadSettings.w = 5
+	correctAboveHeadSettings.h = 1
+	correctAboveHeadSettings.size = 50
+	correctAboveHeadSettings.aboveHeadButton = true
+	
+	correctAboveHeadSettings.buffOnMe = false
+	correctAboveHeadSettings.buffOnTarget = false
+	correctAboveHeadSettings.fixed = false
+	correctAboveHeadSettings.fixedInsidePanel = false
+	correctAboveHeadSettings.flipBuffsButton = false
+	correctAboveHeadSettings.autoDebuffModeButtonUnk = false
+	correctAboveHeadSettings.checkEnemyCleanableUnk = false
+	correctAboveHeadSettings.showImportantButton = false
+	correctAboveHeadSettings.checkControlsButton = false
+	correctAboveHeadSettings.checkMovementsButton = false
+
+	correctAboveHeadSettings.aboveHeadFriendPlayersButton = false
+	correctAboveHeadSettings.aboveHeadNotFriendPlayersButton = false
+	correctAboveHeadSettings.aboveHeadFriendMobsButton = false
+	correctAboveHeadSettings.aboveHeadNotFriendMobsButton = false
+	
+	correctAboveHeadSettings.buffs = {}
+	
+	correctAboveHeadSettings.name = getLocale()["aboveHeadTxt"]
+	
+	return correctAboveHeadSettings
+end
 
 function InitializeDefaultSetting()
 	local allProfiles = userMods.GetGlobalConfigSection("TR_ProfilesArr")
@@ -104,6 +133,7 @@ function InitializeDefaultSetting()
 	local buffFormSettings = {}
 	buffFormSettings.buffGroups = {}
 	buffFormSettings.buffGroupsUnicCnt = 0
+	table.insert(buffFormSettings.buffGroups, GenerateAboveHeadGroup())
 		
 	local bindFormSettings = {}
 	bindFormSettings.actionLeftSwitchRaidSimple = SELECT_CLICK
@@ -225,38 +255,17 @@ function LoadSettings(aProfileInd)
 		if GetTableSize(aboveHeadArr) > 0 then
 			correctAboveHeadSettings = copyTable(aboveHeadArr[1])
 			correctAboveHeadSettings.buffs = copyTable(aboveHeadArr[GetTableSize(aboveHeadArr)].buffs)
+			
+			correctAboveHeadSettings.aboveHeadFriendPlayersButton = true
+			correctAboveHeadSettings.aboveHeadNotFriendPlayersButton = correctAboveHeadSettings.isEnemyButton
+			correctAboveHeadSettings.aboveHeadFriendMobsButton = false
+			correctAboveHeadSettings.aboveHeadNotFriendMobsButton = false
+			
+			if correctAboveHeadSettings.isEnemyButton then
+				correctAboveHeadSettings.aboveHeadFriendPlayersButton = false
+			end
 		else
-			correctAboveHeadSettings = {}
-			correctAboveHeadSettings.w = 5
-			correctAboveHeadSettings.h = 1
-			correctAboveHeadSettings.size = 50
-			correctAboveHeadSettings.aboveHeadButton = true
-			correctAboveHeadSettings.isEnemyButton = true
-			
-			correctAboveHeadSettings.buffOnMe = false
-			correctAboveHeadSettings.buffOnTarget = false
-			correctAboveHeadSettings.fixed = false
-			correctAboveHeadSettings.fixedInsidePanel = false
-			correctAboveHeadSettings.flipBuffsButton = false
-			correctAboveHeadSettings.autoDebuffModeButtonUnk = false
-			correctAboveHeadSettings.checkEnemyCleanableUnk = false
-			correctAboveHeadSettings.showImportantButton = false
-			correctAboveHeadSettings.checkControlsButton = false
-			correctAboveHeadSettings.checkMovementsButton = false
-			
-			correctAboveHeadSettings.buffs = {}
-			
-			correctAboveHeadSettings.name = getLocale()["aboveHeadTxt"]
-		end
-		
-		
-		correctAboveHeadSettings.aboveHeadFriendPlayersButton = true
-		correctAboveHeadSettings.aboveHeadNotFriendPlayersButton = correctAboveHeadSettings.isEnemyButton
-		correctAboveHeadSettings.aboveHeadFriendMobsButton = false
-		correctAboveHeadSettings.aboveHeadNotFriendMobsButton = false
-		
-		if correctAboveHeadSettings.isEnemyButton then
-			correctAboveHeadSettings.aboveHeadFriendPlayersButton = false
+			correctAboveHeadSettings = GenerateAboveHeadGroup()
 		end
 		
 		local newBuffGroups = {}

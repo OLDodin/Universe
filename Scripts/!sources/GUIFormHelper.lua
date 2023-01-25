@@ -53,11 +53,17 @@ local function GenerateWidgetForTable(aTable, aContainer, anIndex)
 	local panel=createWidget(aContainer, nil, "Panel", WIDGET_ALIGN_BOTH, WIDGET_ALIGN_LOW, nil, 30, nil, nil, true)
 	setBackgroundColor(panel, {r=1, g=1, b=1, a=0.5})
 	setText(createWidget(panel, "Id", "TextView", WIDGET_ALIGN_LOW, WIDGET_ALIGN_CENTER, 30, 20, 10), anIndex)
+	local containerParentName = getName(getParent(aContainer))
+	local isBuffSettingsForm = compare(containerParentName, "buffSettingsForm")
+
 	if aTable.name then
-		local nameWidget=createWidget(panel, "Name"..tostring(anIndex), "EditLineTransparent", WIDGET_ALIGN_LOW, WIDGET_ALIGN_CENTER, 150, 20, 35)
+		local editLineWidth = 150
+		if isBuffSettingsForm then 
+			editLineWidth = 300
+		end
+		local nameWidget=createWidget(panel, "Name"..tostring(anIndex), "EditLineTransparent", WIDGET_ALIGN_LOW, WIDGET_ALIGN_CENTER, editLineWidth, 20, 35)
 		setText(nameWidget, aTable.name)
 	end
-	local containerParentName = getName(getParent(aContainer))
 	
 	if find(containerParentName, "profiles") then
 		setText(createWidget(panel, "exportProfileButton", "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 50, 15, 140), "Export") 
@@ -95,17 +101,16 @@ local function GenerateWidgetForTable(aTable, aContainer, anIndex)
 		setLocaleText(createWidget(panel, "setHighlightColorButton"..containerParentName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 30, 25, 30))
 	end
 	
-	if containerParentName then
-		if compare(containerParentName, "buffSettingsForm") then
-			setText(createWidget(panel, "editButton"..containerParentName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 15, 15, 30), "e")
-			--вечный пункт для над головой
-			if anIndex ~= 1 then
-				setText(createWidget(panel, "deleteButton"..containerParentName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 15, 15, 10), "x")
-			end
-		else
+	if compare(containerParentName, "buffSettingsForm") then
+		setText(createWidget(panel, "editButton"..containerParentName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 15, 15, 30), "e")
+		--вечный пункт для над головой
+		if anIndex ~= 1 then
 			setText(createWidget(panel, "deleteButton"..containerParentName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 15, 15, 10), "x")
 		end
+	else
+		setText(createWidget(panel, "deleteButton"..containerParentName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 15, 15, 10), "x")
 	end
+
 	return panel
 end
 

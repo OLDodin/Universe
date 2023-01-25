@@ -397,6 +397,10 @@ local function OnAssertChange(aParams)
 	SaveAllAndApply()
 end
 
+local function EditLineEsc(aParams)
+	aParams.widget:SetFocus(false)
+end
+
 local function OnCheckChange()
 	if raid.IsExist() then
 		raid.StartReadyCheck()
@@ -2484,5 +2488,6 @@ function GUIControllerInit()
 	common.RegisterReactionHandler(OnRaidFilter, "OnRaidFilter")
 	common.RegisterReactionHandler(OnShopChange, "OnShopChange")
 	common.RegisterReactionHandler(OnAssertChange, "OnAssertChange")
+	common.RegisterReactionHandler(EditLineEsc, "EditLineEsc")
 	
 end
