@@ -2,7 +2,7 @@ local m_template = nil
 
 function CreateProfilesForm()
 	local form=createWidget(mainForm, "configProfilesForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 600, 280, 800, 450)
-	priority(form, 6)
+	priority(form, 506)
 	hide(form)
 
 	setLocaleText(createWidget(form, "configProfilesHeader", "TextView",  WIDGET_ALIGN_CENTER, nil, 250, 20, nil, 20))

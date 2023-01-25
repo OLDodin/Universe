@@ -1,25 +1,3 @@
-local m_reactions={}
-local m_template = getChild(mainForm, "Template")
-
-function AddReaction(name, func)
-	if not m_reactions then m_reactions={} end
-	m_reactions[name]=func
-end
-
-local function RunReaction(widget)
-	local name=getName(widget)
-	if name == "GetModeBtn" then
-		name=getName(getParent(widget))
-	end
-	if not name or not m_reactions or not m_reactions[name] then return end
-	m_reactions[name](widget)
-end
-
-local function ButtonPressed(params)
-	RunReaction(params.widget)
-	changeCheckBox(params.widget)
-end
-
 local m_raidSubSystemLoaded = false
 local m_targetSubSystemLoaded = false
 local m_buffGroupSubSystemLoaded = false
@@ -49,6 +27,7 @@ local m_colorForm = nil
 local m_progressActionPanelList = {}
 local m_progressBuffPanelList = {}
 local m_raidPlayerPanelList = {}
+local m_raidPlayerMovePanel = nil
 local m_targeterPlayerPanelList = {}
 local m_moveMode = false
 local m_movingUniqueID = nil
@@ -70,140 +49,6 @@ local m_currTargetType = ALL_TARGETS
 local m_lastTargetType = ALL_TARGETS
 local m_targetUnitsByType = {}
 local m_targetUnselectable = {}
-
-
-function GetIndexForWidget(anWidget)
-	local parent = getParent(anWidget)
-	local container = getParent(getParent(getParent(parent)))
-	if not parent or not container then 
-		return nil
-	end
-	local index = nil
-	for i=0, container:GetElementCount() do
-		if equals(anWidget, getChild(container:At(i), getName(anWidget), true)) then index=i end
-	end
-	return index
-end
-
-local function GenerateWidgetForTable(aTable, aContainer, anIndex)
-	setTemplateWidget(m_template)	
-	local panel=createWidget(aContainer, nil, "Panel", WIDGET_ALIGN_BOTH, WIDGET_ALIGN_LOW, nil, 30, nil, nil, true)
-	setBackgroundColor(panel, {r=1, g=1, b=1, a=0.5})
-	setText(createWidget(panel, "Id", "TextView", WIDGET_ALIGN_LOW, WIDGET_ALIGN_CENTER, 30, 20, 10), anIndex)
-	if aTable.name then
-		local nameWidget=createWidget(panel, "Name"..tostring(anIndex), "EditLineTransparent", WIDGET_ALIGN_LOW, WIDGET_ALIGN_CENTER, 150, 20, 35)
-		setText(nameWidget, aTable.name)
-	end
-	local containerParentName = getName(getParent(aContainer))
-	
-	if find(containerParentName, "profiles") then
-		setText(createWidget(panel, "exportProfileButton", "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 50, 15, 140), "Export") 
-		if anIndex ~= GetCurrentProfileInd() then 
-			setText(createWidget(panel, "loadProfileButton", "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 50, 15, 30), "Load") 
-		else
-			setText(createWidget(panel, "saveProfileButton", "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 50, 15, 85), "Save") 
-		end
-	end
-	
-	if find(containerParentName, "GroupBuffs") then
-		if aTable.isCD==nil then aTable.isCD=false end
-		if aTable.isBuff==nil then aTable.isBuff=true end
-		if aTable.castByMe==nil then aTable.castByMe=false end
-		if aTable.isSpell==nil then aTable.isSpell=false end
-		if aTable.time==nil then aTable.time=30 end
-
-		local cdWidget = createWidget(panel, "isCD"..tostring(anIndex), "CheckBox", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 25, 25, 190)
-		setCheckBox(cdWidget, aTable.isCD)
-		hide(cdWidget)
-		setCheckBox(createWidget(panel, "isBuff"..tostring(anIndex), "CheckBox", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 25, 25, 140), aTable.isBuff)
-		setCheckBox(createWidget(panel, "castByMe"..tostring(anIndex), "CheckBox", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 25, 25, 90), aTable.castByMe)
-		setCheckBox(createWidget(panel, "isSpell"..tostring(anIndex), "CheckBox", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 25, 25, 40), aTable.isSpell)
-		cdWidget = createWidget(panel, "CD"..tostring(anIndex), "EditLineTransparent", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 80, 20, 220)
-		hide(cdWidget)
-		setText(cdWidget, aTable.time)
-		
-		setLocaleText(createWidget(panel, "setHighlightColorButton"..containerParentName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 30, 25, 190))
-	end
-	
-	if find(containerParentName, "raidSettingsForm") then
-		setLocaleText(createWidget(panel, "setHighlightColorButton"..containerParentName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 30, 25, 30))
-	end
-	if find(containerParentName, "targeterSettingsForm") then
-		setLocaleText(createWidget(panel, "setHighlightColorButton"..containerParentName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 30, 25, 30))
-	end
-	
-	if containerParentName then
-		if compare(containerParentName, "buffSettingsForm") then
-			setText(createWidget(panel, "editButton"..containerParentName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 15, 15, 30), "e")
-		end
-		setText(createWidget(panel, "deleteButton"..containerParentName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 15, 15, 10), "x")
-	end
-	return panel
-end
-
-function ShowValuesFromTable(aTable, aForm, aContainer)
-	local container = aContainer
-	if not aContainer then 
-		container = getChild(aForm, "container") 
-	end
-	if not aTable or not container then 
-		return nil 
-	end
-	if container.RemoveItems then 
-		container:RemoveItems() 
-	end
-	for i, element in ipairs(aTable) do
-		if container.PushBack then
-			local widget=GenerateWidgetForTable(element, container, i)
-			if widget then 
-				container:PushBack(widget) 
-			end
-		end
-	end
-end
-
-local function DeleteContainer(aTable, anWidget, aForm)
-	local parent = getParent(anWidget)
-	local container = getParent(getParent(getParent(parent)))
-	local index = GetIndexForWidget(anWidget)
-	if container and index and aTable then
-		container:RemoveAt(index)
-		table.remove(aTable, index+1)
-	end
-	ShowValuesFromTable(aTable, aForm, container)
-end
-
-function UpdateTableValuesFromContainer(aTable, aForm, aContainer)
-	local container = aContainer
-	if not aContainer then 
-		container = getChild(aForm, "container") 
-	end
-	if not container or not aTable then 
-		return nil 
-	end
-	for i, j in ipairs(aTable) do
-		j.name = getText(getChild(container, "Name"..tostring(i), true))
-		j.nameLowerStr = toLowerString(j.name)
-	end
-end
-
-function AddElementFromFormWithText(aTable, aForm, aText, aContainer)
-	local text = aText
-	local textLowerStr = toLowerString(text)
-	if not aTable or not text or common.IsEmptyWString(text) then 
-		return nil 
-	end
-	table.insert(aTable, { name=text, nameLowerStr=textLowerStr } )
-	ShowValuesFromTable(aTable, aForm, aContainer)
-end
-
-function AddElementFromForm(aTable, aForm, aTextedit, aContainer)
-	if not aTextedit then aTextedit="EditLine1" end
-	local text = getText(getChild(aForm, aTextedit))
-	AddElementFromFormWithText(aTable, aForm, text, aContainer)
-	setText(getChild(aForm, aTextedit), "")
-end
-
 
 
 
@@ -421,7 +266,15 @@ end
 
 function AddBuffsGroupButton(aWdg)
 	local profile = GetCurrentProfile()
-	AddElementFromForm(profile.buffFormSettings.buffGroups, m_buffSettingsForm, nil, getChild(m_buffSettingsForm, "container") ) 
+	local result = AddElementFromForm(profile.buffFormSettings.buffGroups, m_buffSettingsForm, nil, getChild(m_buffSettingsForm, "container") ) 
+	if not result then
+		return
+	end
+	local buffGroupCnt = GetTableSize(profile.buffFormSettings.buffGroups)
+	profile.buffFormSettings.buffGroupsUnicCnt = profile.buffFormSettings.buffGroupsUnicCnt + 1
+	profile.buffFormSettings.buffGroups[buffGroupCnt].buffGroupWdgName = BUFF_GROUP_WDG_NAME_PREFIX..tostring(profile.buffFormSettings.buffGroupsUnicCnt)
+	LoadConfigGroupBuffsForm(m_configGroupBuffForm, buffGroupCnt)
+	show(m_configGroupBuffForm)
 end
 
 function AddBuffsInsideGroupButton(aWdg)
@@ -477,6 +330,14 @@ end
 
 function SwitchActionBtn(aWdg)
 	SwitchActionClickBtn(getParent(aWdg))
+end
+
+function BuffOnMeCheckedOn()
+	ConfigGroupBuffsBuffOnMeCheckedOn(m_configGroupBuffForm)
+end
+
+function BuffOnTargetCheckedOn()
+	ConfigGroupBuffsBuffOnTargetCheckedOn(m_configGroupBuffForm)
 end
 
 local function HidePartyBtns()
@@ -616,6 +477,44 @@ local function FindClickedInRaidMove(anWdg)
 	end
 end
 
+local function FindRaidMoveBarByCoordinateInRaid(aGlobalX, aGlobalY)
+	if not m_moveMode then 
+		return
+	end
+	
+	for i=0, GetTableSize(m_raidPlayerPanelList)-1 do
+		local subParty = m_raidPlayerPanelList[i]
+		for j=0, GetTableSize(subParty)-1 do
+			local playerBar = subParty[j]
+			if playerBar.raidMoveWdg:IsVisible() then
+				local realRect = playerBar.raidMoveWdg:GetRealRect()
+				if realRect.x1 < aGlobalX and realRect.x2 > aGlobalX and realRect.y1 < aGlobalY and realRect.y2 > aGlobalY then
+					return playerBar
+				end
+			end
+		end
+	end
+end
+
+local function FindBarByCoordinateInRaid(aGlobalX, aGlobalY)
+	if not m_moveMode then 
+		return
+	end
+	
+	for i=0, GetTableSize(m_raidPlayerPanelList)-1 do
+		local subParty = m_raidPlayerPanelList[i]
+		for j=0, GetTableSize(subParty)-1 do
+			local playerBar = subParty[j]
+			if playerBar.isUsed then
+				local realRect = playerBar.wdg:GetRealRect()
+				if realRect.x1 < aGlobalX and realRect.x2 > aGlobalX and realRect.y1 < aGlobalY and realRect.y2 > aGlobalY then
+					return playerBar
+				end
+			end
+		end
+	end
+end
+
 function TargetChanged()
 	local targetID = avatar.GetTarget()
 	local profile = GetCurrentProfile()
@@ -656,6 +555,7 @@ local function MoveModeClick(aParams)
 	MoveTo(clickedPartyNum, m_movingUniqueID, FindMyUniqueIDInRaid())
 	StopMove()
 end
+
 
 local function MakeBindAction(aParams, aPlayerBar, aLeftClick, aTypeBind)
 	local profile = GetCurrentProfile()
@@ -764,7 +664,7 @@ local function MakeBindAction(aParams, aPlayerBar, aLeftClick, aTypeBind)
 	elseif actionType == SELECT_CLICK then
 		selectTarget(aPlayerBar.playerID)
 	elseif actionType == MENU_CLICK then
-		ShowMenu(aPlayerBar, aParams, m_raidPanel, m_lastRaidPanelSize, FindMyUniqueIDInRaid())
+		ShowMenu(aPlayerBar, aParams, m_raidPanel, m_lastRaidPanelSize, avatar.GetUniqueId())
 	elseif actionType == RESSURECT_CLICK and isExist(aPlayerBar.playerID) and object.IsDead(aPlayerBar.playerID) then
 		ressurect(aPlayerBar.playerID)
 	end
@@ -789,14 +689,14 @@ local function OnPlayerSelect(aParams, aLeftClick)
 					if aLeftClick then
 						selectTarget(playerBar.playerID)
 					else
-						ShowMenu(playerBar, aParams, m_raidPanel, m_lastRaidPanelSize, FindMyUniqueIDInRaid())
+						ShowMenu(playerBar, aParams, m_raidPanel, m_lastRaidPanelSize, avatar.GetUniqueId())
 					end
 				end
 			--end
 		else
-			SwapPlayers(m_movingUniqueID, playerBar.uniqueID, FindMyUniqueIDInRaid())
+			SwapPlayers(m_movingUniqueID, playerBar.uniqueID, avatar.GetUniqueId())
 			StopMove()
-		end
+		end		
 		return
 	end
 
@@ -828,6 +728,20 @@ local function OnRightClick(aParams)
 end
 
 local function OnPlayerBarPointing(aParams)
+	local playerBar = nil
+	playerBar = FindClickedInRaid(aParams.widget)
+	
+	if not playerBar then
+		playerBar = FindClickedInTarget(aParams.widget)
+	end
+	if playerBar then
+		if aParams.active then
+			show(playerBar.highlightWdg)
+		else
+			hide(playerBar.highlightWdg)
+		end
+	end
+	
 	local profile = GetCurrentProfile()
 	if not profile.raidFormSettings.showRollOverInfo and not profile.targeterFormSettings.showRollOverInfo then
 		return
@@ -838,14 +752,7 @@ local function OnPlayerBarPointing(aParams)
 		return
 	end
 	
-	local playerBar = nil
-	if profile.raidFormSettings.showRollOverInfo then
-		playerBar = FindClickedInRaid(aParams.widget)
-	end
-	if not playerBar and profile.targeterFormSettings.showRollOverInfo then
-		playerBar = FindClickedInTarget(aParams.widget)
-	end
-	if playerBar and not m_moveMode then
+	if playerBar and not m_moveMode and playerBar.playerID then
 		InitPlayerShortInfoForm(playerBar.playerID)
 		show(m_playerShortInfoForm)
 	end
@@ -955,10 +862,14 @@ end
 
 local function CreateRaidPanelCache()
 	local profile = GetCurrentProfile()
+	m_raidPlayerMovePanel = CreatePlayerPanel(m_raidPanel, 0, 0, true, profile.raidFormSettings, 111)
+	m_raidPlayerMovePanel.wdg:SetTransparentInput(true)
 	for i = 0, 3 do
 		m_raidPlayerPanelList[i] = {}
 		for j = 0, 5 do
-			local playerPanel = CreatePlayerPanel(m_raidPanel, i, j, true, profile.raidFormSettings)
+			local playerPanel = CreatePlayerPanel(m_raidPanel, i, j, true, profile.raidFormSettings, (i+1)*(j+1))
+			DnD.Init(m_raidPlayerMovePanel.wdg, playerPanel.wdg, false)
+			DnD.Enable(playerPanel.wdg, false)
 			m_raidPlayerPanelList[i][j] = playerPanel
 		end
 	end
@@ -1029,6 +940,74 @@ local function ShowMoveIfNeeded()
 	end
 	
 	ResizeRaidPanel(partyCnt, maxPeopleCnt)
+end
+
+function HideHighlight()
+	for i=0, GetTableSize(m_raidPlayerPanelList)-1 do
+		local subParty = m_raidPlayerPanelList[i]
+		for j=0, GetTableSize(subParty)-1 do
+			local playerBar = subParty[j]
+			hide(playerBar.highlightWdg)
+			hide(playerBar.raidMoveHighlightWdg)
+		end
+	end
+end
+
+function OnDragTo(aParams)
+	if not m_moveMode then
+		return
+	end
+	local playerBar = FindBarByCoordinateInRaid(aParams.posX, aParams.posY)
+	HideHighlight()
+	if playerBar then
+		show(playerBar.highlightWdg)
+	else
+		playerBar = FindRaidMoveBarByCoordinateInRaid(aParams.posX, aParams.posY)
+		if playerBar then
+			show(playerBar.raidMoveHighlightWdg)
+		end
+	end
+end
+
+function OnDragEnd(aParams)
+	if not m_moveMode then
+		return
+	end
+	if aParams.targetWidget then
+		local playerBar = FindClickedInRaid(aParams.targetWidget)
+		if playerBar then
+			SwapPlayers(m_movingUniqueID, playerBar.uniqueID, avatar.GetUniqueId())
+		else
+			local clickedPartyNum = FindClickedInRaidMove(aParams.targetWidget)
+			if clickedPartyNum ~= nil then
+				MoveTo(clickedPartyNum, m_movingUniqueID, avatar.GetUniqueId())
+			end
+		end
+	end
+	StopMove()
+end
+
+function OnDragCancelled()
+	StopMove()
+end
+
+function OnDNDPickAttempt(aParams)
+	local playerBar = FindClickedInRaid(aParams.srcWidget)
+	local profile = GetCurrentProfile()
+	if playerBar then
+		CloneBaseInfoPlayerPanel(playerBar, m_raidPlayerMovePanel)
+		
+		show(m_raidPlayerMovePanel.wdg)
+		priority(m_raidPlayerMovePanel.wdg, 300)
+		local panelWidth = tonumber(profile.raidFormSettings.raidWidthText)
+		local panelHeight = tonumber(profile.raidFormSettings.raidHeightText)
+		local realRect = m_raidPlayerMovePanel.wdg:GetRealRect()
+		local localPlacement = m_raidPlayerMovePanel.wdg:GetPlacementPlain()
+		move(m_raidPlayerMovePanel.wdg
+		, aParams.posX - realRect.x1 + localPlacement.posX - panelWidth/2
+		, aParams.posY - realRect.y1 + localPlacement.posY - panelHeight/2)
+		StartMove(playerBar.uniqueID)
+	end
 end
 
 local function BuildRaidGUI(aCurrentRaid)
@@ -1161,8 +1140,8 @@ function RaidChanged(aParams)
 		local members = group.GetMembers()
 		m_currentRaid.type = PARTY_TYPE
 		m_currentRaid.members = members
-		StopMove()
 		ShowPartyBtns(1)
+		StopMove()
 	else
 		m_currentRaid.type = SOLO_TYPE
 		m_currentRaid.members = {}
@@ -1173,6 +1152,7 @@ function RaidChanged(aParams)
 	BuildRaidGUI(m_currentRaid)
 	ReadyCheckChanged()
 	
+	local canMovePlayers = CanMovePlayers(avatar.GetUniqueId())
 	for i=0, GetTableSize(m_raidPlayerPanelList)-1 do
 		local subParty = m_raidPlayerPanelList[i]
 		for j=0, GetTableSize(subParty)-1 do
@@ -1180,6 +1160,9 @@ function RaidChanged(aParams)
 			if not playerBar.isUsed then
 				playerBar.playerID = nil
 				hide(playerBar.wdg)
+				hide(playerBar.highlightWdg)
+			else
+				DnD.Enable(playerBar.wdg, canMovePlayers)
 			end
 		end
 	end
@@ -1200,13 +1183,18 @@ function HideMove()
 end
 
 function StopMove()
+	if m_moveMode then
+		mission.DNDCancelDrag()
+		DnD.OnDragCancelled()
+	end
 	HideMove()
+	hide(m_raidPlayerMovePanel.wdg)
 	m_moveMode = false
 	m_movingUniqueID = nil
 end
 
 function StartMove(anUniqueID)
-	if not raid.IsExist() then 
+	if not raid.IsExist() and not group.IsExist() then 
 		m_moveMode = false 
 		return 
 	end
@@ -1217,6 +1205,23 @@ function StartMove(anUniqueID)
 	ShowMoveIfNeeded()
 end
 
+
+local function SortByObjID(A, B)
+	return A.objID < B.objID
+end
+
+local function SortByName(A, B)
+	if A.objNameLower < B.objNameLower then
+		return true
+	elseif A.objNameLower == B.objNameLower then
+		return A.objID < B.objID
+	end
+	return false
+end
+
+local function SortByWeight(A, B)
+	return A.sortWeight < B.sortWeight
+end
 
 local function EraseTargetInListTarget(anObjID, aType)
 	local objArr = m_targetUnitsByType[aType]
@@ -1276,6 +1281,7 @@ local function AddTargetInList(aNewTargetInfo, anObjArr)
 	end
 	
 	table.insert(anObjArr, aNewTargetInfo)
+	table.sort(anObjArr, SortByObjID)
 end
 
 local function SetNecessaryTargets(anObjID, anInCombat)
@@ -1377,7 +1383,7 @@ local function CreateTargeterPanelCache()
 	end
 		
 	for i = 0, TARGETS_LIMIT-1 do
-		local playerPanel = CreatePlayerPanel(m_targetPanel, 0, i, false, profile.targeterFormSettings)
+		local playerPanel = CreatePlayerPanel(m_targetPanel, 0, i, false, profile.targeterFormSettings, i)
 		m_targeterPlayerPanelList[i] = playerPanel
 		if profile.targeterFormSettings.twoColumnMode then
 			align(playerPanel.wdg, WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW)
@@ -1385,7 +1391,7 @@ local function CreateTargeterPanelCache()
 	end
 	
 	for i = TARGETS_LIMIT, TARGETS_LIMIT*2-1 do
-		local playerPanel = CreatePlayerPanel(m_targetPanel, 1, i, false, profile.targeterFormSettings)
+		local playerPanel = CreatePlayerPanel(m_targetPanel, 1, i, false, profile.targeterFormSettings, i)
 		m_targeterPlayerPanelList[i] = playerPanel
 		if profile.targeterFormSettings.twoColumnMode then
 			align(playerPanel.wdg, WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW)
@@ -1399,6 +1405,7 @@ local function ClearTargetPanels()
 	for i = 0, GetTableSize(m_targeterPlayerPanelList)-1 do
 		local playerBar = m_targeterPlayerPanelList[i]
 		hide(playerBar.wdg)
+		hide(playerBar.highlightWdg)
 		playerBar.playerID = nil
 	end
 	
@@ -1509,42 +1516,18 @@ local function SeparateTargeterPanelList(anObjList, aPanelListShift)
 	return finededList, freeList
 end
 
-local function SortByName(A, B)
-	return A.objNameLower < B.objNameLower
-end
-
-local function SortByHP(A, B)
-	return A.hp < B.hp
-end
-
-local function SortByClass(A, B)
-	return A.classPriority < B.classPriority
-end
-
-local function SortByDead(A, B)
-	return A.isDead < B.isDead
-end
-
-local function SortByWeight(A, B)
-	return A.sortWeight < B.sortWeight
-end
-
 local function SortBySettings(anArr)
 	local profile = GetCurrentProfile()
-	
-	for i = 1, GetTableSize(anArr)  do
-		anArr[i].sortWeight = 0
-	end
-		
+
 	if profile.targeterFormSettings.sortByName then
 		table.sort(anArr, SortByName)
-		for i = 1, GetTableSize(anArr) do
-			anArr[i].sortWeight = i
-		end
 	end
 	
+	for i = 1, GetTableSize(anArr) do
+		anArr[i].sortWeight = i
+	end
+		
 	if profile.targeterFormSettings.sortByHP then
-		table.sort(anArr, SortByHP)
 		for i = 1, GetTableSize(anArr) do
 			anArr[i].sortWeight = anArr[i].sortWeight + anArr[i].hp * TARGETS_LIMIT
 		end
@@ -1552,7 +1535,6 @@ local function SortBySettings(anArr)
 	
 	if profile.targeterFormSettings.sortByClass then
 		local shiftMult = 101 * TARGETS_LIMIT
-		table.sort(anArr, SortByClass)
 		for i = 1, GetTableSize(anArr) do
 			anArr[i].sortWeight = anArr[i].sortWeight + anArr[i].classPriority * shiftMult
 		end
@@ -1560,7 +1542,6 @@ local function SortBySettings(anArr)
 	
 	if profile.targeterFormSettings.sortByDead then
 		local shiftMult = 101 * TARGETS_LIMIT * (GetTableSize(g_classPriority) + 1)
-		table.sort(anArr, SortByDead)
 		for i = 1, GetTableSize(anArr) do
 			anArr[i].sortWeight = anArr[i].sortWeight + anArr[i].isDead * shiftMult
 		end
@@ -1639,6 +1620,7 @@ local function SortAndSetTarget(aTargetUnion, aPanelListShift, aPanelPosShift)
 			if playerBar.playerID then
 				UnsubscribeTargetListener(playerBar.playerID)
 				hide(playerBar.wdg)
+				hide(playerBar.highlightWdg)
 			end
 			playerBar.playerID = nil
 		end
@@ -2182,12 +2164,12 @@ function UnloadRaidSubSystem()
 	for i=0, GetTableSize(m_raidPlayerPanelList)-1 do
 		local subParty = m_raidPlayerPanelList[i]
 		for j=0, GetTableSize(subParty)-1 do
-			local playerBar = subParty[j]
-			hide(playerBar.wdg)
-			destroy(playerBar.wdg)
+			DestroyPlayerPanel(subParty[j])
 		end
 	end
 	m_raidPlayerPanelList = {}
+	DestroyPlayerPanel(m_raidPlayerMovePanel)
+	m_raidPlayerMovePanel = nil
 	
 	hide(m_raidPanel)
 	
@@ -2218,7 +2200,7 @@ function UnloadTargeterSubSystem()
 	DestroyColorForm()
 	ClearTargetPanels()
 	for i = 0, GetTableSize(m_targeterPlayerPanelList)-1 do
-		destroy(m_targeterPlayerPanelList[i].wdg)
+		DestroyPlayerPanel(m_targeterPlayerPanelList[i])
 	end
 	m_targeterPlayerPanelList = {}
 	hide(m_targetPanel)
@@ -2361,6 +2343,8 @@ function GUIControllerInit()
 	
 	
 	common.RegisterReactionHandler(ButtonPressed, "execute")
+	common.RegisterReactionHandler(CheckBoxChangedOn, "CheckBoxChangedOn")
+	common.RegisterReactionHandler(CheckBoxChangedOff, "CheckBoxChangedOff")
 	
 	AddReaction("closeButton", function (aWdg) swap(getParent(aWdg)) end)
 	AddReaction("UniverseButton", UniverseBtnPressed)
@@ -2429,6 +2413,8 @@ function GUIControllerInit()
 	AddReaction("prevHelpBtn", PrevHelp)
 	AddReaction("distanceButton", DistanceBtnPressed)
 	AddReaction("closeDistanceFormButton", function (aWdg) swap(getParent(aWdg)) end)
+	AddReaction("buffOnMe", BuffOnMeCheckedOn)
+	AddReaction("buffOnTarget", BuffOnTargetCheckedOn)
 	
 	local profile = GetCurrentProfile()
 	if profile.mainFormSettings.useRaidSubSystem then
@@ -2448,7 +2434,7 @@ function GUIControllerInit()
 	end
 	
 	TargetChanged()
-	
+	DnD.SetDndCallbackFunc(OnDNDPickAttempt)
 	
 	
 	startTimer("updateTimer", Update, 0.1)
@@ -2470,10 +2456,11 @@ function GUIControllerInit()
 	common.RegisterEventHandler(UnitHPChanged, "EVENT_UNIT_HEALTH_CHANGED")
 	common.RegisterEventHandler(UnitHPChanged, "EVENT_OBJECT_HEALTH_CHANGED")
 
-	
+	common.RegisterEventHandler(OnDragTo, "EVENT_DND_DRAG_TO")
+	common.RegisterEventHandler(OnDragEnd, "EVENT_DND_DROP_ATTEMPT")
+	common.RegisterEventHandler(OnDragCancelled, "EVENT_DND_DRAG_CANCELLED")
 	common.RegisterEventHandler(UnitDeadChanged, "EVENT_UNIT_DEAD_CHANGED")
 
-	
 	common.RegisterEventHandler(effectDone, "EVENT_EFFECT_FINISHED")
 
 	
@@ -2482,8 +2469,8 @@ function GUIControllerInit()
 	common.RegisterEventHandler(UnitDead, "EVENT_UNIT_DEAD_CHANGED")
 	common.RegisterEventHandler(WoundsChanged, "EVENT_UNIT_WOUNDS_COMPLEXITY_CHANGED")
 	
-	common.RegisterReactionHandler(OnLeftClick, "OnLeftClick")
-	common.RegisterReactionHandler(OnRightClick, "OnRightClick" )
+	common.RegisterReactionHandler(OnLeftClick, "OnPlayerBarLeftClick")
+	common.RegisterReactionHandler(OnRightClick, "OnPlayerBarRightClick" )
 	common.RegisterReactionHandler(OnPlayerBarPointing, "OnPlayerBarPointing" )
 	common.RegisterReactionHandler(MoveModeClick, "addClick")
 	common.RegisterReactionHandler(ShowSelectTargetTypePanel, "GetModeBtnReaction")

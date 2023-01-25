@@ -200,18 +200,16 @@ function InitBuffConditionMgr()
 	
 	
 	for i, buffPlateSettings in ipairs(profile.buffFormSettings.buffGroups) do
-		local buffGroup = {}
-		buffGroup = buffPlateSettings
-		buffGroup.customBuffs = {}
+		buffPlateSettings.customBuffs = {}
 		if buffPlateSettings.buffs then
 			for ind, settingsBuffInfo in pairs(buffPlateSettings.buffs) do
 				if settingsBuffInfo.isBuff then
 					settingsBuffInfo.ind = ind
-					table.insert(buffGroup.customBuffs, settingsBuffInfo)
+					table.insert(buffPlateSettings.customBuffs, settingsBuffInfo)
 				end
 			end
 			m_buffPlateConditionArr[i] = copyTable(BuffCondition)
-			m_buffPlateConditionArr[i]:Init(buffGroup)
+			m_buffPlateConditionArr[i]:Init(buffPlateSettings)
 			
 			if buffPlateSettings.aboveHeadButton then
 				m_aboveHeadCondition = m_buffPlateConditionArr[i]

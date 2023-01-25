@@ -16,9 +16,18 @@ local function CheckHelper(aUniqueID)
 	return false
 end
 
+function CanMovePlayers(aMyUniqueID)
+	if isRaid() then
+		local iamHelper = CheckHelper(aMyUniqueID)
+		if raid.IsLeader() or iamHelper then
+			return true
+		end
+	end
+	return false
+end
+
 function MoveTo(aPartyNum, anUniqueID, aMyUniqueID)
-	local iamHelper = CheckHelper(aMyUniqueID)
-	if isRaid() and (raid.IsLeader() or iamHelper) and anUniqueID then
+	if CanMovePlayers(aMyUniqueID) and anUniqueID then
 		if aPartyNum < 4 then
 			local currGroupSize = getGroupSizeFromPersId(anUniqueID)
 			local currGroupNum = getGroupFromPersId(anUniqueID)
@@ -35,8 +44,7 @@ function MoveTo(aPartyNum, anUniqueID, aMyUniqueID)
 end
 
 function SwapPlayers(anUniqueID1, anUniqueID2, aMyUniqueID)
-	local iamHelper = CheckHelper(aMyUniqueID)
-	if isRaid() and (raid.IsLeader() or iamHelper) then
+	if CanMovePlayers(aMyUniqueID) then
 		if anUniqueID1 and anUniqueID2 then 
 			raid.SwapMembers(anUniqueID1, anUniqueID2) 
 		end
@@ -131,6 +139,7 @@ function GenerateMenuInfos(aPlayerBar, aMyUniqueID)
 					AddToMenu("disbandMenuButton", function () raid.Disband() CloseMenu() end)
 				end
 				AddToMenu("moveMenuButton", function () StartMove(uniqueID) CloseMenu() end)
+
 			elseif iamHelper then
 				AddToMenu("disbandMenuButton", function () raid.Disband() CloseMenu() end)
 				AddToMenu("moveMenuButton", function () StartMove(uniqueID) CloseMenu() end)

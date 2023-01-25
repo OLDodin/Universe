@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <WidgetTextView>
 	<Name>NameTargetText</Name>
-	<Priority>140</Priority>
+	<Priority>141</Priority>
 	<Placement>
 		<X>
 			<Align>WIDGET_ALIGN_LOW</Align>

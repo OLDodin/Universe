@@ -20,7 +20,7 @@ m_actionSwitch[AUTOCAST_CLICK] = m_locale["AUTOCAST_CLICK"]
 function CreateBindSettingsForm()
 	local form=createWidget(mainForm, "bindSettingsForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 1280, 620, 200, 100)
 	hide(form)
-	priority(form, 5)
+	priority(form, 505)
 
 	local group1 = createWidget(form, "group1", "Panel")
 	align(group1, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)

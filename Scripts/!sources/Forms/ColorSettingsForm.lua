@@ -55,7 +55,7 @@ function CreateColorSettingsForm(aSaveLoadType, aGroupBuffsNum, aBuffInd)
 	setTemplateWidget(m_template)
 	
 	local form=createWidget(mainForm, "colorSettingsForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 400, 260, 200, 100)
-	priority(form, 7)
+	priority(form, 507)
 	hide(form)
 	
 	setLocaleText(createWidget(form, "useHighlightBuffCheckBox", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 345, 25, 10, 150), info.useHighlightBuff)

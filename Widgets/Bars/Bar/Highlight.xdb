@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<WidgetPanel>
+	<Priority>201</Priority>
+	<Name>Highlight</Name>
+	<Children>
+	</Children>
+	<BackLayer href="../Textures/Highlighted.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)" />
+	<Placement>
+		<X>
+			<Align>WIDGET_ALIGN_BOTH</Align>
+			<Size>10</Size>
+			<Pos>0</Pos>
+		</X>
+		<Y>
+			<Align>WIDGET_ALIGN_BOTH</Align>
+			<Size>10</Size>
+			<Pos>0</Pos>
+		</Y>
+	</Placement>
+	<TransparentInput>true</TransparentInput>
+</WidgetPanel>

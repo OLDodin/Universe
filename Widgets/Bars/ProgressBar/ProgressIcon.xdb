@@ -2,7 +2,7 @@
 <WidgetPanel>
 	<Priority>130</Priority>
 	<Name>ProgressIcon</Name>
-	<BackLayer href="Textures/DotIcon.xdb#xpointer(/WidgetLayerSimpleTexture)" />
+	<BackLayer href="../Textures/DotIcon.xdb#xpointer(/WidgetLayerSimpleTexture)" />
 	<Placement>
 		<X>
 			<Align>WIDGET_ALIGN_LOW</Align>

@@ -24,7 +24,7 @@ function onAOPanelRightClick( params )
 	if params.sender == common.GetAddonName() then
 		local SetVal = { val = userMods.ToWString( "U" )}
 		userMods.SendEvent( "AOPANEL_UPDATE_ADDON", { sysName = common.GetAddonName(), header = SetVal } )
-		ChangeSelectedAddons()
+		--ChangeSelectedAddons()
 	end
 	
 end

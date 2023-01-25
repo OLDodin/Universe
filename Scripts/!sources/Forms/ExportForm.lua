@@ -1,6 +1,6 @@
 function CreateExportProfilesForm()
 	local form=createWidget(mainForm, "exportProfilesForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 600, 280, 800, 450)
-	priority(form, 6)
+	priority(form, 506)
 	hide(form)
 	
 	setLocaleText(createWidget(form, "exportProfilesHeader", "TextView",  WIDGET_ALIGN_CENTER, nil, 450, 20, nil, 20))

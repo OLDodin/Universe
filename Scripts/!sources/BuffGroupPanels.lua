@@ -200,7 +200,7 @@ function CreateGroupBuffPanel(aForm, aSettings, anIsAboveHead, aPosInPlateIndex)
 		if anIsAboveHead then
 			groupBuffPanel.panelWdg = createWidget(mainForm, "BuffGroup"..tostring(aPosInPlateIndex), "BuffGroup")			
 		else
-			groupBuffPanel.panelWdg = createWidget(aForm, "BuffGroup"..tostring(aPosInPlateIndex), "BuffGroup")
+			groupBuffPanel.panelWdg = createWidget(aForm, aSettings.buffGroupWdgName, "BuffGroup")
 		end
 		resize(groupBuffPanel.panelWdg, math.max(size*math.min(w, num), GetMinGroupPanelSize(anIsAboveHead)), size*math.min(h, math.ceil(num/w))+30)
 
@@ -344,8 +344,13 @@ function GetAboveHeadSettings()
 	end
 end
 
-local function CheckEnemy(anEnemyButton, anObjID)
-	return anEnemyButton and not object.IsFriend(anObjID)
+local function CheckSettingsCondition(aSettings, anObjID)
+	local isPlayer = unit.IsPlayer(anObjID)
+	local isFriend = object.IsFriend(anObjID)
+	return aSettings.aboveHeadFriendPlayersButton and isPlayer and isFriend 
+			or aSettings.aboveHeadNotFriendPlayersButton and isPlayer and not isFriend
+			or aSettings.aboveHeadFriendMobsButton and not isPlayer and isFriend
+			or aSettings.aboveHeadNotFriendMobsButton and not isPlayer and not isFriend, isPlayer
 end
 
 function UnitsChangedForAboveHead(aSpawnedUnitList, aDespawnedUnitList)
@@ -367,11 +372,15 @@ function UnitsChangedForAboveHead(aSpawnedUnitList, aDespawnedUnitList)
 	FabricDestroyUnused()
 	
 	for _, objID in pairs(aSpawnedUnitList) do
-		if isExist(objID) and unit.IsPlayer(objID) then
-			if not aboveHeadSettings.isEnemyButton or CheckEnemy(aboveHeadSettings.isEnemyButton, objID) then
+		if isExist(objID) then
+			local needPanel, isPlayer = CheckSettingsCondition(aboveHeadSettings, objID)
+			if needPanel then
 				priority = NORMAL_PRIORITY_PANELS
 				if objID == myID then
 					priority = HIGH_PRIORITY_PANELS
+				end
+				if not isPlayer then
+					priority = LOW_PRIORITY_PANELS
 				end
 				aboveHeadPanel = GetAboveHeadPanel(objID, priority)
 				if aboveHeadPanel then
@@ -398,16 +407,20 @@ function RelationChangedForAboveHead(anUnitID)
 			break
 		end
 	end
-	
-	if anUnitID and reallyExist and unit.IsPlayer(anUnitID) then
-		if not aboveHeadSettings.isEnemyButton or CheckEnemy(aboveHeadSettings.isEnemyButton, anUnitID) then
+	local priority = NORMAL_PRIORITY_PANELS
+	if anUnitID and reallyExist then
+		local needPanel, isPlayer = CheckSettingsCondition(aboveHeadSettings, anUnitID)
+		if needPanel then
 			if not IsExistAboveHeadPanel(anUnitID) then
-				aboveHeadPanel = GetAboveHeadPanel(anUnitID, NORMAL_PRIORITY_PANELS)
+				if not isPlayer then
+					priority = LOW_PRIORITY_PANELS
+				end
+				aboveHeadPanel = GetAboveHeadPanel(anUnitID, priority)
 				if aboveHeadPanel then
 					FabricMakeAboveHeadPlayerInfo(anUnitID, aboveHeadPanel)
 				end
 			end
-		elseif aboveHeadSettings.isEnemyButton and object.IsFriend(anUnitID) then
+		else
 			RemovePanelAboveHead(anUnitID)
 			UnsubscribeAboveHeadListeners(anUnitID)
 		end
@@ -421,11 +434,14 @@ function ChangedTargetForAboveHead(aTargetID)
 	if not aboveHeadSettings or not aTargetID then
 		return
 	end
-	if not unit.IsPlayer(aTargetID) then
-		return
-	end
-	if not aboveHeadSettings.isEnemyButton or CheckEnemy(aboveHeadSettings.isEnemyButton, aTargetID) then
-		SetPriorityAboveHeadPanel(m_lastTargetID, NORMAL_PRIORITY_PANELS)
+
+	local priority = NORMAL_PRIORITY_PANELS
+	local needPanel, isPlayer = CheckSettingsCondition(aboveHeadSettings, aTargetID)
+	if needPanel then
+		if isExist(m_lastTargetID) and not unit.IsPlayer(m_lastTargetID) then
+			priority = LOW_PRIORITY_PANELS
+		end
+		SetPriorityAboveHeadPanel(m_lastTargetID, priority)
 		if  not IsExistAboveHeadPanel(aTargetID) then
 			local aboveHeadPanel = GetAboveHeadPanel(aTargetID, HIGH_PRIORITY_PANELS)
 			if aboveHeadPanel then

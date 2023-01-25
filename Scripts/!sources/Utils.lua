@@ -215,23 +215,6 @@ function logMemoryUsage()
 	common.LogInfo( common.GetAddonName(), "usage "..tostring(gcinfo()).."kb" )
 end
 
-function logText(text)
-	common.LogInfo("common", toWString(text))
-end
-
-function message(text, color, fontSize)
-	local chat=stateMainForm:GetChildUnchecked("ChatLog", false)
-	if not chat then
-		chat=stateMainForm:GetChildUnchecked("Chat", true)
-	else
-		chat=chat:GetChildUnchecked("Container", true)
-	end
-	if not chat then return end
-
-	text=common.GetAddonName()..": "..(toStringUtils(text) or "nil")
-	chat:PushFrontValuedText(toValuedText(text, nil, nil, 16, nil, nil, "AllodsSystem"))
-end
-
 
 --------------------------------------------------------------------------------
 -- Widget funtions

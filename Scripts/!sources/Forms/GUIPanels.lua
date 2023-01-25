@@ -344,6 +344,13 @@ local function PlayerRemoveImportantBuff(aBuffID, aPlayerBar)
 	end
 end
 
+function CloneBaseInfoPlayerPanel(aPlayerBar, aNewPlayerBar)
+	aNewPlayerBar.farBarBackgroundWdg:Show(aPlayerBar.farBarBackgroundWdg:IsVisible())
+	aNewPlayerBar.farColoredBarWdg:Show(aPlayerBar.farColoredBarWdg:IsVisible())
+	aNewPlayerBar.textWdg:SetValuedText(aPlayerBar.textWdg:GetValuedText())
+	aNewPlayerBar.barWdg:SetBackgroundColor(aPlayerBar.barWdg:GetBackgroundColor())
+end
+
 function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettings, aRelationType)
 	aPlayerBar.isUsed = true
 	aPlayerBar.playerID = aPlayerInfo.id
@@ -505,7 +512,7 @@ function ResetPlayerPanelPosition(aPlayerBar, aX, aY, aFormSettings)
 	end
 end
 
-function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings)
+function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings, aNum)
 	setTemplateWidget(aParentPanel)
 	local barColor = { r = 0.8; g = 0.8; b = 0; a = 1.0 }
 	local panelWidth = tonumber(aFormSettings.raidWidthText)
@@ -521,9 +528,12 @@ function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings)
 		local raidMoveBar = createWidget(aParentPanel, nil, "AddBar", nil, nil, panelWidth, panelHeight, posX, posY)
 		resize(getChild(raidMoveBar, "HealthBarBackground"), panelWidth, panelHeight)
 		hide(raidMoveBar)
+		DnD.Init(raidMoveBar, raidMoveBar, false)
 		playerBar.raidMoveWdg = raidMoveBar
+		playerBar.raidMoveHighlightWdg = getChild(raidMoveBar, "Highlight")
+		hide(playerBar.raidMoveHighlightWdg)
 	end
-	playerBar.wdg = createWidget(aParentPanel, nil, "PlayerBar", nil, nil, panelWidth, panelHeight, posX, posY)
+	playerBar.wdg = createWidget(aParentPanel, "PlayerBar"..tostring(aNum)..tostring(aRaidMode), "PlayerBar", nil, nil, panelWidth, panelHeight, posX, posY)
 	playerBar.barWdg = getChild(playerBar.wdg, "HealthBar")
 	playerBar.manaBarWdg = getChild(playerBar.wdg, "ManaBar")
 	playerBar.shieldBarWdg = getChild(playerBar.wdg, "ShieldBar")
@@ -541,6 +551,7 @@ function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings)
 	playerBar.farBarBackgroundWdg = getChild(playerBar.wdg, "FarBarBackground")
 	playerBar.clearBarWdg = getChild(playerBar.wdg, "ClearBar")
 	playerBar.farColoredBarWdg = getChild(playerBar.wdg, "FarColored")
+	playerBar.highlightWdg = getChild(playerBar.wdg, "Highlight")
 	playerBar.optimizeInfo = {}
 	playerBar.optimizeInfo.name = m_emptyWStr
 	playerBar.optimizeInfo.shardName = m_emptyWStr
@@ -562,6 +573,8 @@ function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings)
 	end
 	
 	playerBar.textWdg:SetEllipsis(true)
+	
+	hide(playerBar.highlightWdg)
 	
 	hide(playerBar.manaBarWdg)
 	resize(playerBar.shieldBarWdg, 0)
@@ -664,6 +677,18 @@ function CreateBuffSlot(aParent, aBuffSize, anResArray, anIndex, anAlign)
 		table.insert(anResArray, buffSlot)	
 	end
 	return buffSlot
+end
+
+function DestroyPlayerPanel(aPlayerBar)
+	if aPlayerBar.raidMoveWdg then
+		DnD.Remove(aPlayerBar.raidMoveWdg)
+		hide(aPlayerBar.raidMoveWdg)
+		destroy(aPlayerBar.raidMoveWdg)
+	end
+	
+	DnD.Remove(aPlayerBar.wdg)
+	hide(aPlayerBar.wdg)
+	destroy(aPlayerBar.wdg)
 end
 
 function HideReadyStateInGUI(aPlayerBar)

@@ -5,7 +5,7 @@ local m_template = nil
 function CreateTargeterSettingsForm()
 	local form=createWidget(mainForm, "targeterSettingsForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 980, 700, 200, 100)
 	hide(form)
-	priority(form, 5)
+	priority(form, 505)
 
 	local group1 = createWidget(form, "group1", "Panel")
 	align(group1, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)

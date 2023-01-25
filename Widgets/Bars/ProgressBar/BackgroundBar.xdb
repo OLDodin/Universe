@@ -4,7 +4,7 @@
 	<Name>BackgroundBar</Name>
 	<Children>
 	</Children>
-	<BackLayer href="Textures/EmptyWhite.(WidgetLayerSimpleTexture).xdb" />
+	<BackLayer href="../Textures/EmptyWhite.(WidgetLayerSimpleTexture).xdb" />
 	<Placement>
 		<X>
 			<Align>WIDGET_ALIGN_LOW</Align>

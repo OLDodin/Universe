@@ -158,14 +158,6 @@
       <resource href="flipBuffsButton.txt"/>
     </Item>
     <Item>
-      <name>aboveHeadButton</name>
-      <resource href="aboveHeadButton.txt"/>
-    </Item>
-    <Item>
-      <name>isEnemyButton</name>
-      <resource href="isEnemyButton.txt"/>
-    </Item>
-    <Item>
       <name>isSpell</name>
       <resource href="isSpell.txt"/>
     </Item>
@@ -1276,6 +1268,38 @@
 	<Item>
       <name>ProgressActionPanel</name>
       <resource href="progressActionPanelName.txt"/>
+    </Item>
+	<Item>
+      <name>allShop79</name>
+      <resource href="allShop79.txt"/>
+    </Item>
+	<Item>
+      <name>allShop80</name>
+      <resource href="allShop80.txt"/>
+    </Item>
+	<Item>
+      <name>allShop81</name>
+      <resource href="allShop81.txt"/>
+    </Item>
+	<Item>
+      <name>aboveHeadTxt</name>
+      <resource href="aboveHeadTxt.txt"/>
+    </Item>
+	<Item>
+      <name>aboveHeadFriendPlayersButton</name>
+      <resource href="aboveHeadFriendPlayersButton.txt"/>
+    </Item>
+	<Item>
+      <name>aboveHeadNotFriendPlayersButton</name>
+      <resource href="aboveHeadNotFriendPlayersButton.txt"/>
+    </Item>
+	<Item>
+      <name>aboveHeadFriendMobsButton</name>
+      <resource href="aboveHeadFriendMobsButton.txt"/>
+    </Item>
+	<Item>
+      <name>aboveHeadNotFriendMobsButton</name>
+      <resource href="aboveHeadNotFriendMobsButton.txt"/>
     </Item>
   </items>
 </UIRelatedTexts>

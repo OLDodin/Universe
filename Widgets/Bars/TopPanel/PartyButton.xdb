@@ -4,7 +4,7 @@
 	<Name>PartyButton</Name>
 	<Children>
 	</Children>
-	<BackLayer href="Textures/PartyButton.xdb#xpointer(/WidgetLayerSimpleTexture)" />
+	<BackLayer href="../Textures/PartyButton.xdb#xpointer(/WidgetLayerSimpleTexture)" />
 	<Placement>
 		<X>
 			<Align>WIDGET_ALIGN_LOW</Align>

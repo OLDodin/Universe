@@ -11,7 +11,7 @@ Global("LOW_PRIORITY_PANELS", 100)
 
 local m_smallestPriority = LOW_PRIORITY_PANELS
 local m_aboveHeadInitialized = false
-local CACHE_PANELS_SIZE = 48
+local CACHE_PANELS_SIZE = 60
 
 local function RemovePanel(anObjID)
 	local panelForRemove = m_usingPanels[anObjID]

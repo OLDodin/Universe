@@ -2,7 +2,7 @@ local m_imagebox = nil
 
 function CreateHelpForm()
 	local form=createWidget(mainForm, "helpForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 1280, 780, 800, 450)
-	priority(form, 6)
+	priority(form, 506)
 	hide(form)
 	
 	setLocaleText(createWidget(form, "helpHeader", "TextView",  WIDGET_ALIGN_CENTER, nil, 300, 20, nil, 10))

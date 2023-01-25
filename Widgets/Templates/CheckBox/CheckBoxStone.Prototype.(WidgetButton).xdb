@@ -26,7 +26,7 @@
 				<FormatFileRef href="ButtonExecute.txt" />
 			</StatePushed>
 			<ReactionOnUp>true</ReactionOnUp>
-			<Reaction>execute</Reaction>
+			<Reaction>CheckBoxChangedOn</Reaction>
 		</Item>
 		<Item>
 			<TextFileRef href="ButtonExecute.txt" />
@@ -36,7 +36,7 @@
 				<FormatFileRef href="ButtonExecute.txt" />
 			</StateNormal>
 			<ReactionOnUp>true</ReactionOnUp>
-			<Reaction>execute</Reaction>
+			<Reaction>CheckBoxChangedOff</Reaction>
 		</Item>
 	</Variants>
 </WidgetButton>

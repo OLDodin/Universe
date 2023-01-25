@@ -1,3 +1,5 @@
+Global("BUFF_GROUP_WDG_NAME_PREFIX", "BuffGroup")
+
 local m_currentProfile = nil
 local m_currentProfileInd = nil
 
@@ -101,6 +103,7 @@ function InitializeDefaultSetting()
 	
 	local buffFormSettings = {}
 	buffFormSettings.buffGroups = {}
+	buffFormSettings.buffGroupsUnicCnt = 0
 		
 	local bindFormSettings = {}
 	bindFormSettings.actionLeftSwitchRaidSimple = SELECT_CLICK
@@ -210,6 +213,74 @@ function LoadSettings(aProfileInd)
 			buffGroupSettings.fixed = false
 		end
 	end
+	if m_currentProfile.version < 2.7 or m_currentProfile.version == nil then
+		-- панель настроек над головой должна быть одна, удаляем повторы причем основные настройки в таком случае с 1й, а бафов с последней (так это работало в таком случае)
+		local aboveHeadArr = {}
+		for i, buffGroupSettings in ipairs(m_currentProfile.buffFormSettings.buffGroups) do
+			if buffGroupSettings.aboveHeadButton then
+				table.insert(aboveHeadArr, buffGroupSettings)
+			end
+		end
+		local correctAboveHeadSettings = nil
+		if GetTableSize(aboveHeadArr) > 0 then
+			correctAboveHeadSettings = copyTable(aboveHeadArr[1])
+			correctAboveHeadSettings.buffs = copyTable(aboveHeadArr[GetTableSize(aboveHeadArr)].buffs)
+		else
+			correctAboveHeadSettings = {}
+			correctAboveHeadSettings.w = 5
+			correctAboveHeadSettings.h = 1
+			correctAboveHeadSettings.size = 50
+			correctAboveHeadSettings.aboveHeadButton = true
+			correctAboveHeadSettings.isEnemyButton = true
+			
+			correctAboveHeadSettings.buffOnMe = false
+			correctAboveHeadSettings.buffOnTarget = false
+			correctAboveHeadSettings.fixed = false
+			correctAboveHeadSettings.fixedInsidePanel = false
+			correctAboveHeadSettings.flipBuffsButton = false
+			correctAboveHeadSettings.autoDebuffModeButtonUnk = false
+			correctAboveHeadSettings.checkEnemyCleanableUnk = false
+			correctAboveHeadSettings.showImportantButton = false
+			correctAboveHeadSettings.checkControlsButton = false
+			correctAboveHeadSettings.checkMovementsButton = false
+			
+			correctAboveHeadSettings.buffs = {}
+			
+			correctAboveHeadSettings.name = getLocale()["aboveHeadTxt"]
+		end
+		
+		
+		correctAboveHeadSettings.aboveHeadFriendPlayersButton = true
+		correctAboveHeadSettings.aboveHeadNotFriendPlayersButton = correctAboveHeadSettings.isEnemyButton
+		correctAboveHeadSettings.aboveHeadFriendMobsButton = false
+		correctAboveHeadSettings.aboveHeadNotFriendMobsButton = false
+		
+		if correctAboveHeadSettings.isEnemyButton then
+			correctAboveHeadSettings.aboveHeadFriendPlayersButton = false
+		end
+		
+		local newBuffGroups = {}
+		table.insert(newBuffGroups, correctAboveHeadSettings)
+		for i, buffGroupSettings in ipairs(m_currentProfile.buffFormSettings.buffGroups) do
+			if not buffGroupSettings.aboveHeadButton then
+				table.insert(newBuffGroups, buffGroupSettings)
+			end
+		end
+		
+		m_currentProfile.buffFormSettings.buffGroups = newBuffGroups
+		
+		--не могут быть выбраны сразу оба, если выбраны оба сбросим один из флагов
+		for i, buffGroupSettings in ipairs(m_currentProfile.buffFormSettings.buffGroups) do
+			if buffGroupSettings.buffOnMe and buffGroupSettings.buffOnTarget then
+				buffGroupSettings.buffOnMe = false
+			end
+			--при вынесении панели над головами на 1ю позицию собьются настройки позиций остальных панелей (исправлено далее, будем сохранять и имя виджета)
+			buffGroupSettings.fixed = false
+			buffGroupSettings.buffGroupWdgName = BUFF_GROUP_WDG_NAME_PREFIX..tostring(i)
+		end
+		
+		m_currentProfile.buffFormSettings.buffGroupsUnicCnt = GetTableSize(m_currentProfile.buffFormSettings.buffGroups) + 1
+	end
 end
 
 function ProfileWasDeleted(anInd)
@@ -247,5 +318,5 @@ function ExportProfileByIndex(anInd)
 end
 
 function GetSettingsVersion()
-	return 2.6;
+	return 2.7;
 end

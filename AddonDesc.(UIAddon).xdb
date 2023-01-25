@@ -14,6 +14,7 @@
 	<ScriptFileRefs>
 		<Item href="/Mods/SampleCommon/SampleAddonBase.lua"/>
 		<Item href="Scripts/LibDnD.lua"/>
+		<Item href="Scripts/MyLibDnD.lua"/>
 		<Item href="Locales/main.lua"/>
 		<Item href="Scripts/Utils.lua"/>
 		<Item href="Scripts/AVL/avl.lua"/>
@@ -53,6 +54,7 @@
 		<Item href="Scripts/Forms/PlayerShortInfo.lua"/>
 		<Item href="Scripts/AboveHead.lua"/>
 		<Item href="Scripts/BuffGroupPanels.lua"/>
+		<Item href="Scripts/GUIFormHelper.lua"/>
 		<Item href="Scripts/GUIController.lua"/>
 		<Item href="Scripts/mainscript.lua"/>
 	</ScriptFileRefs>

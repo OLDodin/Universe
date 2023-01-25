@@ -1,6 +1,6 @@
 function CreateBuffSettingsForm()
 	local form = createWidget(mainForm, "buffSettingsForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 550, 420, 350, 130)
-	priority(form, 6)
+	priority(form, 506)
 	hide(form)
 	
 	setLocaleText(createWidget(form, "configBuffsHeader", "TextView",  WIDGET_ALIGN_CENTER, nil, 250, 20, nil, 20))
@@ -42,10 +42,11 @@ end
 
 
 local m_loadedWndInd = 0
+local m_commaWStr = userMods.ToWString("\"")
 
 function CreateConfigGroupBuffsForm()
 	local form=createWidget(mainForm, "configGroupBuffsForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 1000, 600, 550, 130)
-	priority(form, 6)
+	priority(form, 507)
 	hide(form)
 	
 	local group1 = createWidget(form, "group1", "Panel")
@@ -68,7 +69,8 @@ function CreateConfigGroupBuffsForm()
 	resize(group4, 555, 498)
 	move(group4, 428, 47)
 	
-	setLocaleText(createWidget(form, "configGroupBuffsHeader", "TextView",  WIDGET_ALIGN_CENTER, nil, 250, 20, nil, 16))
+	--setLocaleText(createWidget(form, "configGroupBuffsHeader", "TextView",  WIDGET_ALIGN_CENTER, nil, 250, 20, nil, 16))
+	createWidget(form, "buffGroupNameHeader", "TextView",  WIDGET_ALIGN_CENTER, nil, 400, 20, nil, 16)
 	setText(createWidget(form, "closeSomeSettingsButton", "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 20, 20, 20, 20), "x")
 
 	setLocaleText(createWidget(form, "widthBuffCntText", "TextView", nil, nil, 200, 25, 20, 50))
@@ -82,8 +84,12 @@ function CreateConfigGroupBuffsForm()
 	
 	setLocaleText(createWidget(form, "buffOnMe", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 400, 25, 20, 140), true)
 	setLocaleText(createWidget(form, "buffOnTarget", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 400, 25, 20, 170), true)
-	setLocaleText(createWidget(form, "aboveHeadButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 400, 25, 20, 200), true)
-	setLocaleText(createWidget(form, "isEnemyButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 400, 25, 20, 230), true)
+	
+	setLocaleText(createWidget(form, "aboveHeadTxt", "TextView", nil, nil, 400, 25, 20, 140))
+	setLocaleText(createWidget(form, "aboveHeadFriendPlayersButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 400, 25, 20, 170), true)
+	setLocaleText(createWidget(form, "aboveHeadNotFriendPlayersButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 400, 25, 20, 200), true)
+	setLocaleText(createWidget(form, "aboveHeadFriendMobsButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 400, 25, 20, 230), true)
+	setLocaleText(createWidget(form, "aboveHeadNotFriendMobsButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 400, 25, 20, 260), true)
 	
 	setLocaleText(createWidget(form, "buffsFixButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 400, 25, 20, 260), true)
 	setLocaleText(createWidget(form, "buffsFixInsidePanelButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 400, 25, 20, 290), true)
@@ -132,6 +138,7 @@ function SaveConfigGroupBuffsForm(aForm, aClose)
 	
 	local profile = GetCurrentProfile()
 	mySettings.buffGroups = profile.buffFormSettings.buffGroups
+	mySettings.buffGroupsUnicCnt = profile.buffFormSettings.buffGroupsUnicCnt
 
 	if m_loadedWndInd == 0 then
 		return mySettings
@@ -147,8 +154,10 @@ function SaveConfigGroupBuffsForm(aForm, aClose)
 		mySettings.buffGroups[m_loadedWndInd].fixed = false
 	end
 	mySettings.buffGroups[m_loadedWndInd].flipBuffsButton = getCheckBoxState(getChild(aForm, "flipBuffsButton"))
-	mySettings.buffGroups[m_loadedWndInd].aboveHeadButton = getCheckBoxState(getChild(aForm, "aboveHeadButton"))
-	mySettings.buffGroups[m_loadedWndInd].isEnemyButton = getCheckBoxState(getChild(aForm, "isEnemyButton"))
+	mySettings.buffGroups[m_loadedWndInd].aboveHeadFriendPlayersButton = getCheckBoxState(getChild(aForm, "aboveHeadFriendPlayersButton"))
+	mySettings.buffGroups[m_loadedWndInd].aboveHeadNotFriendPlayersButton = getCheckBoxState(getChild(aForm, "aboveHeadNotFriendPlayersButton"))
+	mySettings.buffGroups[m_loadedWndInd].aboveHeadFriendMobsButton = getCheckBoxState(getChild(aForm, "aboveHeadFriendMobsButton"))
+	mySettings.buffGroups[m_loadedWndInd].aboveHeadNotFriendMobsButton = getCheckBoxState(getChild(aForm, "aboveHeadNotFriendMobsButton"))
 	mySettings.buffGroups[m_loadedWndInd].autoDebuffModeButtonUnk = getCheckBoxState(getChild(aForm, "autoDebuffModeButtonUnk"))
 	mySettings.buffGroups[m_loadedWndInd].checkEnemyCleanableUnk = getCheckBoxState(getChild(aForm, "checkEnemyCleanableUnk"))
 	mySettings.buffGroups[m_loadedWndInd].showImportantButton = getCheckBoxState(getChild(aForm, "showImportantButton"))
@@ -198,8 +207,17 @@ function LoadConfigGroupBuffsForm(aForm, anIndex)
 	if info.aboveHeadButton == nil then 
 		info.aboveHeadButton = false
 	end
-	if info.isEnemyButton == nil then 
-		info.isEnemyButton = false
+	if info.aboveHeadFriendPlayersButton == nil then 
+		info.aboveHeadFriendPlayersButton = false
+	end
+	if info.aboveHeadNotFriendPlayersButton == nil then 
+		info.aboveHeadNotFriendPlayersButton = false
+	end
+	if info.aboveHeadFriendMobsButton == nil then 
+		info.aboveHeadFriendMobsButton = false
+	end
+	if info.aboveHeadNotFriendMobsButton == nil then 
+		info.aboveHeadNotFriendMobsButton = false
 	end
 	if info.autoDebuffModeButtonUnk == nil then 
 		info.autoDebuffModeButtonUnk = false
@@ -216,13 +234,19 @@ function LoadConfigGroupBuffsForm(aForm, anIndex)
 	if info.checkMovementsButton == nil then 
 		info.checkMovementsButton = false
 	end
+	
+	
+	setText(getChild(aForm, "buffGroupNameHeader"), ConcatWString(getLocale()["configGroupBuffsHeader"], m_commaWStr, info.name, m_commaWStr))
+	
 	setCheckBox(getChild(aForm, "buffOnMe"), info.buffOnMe)
 	setCheckBox(getChild(aForm, "buffOnTarget"), info.buffOnTarget)
 	setCheckBox(getChild(aForm, "buffsFixButton"), not info.fixed)
 	setCheckBox(getChild(aForm, "buffsFixInsidePanelButton"), info.fixedInsidePanel)
 	setCheckBox(getChild(aForm, "flipBuffsButton"), info.flipBuffsButton)
-	setCheckBox(getChild(aForm, "aboveHeadButton"), info.aboveHeadButton)
-	setCheckBox(getChild(aForm, "isEnemyButton"), info.isEnemyButton)
+	setCheckBox(getChild(aForm, "aboveHeadFriendPlayersButton"), info.aboveHeadFriendPlayersButton)
+	setCheckBox(getChild(aForm, "aboveHeadNotFriendPlayersButton"), info.aboveHeadNotFriendPlayersButton)
+	setCheckBox(getChild(aForm, "aboveHeadFriendMobsButton"), info.aboveHeadFriendMobsButton)
+	setCheckBox(getChild(aForm, "aboveHeadNotFriendMobsButton"), info.aboveHeadNotFriendMobsButton)
 	setCheckBox(getChild(aForm, "autoDebuffModeButtonUnk"), info.autoDebuffModeButtonUnk)
 	setCheckBox(getChild(aForm, "checkEnemyCleanableUnk"), info.checkEnemyCleanableUnk)
 	setCheckBox(getChild(aForm, "showImportantButton"), info.showImportantButton)
@@ -234,4 +258,44 @@ function LoadConfigGroupBuffsForm(aForm, anIndex)
 	end
 
 	ShowValuesFromTable(profile.buffFormSettings.buffGroups[anIndex].buffs, aForm)
+
+	if info.aboveHeadButton then
+		hide(getChild(aForm, "buffOnMe"))
+		hide(getChild(aForm, "buffOnTarget"))
+		hide(getChild(aForm, "buffsFixButton"))
+		show(getChild(aForm, "aboveHeadFriendPlayersButton"))
+		show(getChild(aForm, "aboveHeadNotFriendPlayersButton"))
+		show(getChild(aForm, "aboveHeadFriendMobsButton"))
+		show(getChild(aForm, "aboveHeadNotFriendMobsButton"))
+		show(getChild(aForm, "aboveHeadTxt"))
+		
+		resize(getChild(aForm, "group1"), 415, 151)
+		resize(getChild(aForm, "group2"), 415, 61)
+		move(getChild(aForm, "group2"), 15, 287)
+	else
+		show(getChild(aForm, "buffOnMe"))
+		show(getChild(aForm, "buffOnTarget"))
+		show(getChild(aForm, "buffsFixButton"))
+		hide(getChild(aForm, "aboveHeadFriendPlayersButton"))
+		hide(getChild(aForm, "aboveHeadNotFriendPlayersButton"))
+		hide(getChild(aForm, "aboveHeadFriendMobsButton"))
+		hide(getChild(aForm, "aboveHeadNotFriendMobsButton"))
+		hide(getChild(aForm, "aboveHeadTxt"))
+		
+		resize(getChild(aForm, "group1"), 415, 61)
+		resize(getChild(aForm, "group2"), 415, 91)
+		move(getChild(aForm, "group2"), 15, 257)
+	end
+end
+
+function ConfigGroupBuffsBuffOnMeCheckedOn(aForm)
+	if getCheckBoxState(getChild(aForm, "buffOnTarget")) then
+		changeCheckBox(getChild(aForm, "buffOnTarget"))
+	end
+end
+
+function ConfigGroupBuffsBuffOnTargetCheckedOn(aForm)
+	if getCheckBoxState(getChild(aForm, "buffOnMe")) then
+		changeCheckBox(getChild(aForm, "buffOnMe"))
+	end
 end

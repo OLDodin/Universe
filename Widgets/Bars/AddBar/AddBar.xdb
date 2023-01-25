@@ -1,10 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <WidgetButton>
-	<Priority>50</Priority>
+	<Priority>5</Priority>
 	<Name>AddBar</Name>
 	<Children>
 		<Item href="Background.xdb#xpointer(/WidgetPanel)"/>
 		<Item href="AddIcon.xdb#xpointer(/WidgetPanel)"/>
+		<Item href="Highlight.xdb#xpointer(/WidgetPanel)"/>
 	</Children>
 	<Variants>
 		<Item>
@@ -12,4 +13,6 @@
 			<ReactionRightClick>addClick</ReactionRightClick>
 		</Item>
 	</Variants>
+	<reactionOnPointing>OnAddBarPointing</reactionOnPointing>
+	
 </WidgetButton>

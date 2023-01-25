@@ -17,6 +17,7 @@
 		<Item href="Far.xdb#xpointer(/WidgetPanel)"/>
 		<Item href="ClearBar.xdb#xpointer(/WidgetPanel)"/>
 		<Item href="FarColored.xdb#xpointer(/WidgetPanel)"/>
+		<Item href="Highlight.xdb#xpointer(/WidgetPanel)"/>
 
 		<Item href="BuffPanelNegative.xdb#xpointer(/WidgetPanel)"/>
 		<Item href="BuffPanel.xdb#xpointer(/WidgetPanel)"/>
@@ -24,8 +25,9 @@
 	</Children>
 	<Variants>
 		<Item>
-			<Reaction>OnLeftClick</Reaction>
-			<ReactionRightClick>OnRightClick</ReactionRightClick>
+			<Reaction>OnPlayerBarLeftClick</Reaction>
+			<ReactionRightClick>OnPlayerBarRightClick</ReactionRightClick>
+			<ReactionOnUp>true</ReactionOnUp>
 		</Item>
 	</Variants>
 	<reactionOnPointing>OnPlayerBarPointing</reactionOnPointing>

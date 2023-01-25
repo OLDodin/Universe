@@ -3,7 +3,7 @@
 function CreateDistanceSettingsForm()
 	local form=createWidget(mainForm, "distanceSettingsForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 350, 200, 200, 100)
 	hide(form)
-	priority(form, 5)
+	priority(form, 507)
 		
 	setLocaleText(createWidget(form, "distanceSettingsFormHeader", "TextView",  WIDGET_ALIGN_CENTER, nil, 250, 20, nil, 16))
 	setText(createWidget(form, "closeDistanceFormButton", "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 20, 20, 20, 20), "x")
