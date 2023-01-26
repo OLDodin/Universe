@@ -209,7 +209,7 @@ function PlayerTargetsHighlightChanged(anInfo, aPlayerBar)
 		barColor = { r=1; g=1; b=1; a=1 }
 	end
 	aPlayerBar.highlight = anInfo
-	
+	aPlayerBar.highlightWdg:Show(anInfo)
 	if not compareColor(aPlayerBar.optimizeInfo.barBackgroundColor, barColor) then
 		aPlayerBar.optimizeInfo.barBackgroundColor = barColor
 		setBackgroundColor(aPlayerBar.barBackgroundWdg, barColor)
@@ -551,6 +551,7 @@ function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings, aNum)
 	playerBar.farBarBackgroundWdg = getChild(playerBar.wdg, "FarBarBackground")
 	playerBar.clearBarWdg = getChild(playerBar.wdg, "ClearBar")
 	playerBar.farColoredBarWdg = getChild(playerBar.wdg, "FarColored")
+	playerBar.rollOverHighlightWdg = getChild(playerBar.wdg, "RolloverHighlight")
 	playerBar.highlightWdg = getChild(playerBar.wdg, "Highlight")
 	playerBar.optimizeInfo = {}
 	playerBar.optimizeInfo.name = m_emptyWStr
@@ -574,6 +575,7 @@ function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings, aNum)
 	
 	playerBar.textWdg:SetEllipsis(true)
 	
+	hide(playerBar.rollOverHighlightWdg)
 	hide(playerBar.highlightWdg)
 	
 	hide(playerBar.manaBarWdg)

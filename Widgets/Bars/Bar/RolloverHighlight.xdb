@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <WidgetPanel>
-	<Priority>201</Priority>
-	<Name>Highlight</Name>
+	<Priority>202</Priority>
+	<Name>RolloverHighlight</Name>
 	<Children>
 	</Children>
-	<BackLayer href="../Textures/Highlighted2.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)" />
+	<BackLayer href="../Textures/Highlighted.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)" />
 	<Placement>
 		<X>
 			<Align>WIDGET_ALIGN_BOTH</Align>

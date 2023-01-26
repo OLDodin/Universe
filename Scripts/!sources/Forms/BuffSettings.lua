@@ -22,8 +22,8 @@ function SaveBuffFormSettings(aForm)
 	local mySettings = {}
 	
 	local profile = GetCurrentProfile()
-	mySettings.buffGroups = profile.buffFormSettings.buffGroups
-	
+	mySettings = profile.buffFormSettings
+		
 	UpdateTableValuesFromContainer(mySettings.buffGroups, aForm, getChild(aForm, "container"))
 	for i, _ in pairs(mySettings.buffGroups) do
 		if not mySettings.buffGroups[i].buffs then
@@ -113,8 +113,7 @@ function CreateConfigGroupBuffsForm()
 
 	setLocaleText(createWidget(form, "configGroupBuffsId", "TextView",  WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 30, 25, 533, 50))
 	setLocaleText(createWidget(form, "configGroupBuffsName", "TextView",  WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 220, 25, 313, 50))
-	--setLocaleText(createWidget(form, "configGroupBuffsTime", "TextView",  WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 130, 25, 233, 50))
-	--setLocaleText(createWidget(form, "configGroupBuffsCD", "TextView",  WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 40, 25, 203, 50))
+	
 	setLocaleText(createWidget(form, "configGroupBuffsBuff", "TextView",  WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 50, 25, 173, 50))
 	setLocaleText(createWidget(form, "castByMe", "TextView",  WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 50, 25, 123, 50))
 	setLocaleText(createWidget(form, "isSpell", "TextView",  WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 100, 25, 20, 50))
@@ -137,9 +136,8 @@ function SaveConfigGroupBuffsForm(aForm, aClose)
 	local mySettings = {}
 	
 	local profile = GetCurrentProfile()
-	mySettings.buffGroups = profile.buffFormSettings.buffGroups
-	mySettings.buffGroupsUnicCnt = profile.buffFormSettings.buffGroupsUnicCnt
-
+	mySettings = profile.buffFormSettings
+	
 	if m_loadedWndInd == 0 then
 		return mySettings
 	end
@@ -167,10 +165,8 @@ function SaveConfigGroupBuffsForm(aForm, aClose)
 	local container = getChild(aForm, "container")
 	if container and mySettings.buffGroups[m_loadedWndInd].buffs then
 		for i, j in ipairs(mySettings.buffGroups[m_loadedWndInd].buffs) do
-			j.time = tonumber(getTextString(getChild(container, "CD"..tostring(i), true)))
 			j.name = getText(getChild(container, "Name"..tostring(i), true))
 			j.isBuff = getCheckBoxState(getChild(container, "isBuff"..tostring(i), true))
-			j.isCD = getCheckBoxState(getChild(container, "isCD"..tostring(i), true))
 			j.castByMe = getCheckBoxState(getChild(container, "castByMe"..tostring(i), true))
 			j.isSpell = getCheckBoxState(getChild(container, "isSpell"..tostring(i), true))
 		end

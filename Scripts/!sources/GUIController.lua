@@ -740,9 +740,9 @@ local function OnPlayerBarPointing(aParams)
 	end
 	if playerBar then
 		if aParams.active then
-			show(playerBar.highlightWdg)
+			show(playerBar.rollOverHighlightWdg)
 		else
-			hide(playerBar.highlightWdg)
+			hide(playerBar.rollOverHighlightWdg)
 		end
 	end
 	
@@ -951,7 +951,7 @@ function HideHighlight()
 		local subParty = m_raidPlayerPanelList[i]
 		for j=0, GetTableSize(subParty)-1 do
 			local playerBar = subParty[j]
-			hide(playerBar.highlightWdg)
+			hide(playerBar.rollOverHighlightWdg)
 			hide(playerBar.raidMoveHighlightWdg)
 		end
 	end
@@ -964,7 +964,7 @@ function OnDragTo(aParams)
 	local playerBar = FindBarByCoordinateInRaid(aParams.posX, aParams.posY)
 	HideHighlight()
 	if playerBar then
-		show(playerBar.highlightWdg)
+		show(playerBar.rollOverHighlightWdg)
 	else
 		playerBar = FindRaidMoveBarByCoordinateInRaid(aParams.posX, aParams.posY)
 		if playerBar then
@@ -1164,7 +1164,7 @@ function RaidChanged(aParams)
 			if not playerBar.isUsed then
 				playerBar.playerID = nil
 				hide(playerBar.wdg)
-				hide(playerBar.highlightWdg)
+				hide(playerBar.rollOverHighlightWdg)
 			else
 				DnD.Enable(playerBar.wdg, canMovePlayers)
 			end
@@ -1409,7 +1409,7 @@ local function ClearTargetPanels()
 	for i = 0, GetTableSize(m_targeterPlayerPanelList)-1 do
 		local playerBar = m_targeterPlayerPanelList[i]
 		hide(playerBar.wdg)
-		hide(playerBar.highlightWdg)
+		hide(playerBar.rollOverHighlightWdg)
 		playerBar.playerID = nil
 	end
 	
@@ -1624,7 +1624,7 @@ local function SortAndSetTarget(aTargetUnion, aPanelListShift, aPanelPosShift)
 			if playerBar.playerID then
 				UnsubscribeTargetListener(playerBar.playerID)
 				hide(playerBar.wdg)
-				hide(playerBar.highlightWdg)
+				hide(playerBar.rollOverHighlightWdg)
 			end
 			playerBar.playerID = nil
 		end
@@ -2489,5 +2489,4 @@ function GUIControllerInit()
 	common.RegisterReactionHandler(OnShopChange, "OnShopChange")
 	common.RegisterReactionHandler(OnAssertChange, "OnAssertChange")
 	common.RegisterReactionHandler(EditLineEsc, "EditLineEsc")
-	
 end

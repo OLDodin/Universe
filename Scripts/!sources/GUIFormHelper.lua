@@ -54,62 +54,58 @@ local function GenerateWidgetForTable(aTable, aContainer, anIndex)
 	setBackgroundColor(panel, {r=1, g=1, b=1, a=0.5})
 	setText(createWidget(panel, "Id", "TextView", WIDGET_ALIGN_LOW, WIDGET_ALIGN_CENTER, 30, 20, 10), anIndex)
 	local containerParentName = getName(getParent(aContainer))
-	local isBuffSettingsForm = compare(containerParentName, "buffSettingsForm")
-
+	
 	if aTable.name then
 		local editLineWidth = 150
-		if isBuffSettingsForm then 
-			editLineWidth = 300
+		if containerParentName == "configProfilesForm" then
+			editLineWidth = 290
+		elseif containerParentName == "configGroupBuffsForm" then
+			editLineWidth = 250
+		elseif containerParentName == "raidSettingsForm" then
+			editLineWidth = 200
+		elseif containerParentName == "targeterSettingsForm" then
+			editLineWidth = 160
+		elseif containerParentName == "buffSettingsForm" then
+			editLineWidth = 380
+		elseif containerParentName == "castSettingsForm" then
+			editLineWidth = 200
 		end
+		
 		local nameWidget=createWidget(panel, "Name"..tostring(anIndex), "EditLineTransparent", WIDGET_ALIGN_LOW, WIDGET_ALIGN_CENTER, editLineWidth, 20, 35)
 		setText(nameWidget, aTable.name)
 	end
 	
-	if find(containerParentName, "profiles") then
+	if containerParentName == "configProfilesForm" then
 		setText(createWidget(panel, "exportProfileButton", "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 50, 15, 140), "Export") 
 		if anIndex ~= GetCurrentProfileInd() then 
 			setText(createWidget(panel, "loadProfileButton", "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 50, 15, 30), "Load") 
 		else
 			setText(createWidget(panel, "saveProfileButton", "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 50, 15, 85), "Save") 
 		end
-	end
-	
-	if find(containerParentName, "GroupBuffs") then
-		if aTable.isCD==nil then aTable.isCD=false end
+	elseif containerParentName == "configGroupBuffsForm" then
 		if aTable.isBuff==nil then aTable.isBuff=true end
 		if aTable.castByMe==nil then aTable.castByMe=false end
 		if aTable.isSpell==nil then aTable.isSpell=false end
-		if aTable.time==nil then aTable.time=30 end
 
-		local cdWidget = createWidget(panel, "isCD"..tostring(anIndex), "CheckBox", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 25, 25, 190)
-		setCheckBox(cdWidget, aTable.isCD)
-		hide(cdWidget)
 		setCheckBox(createWidget(panel, "isBuff"..tostring(anIndex), "CheckBox", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 25, 25, 140), aTable.isBuff)
 		setCheckBox(createWidget(panel, "castByMe"..tostring(anIndex), "CheckBox", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 25, 25, 90), aTable.castByMe)
 		setCheckBox(createWidget(panel, "isSpell"..tostring(anIndex), "CheckBox", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 25, 25, 40), aTable.isSpell)
-		cdWidget = createWidget(panel, "CD"..tostring(anIndex), "EditLineTransparent", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 80, 20, 220)
-		hide(cdWidget)
-		setText(cdWidget, aTable.time)
 		
 		setLocaleText(createWidget(panel, "setHighlightColorButton"..containerParentName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 30, 25, 190))
-	end
-	
-	if find(containerParentName, "raidSettingsForm") then
+	elseif containerParentName == "raidSettingsForm" then
 		setLocaleText(createWidget(panel, "setHighlightColorButton"..containerParentName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 30, 25, 30))
-	end
-	if find(containerParentName, "targeterSettingsForm") then
+	elseif containerParentName == "targeterSettingsForm" then
 		setLocaleText(createWidget(panel, "setHighlightColorButton"..containerParentName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 30, 25, 30))
-	end
-	
-	if compare(containerParentName, "buffSettingsForm") then
+	elseif containerParentName == "buffSettingsForm" then
 		setText(createWidget(panel, "editButton"..containerParentName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 15, 15, 30), "e")
 		--вечный пункт для над головой
 		if anIndex ~= 1 then
 			setText(createWidget(panel, "deleteButton"..containerParentName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 15, 15, 10), "x")
 		end
-	else
-		setText(createWidget(panel, "deleteButton"..containerParentName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 15, 15, 10), "x")
+		return panel
 	end
+	
+	setText(createWidget(panel, "deleteButton"..containerParentName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 15, 15, 10), "x")
 
 	return panel
 end

@@ -1,7 +1,7 @@
 function CreateProgressCastSettingsForm()
 	local form=createWidget(mainForm, "castSettingsForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 700, 410, 200, 100)
 	hide(form)
-	priority(form, 5)
+	priority(form, 505)
 	
 	setText(createWidget(form, "closeSomeSettingsButton", "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 20, 20, 20, 20), "x")
 
