@@ -13,7 +13,7 @@ local function CreateProgressPanel(aPanelName)
 	local topPanel = getChild(progressPanel, "MoveModePanel")
 	
 	setText(getChild(topPanel, "PanelNameText"), getLocale()[aPanelName], "ColorWhite", "center", 16, true, true)
-	hide(progressPanel)
+	DnD.HideWdg(progressPanel)
 	DnD.Init(progressPanel, topPanel, true, false)
 	
 	return progressPanel

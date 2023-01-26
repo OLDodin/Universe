@@ -27,7 +27,7 @@ function ShowImportError()
 
 	DnD.Init(form, form, true)
 
-	show(form)
+	DnD.ShowWdg(form)
 end
 
 function GetImportText(aForm)

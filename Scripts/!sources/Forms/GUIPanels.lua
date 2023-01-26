@@ -494,7 +494,7 @@ function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettin
 	
 	HideReadyStateInGUI(aPlayerBar)
 	
-	show(aPlayerBar.wdg)
+	DnD.ShowWdg(aPlayerBar.wdg)
 end
 
 function ResetPlayerPanelPosition(aPlayerBar, aX, aY, aFormSettings)
@@ -527,7 +527,7 @@ function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings, aNum)
 	if aRaidMode then
 		local raidMoveBar = createWidget(aParentPanel, nil, "AddBar", nil, nil, panelWidth, panelHeight, posX, posY)
 		resize(getChild(raidMoveBar, "HealthBarBackground"), panelWidth, panelHeight)
-		hide(raidMoveBar)
+		DnD.HideWdg(raidMoveBar)
 		DnD.Init(raidMoveBar, raidMoveBar, false)
 		playerBar.raidMoveWdg = raidMoveBar
 		playerBar.raidMoveHighlightWdg = getChild(raidMoveBar, "Highlight")
@@ -621,7 +621,7 @@ function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings, aNum)
 	setBackgroundColor(playerBar.clearBarWdg, barColor) 
 	hide(playerBar.clearBarWdg)
 	
-	hide(playerBar.wdg)
+	DnD.HideWdg(playerBar.wdg)
 	
 	
 	local buffSlotCnt = math.floor((panelWidth)*0.85 / buffSize)
@@ -684,12 +684,12 @@ end
 function DestroyPlayerPanel(aPlayerBar)
 	if aPlayerBar.raidMoveWdg then
 		DnD.Remove(aPlayerBar.raidMoveWdg)
-		hide(aPlayerBar.raidMoveWdg)
+		DnD.HideWdg(aPlayerBar.raidMoveWdg)
 		destroy(aPlayerBar.raidMoveWdg)
 	end
 	
 	DnD.Remove(aPlayerBar.wdg)
-	hide(aPlayerBar.wdg)
+	DnD.HideWdg(aPlayerBar.wdg)
 	destroy(aPlayerBar.wdg)
 end
 
@@ -735,7 +735,7 @@ function CreateRaidPanel()
 	DnD.Init(raidPanel, wtTopPanel, true)
 	
 	resize(wtTopPanel, 200, nil)
-	hide(raidPanel)
+	DnD.HideWdg(raidPanel)
 	
 	m_raidLockBtn = getChild(wtTopPanel, "ButtonLocker")
 	RaidLockBtn(raidPanel)
@@ -852,7 +852,7 @@ function CreateTargeterPanel()
 	m_modeBtn = getChild(modePanel, "GetModeBtn")
 	
 	TargetLockBtn(targeterPanel)
-	hide(targeterPanel)
+	DnD.HideWdg(targeterPanel)
 	
 	
 	m_modeSelectPanel = getChild(targeterPanel, "ModeSelectPanel")	

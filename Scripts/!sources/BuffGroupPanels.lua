@@ -161,8 +161,9 @@ end
 function DestroyGroupBuffPanels()
 	for _, groupBuffPanel in pairs(m_groupBuffPanels) do
 		if groupBuffPanel.panelWdg then
-			if groupBuffPanel.panelWdg.IsValid and groupBuffPanel.panelWdg:IsValid() then DnD.Remove(groupBuffPanel.panelWdg) end
-			hide(groupBuffPanel.panelWdg)
+			local groupBuffTopPanel = getChild(groupBuffPanel.panelWdg, "MoveModePanel")
+			DnD.Remove(groupBuffTopPanel)
+			DnD.HideWdg(groupBuffTopPanel)
 			destroy(groupBuffPanel.panelWdg)
 		end
 	end
@@ -206,9 +207,9 @@ function CreateGroupBuffPanel(aForm, aSettings, anIsAboveHead, aPosInPlateIndex)
 
 		local groupBuffTopPanel = getChild(groupBuffPanel.panelWdg, "MoveModePanel", true)
 		if aSettings.fixed or anIsAboveHead then
-			hide(groupBuffTopPanel)
+			DnD.HideWdg(groupBuffTopPanel)
 		else
-			show(groupBuffTopPanel)
+			DnD.ShowWdg(groupBuffTopPanel)
 			setText(getChild(groupBuffTopPanel, "PanelNameText"), aSettings.name, "ColorWhite", "center", 17, true, true)
 		end
 		setFade(groupBuffTopPanel, 0.7)
@@ -264,9 +265,13 @@ function CreateGroupBuffPanels(aForm)
 end
 
 function ResetPanelPos(aInd)
-	DnD.Remove(m_groupBuffPanels[aInd].panelWdg)
+	if not m_groupBuffPanels[aInd] then
+		return
+	end
+	local groupBuffTopPanel = getChild(m_groupBuffPanels[aInd].panelWdg, "MoveModePanel")
+	DnD.Remove(groupBuffTopPanel)
 	SetConfig("DnD:"..DnD.GetWidgetTreePath(m_groupBuffPanels[aInd].panelWdg), {posX = 500, posY = 400, highPosX = 0, highPosY = 0})
-	DnD.Init(m_groupBuffPanels[aInd].panelWdg, getChild(m_groupBuffPanels[aInd].panelWdg, "MoveModePanel"), true, false)
+	DnD.Init(m_groupBuffPanels[aInd].panelWdg, groupBuffTopPanel, true, false)
 end
 
 local function FindIndexByWdg(aWdg)

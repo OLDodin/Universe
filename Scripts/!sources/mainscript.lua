@@ -10,7 +10,7 @@ function onAOPanelStart( params )
 		userMods.SendEvent( "AOPANEL_SEND_ADDON",
 			{ name = common.GetAddonName(), sysName = common.GetAddonName(), param = params } )
 
-		hide(getChild(mainForm, "UniverseButton"))
+		DnD.HideWdg(getChild(mainForm, "UniverseButton"))
 	end
 end
 
@@ -24,14 +24,13 @@ function onAOPanelRightClick( params )
 	if params.sender == common.GetAddonName() then
 		local SetVal = { val = userMods.ToWString( "U" )}
 		userMods.SendEvent( "AOPANEL_UPDATE_ADDON", { sysName = common.GetAddonName(), header = SetVal } )
-		--ChangeSelectedAddons()
 	end
 	
 end
 
 function onAOPanelChange( params )
 	if params.unloading and params.name == "UserAddon/AOPanelMod" then
-		show(getChild(mainForm, "UniverseButton"))
+		DnD.ShowWdg(getChild(mainForm, "UniverseButton"))
 	end
 end
 
@@ -42,27 +41,17 @@ function enableAOPanelIntegration( enable )
 	if enable then
 		onAOPanelStart()
 	else
-		show(getChild(mainForm, "UniverseButton"))
+		DnD.ShowWdg(getChild(mainForm, "UniverseButton"))
 	end
-end
-
-function CheckData()
-	local currDate = common.GetLocalDateTime()
-	if currDate.m < 7 and currDate.y == 2018 then
-		return true
-	end
-	return false
 end
 
 local function Init()
-	--if CheckData() then
-		GUIControllerInit()
-		
-		common.RegisterEventHandler( onAOPanelStart, "AOPANEL_START" )
-		common.RegisterEventHandler( onAOPanelLeftClick, "AOPANEL_BUTTON_LEFT_CLICK" )
-		common.RegisterEventHandler( onAOPanelRightClick, "AOPANEL_BUTTON_RIGHT_CLICK" )
-		common.RegisterEventHandler( onAOPanelChange, "EVENT_ADDON_LOAD_STATE_CHANGED" )
-	--end
+	GUIControllerInit()
+	
+	common.RegisterEventHandler( onAOPanelStart, "AOPANEL_START" )
+	common.RegisterEventHandler( onAOPanelLeftClick, "AOPANEL_BUTTON_LEFT_CLICK" )
+	common.RegisterEventHandler( onAOPanelRightClick, "AOPANEL_BUTTON_RIGHT_CLICK" )
+	common.RegisterEventHandler( onAOPanelChange, "EVENT_ADDON_LOAD_STATE_CHANGED" )
 end
 
 

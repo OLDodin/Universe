@@ -18,5 +18,5 @@ end
 
 function SetEditText(aForm, aTxt)
 	setText(getChild(aForm, "EditBox1"), aTxt)
-	show(aForm)
+	DnD.ShowWdg(aForm)
 end

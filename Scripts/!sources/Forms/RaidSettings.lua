@@ -79,7 +79,7 @@ function CreateRaidSettingsForm()
 end
 
 function DistanceBtnPressed()
-	show(m_distanceSettingsForm)
+	DnD.ShowWdg(m_distanceSettingsForm)
 end
 
 function SaveRaidFormSettings(aForm)

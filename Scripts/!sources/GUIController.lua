@@ -180,12 +180,12 @@ function ImportProfile()
 		allProfiles[GetTableSize(allProfiles)] = importedProfile
 		SaveProfiles(allProfiles)
 		
-		hide(m_importProfileForm)
+		DnD.HideWdg(m_importProfileForm)
 	end
 end
 
 function ShowImportProfile(aWdg)
-	show(m_importProfileForm)
+	DnD.ShowWdg(m_importProfileForm)
 end
 
 function LoadForms()
@@ -196,7 +196,7 @@ function LoadForms()
 	LoadProgressCastFormSettings(m_progressCastSettingsForm)
 	LoadTargeterFormSettings(m_targeterSettingsForm)
 	LoadBuffFormSettings(m_buffSettingsForm)
-	hide(m_configGroupBuffForm)
+	DnD.HideWdg(m_configGroupBuffForm)
 	ResetConfigGroupBuffsActiveNum()
 	DestroyColorForm()
 end
@@ -229,7 +229,7 @@ function SetColorBuffHighlight(aWdg, aSaveLoadType)
 	DestroyColorForm()
 	local index = GetIndexForWidget(aWdg)
 	m_colorForm = CreateColorSettingsForm(aSaveLoadType, GetConfigGroupBuffsActiveNum(), index+1)
-	show(m_colorForm)
+	DnD.ShowWdg(m_colorForm)
 end
 
 function ResetGroupBuffPanelPos(aWdg)
@@ -274,7 +274,7 @@ function AddBuffsGroupButton(aWdg)
 	profile.buffFormSettings.buffGroupsUnicCnt = profile.buffFormSettings.buffGroupsUnicCnt + 1
 	profile.buffFormSettings.buffGroups[buffGroupCnt].buffGroupWdgName = BUFF_GROUP_WDG_NAME_PREFIX..tostring(profile.buffFormSettings.buffGroupsUnicCnt)
 	LoadConfigGroupBuffsForm(m_configGroupBuffForm, buffGroupCnt)
-	show(m_configGroupBuffForm)
+	DnD.ShowWdg(m_configGroupBuffForm)
 end
 
 function AddBuffsInsideGroupButton(aWdg)
@@ -313,7 +313,7 @@ end
 function EditBuffGroup(aWdg)
 	local index = GetIndexForWidget(aWdg) + 1
 	LoadConfigGroupBuffsForm(m_configGroupBuffForm, index)
-	show(m_configGroupBuffForm)
+	DnD.ShowWdg(m_configGroupBuffForm)
 end
 
 function DeleteBuffGroup(aWdg)
@@ -383,7 +383,7 @@ local function OnAssertChange(aParams)
 	if m_castSubSystemLoaded and (m_progressActionPanel:IsEqual(getParent(aParams.widget, 2)) or m_progressBuffPanel:IsEqual(getParent(aParams.widget, 2))) then
 		--пока не подтвердим пложение на обеих панельках не сбрасываем флаг перемещния
 		if isVisible(m_progressActionPanel) and isVisible(m_progressBuffPanel) then
-			hide(getParent(aParams.widget, 2))
+			DnD.HideWdg(getParent(aParams.widget, 2))
 			return
 		end
 		local profile = GetCurrentProfile()
@@ -933,13 +933,13 @@ local function ShowMoveIfNeeded()
 		maxPeopleCnt = math.max(maxPeopleCnt, GetTableSize(subParty))
 		local peopleCnt = GetTableSize(subParty)
 		if peopleCnt < 6 and (currGroupNum and i < currGroupNum or currGroupSize and currGroupSize > 1) and currGroupNum ~= i then	
-			show(m_raidPlayerPanelList[i][peopleCnt].raidMoveWdg)
+			DnD.ShowWdg(m_raidPlayerPanelList[i][peopleCnt].raidMoveWdg)
 			maxPeopleCnt = maxPeopleCnt + 1
 		end
 	end
 	if partyCnt < 4 and currGroupSize and currGroupSize > 1 then
 		local subParty = members[partyCnt]
-		show(m_raidPlayerPanelList[partyCnt][0].raidMoveWdg)
+		DnD.ShowWdg(m_raidPlayerPanelList[partyCnt][0].raidMoveWdg)
 		partyCnt = partyCnt + 1
 	end
 	
@@ -1001,7 +1001,7 @@ function OnDNDPickAttempt(aParams)
 	if playerBar then
 		CloneBaseInfoPlayerPanel(playerBar, m_raidPlayerMovePanel)
 		
-		show(m_raidPlayerMovePanel.wdg)
+		DnD.ShowWdg(m_raidPlayerMovePanel.wdg)
 		priority(m_raidPlayerMovePanel.wdg, 300)
 		local panelWidth = tonumber(profile.raidFormSettings.raidWidthText)
 		local panelHeight = tonumber(profile.raidFormSettings.raidHeightText)
@@ -1163,7 +1163,7 @@ function RaidChanged(aParams)
 			local playerBar = subParty[j]
 			if not playerBar.isUsed then
 				playerBar.playerID = nil
-				hide(playerBar.wdg)
+				DnD.HideWdg(playerBar.wdg)
 				hide(playerBar.rollOverHighlightWdg)
 			else
 				DnD.Enable(playerBar.wdg, canMovePlayers)
@@ -1180,7 +1180,7 @@ function HideMove()
 			local subParty = m_raidPlayerPanelList[i]
 			for j=0, GetTableSize(subParty)-1 do
 				local playerBar = subParty[j]
-				hide(playerBar.raidMoveWdg)
+				DnD.HideWdg(playerBar.raidMoveWdg)
 			end
 		end
 	end
@@ -1192,7 +1192,7 @@ function StopMove()
 		DnD.OnDragCancelled()
 	end
 	HideMove()
-	hide(m_raidPlayerMovePanel.wdg)
+	DnD.HideWdg(m_raidPlayerMovePanel.wdg)
 	m_moveMode = false
 	m_movingUniqueID = nil
 end
@@ -1408,7 +1408,7 @@ local function ClearTargetPanels()
 	
 	for i = 0, GetTableSize(m_targeterPlayerPanelList)-1 do
 		local playerBar = m_targeterPlayerPanelList[i]
-		hide(playerBar.wdg)
+		DnD.HideWdg(playerBar.wdg)
 		hide(playerBar.rollOverHighlightWdg)
 		playerBar.playerID = nil
 	end
@@ -1623,7 +1623,7 @@ local function SortAndSetTarget(aTargetUnion, aPanelListShift, aPanelPosShift)
 		if not playerBar.isUsed then
 			if playerBar.playerID then
 				UnsubscribeTargetListener(playerBar.playerID)
-				hide(playerBar.wdg)
+				DnD.HideWdg(playerBar.wdg)
 				hide(playerBar.rollOverHighlightWdg)
 			end
 			playerBar.playerID = nil
@@ -2123,7 +2123,7 @@ function InitRaidSubSystem()
 	common.RegisterEventHandler(ReadyCheckChanged, "EVENT_READY_CHECK_INFO_CHANGED")
 	common.RegisterEventHandler(ReadyCheckEnded, "EVENT_READY_CHECK_ENDED")
 	
-	show(m_raidPanel)
+	DnD.ShowWdg(m_raidPanel)
 	
 	RaidChanged()
 	
@@ -2175,7 +2175,7 @@ function UnloadRaidSubSystem()
 	DestroyPlayerPanel(m_raidPlayerMovePanel)
 	m_raidPlayerMovePanel = nil
 	
-	hide(m_raidPanel)
+	DnD.HideWdg(m_raidPanel)
 	
 	ApplyUnloadRaidSettings(true)
 end
@@ -2187,7 +2187,7 @@ function InitTargeterSubSystem(aReload)
 	m_targetSubSystemLoaded = true
 	CreateTargeterPanelCache()
 	
-	show(m_targetPanel)
+	DnD.ShowWdg(m_targetPanel)
 	--local needActive = m_currTargetType ~= TARGETS_DISABLE
 	InitTargeterData()
 	--if aReload and needActive then
@@ -2207,7 +2207,7 @@ function UnloadTargeterSubSystem()
 		DestroyPlayerPanel(m_targeterPlayerPanelList[i])
 	end
 	m_targeterPlayerPanelList = {}
-	hide(m_targetPanel)
+	DnD.HideWdg(m_targetPanel)
 end
 
 function InitGroupBuffSubSystem()
@@ -2260,9 +2260,9 @@ local function InitCastPanel(aPanel)
 	local profile = GetCurrentProfile()
 	resize(aPanel, tonumber(profile.castFormSettings.panelWidthText), tonumber(profile.castFormSettings.panelHeightText)*PROGRESS_PANELS_LIMIT)
 	if profile.castFormSettings.fixed then
-		hide(getChild(aPanel, "MoveModePanel"))
+		DnD.HideWdg(getChild(aPanel, "MoveModePanel"))
 	else
-		show(getChild(aPanel, "MoveModePanel"))
+		DnD.ShowWdg(getChild(aPanel, "MoveModePanel"))
 	end
 	show(aPanel)
 end
@@ -2317,8 +2317,8 @@ function UnloadCastSubSystem()
 	m_progressActionPanelList = {}
 	m_progressBuffPanelList = {}
 	
-	hide(m_progressActionPanel)
-	hide(m_progressBuffPanel)
+	DnD.HideWdg(m_progressActionPanel)
+	DnD.HideWdg(m_progressBuffPanel)
 	
 	common.UnRegisterEventHandler(ActionProgressStart, "EVENT_MOB_ACTION_PROGRESS_START")
 	common.UnRegisterEventHandler(ActionProgressEnd, "EVENT_MOB_ACTION_PROGRESS_FINISH")
@@ -2329,7 +2329,7 @@ end
 
 
 function UniverseBtnPressed()
-	swap(m_mainSettingForm)
+	DnD.SwapWdg(m_mainSettingForm)
 end
 
 function GUIControllerInit()	
@@ -2350,12 +2350,12 @@ function GUIControllerInit()
 	common.RegisterReactionHandler(CheckBoxChangedOn, "CheckBoxChangedOn")
 	common.RegisterReactionHandler(CheckBoxChangedOff, "CheckBoxChangedOff")
 	
-	AddReaction("closeButton", function (aWdg) swap(getParent(aWdg)) end)
+	AddReaction("closeButton", function (aWdg) DnD.SwapWdg(getParent(aWdg)) end)
 	AddReaction("UniverseButton", UniverseBtnPressed)
-	AddReaction("okButton", function (aWdg) swap(getParent(aWdg)) SaveAllAndApply() end)
-	AddReaction("closeExprotBtn", function (aWdg) swap(getParent(aWdg)) end)
-	AddReaction("closeButtonOK", function (aWdg) swap(getParent(aWdg)) end)
-	AddReaction("profilesButton", function () swap(m_profilesForm) end)
+	AddReaction("okButton", function (aWdg) DnD.SwapWdg(getParent(aWdg)) SaveAllAndApply() end)
+	AddReaction("closeExprotBtn", function (aWdg) DnD.SwapWdg(getParent(aWdg)) end)
+	AddReaction("closeButtonOK", function (aWdg) DnD.SwapWdg(getParent(aWdg)) end)
+	AddReaction("profilesButton", function () DnD.SwapWdg(m_profilesForm) end)
 	AddReaction("deleteButtonconfigProfilesForm", DeleteProfile)
 	AddReaction("saveAsProfileButton", SaveProfileAs)
 	AddReaction("loadProfileButton", LoadProfile)
@@ -2363,13 +2363,13 @@ function GUIControllerInit()
 	AddReaction("exportProfileButton", ExportProfile)
 	AddReaction("importProfileButton", ShowImportProfile)
 	AddReaction("importBtn", ImportProfile)
-	AddReaction("raidButton", function () swap(m_raidSettingsForm) end)
-	AddReaction("saveButton", function (aWdg) swap(getParent(aWdg)) SaveAllAndApply() end)
-	AddReaction("targeterButton", function () swap(m_targeterSettingsForm) end)
-	AddReaction("bindButton", function () swap(m_bindSettingsForm) end)
-	AddReaction("progressCastButton", function () swap(m_progressCastSettingsForm) end)
-	AddReaction("helpButton", function () swap(m_helpForm) end)
-	AddReaction("closeSomeSettingsButton", function (aWdg) swap(getParent(aWdg)) UndoAll() end)
+	AddReaction("raidButton", function () DnD.SwapWdg(m_raidSettingsForm) end)
+	AddReaction("saveButton", function (aWdg) DnD.SwapWdg(getParent(aWdg)) SaveAllAndApply() end)
+	AddReaction("targeterButton", function () DnD.SwapWdg(m_targeterSettingsForm) end)
+	AddReaction("bindButton", function () DnD.SwapWdg(m_bindSettingsForm) end)
+	AddReaction("progressCastButton", function () DnD.SwapWdg(m_progressCastSettingsForm) end)
+	AddReaction("helpButton", function () DnD.SwapWdg(m_helpForm) end)
+	AddReaction("closeSomeSettingsButton", function (aWdg) DnD.SwapWdg(getParent(aWdg)) UndoAll() end)
 	AddReaction("addRaidBuffButton", AddRaidBuffButton)
 	AddReaction("addTargeterBuffButton", AddTargetBuffButton)
 	AddReaction("addTargetButton", AddTargetButton)
@@ -2378,7 +2378,7 @@ function GUIControllerInit()
 	AddReaction("deleteButtoncastSettingsForm", DeleteIgnoreCastElement)
 	AddReaction("deleteButtontargeterSettingsForm", DeleteTargetWndElement)
 	AddReaction("deleteButtonraidSettingsForm", DeleteRaidBuffElement)
-	AddReaction("buffsButton", function () swap(m_buffSettingsForm) end)
+	AddReaction("buffsButton", function () DnD.SwapWdg(m_buffSettingsForm) end)
 	AddReaction("editButtonbuffSettingsForm", EditBuffGroup)
 	AddReaction("deleteButtonbuffSettingsForm", DeleteBuffGroup)
 	AddReaction("addBuffsButton", AddBuffsInsideGroupButton)
@@ -2410,13 +2410,13 @@ function GUIControllerInit()
 	AddReaction("setHighlightColorButtonconfigGroupBuffsForm", SetColorBuffGroup)
 	AddReaction("setHighlightColorButtonraidSettingsForm", SetColorBuffRaid)
 	AddReaction("setHighlightColorButtontargeterSettingsForm", SetColorBuffTargeter)
-	AddReaction("setColorButton", function (aWdg) swap(getParent(aWdg)) SaveBuffColorHighlight(m_colorForm) DestroyColorForm() end)
+	AddReaction("setColorButton", function (aWdg) DnD.SwapWdg(getParent(aWdg)) SaveBuffColorHighlight(m_colorForm) DestroyColorForm() end)
 	AddReaction("resetPanelBuffPosButton", ResetGroupBuffPanelPos)
 	AddReaction("resetPanelCastPosButton", ResetProgressCastPanelPos)
 	AddReaction("nextHelpBtn", NextHelp)
 	AddReaction("prevHelpBtn", PrevHelp)
 	AddReaction("distanceButton", DistanceBtnPressed)
-	AddReaction("closeDistanceFormButton", function (aWdg) swap(getParent(aWdg)) end)
+	AddReaction("closeDistanceFormButton", function (aWdg) DnD.SwapWdg(getParent(aWdg)) end)
 	AddReaction("buffOnMe", BuffOnMeCheckedOn)
 	AddReaction("buffOnTarget", BuffOnTargetCheckedOn)
 	
@@ -2482,8 +2482,8 @@ function GUIControllerInit()
 	common.RegisterReactionHandler(TargetWorkSwitch, "GetModeBtnRightClick")
 	common.RegisterReactionHandler(TargetLockChanged, "OnTargetLockChanged")
 	common.RegisterReactionHandler(function () RaidLockBtn(m_raidPanel) end, "OnRaidLockChanged")
-	common.RegisterReactionHandler(function () swap(m_raidSettingsForm) end, "OnConfigRaidChange")
-	common.RegisterReactionHandler(function () swap(m_targeterSettingsForm) end, "OnConfigTargeterChange")
+	common.RegisterReactionHandler(function () DnD.SwapWdg(m_raidSettingsForm) end, "OnConfigRaidChange")
+	common.RegisterReactionHandler(function () DnD.SwapWdg(m_targeterSettingsForm) end, "OnConfigTargeterChange")
 	common.RegisterReactionHandler(OnCheckChange, "OnCheckChange")
 	common.RegisterReactionHandler(OnRaidFilter, "OnRaidFilter")
 	common.RegisterReactionHandler(OnShopChange, "OnShopChange")

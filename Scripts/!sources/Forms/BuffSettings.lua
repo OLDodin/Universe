@@ -268,6 +268,8 @@ function LoadConfigGroupBuffsForm(aForm, anIndex)
 		resize(getChild(aForm, "group1"), 415, 151)
 		resize(getChild(aForm, "group2"), 415, 61)
 		move(getChild(aForm, "group2"), 15, 287)
+		
+		hide(getChild(aForm, "resetPanelBuffPosButton"))
 	else
 		show(getChild(aForm, "buffOnMe"))
 		show(getChild(aForm, "buffOnTarget"))
@@ -281,6 +283,8 @@ function LoadConfigGroupBuffsForm(aForm, anIndex)
 		resize(getChild(aForm, "group1"), 415, 61)
 		resize(getChild(aForm, "group2"), 415, 91)
 		move(getChild(aForm, "group2"), 15, 257)
+		
+		show(getChild(aForm, "resetPanelBuffPosButton"))
 	end
 end
 
