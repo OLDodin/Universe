@@ -12,8 +12,8 @@
 	</Children>
 	<Variants>
 		<Item>
-			<Reaction>OnLeftClick</Reaction>
-			<ReactionRightClick>OnRightClick</ReactionRightClick>
+			<Reaction>OnProgressBarLeftClick</Reaction>
+			<ReactionRightClick>OnProgressBarRightClick</ReactionRightClick>
 		</Item>
 	</Variants>
 	<reactionOnPointing>OnPointing</reactionOnPointing>

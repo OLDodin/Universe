@@ -2475,6 +2475,8 @@ function GUIControllerInit()
 	
 	common.RegisterReactionHandler(OnLeftClick, "OnPlayerBarLeftClick")
 	common.RegisterReactionHandler(OnRightClick, "OnPlayerBarRightClick" )
+	common.RegisterReactionHandler(OnLeftClick, "OnProgressBarLeftClick")
+	common.RegisterReactionHandler(OnRightClick, "OnProgressBarRightClick" )
 	common.RegisterReactionHandler(OnPlayerBarPointing, "OnPlayerBarPointing" )
 	common.RegisterReactionHandler(MoveModeClick, "addClick")
 	common.RegisterReactionHandler(ShowSelectTargetTypePanel, "GetModeBtnReaction")
