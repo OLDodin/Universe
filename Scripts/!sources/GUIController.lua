@@ -23,6 +23,7 @@ local m_bindSettingsForm  = nil
 local m_exportProfileForm = nil
 local m_importProfileForm = nil
 local m_colorForm = nil
+local m_importErrorForm = nil
 
 local m_progressActionPanelList = {}
 local m_progressBuffPanelList = {}
@@ -169,7 +170,7 @@ end
 function ImportProfile()
 	local importedProfile = StartDeserialize(GetImportText(m_importProfileForm))
 	if not importedProfile then
-		ShowImportError()
+		DnD.ShowWdg(m_importErrorForm)
 		return
 	else	
 		importedProfile.name = ConcatWString(toWString(importedProfile.name), userMods.ToWString("-import"))
@@ -2003,6 +2004,7 @@ local function GUIInit()
 	m_buffsGroupParentForm = CreateGroupsParentForm()
 	m_exportProfileForm = CreateExportProfilesForm()
 	m_importProfileForm = CreateImportProfilesForm()
+	m_importErrorForm = CreateImportError()
 	m_progressCastSettingsForm = CreateProgressCastSettingsForm()
 	m_helpForm = CreateHelpForm()
 	m_playerShortInfoForm = CreatePlayerShortInfoForm()

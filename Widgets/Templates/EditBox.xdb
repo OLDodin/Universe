@@ -27,7 +27,7 @@
   <Cursor2Layer href="EditBox\TransparentLayer.(WidgetLayerSimpleTexture).xdb#xpointer(/WidgetLayerSimpleTexture)" />
   <CursorWidth>2</CursorWidth>
   <CursorChangeTimeMs>500</CursorChangeTimeMs>
-  <ReactionEsc></ReactionEsc>
+  <ReactionEsc>EditLineEsc</ReactionEsc>
   <ReactionEnter></ReactionEnter>
   <TextStyle>
     <multiline>true</multiline>

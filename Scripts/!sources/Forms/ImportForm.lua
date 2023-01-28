@@ -16,9 +16,10 @@ function CreateImportProfilesForm()
 	return form
 end
 
-function ShowImportError()
+function CreateImportError()
 	local form=createWidget(mainForm, "importProfilesError", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 350, 100, 50, 100)
-	priority(form, 7)
+	priority(form, 515)
+	hide(form)
 	
 	setLocaleText(createWidget(form, "importErrorTxt", "TextView",  WIDGET_ALIGN_CENTER, nil, 300, 20, nil, 20))
 	setText(createWidget(form, "closeButton", "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 20, 20, 20, 20), "x")
@@ -27,7 +28,7 @@ function ShowImportError()
 
 	DnD.Init(form, form, true)
 
-	DnD.ShowWdg(form)
+	return form
 end
 
 function GetImportText(aForm)
