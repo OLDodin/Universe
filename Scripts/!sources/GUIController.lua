@@ -1051,11 +1051,11 @@ local function BuildRaidGUI(aCurrentRaid)
 		for i=0, GetTableSize(aCurrentRaid.members)-1 do
 			local subParty = aCurrentRaid.members[i]
 			maxPeopleCnt = math.max(maxPeopleCnt, GetTableSize(subParty))
-			if not m_raidPartyButtons[i+1].active then
+			if not m_raidPartyButtons[i+1].active or m_moveMode then
 				maxPartyCnt = maxPartyCnt - 1
 			end
 			
-			if m_raidPartyButtons[i+1].active then
+			if m_raidPartyButtons[i+1].active or m_moveMode then
 				for j=0, GetTableSize(subParty)-1 do
 					local playerInfo = subParty[j]
 					local playerBar = m_raidPlayerPanelList[partyCnt][j]
@@ -1207,7 +1207,8 @@ function StartMove(anUniqueID)
 	m_moveMode = true
 	m_movingUniqueID = anUniqueID
 	
-	ShowMoveIfNeeded()
+	--ShowMoveIfNeeded()
+	RaidChanged()
 end
 
 

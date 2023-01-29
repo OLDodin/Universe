@@ -33,7 +33,7 @@ function MoveTo(aPartyNum, anUniqueID, aMyUniqueID)
 			local currGroupNum = getGroupFromPersId(anUniqueID)
 			if currGroupNum and aPartyNum < currGroupNum or currGroupSize and currGroupSize > 1 then
 				local emptyParty = getFirstEmptyPartyInRaid()
-				if aPartyNum < emptyParty  then
+				if emptyParty == nil or aPartyNum < emptyParty  then
 					raid.MoveMemberToGroup(anUniqueID, aPartyNum)
 				else
 					raid.IsolateMember(anUniqueID)

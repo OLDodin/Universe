@@ -553,6 +553,7 @@ function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings, aNum)
 	playerBar.farColoredBarWdg = getChild(playerBar.wdg, "FarColored")
 	playerBar.rollOverHighlightWdg = getChild(playerBar.wdg, "RolloverHighlight")
 	playerBar.highlightWdg = getChild(playerBar.wdg, "Highlight")
+	
 	playerBar.optimizeInfo = {}
 	playerBar.optimizeInfo.name = m_emptyWStr
 	playerBar.optimizeInfo.shardName = m_emptyWStr
