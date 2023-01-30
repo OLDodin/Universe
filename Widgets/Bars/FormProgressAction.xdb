@@ -13,12 +13,12 @@
 		<X>
 			<Align>WIDGET_ALIGN_LOW</Align>
 			<Size>250</Size>
-			<Pos>280</Pos>
+			<Pos>450</Pos>
 		</X>
 		<Y>
 			<Align>WIDGET_ALIGN_LOW</Align>
 			<Size>175</Size>
-			<Pos>380</Pos>
+			<Pos>240</Pos>
 		</Y>
 	</Placement>
 	<PickChildrenOnly>true</PickChildrenOnly>

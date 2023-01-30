@@ -341,6 +341,10 @@ function BuffOnTargetCheckedOn()
 	ConfigGroupBuffsBuffOnTargetCheckedOn(m_configGroupBuffForm)
 end
 
+function СolorDebuffButtonCheckedOn()
+	RaidSettingsСolorDebuffButtonCheckedOn(m_raidSettingsForm)
+end
+
 local function HidePartyBtns()
 	for i = 1, 4 do
 		if m_raidPartyButtons[i].showed then
@@ -2422,6 +2426,7 @@ function GUIControllerInit()
 	AddReaction("closeDistanceFormButton", function (aWdg) DnD.SwapWdg(getParent(aWdg)) end)
 	AddReaction("buffOnMe", BuffOnMeCheckedOn)
 	AddReaction("buffOnTarget", BuffOnTargetCheckedOn)
+	AddReaction("colorDebuffButton", СolorDebuffButtonCheckedOn)
 	
 	local profile = GetCurrentProfile()
 	if profile.mainFormSettings.useRaidSubSystem then

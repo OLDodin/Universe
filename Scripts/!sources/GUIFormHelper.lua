@@ -22,8 +22,8 @@ function ButtonPressed(aParams)
 end
 
 function CheckBoxChangedOn(aParams)
-	ButtonPressed(aParams)
 	changeCheckBox(aParams.widget)
+	ButtonPressed(aParams)
 end
 
 function CheckBoxChangedOff(aParams)

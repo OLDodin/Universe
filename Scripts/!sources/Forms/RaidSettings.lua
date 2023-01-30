@@ -82,6 +82,12 @@ function DistanceBtnPressed()
 	DnD.ShowWdg(m_distanceSettingsForm)
 end
 
+function RaidSettingsСolorDebuffButtonCheckedOn(aForm)
+	if getCheckBoxState(getChild(aForm, "colorDebuffButton")) then
+		setCheckBox(getChild(aForm, "checkFriendCleanableButton"), true)
+	end
+end
+
 function SaveRaidFormSettings(aForm)
 	local mySettings = {}
 	local profile = GetCurrentProfile()
