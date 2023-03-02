@@ -1,5 +1,9 @@
 Global( "PlayerBuffs", {} )
 
+local cachedGetBuffInfo = object.GetBuffInfo
+local cachedGetBuffsWithProperties = object.GetBuffsWithProperties
+local cachedRegisterEventHandler = common.RegisterEventHandler
+local cachedUnRegisterEventHandler = common.UnRegisterEventHandler
 
 function PlayerBuffs:Init(anID)
 	self.playerID = anID
@@ -78,7 +82,7 @@ end
 
 function PlayerBuffs:UpdateValueIfNeeded()
 	self.updateCnt = self.updateCnt + 1
-	if self.updateCnt == 3000 then
+	if self.updateCnt == 6000 then
 		self:ClearLastValues()
 	end
 	for i, buffPlate in pairs(self.base.guiBuffPlatesListeners) do
@@ -95,9 +99,12 @@ function PlayerBuffs:InitIgnorePlatesBuffsList(anIndex)
 	end
 end
 
-function PlayerBuffs:CallListenerIfNeeded(aBuffID, aListener, aCondition, aRaidType, anIgnoreBuffsList)
+function PlayerBuffs:CallListenerIfNeeded(aBuffID, aListener, aCondition, aRaidType, anIgnoreBuffsList, aBuffInfo)
 	if aListener and not anIgnoreBuffsList[aBuffID] then
-		local buffInfo = aBuffID and object.GetBuffInfo(aBuffID)
+		local buffInfo = aBuffID and aBuffInfo
+		if not buffInfo then
+			buffInfo = aBuffID and cachedGetBuffInfo(aBuffID)
+		end
 		if buffInfo and buffInfo.name then
 			if aCondition:IsImportant(buffInfo) then
 				aListener.listenerChangeImportantBuff(buffInfo, aListener)
@@ -117,18 +124,20 @@ function PlayerBuffs:CallListenerIfNeeded(aBuffID, aListener, aCondition, aRaidT
 			else
 				anIgnoreBuffsList[aBuffID] = true
 			end
+			return buffInfo
 		end
 	end
+	return aBuffInfo
 end
 
 function PlayerBuffs:GetReadAllEventFunc(aParams, aListener, aCondition, aRaidType, anIgnoreBuffsList)
 	if aListener and aCondition then
 		--local unitBuffs = object.GetBuffs(aParams.unitId)
-		local unitBuffs = object.GetBuffsWithProperties(aParams.unitId, true, true)
+		local unitBuffs = cachedGetBuffsWithProperties(aParams.unitId, true, true)
 		for i, buffID in pairs(unitBuffs) do
 			self:CallListenerIfNeeded(buffID, aListener, aCondition, aRaidType, anIgnoreBuffsList)
 		end
-		unitBuffs = object.GetBuffsWithProperties(aParams.unitId, false, true)
+		unitBuffs = cachedGetBuffsWithProperties(aParams.unitId, false, true)
 		for i, buffID in pairs(unitBuffs) do
 			self:CallListenerIfNeeded(buffID, aListener, aCondition, aRaidType, anIgnoreBuffsList)
 		end
@@ -171,15 +180,15 @@ function PlayerBuffs:GetAddEventFunc()
 		local profile = GetCurrentProfile()
 		local asRaid = profile.targeterFormSettings.separateBuffDebuff
 		
-		self:CallListenerIfNeeded(aParams.buffId, self.base.guiRaidListener, GetBuffConditionForRaid(), true, self.ignoreRaidBuffsID)
-		self:CallListenerIfNeeded(aParams.buffId, self.base.guiTargetListener, GetBuffConditionForTargeter(), asRaid, self.ignoreTargeterBuffsID)
+		local buffInfo = self:CallListenerIfNeeded(aParams.buffId, self.base.guiRaidListener, GetBuffConditionForRaid(), true, self.ignoreRaidBuffsID)
+		buffInfo = self:CallListenerIfNeeded(aParams.buffId, self.base.guiTargetListener, GetBuffConditionForTargeter(), asRaid, self.ignoreTargeterBuffsID, buffInfo)
 		
 		for i, buffPlate in pairs(self.base.guiBuffPlatesListeners) do
 			self:InitIgnorePlatesBuffsList(i)
-			self:CallListenerIfNeeded(aParams.buffId, buffPlate, GetBuffConditionForBuffPlate(i), false, self.ignorePlateBuffsID[i])
+			buffInfo = self:CallListenerIfNeeded(aParams.buffId, buffPlate, GetBuffConditionForBuffPlate(i), false, self.ignorePlateBuffsID[i], buffInfo)
 		end
 		
-		self:CallListenerIfNeeded(aParams.buffId, self.base.guiAboveHeadListener, GetBuffConditionForAboveHead(), false, self.ignoreAboveHeadBuffsID)
+		self:CallListenerIfNeeded(aParams.buffId, self.base.guiAboveHeadListener, GetBuffConditionForAboveHead(), false, self.ignoreAboveHeadBuffsID, buffInfo)
 	end
 end
 
@@ -213,22 +222,22 @@ function PlayerBuffs:GetChangedEventFunc()
 		local profile = GetCurrentProfile()
 		local asRaid = profile.targeterFormSettings.separateBuffDebuff
 		
-		self:CallListenerIfNeeded(aParams, self.base.guiRaidListener, GetBuffConditionForRaid(), true, self.ignoreRaidBuffsID)
-		self:CallListenerIfNeeded(aParams, self.base.guiTargetListener, GetBuffConditionForTargeter(), asRaid, self.ignoreTargeterBuffsID)
+		local buffInfo = self:CallListenerIfNeeded(aParams, self.base.guiRaidListener, GetBuffConditionForRaid(), true, self.ignoreRaidBuffsID)
+		buffInfo = self:CallListenerIfNeeded(aParams, self.base.guiTargetListener, GetBuffConditionForTargeter(), asRaid, self.ignoreTargeterBuffsID, buffInfo)
 		
 		for i, buffPlate in pairs(self.base.guiBuffPlatesListeners) do
 			self:InitIgnorePlatesBuffsList(i)
-			self:CallListenerIfNeeded(aParams, buffPlate, GetBuffConditionForBuffPlate(i), false, self.ignorePlateBuffsID[i])
+			buffInfo = self:CallListenerIfNeeded(aParams, buffPlate, GetBuffConditionForBuffPlate(i), false, self.ignorePlateBuffsID[i], buffInfo)
 		end
-		self:CallListenerIfNeeded(aParams, self.base.guiAboveHeadListener, GetBuffConditionForAboveHead(), false, self.ignoreAboveHeadBuffsID)
+		self:CallListenerIfNeeded(aParams, self.base.guiAboveHeadListener, GetBuffConditionForAboveHead(), false, self.ignoreAboveHeadBuffsID, buffInfo)
 	end
 end
 
 function PlayerBuffs:RegisterEvent(anID)
 	self.unitParams.objectId = anID
 
-	common.RegisterEventHandler(self.addEventFunc, 'EVENT_OBJECT_BUFF_ADDED', self.unitParams)
-	common.RegisterEventHandler(self.delEventFunc, 'EVENT_OBJECT_BUFF_REMOVED', self.unitParams)
+	cachedRegisterEventHandler(self.addEventFunc, 'EVENT_OBJECT_BUFF_ADDED', self.unitParams)
+	cachedRegisterEventHandler(self.delEventFunc, 'EVENT_OBJECT_BUFF_REMOVED', self.unitParams)
 	if g_debugSubsrb then
 		self.base:reg("buff")
 		self.base:reg("buff")
@@ -236,8 +245,8 @@ function PlayerBuffs:RegisterEvent(anID)
 end
 
 function PlayerBuffs:UnRegisterEvent()
-	common.UnRegisterEventHandler(self.addEventFunc, 'EVENT_OBJECT_BUFF_ADDED', self.unitParams)
-	common.UnRegisterEventHandler(self.delEventFunc, 'EVENT_OBJECT_BUFF_REMOVED', self.unitParams)
+	cachedUnRegisterEventHandler(self.addEventFunc, 'EVENT_OBJECT_BUFF_ADDED', self.unitParams)
+	cachedUnRegisterEventHandler(self.delEventFunc, 'EVENT_OBJECT_BUFF_REMOVED', self.unitParams)
 	
 	if g_debugSubsrb then
 		self.base:unreg("buff")

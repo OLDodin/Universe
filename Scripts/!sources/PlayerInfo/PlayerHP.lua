@@ -1,5 +1,8 @@
 Global( "PlayerHP", {} )
 
+local cachedGetHealthInfo = object.GetHealthInfo
+local cachedRegisterEventHandler = common.RegisterEventHandler
+local cachedUnRegisterEventHandler = common.UnRegisterEventHandler
 
 function PlayerHP:Init(anID)
 	self.playerID = anID
@@ -87,7 +90,7 @@ function PlayerHP:GetEventFunc()
 	return function(aParams)
 		local playerID = aParams.unitId or aParams.id
 		if isExist(playerID) then
-			local healthInfo = object.GetHealthInfo(playerID)
+			local healthInfo = cachedGetHealthInfo(playerID)
 			self.shield = healthInfo and healthInfo.additionalPercents 
 			self.hp = healthInfo and healthInfo.valuePercents
 		end
@@ -96,9 +99,9 @@ end
 
 function PlayerHP:RegisterEvent(anID)
 	self.unitParams.unitId = anID
-	common.RegisterEventHandler(self.eventFunc, "EVENT_UNIT_HEALTH_CHANGED", self.unitParams)
+	cachedRegisterEventHandler(self.eventFunc, "EVENT_UNIT_HEALTH_CHANGED", self.unitParams)
 	self.objParams.id = anID
-	common.RegisterEventHandler(self.eventFunc, "EVENT_OBJECT_HEALTH_CHANGED", self.objParams)
+	cachedRegisterEventHandler(self.eventFunc, "EVENT_OBJECT_HEALTH_CHANGED", self.objParams)
 	if g_debugSubsrb then
 		self.base:reg("hp")
 		self.base:reg("hp")
@@ -106,8 +109,8 @@ function PlayerHP:RegisterEvent(anID)
 end
 
 function PlayerHP:UnRegisterEvent()
-	common.UnRegisterEventHandler(self.eventFunc, "EVENT_UNIT_HEALTH_CHANGED", self.unitParams)
-	common.UnRegisterEventHandler(self.eventFunc, "EVENT_OBJECT_HEALTH_CHANGED", self.objParams)
+	cachedUnRegisterEventHandler(self.eventFunc, "EVENT_UNIT_HEALTH_CHANGED", self.unitParams)
+	cachedUnRegisterEventHandler(self.eventFunc, "EVENT_OBJECT_HEALTH_CHANGED", self.objParams)
 	if g_debugSubsrb then
 		self.base:unreg("hp")
 		self.base:unreg("hp")

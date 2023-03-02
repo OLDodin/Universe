@@ -13,7 +13,7 @@ local function FabricMakePlayerInfoForGroupBuff(anID, aListeners, aNeedSpells)
 		return
 	end
 	local player = m_players[anID] or {}
-	
+
 	if not player.buffs then
 		player.buffs = CreatePlayerSubInfo(anID, PlayerBuffs)
 	end
@@ -54,7 +54,6 @@ local function FabricMakePlayerInfo(anID, aListener, anIsRaidInfo)
 	if not anIsRaidInfo then
 		settings = profile.targeterFormSettings
 	end
-	
 	
 	if not player.hp then
 		player.hp = CreatePlayerSubInfo(anID, PlayerHP)	
@@ -130,7 +129,7 @@ local function FabricMakePlayerInfo(anID, aListener, anIsRaidInfo)
 		player.buffs:SubscribeRaidGui(aListener)
 	else
 		player.buffs:SubscribeTargetGui(aListener)
-	end	
+	end
 	
 	m_players[anID] = player
 end

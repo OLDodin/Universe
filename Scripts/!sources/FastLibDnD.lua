@@ -62,7 +62,11 @@ DnD.Init = function( wtMovable, wtReacting, fUseCfg, fLockedToParentArea, Paddin
 			InitialPlace.posY = Cfg.posY or InitialPlace.posY
 			InitialPlace.highPosX = Cfg.highPosX or InitialPlace.highPosX
 			InitialPlace.highPosY = Cfg.highPosY or InitialPlace.highPosY
-			DnD.Widgets[ ID ].wtMovable:SetPlacementPlain( DnD.NormalizePlacement( InitialPlace, LimitMin, LimitMax ) )
+			if DnD.Widgets[ ID ].fLockedToParentArea then
+				DnD.Widgets[ ID ].wtMovable:SetPlacementPlain( DnD.NormalizePlacement( InitialPlace, LimitMin, LimitMax ) )
+			else
+				DnD.Widgets[ ID ].wtMovable:SetPlacementPlain( InitialPlace )
+			end
 		end
 	end
 	DnD.Widgets[ ID ].Initial = { X = InitialPlace.posX, Y = InitialPlace.posY, HX = InitialPlace.highPosX, HY = InitialPlace.highPosY }

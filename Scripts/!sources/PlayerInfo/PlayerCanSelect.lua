@@ -1,5 +1,6 @@
 Global( "PlayerCanSelect", {} )
 
+local cachedCanSelectTarget = unit.CanSelectTarget
 
 function PlayerCanSelect:Init(anID)
 	self.playerID = anID
@@ -55,7 +56,7 @@ function PlayerCanSelect:UpdateValueIfNeeded()
 		return
 	end
 
-	self.canSelect = unit.CanSelectTarget(self.playerID)
+	self.canSelect = cachedCanSelectTarget(self.playerID)
 	if self.lastCanSelect ~= self.canSelect then
 		self.lastCanSelect = self.canSelect
 		local res = self.base.guiTargetListener and self.base.guiTargetListener.listenerCanSelect(self.canSelect, self.base.guiTargetListener)

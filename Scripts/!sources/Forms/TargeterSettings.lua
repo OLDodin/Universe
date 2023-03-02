@@ -77,6 +77,10 @@ function CreateTargeterSettingsForm()
 	setLocaleText(createWidget(form, "addTargeterBuffButton", "Button", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 130, 25, 510, 610))
 	createWidget(form, "EditLine1", "EditLine", nil, nil, 160, 25, 340, 610)
 	
+	setLocaleText(createWidget(form, "configGroupBuffsId", "TextView",  WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 30, 25, 350, 185))
+	setLocaleText(createWidget(form, "configGroupBuffsName", "TextView",  WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 220, 25, 380, 185))
+	setLocaleText(createWidget(form, "castByMe", "TextView",  WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 50, 25, 520, 185))
+	
 	setLocaleText(createWidget(form, "myTargetsButton", "TextView", nil, nil, 200, 25, 715, 50))
 	createWidget(form, "container2", "ScrollableContainer", nil, nil, 300, 530, 665, 70)
 	setLocaleText(createWidget(form, "addTargetButton", "Button", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 130, 25, 835, 610))
@@ -129,7 +133,14 @@ function SaveTargeterFormSettings(aForm)
 	mySettings.raidBuffs.checkControlsButton = getCheckBoxState(getChild(aForm, "checkControlsButton"))
 	mySettings.raidBuffs.checkMovementsButton = getCheckBoxState(getChild(aForm, "checkMovementsButton"))
 	
-	UpdateTableValuesFromContainer(mySettings.raidBuffs.customBuffs, aForm, getChild(aForm, "container1"))
+	local container = getChild(aForm, "container1")
+	if container and mySettings.raidBuffs.customBuffs then
+		for i, j in ipairs(mySettings.raidBuffs.customBuffs) do
+			j.name = getText(getChild(container, "Name"..tostring(i), true))
+			j.castByMe = getCheckBoxState(getChild(container, "castByMe"..tostring(i), true))
+		end
+	end
+
 	UpdateTableValuesFromContainer(mySettings.myTargets, aForm, getChild(aForm, "container2"))
 
 	return mySettings

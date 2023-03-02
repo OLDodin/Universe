@@ -77,6 +77,7 @@ local function PlayerAddBuff(aBuffInfo, aGroupBuffBar, anInfoObj)
 		buffSlot.info.buffTimeStr = buffTimeStr
 		show(buffSlot.info.buffTimerWdg)
 	else
+		buffSlot.info.buffTimeStr = nil
 		hide(buffSlot.info.buffTimerWdg)
 	end
 	
@@ -126,7 +127,7 @@ end
 
 local function UpdateTick(aGroupBuffBar)
 	for _, buffSlot in pairs(aGroupBuffBar.buffList) do
-		if buffSlot.info.buffTimerWdg:IsVisible() then
+		if buffSlot.info.buffTimeStr then
 			local remainingMs = buffSlot.buffFinishedTime_h - g_cachedTimestamp
 			if remainingMs > 0 then
 				local buffTimeStr = getTimeString(remainingMs)
@@ -135,6 +136,7 @@ local function UpdateTick(aGroupBuffBar)
 					buffSlot.info.buffTimeStr = buffTimeStr
 				end
 			else
+				buffSlot.info.buffTimeStr = nil
 				buffSlot.info.buffTimerWdg:Show(false)
 			end
 		end
@@ -358,13 +360,35 @@ local function CheckSettingsCondition(aSettings, anObjID)
 			or aSettings.aboveHeadNotFriendMobsButton and not isPlayer and not isFriend, isPlayer
 end
 
-function UnitsChangedForAboveHead(aSpawnedUnitList, aDespawnedUnitList)
-	local profile = GetCurrentProfile()
+function SpawnedUnitsForAboveHead(aSpawnedUnitList)
 	local aboveHeadPanel = nil
 	local priority = NORMAL_PRIORITY_PANELS
 	local myID = avatar.GetId()
 	local aboveHeadSettings = GetAboveHeadSettings()
 	if not aboveHeadSettings then
+		return
+	end
+	
+	for _, objID in pairs(aSpawnedUnitList) do
+		local needPanel, isPlayer = CheckSettingsCondition(aboveHeadSettings, objID)
+		if needPanel then
+			priority = NORMAL_PRIORITY_PANELS
+			if objID == myID then
+				priority = HIGH_PRIORITY_PANELS
+			end
+			if not isPlayer then
+				priority = LOW_PRIORITY_PANELS
+			end
+			aboveHeadPanel = GetAboveHeadPanel(objID, priority)
+			if aboveHeadPanel then
+				FabricMakeAboveHeadPlayerInfo(objID, aboveHeadPanel)
+			end
+		end
+	end
+end
+
+function DespawnedUnitsForAboveHead(aDespawnedUnitList)
+	if not GetAboveHeadSettings() then
 		return
 	end
 	
@@ -375,25 +399,6 @@ function UnitsChangedForAboveHead(aSpawnedUnitList, aDespawnedUnitList)
 		end
 	end
 	FabricDestroyUnused()
-	
-	for _, objID in pairs(aSpawnedUnitList) do
-		if isExist(objID) then
-			local needPanel, isPlayer = CheckSettingsCondition(aboveHeadSettings, objID)
-			if needPanel then
-				priority = NORMAL_PRIORITY_PANELS
-				if objID == myID then
-					priority = HIGH_PRIORITY_PANELS
-				end
-				if not isPlayer then
-					priority = LOW_PRIORITY_PANELS
-				end
-				aboveHeadPanel = GetAboveHeadPanel(objID, priority)
-				if aboveHeadPanel then
-					FabricMakeAboveHeadPlayerInfo(objID, aboveHeadPanel)
-				end
-			end
-		end
-	end
 end
 
 function RelationChangedForAboveHead(anUnitID)

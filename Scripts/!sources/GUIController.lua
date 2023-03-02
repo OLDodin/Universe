@@ -1263,8 +1263,8 @@ local function EraseTarget(anObjID)
 end
 
 local function FindInListTarget(anObjID, anObjArr)
-	for i=1, GetTableSize(anObjArr) do
-		if anObjArr[i].objID == anObjID then
+	for _, info in ipairs(anObjArr) do
+		if info.objID == anObjID then
 			return true
 		end
 	end
@@ -1510,9 +1510,9 @@ local function SeparateTargeterPanelList(anObjList, aPanelListShift)
 	for i = aPanelListShift, TARGETS_LIMIT+aPanelListShift-1 do
 		local playerBar = m_targeterPlayerPanelList[i]
 		local found = false
-		for k = 1, GetTableSize(anObjList) do
-			if playerBar.playerID == anObjList[k].objID
-			and (playerBar.formSettings.classColorModeButton or playerBar.panelColorType == anObjList[k].relationType)
+		for _, info in ipairs(anObjList) do
+			if playerBar.playerID == info.objID
+			and (playerBar.formSettings.classColorModeButton or playerBar.panelColorType == info.relationType)
 			then
 				finededList[playerBar.playerID] = playerBar
 				found = true
@@ -1532,28 +1532,27 @@ local function SortBySettings(anArr)
 	if profile.targeterFormSettings.sortByName then
 		table.sort(anArr, SortByName)
 	end
-	
-	for i = 1, GetTableSize(anArr) do
-		anArr[i].sortWeight = i
+	for i, info in ipairs(anArr) do
+		info.sortWeight = i
 	end
 		
 	if profile.targeterFormSettings.sortByHP then
-		for i = 1, GetTableSize(anArr) do
-			anArr[i].sortWeight = anArr[i].sortWeight + anArr[i].hp * TARGETS_LIMIT
+		for _, info in ipairs(anArr) do
+			info.sortWeight = info.sortWeight + info.hp * TARGETS_LIMIT
 		end
 	end
 	
 	if profile.targeterFormSettings.sortByClass then
 		local shiftMult = 101 * TARGETS_LIMIT
-		for i = 1, GetTableSize(anArr) do
-			anArr[i].sortWeight = anArr[i].sortWeight + anArr[i].classPriority * shiftMult
+		for _, info in ipairs(anArr) do
+			info.sortWeight = info.sortWeight + info.classPriority * shiftMult
 		end
 	end
 	
 	if profile.targeterFormSettings.sortByDead then
 		local shiftMult = 101 * TARGETS_LIMIT * (GetTableSize(g_classPriority) + 1)
-		for i = 1, GetTableSize(anArr) do
-			anArr[i].sortWeight = anArr[i].sortWeight + anArr[i].isDead * shiftMult
+		for _, info in ipairs(anArr) do
+			info.sortWeight = info.sortWeight + info.isDead * shiftMult
 		end
 	end
 	
@@ -1641,9 +1640,9 @@ end
 local function GetArrByCombatStatus(aStatus, aType)
 	local objArr = m_targetUnitsByType[aType]
 	local resultArr = {}
-	for i=1, GetTableSize(objArr) do
-		if objArr[i].inCombat == aStatus then
-			table.insert(resultArr, objArr[i])
+	for _, info in ipairs(objArr) do
+		if info.inCombat == aStatus then
+			table.insert(resultArr, info)
 		end
 	end
 	return resultArr
@@ -1888,52 +1887,83 @@ local function BuffProgressEnd(aParams)
 	ProgressEnd(aParams, m_progressBuffPanelList)
 end
 
-local function UnitChanged(aParams)
-	if m_buffGroupSubSystemLoaded then
-		UnitsChangedForAboveHead(aParams.spawned, aParams.despawned)
+local function CheckSpawnAndDespawnAtSameTime(aParams)
+	for _, despawnedObjID in pairs(aParams.despawned) do
+		for _, spawnedObjID in pairs(aParams.spawned) do
+			if despawnedObjID == spawnedObjID then
+				LogInfo("SPAWN AND DESPAWN = ", despawnedObjID)
+				return true
+			end
+		end
 	end
-	
+	return false
+end
+
+local function UnitChanged(aParams)
 	local profile = GetCurrentProfile()
 	
-	if m_targetSubSystemLoaded then
-		if m_currTargetType == TARGETS_DISABLE then
-			return
-		end
-		
-		for i=0, GetTableSize(aParams.spawned)-1 do
-			if isExist(aParams.spawned[i]) then
-				local isCombat = false
-				if profile.targeterFormSettings.twoColumnMode then
-					isCombat = object.IsInCombat(aParams.spawned[i])
-				end
-				EraseTarget(aParams.spawned[i])
-				SetNecessaryTargets(aParams.spawned[i], isCombat)
-				--LogInfo("sp ", aParams.spawned[i])
+	local existSpawned = {}
+	if m_buffGroupSubSystemLoaded or m_targetSubSystemLoaded or m_castSubSystemLoaded then
+		for _, objID in pairs(aParams.spawned) do
+			if isExist(objID) then
+				table.insert(existSpawned, objID)
 			end
 		end
-		
-		for i=0, GetTableSize(aParams.despawned)-1 do
-			if aParams.despawned[i] then
-				EraseTarget(aParams.despawned[i])
+	end
+	
+	--сначала все системы despawned
+	if m_buffGroupSubSystemLoaded then
+		DespawnedUnitsForAboveHead(aParams.despawned)
+	end
+	if m_targetSubSystemLoaded and m_currTargetType ~= TARGETS_DISABLE then	
+		for _, objID in pairs(aParams.despawned) do
+			if objID then
+				EraseTarget(objID)
 			end
+		end
+		--[[ по заверению разработчика такое невозможно
+		--если один и тот же объект в spawned и в despawned, то нужно обязательно вызвать отписку всех для despawned, а лишь затем обработать spawned
+		if CheckSpawnAndDespawnAtSameTime(aParams) then
+			SetTargetType(m_currTargetType)
+		end]]
+	end
+	
+	if m_castSubSystemLoaded and profile.castFormSettings.showImportantCasts then
+		for _, objID in pairs(aParams.despawned) do
+			if objID then
+				StopShowProgressNow(objID)
+			end
+		end
+	end
+	
+	FabricDestroyUnused()
+	
+	--все системы spawned
+	if m_buffGroupSubSystemLoaded then
+		SpawnedUnitsForAboveHead(existSpawned)
+	end
+	
+	if m_targetSubSystemLoaded and m_currTargetType ~= TARGETS_DISABLE then	
+		for _, objID in pairs(existSpawned) do
+			local isCombat = false
+			if profile.targeterFormSettings.twoColumnMode then
+				isCombat = object.IsInCombat(objID)
+			end
+			EraseTarget(objID)
+			SetNecessaryTargets(objID, isCombat)
 		end
 			
 		SetTargetType(m_currTargetType)
 	end
 	
 	if m_castSubSystemLoaded and profile.castFormSettings.showImportantCasts then
-		for i=0, GetTableSize(aParams.spawned)-1 do
-			if isExist(aParams.spawned[i]) and not unit.IsPlayer(aParams.spawned[i]) then
-				local mobActionProgressInfo = unit.GetMobActionProgress(aParams.spawned[i])
+		for _, objID in pairs(existSpawned) do
+			if not unit.IsPlayer(objID) then
+				local mobActionProgressInfo = unit.GetMobActionProgress(objID)
 				if mobActionProgressInfo then
-					mobActionProgressInfo.id = aParams.spawned[i]
+					mobActionProgressInfo.id = objID
 					ActionProgressStart(mobActionProgressInfo)
 				end
-			end
-		end
-		for i=0, GetTableSize(aParams.despawned)-1 do
-			if aParams.despawned[i] then
-				StopShowProgressNow(aParams.despawned[i])
 			end
 		end
 	end
@@ -2105,7 +2135,7 @@ function InitRaidSubSystem()
 	m_raidSubSystemLoaded = true
 	CreateRaidPanelCache()
 	
-	common.RegisterEventHandler(RaidChanged, "EVENT_GROUP_CHANGED")
+	--common.RegisterEventHandler(RaidChanged, "EVENT_GROUP_CHANGED")
 	common.RegisterEventHandler(RaidChanged, "EVENT_GROUP_CONVERTED")
 	common.RegisterEventHandler(RaidChanged, "EVENT_GROUP_APPEARED")
 	common.RegisterEventHandler(RaidChanged, "EVENT_GROUP_DISAPPEARED")
@@ -2115,7 +2145,7 @@ function InitRaidSubSystem()
 	common.RegisterEventHandler(RaidChanged, "EVENT_GROUP_MEMBER_REMOVED")
 	
 	common.RegisterEventHandler(RaidChanged, "EVENT_RAID_APPEARED")
-	common.RegisterEventHandler(RaidChanged, "EVENT_RAID_CHANGED")
+	--common.RegisterEventHandler(RaidChanged, "EVENT_RAID_CHANGED")
 	common.RegisterEventHandler(RaidChanged, "EVENT_RAID_DISAPPEARED")
 	common.RegisterEventHandler(RaidChanged, "EVENT_RAID_LEADER_CHANGED")
 	common.RegisterEventHandler(RaidChanged, "EVENT_RAID_MEMBER_ADDED")
@@ -2143,7 +2173,7 @@ function UnloadRaidSubSystem()
 	end
 
 	m_raidSubSystemLoaded = false
-	common.UnRegisterEventHandler(RaidChanged, "EVENT_GROUP_CHANGED")
+	--common.UnRegisterEventHandler(RaidChanged, "EVENT_GROUP_CHANGED")
 	common.UnRegisterEventHandler(RaidChanged, "EVENT_GROUP_CONVERTED")
 	common.UnRegisterEventHandler(RaidChanged, "EVENT_GROUP_APPEARED")
 	common.UnRegisterEventHandler(RaidChanged, "EVENT_GROUP_DISAPPEARED")
@@ -2153,7 +2183,7 @@ function UnloadRaidSubSystem()
 	common.UnRegisterEventHandler(RaidChanged, "EVENT_GROUP_MEMBER_REMOVED")
 	
 	common.UnRegisterEventHandler(RaidChanged, "EVENT_RAID_APPEARED")
-	common.UnRegisterEventHandler(RaidChanged, "EVENT_RAID_CHANGED")
+	--common.UnRegisterEventHandler(RaidChanged, "EVENT_RAID_CHANGED")
 	common.UnRegisterEventHandler(RaidChanged, "EVENT_RAID_DISAPPEARED")
 	common.UnRegisterEventHandler(RaidChanged, "EVENT_RAID_LEADER_CHANGED")
 	common.UnRegisterEventHandler(RaidChanged, "EVENT_RAID_MEMBER_ADDED")
@@ -2233,7 +2263,7 @@ function InitGroupBuffSubSystem()
 	
 	local unitList = avatar.GetUnitList()
 	table.insert(unitList, g_myAvatarID)
-	UnitsChangedForAboveHead(unitList, {})
+	SpawnedUnitsForAboveHead(unitList)
 end
 
 function UnloadGroupBuffSubSystem()

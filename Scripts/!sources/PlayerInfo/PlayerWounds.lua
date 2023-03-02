@@ -1,5 +1,7 @@
 Global( "PlayerWounds", {} )
 
+local cachedGetRuneWoundsComplexity = unit.GetRuneWoundsComplexity
+local cachedGetRelativeWoundsComplexity = unit.GetRelativeWoundsComplexity
 
 function PlayerWounds:Init(anID)
 	self.playerID = anID
@@ -56,7 +58,7 @@ end
 
 function PlayerWounds:GetEventFunc()
 	return function(aParams)
-		self.woundsComplexity = 100*(1-1/((1+unit.GetRuneWoundsComplexity(aParams.unitId)/10)*(unit.GetRelativeWoundsComplexity(aParams.unitId)))) or 0
+		self.woundsComplexity = 100*(1-1/((1+cachedGetRuneWoundsComplexity(aParams.unitId)/10)*(cachedGetRelativeWoundsComplexity(aParams.unitId)))) or 0
 		--LogInfo("EVENT_UNIT_WOUNDS_COMPLEXITY_CHANGED ", self.woundsComplexity)
 	end
 end

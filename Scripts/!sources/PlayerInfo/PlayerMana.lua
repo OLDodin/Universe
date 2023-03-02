@@ -1,5 +1,8 @@
 Global( "PlayerMana", {} )
 
+local cachedGetManaPercentage = unit.GetManaPercentage
+local cachedRegisterEventHandler = common.RegisterEventHandler
+local cachedUnRegisterEventHandler = common.UnRegisterEventHandler
 
 function PlayerMana:Init(anID)
 	self.playerID = anID
@@ -55,21 +58,21 @@ end
 
 function PlayerMana:GetEventFunc()
 	return function(aParams)
-		self.mana = unit.GetManaPercentage( aParams.unitId )
+		self.mana = cachedGetManaPercentage( aParams.unitId )
 		--LogInfo("EVENT_UNIT_MANA_PERCENTAGE_CHANGED ", self.playerID)
 	end
 end
 
 function PlayerMana:RegisterEvent(anID)
 	self.unitParams.unitId = anID
-	common.RegisterEventHandler(self.eventFunc, "EVENT_UNIT_MANA_PERCENTAGE_CHANGED", self.unitParams)
+	cachedRegisterEventHandler(self.eventFunc, "EVENT_UNIT_MANA_PERCENTAGE_CHANGED", self.unitParams)
 	if g_debugSubsrb then
 		self.base:reg("mana")
 	end
 end
 
 function PlayerMana:UnRegisterEvent()
-	common.UnRegisterEventHandler(self.eventFunc, "EVENT_UNIT_MANA_PERCENTAGE_CHANGED", self.unitParams)
+	cachedUnRegisterEventHandler(self.eventFunc, "EVENT_UNIT_MANA_PERCENTAGE_CHANGED", self.unitParams)
 	if g_debugSubsrb then
 		self.base:unreg("mana")
 	end

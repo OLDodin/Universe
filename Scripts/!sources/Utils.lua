@@ -1,3 +1,6 @@
+local cachedToWString = userMods.ToWString
+local cachedFromWString = userMods.FromWString
+local cachedIsWString = common.IsWString
 --------------------------------------------------------------------------------
 -- Integer functions
 --------------------------------------------------------------------------------
@@ -24,22 +27,22 @@ end
 
 function toWString(text)
 	if not text then return nil end
-	if not common.IsWString(text) then
-		text=userMods.ToWString(tostring(text))
+	if not cachedIsWString(text) then
+		text=cachedToWString(tostring(text))
 	end
 	return text
 end
 
 local function toStringUtils(text)
 	if not text then return nil end
-	if common.IsWString(text) then
-		text=userMods.FromWString(text)
+	if cachedIsWString(text) then
+		text=cachedFromWString(text)
 	end
 	return tostring(text)
 end
 
 function toString(text)
-	return userMods.FromWString(text)
+	return cachedFromWString(text)
 end
 
 function toLowerString(text)
@@ -89,7 +92,7 @@ function ConcatWStringFromTable(aTable)
 	local valuedTxtFormatStr = "<rs class=\"class\">"
 	local i = 0
     for k, v in pairs( aTable ) do
-        if v and common.IsWString(v) then
+        if v and cachedIsWString(v) then
 			valuedTxtFormatStr = valuedTxtFormatStr.."<r name=\"obj"..i.."\"/>" 
 			i = i + 1
         end
@@ -97,13 +100,13 @@ function ConcatWStringFromTable(aTable)
 	valuedTxtFormatStr = valuedTxtFormatStr.."</rs>"
 	
 	local tableFormat = {
-		format = userMods.ToWString(valuedTxtFormatStr),	
+		format = cachedToWString(valuedTxtFormatStr),	
 	}
 	common.SetTextValues( vt, tableFormat )
 	
 	i = 0
 	for k, v in pairs( aTable ) do
-        if v and common.IsWString(v) then
+        if v and cachedIsWString(v) then
 			vt:SetVal("obj"..i, v)
 			i = i + 1
         end
@@ -635,10 +638,11 @@ function clearItemsCache()
 	cacheItemId=nil
 end
 
-
+local cachedIsExist = object.IsExist
+local cachedIsUnit = object.IsUnit
 function isExist(targetId)
 	if targetId then
-		return object.IsExist(targetId) and object.IsUnit(targetId)
+		return cachedIsExist(targetId) and cachedIsUnit(targetId)
 	end
 	return false
 end
@@ -760,28 +764,25 @@ function ressurect(targetId, ressurectName)
 	return false
 end
 
-function getDistanceToTarget(targetId)
-	local projectedInfo = object.GetProjectedInfo( targetId )	
-	local res = projectedInfo and projectedInfo.playerDistance or nil
-	
-	if not projectedInfo then
-		local objPos = object.GetPos(targetId)
-		if not objPos then return nil end
-		local avPos=avatar.GetPos()
-		res = ((objPos.posX-avPos.posX)^2+(objPos.posY-avPos.posY)^2+(objPos.posZ-avPos.posZ)^2)^0.5
-	end
+local cachedObjGetPos = object.GetPos
+local cachedAvatarGetPos = avatar.GetPos
+local cachedAvatarGetDir = avatar.GetDir
 
-	if res then 
-		res = math.ceil(res)
-	end
+function getDistanceToTarget(targetId)
+	local objPos = cachedObjGetPos(targetId)
+	if not objPos then return nil end
+	local avPos = cachedAvatarGetPos()
+	local res = ((objPos.posX-avPos.posX)^2+(objPos.posY-avPos.posY)^2+(objPos.posZ-avPos.posZ)^2)^0.5
+	res = math.ceil(res)
+
 	return res
 end
 
 function getAngleToTarget(targetId)
-	local t=isExist(targetId) and object.GetPos(targetId)
-	if not t then return nil end
-	local p=avatar.GetPos()
-	return math.floor(math.atan2(t.posY-p.posY, t.posX-p.posX)*100+0.5)/100 - avatar.GetDir()
+	local objPos = cachedObjGetPos(targetId)
+	if not objPos then return nil end
+	local myPos = cachedAvatarGetPos()
+	return math.floor(math.atan2(objPos.posY-myPos.posY, objPos.posX-myPos.posX)*100+0.5)/100 - cachedAvatarGetDir()
 end
 
 
@@ -929,7 +930,7 @@ local wtChat = nil
 local chatRows = 0 --- for clear buffer after show messages
 local valuedText = common.CreateValuedText()
 local formatVT = "<html fontname='AllodsSystem' shadow='1'><rs class='color'><r name='addon'/><r name='text'/></rs></html>"
-valuedText:SetFormat(userMods.ToWString(formatVT))
+valuedText:SetFormat(cachedToWString(formatVT))
 
 wtGetNumParents = function(w, parents)
 	if parents > 0 and w.GetParent then
@@ -965,16 +966,17 @@ function LogToChatVT(valuedText, name, toWW)
 	if not wtChat then wtChat = GetSysChatContainer() end
 	if wtChat and wtChat.PushFrontValuedText then
 		chatRows =  chatRows + 1
-		valuedText:SetVal( "addon", userMods.ToWString(name..": ") )
+		valuedText:SetVal( "addon", cachedToWString(name..": ") )
 		wtChat:PushFrontValuedText( valuedText )
 	end
 end
 
 function LogToChat(message, color, toWW)
-
+	valuedText = common.CreateValuedText()
+	valuedText:SetFormat(cachedToWString(formatVT))
 	valuedText:ClearValues() 
 	valuedText:SetClassVal( "color", color or "LogColorYellow" )
-	if not common.IsWString( message ) then	message = userMods.ToWString(message) end
+	if not cachedIsWString( message ) then	message = cachedToWString(message) end
 	valuedText:SetVal( "text", message )
 	LogToChatVT(valuedText, common.GetAddonName(), toWW)
 

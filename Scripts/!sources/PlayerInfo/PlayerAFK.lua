@@ -1,5 +1,7 @@
 Global( "PlayerAFK", {} )
 
+local cachedIsPlayer = unit.IsPlayer
+local cachedIsAfk = unit.IsAfk
 
 function PlayerAFK:Init(anID)
 	self.playerID = anID
@@ -56,8 +58,8 @@ end
 function PlayerAFK:GetEventFunc()
 	return function(aParams)
 		self.isAfk = aParams.isAfk
-		if aParams.isAfk == nil and aParams.unitId and isExist(aParams.unitId) and unit.IsPlayer(aParams.unitId) then
-			self.isAfk = unit.IsAfk(aParams.unitId)
+		if aParams.isAfk == nil and aParams.unitId and isExist(aParams.unitId) and cachedIsPlayer(aParams.unitId) then
+			self.isAfk = cachedIsAfk(aParams.unitId)
 		end
 	end
 end

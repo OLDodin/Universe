@@ -1,5 +1,8 @@
 Global( "PlayerSpells", {} )
 
+local cachedGetDescription = spellLib.GetDescription
+local cachedRegisterEventHandler = common.RegisterEventHandler
+local cachedUnRegisterEventHandler = common.UnRegisterEventHandler
 
 function PlayerSpells:Init(anID)
 	self.playerID = anID
@@ -77,7 +80,7 @@ end
 
 function PlayerSpells:CallListenerIfNeeded(aSpellID, aListener, aCondition, anIgnoreBuffsList)
 	if aListener and aCondition:HasCondtion() then
-		local spellInfo = aSpellID and spellLib.GetDescription(aSpellID)
+		local spellInfo = aSpellID and cachedGetDescription(aSpellID)
 		--LogInfo("sp GetChangedEventFunc ", spellInfo.name, " ", spellInfo.objectId)
 		if spellInfo and not anIgnoreBuffsList[spellInfo.objectId] and spellInfo.name then
 			spellInfo.spellID = aSpellID
@@ -124,11 +127,10 @@ function PlayerSpells:GetSpellbookChangedEventFunc()
 end
 
 function PlayerSpells:RegisterEvent()
-	common.RegisterEventHandler(self.changedEventFunc, 'EVENT_SPELLBOOK_ELEMENT_EFFECT')
+	cachedRegisterEventHandler(self.changedEventFunc, 'EVENT_SPELLBOOK_ELEMENT_EFFECT')
 
 end
 
 function PlayerSpells:UnRegisterEvent()
-	common.UnRegisterEventHandler(self.changedEventFunc, 'EVENT_SPELLBOOK_ELEMENT_EFFECT')
-
+	cachedUnRegisterEventHandler(self.changedEventFunc, 'EVENT_SPELLBOOK_ELEMENT_EFFECT')
 end

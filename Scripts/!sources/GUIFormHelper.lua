@@ -65,6 +65,9 @@ local function GenerateWidgetForTable(aTable, aContainer, anIndex)
 			editLineWidth = 200
 		elseif containerParentName == "targeterSettingsForm" then
 			editLineWidth = 160
+			if getName(aContainer) == "container1" then
+				editLineWidth = 150
+			end
 		elseif containerParentName == "buffSettingsForm" then
 			editLineWidth = 380
 		elseif containerParentName == "castSettingsForm" then
@@ -95,6 +98,10 @@ local function GenerateWidgetForTable(aTable, aContainer, anIndex)
 	elseif containerParentName == "raidSettingsForm" then
 		setLocaleText(createWidget(panel, "setHighlightColorButton"..containerParentName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 30, 25, 30))
 	elseif containerParentName == "targeterSettingsForm" then
+		if getName(aContainer) == "container1" then
+			if aTable.castByMe==nil then aTable.castByMe=false end
+			setCheckBox(createWidget(panel, "castByMe"..tostring(anIndex), "CheckBox", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 25, 25, 60), aTable.castByMe)
+		end
 		setLocaleText(createWidget(panel, "setHighlightColorButton"..containerParentName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 30, 25, 30))
 	elseif containerParentName == "buffSettingsForm" then
 		setText(createWidget(panel, "editButton"..containerParentName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 15, 15, 30), "e")

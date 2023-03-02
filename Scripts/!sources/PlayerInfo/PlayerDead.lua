@@ -1,5 +1,6 @@
 Global( "PlayerDead", {} )
 
+local cachedIsDead = object.IsDead
 
 function PlayerDead:Init(anID)
 	self.playerID = anID
@@ -55,7 +56,7 @@ end
 
 function PlayerDead:GetEventFunc()
 	return function(aParams)
-		self.isDead = isExist(aParams.unitId) and object.IsDead( aParams.unitId )
+		self.isDead = isExist(aParams.unitId) and cachedIsDead( aParams.unitId )
 		--LogInfo("EVENT_UNIT_MANA_PERCENTAGE_CHANGED ", self.playerID)
 	end
 end
