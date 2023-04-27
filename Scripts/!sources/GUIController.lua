@@ -2135,7 +2135,7 @@ function InitRaidSubSystem()
 	m_raidSubSystemLoaded = true
 	CreateRaidPanelCache()
 	
-	--common.RegisterEventHandler(RaidChanged, "EVENT_GROUP_CHANGED")
+	common.RegisterEventHandler(RaidChanged, "EVENT_GROUP_CHANGED")
 	common.RegisterEventHandler(RaidChanged, "EVENT_GROUP_CONVERTED")
 	common.RegisterEventHandler(RaidChanged, "EVENT_GROUP_APPEARED")
 	common.RegisterEventHandler(RaidChanged, "EVENT_GROUP_DISAPPEARED")
@@ -2145,7 +2145,7 @@ function InitRaidSubSystem()
 	common.RegisterEventHandler(RaidChanged, "EVENT_GROUP_MEMBER_REMOVED")
 	
 	common.RegisterEventHandler(RaidChanged, "EVENT_RAID_APPEARED")
-	--common.RegisterEventHandler(RaidChanged, "EVENT_RAID_CHANGED")
+	common.RegisterEventHandler(RaidChanged, "EVENT_RAID_CHANGED")
 	common.RegisterEventHandler(RaidChanged, "EVENT_RAID_DISAPPEARED")
 	common.RegisterEventHandler(RaidChanged, "EVENT_RAID_LEADER_CHANGED")
 	common.RegisterEventHandler(RaidChanged, "EVENT_RAID_MEMBER_ADDED")
@@ -2173,7 +2173,7 @@ function UnloadRaidSubSystem()
 	end
 
 	m_raidSubSystemLoaded = false
-	--common.UnRegisterEventHandler(RaidChanged, "EVENT_GROUP_CHANGED")
+	common.UnRegisterEventHandler(RaidChanged, "EVENT_GROUP_CHANGED")
 	common.UnRegisterEventHandler(RaidChanged, "EVENT_GROUP_CONVERTED")
 	common.UnRegisterEventHandler(RaidChanged, "EVENT_GROUP_APPEARED")
 	common.UnRegisterEventHandler(RaidChanged, "EVENT_GROUP_DISAPPEARED")
@@ -2183,7 +2183,7 @@ function UnloadRaidSubSystem()
 	common.UnRegisterEventHandler(RaidChanged, "EVENT_GROUP_MEMBER_REMOVED")
 	
 	common.UnRegisterEventHandler(RaidChanged, "EVENT_RAID_APPEARED")
-	--common.UnRegisterEventHandler(RaidChanged, "EVENT_RAID_CHANGED")
+	common.UnRegisterEventHandler(RaidChanged, "EVENT_RAID_CHANGED")
 	common.UnRegisterEventHandler(RaidChanged, "EVENT_RAID_DISAPPEARED")
 	common.UnRegisterEventHandler(RaidChanged, "EVENT_RAID_LEADER_CHANGED")
 	common.UnRegisterEventHandler(RaidChanged, "EVENT_RAID_MEMBER_ADDED")

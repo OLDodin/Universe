@@ -17,7 +17,6 @@
 		<Item href="Scripts/FastLibDnD.lua"/>
 		<Item href="Locales/main.lua"/>
 		<Item href="Scripts/Utils.lua"/>
-		<Item href="Scripts/AVL/avl.lua"/>
 		<Item href="Scripts/AVL/avl_WStr.lua"/>
 		<Item href="Scripts/PlayerInfo/PlayerBase.lua"/>
 		<Item href="Scripts/PlayerInfo/PlayerDistance.lua"/>

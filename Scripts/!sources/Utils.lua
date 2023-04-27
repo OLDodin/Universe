@@ -446,7 +446,7 @@ function timer(params)
 
 	if timers[name] then
 		if timers[name].widget and not timers[name].one then
-			timers[name].widget:PlayFadeEffect( 1.0, 1.0, timers[name].speed*1000, EA_MONOTONOUS_INCREASE )
+			timers[name].widget:PlayFadeEffect( 1.0, 1.0, timers[name].speed*1000, EA_MONOTONOUS_INCREASE, true)
 		end
 		--userMods.SendEvent( timers[name].event, {sender = common.GetAddonName()} )
 		timers[name].callback()
@@ -465,7 +465,7 @@ function startTimer(name, callback, speed, one)
 	timers[name].speed=tonumber(speed) or 1
 
 	common.RegisterEventHandler(timer, "EVENT_EFFECT_FINISHED")
-    timerWidget:PlayFadeEffect(1.0, 1.0, timers[name].speed*1000, EA_MONOTONOUS_INCREASE)
+    timerWidget:PlayFadeEffect(1.0, 1.0, timers[name].speed*1000, EA_MONOTONOUS_INCREASE, true)
 	return true
 end
 
@@ -499,7 +499,7 @@ function effectDone(aParams)
 	if not findedWdg then return end
 
 	if findedWdg.widget then
-		findedWdg.widget:PlayFadeEffect( 0.0, 1.0, findedWdg.speed*1000, EA_SYMMETRIC_FLASH )
+		findedWdg.widget:PlayFadeEffect( 0.0, 1.0, findedWdg.speed*1000, EA_SYMMETRIC_FLASH, true)
 	end
 end
 
@@ -516,7 +516,7 @@ function startLoopBlink(aWdg, aSpeed)
 	obj.speed = aSpeed
 	table.insert(m_loopEffects, obj)
 	
-	aWdg:PlayFadeEffect( 0.0, 1.0, aSpeed*1000, EA_SYMMETRIC_FLASH )
+	aWdg:PlayFadeEffect( 0.0, 1.0, aSpeed*1000, EA_SYMMETRIC_FLASH, true)
 end
 
 function stopLoopBlink(aWdg)
