@@ -2000,7 +2000,7 @@ local function SwitchPartyGUIToRaidGUI()
 							local optionId = optionIds[optionIndex]
 							local optionInfo = options.GetOptionInfo( optionId )
 	
-							if pageIndex == 3 and blockIndex == 0 and optionIndex == 4 then 
+							if pageIndex == 3 and blockIndex == 0 and optionIndex == 5 then 
 								options.SetOptionCurrentIndex( optionId, 1 )
 							end
 						end
