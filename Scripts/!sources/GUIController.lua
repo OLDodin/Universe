@@ -1197,7 +1197,9 @@ function StopMove()
 		DnD.OnDragCancelled()
 	end
 	HideMove()
-	DnD.HideWdg(m_raidPlayerMovePanel.wdg)
+	if m_raidPlayerMovePanel then 
+		DnD.HideWdg(m_raidPlayerMovePanel.wdg)
+	end
 	m_moveMode = false
 	m_movingUniqueID = nil
 end
