@@ -59,14 +59,7 @@ function DnD.Init( wtMovable, wtReacting, fUseCfg, fLockedToParentArea, Padding,
 		end
 	end
 	DnD.Widgets[ ID ].Initial = { X = InitialPlace.posX, Y = InitialPlace.posY, HX = InitialPlace.highPosX, HY = InitialPlace.highPosY }
-	local mt = getmetatable( wtReacting )
-	if not mt._Show then
-		mt._Show = mt.Show
-		mt.Show = function ( self, show )
-			self:_Show( show ); 
-			if self:IsValid() then DnD.Register( self, show ) end
-		end
-	end
+
 	DnD.Register( wtReacting, true )
 end
 function DnD.Remove( wtWidget, oldParam1 )
@@ -303,4 +296,22 @@ function DnD.OnResolutionChanged()
 			W.wtMovable:SetPlacementPlain( DnD.NormalizePlacement( InitialPlace, LimitMin, LimitMax ) )
 		end
 	end
+end
+
+DnD.SwapWdg = function(aWdg)
+	if aWdg:IsVisible() then
+		DnD.HideWdg(aWdg)
+	else
+		DnD.ShowWdg(aWdg)
+	end
+end
+
+DnD.ShowWdg = function(aWdg)
+	aWdg:Show(true)
+	DnD.Register(aWdg, true)
+end
+
+DnD.HideWdg = function(aWdg)
+	aWdg:Show(false)
+	DnD.Register(aWdg, false)
 end

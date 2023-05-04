@@ -14,7 +14,7 @@
 	<ScriptFileRefs>
 		<Item href="/Mods/SampleCommon/SampleAddonBase.lua"/>
 		<Item href="Scripts/LibDnD.lua"/>
-		<Item href="Scripts/FastLibDnD.lua"/>
+		<Item href="Scripts/LibDnDExt.lua"/>
 		<Item href="Locales/main.lua"/>
 		<Item href="Scripts/Utils.lua"/>
 		<Item href="Scripts/AVL/avl_WStr.lua"/>

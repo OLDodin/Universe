@@ -1019,6 +1019,24 @@ function OnDNDPickAttempt(aParams)
 	end
 end
 
+function OnInterfaceToggle(aParams)
+	if aParams.toggleTarget == ENUM_InterfaceToggle_Target_All then
+		if aParams.hide then
+			DnD.HideWdg(m_raidPanel)
+			DnD.HideWdg(m_targetPanel)
+			DnD.HideWdg(m_buffsGroupParentForm)
+			DnD.HideWdg(m_progressActionPanel)
+			DnD.HideWdg(m_progressBuffPanel)
+		else
+			DnD.ShowWdg(m_raidPanel)
+			DnD.ShowWdg(m_targetPanel)
+			DnD.ShowWdg(m_buffsGroupParentForm)
+			DnD.ShowWdg(m_progressActionPanel)
+			DnD.ShowWdg(m_progressBuffPanel)
+		end
+	end
+end
+
 local function BuildRaidGUI(aCurrentRaid)
 	local profile = GetCurrentProfile()
 	
@@ -2371,6 +2389,8 @@ function UniverseBtnPressed()
 	DnD.SwapWdg(m_mainSettingForm)
 end
 
+
+
 function GUIControllerInit()	
 	InitClassIconsTexture()
 	InitCheckTextures()
@@ -2506,6 +2526,8 @@ function GUIControllerInit()
 	common.RegisterEventHandler(UnitDeadChanged, "EVENT_UNIT_DEAD_CHANGED")
 
 	common.RegisterEventHandler(effectDone, "EVENT_EFFECT_FINISHED")
+	
+	common.RegisterEventHandler(OnInterfaceToggle, "EVENT_INTERFACE_TOGGLE" )
 
 	
 	--из-за лимита в 500 подписок на события какие не требуют привязки по ID вынесены из PlayerInfo
