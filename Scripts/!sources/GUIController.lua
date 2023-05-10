@@ -1268,6 +1268,9 @@ local function EraseTarget(anObjID)
 	if not anObjID then
 		return
 	end
+	if not m_targetSubSystemLoaded then
+		return
+	end
 	EraseTargetInListTarget(anObjID, ENEMY_PLAYERS_TARGETS)
 	EraseTargetInListTarget(anObjID, FRIEND_PLAYERS_TARGETS)
 	EraseTargetInListTarget(anObjID, NEITRAL_PLAYERS_TARGETS)
@@ -1292,6 +1295,9 @@ local function FindInListTarget(anObjID, anObjArr)
 end
 
 local function FindTarget(anObjID)
+	if not m_targetSubSystemLoaded then
+		return
+	end
 	local res = FindInListTarget(anObjID, m_targetUnitsByType[ENEMY_PLAYERS_TARGETS])
 	res = res or FindInListTarget(anObjID, m_targetUnitsByType[FRIEND_PLAYERS_TARGETS])
 	res = res or FindInListTarget(anObjID, m_targetUnitsByType[NEITRAL_PLAYERS_TARGETS])
@@ -1781,6 +1787,12 @@ local function UnitHPChanged(aParams)
 	if not profile.targeterFormSettings.sortByHP then
 		return
 	end
+	if not m_targetSubSystemLoaded then
+		return
+	end
+	if m_currTargetType == TARGETS_DISABLE then
+		return
+	end
 	local playerID = aParams.unitId or aParams.id
 	if isExist(playerID) then
 		-- пока не получили EVENT_UNITS_CHANGED данные по могут быть невалидными
@@ -1799,6 +1811,12 @@ end
 local function UnitDeadChanged(aParams)
 	local profile = GetCurrentProfile()
 	if not profile.targeterFormSettings.sortByDead then
+		return
+	end
+	if not m_targetSubSystemLoaded then
+		return
+	end
+	if m_currTargetType == TARGETS_DISABLE then
 		return
 	end
 	if isExist(aParams.unitId) then
