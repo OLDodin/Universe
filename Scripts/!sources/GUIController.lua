@@ -1028,11 +1028,19 @@ function OnInterfaceToggle(aParams)
 			DnD.HideWdg(m_progressActionPanel)
 			DnD.HideWdg(m_progressBuffPanel)
 		else
-			DnD.ShowWdg(m_raidPanel)
-			DnD.ShowWdg(m_targetPanel)
-			DnD.ShowWdg(m_buffsGroupParentForm)
-			DnD.ShowWdg(m_progressActionPanel)
-			DnD.ShowWdg(m_progressBuffPanel)
+			if m_raidSubSystemLoaded then
+				DnD.ShowWdg(m_raidPanel)
+			end
+			if m_targetSubSystemLoaded then
+				DnD.ShowWdg(m_targetPanel)
+			end
+			if m_buffGroupSubSystemLoaded then
+				DnD.ShowWdg(m_buffsGroupParentForm)
+			end
+			if m_castSubSystemLoaded then
+				DnD.ShowWdg(m_progressActionPanel)
+				DnD.ShowWdg(m_progressBuffPanel)
+			end
 		end
 	end
 end
