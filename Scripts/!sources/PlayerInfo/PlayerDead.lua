@@ -47,6 +47,9 @@ function PlayerDead:TryDestroy()
 end
 
 function PlayerDead:UpdateValueIfNeeded()
+end
+
+function PlayerDead:UpdateValueIfNeededInternal()
 	if self.isDead ~= self.lastDead then
 		self.lastDead = self.isDead
 		local res = self.base.guiRaidListener and self.base.guiRaidListener.listenerDead(self.isDead, self.base.guiRaidListener)
@@ -57,7 +60,7 @@ end
 function PlayerDead:GetEventFunc()
 	return function(aParams)
 		self.isDead = isExist(aParams.unitId) and cachedIsDead( aParams.unitId )
-		--LogInfo("EVENT_UNIT_MANA_PERCENTAGE_CHANGED ", self.playerID)
+		self:UpdateValueIfNeededInternal()
 	end
 end
 

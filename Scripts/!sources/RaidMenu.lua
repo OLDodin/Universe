@@ -111,7 +111,7 @@ function GenerateMenuInfos(aPlayerBar, aMyUniqueID)
 ]]
 	if canWhisper then
 		AddToMenu("whisperMenuButton", function ()
-			local chat=stateMainForm:GetChildUnchecked("ChatInput", false)
+			local chat = common.GetAddonMainForm("ChatInput")
 			chat=getChild(chat, "ChatInput")
 			m_whisperMode = true
 			show(chat)

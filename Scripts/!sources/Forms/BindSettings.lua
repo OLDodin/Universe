@@ -297,7 +297,7 @@ end
 
 function GetCurrentSwitchIndex(aWdg)
 	local txtWdg = getChild(aWdg, "ModeNameTextView")
-	local currValue = common.ExtractWStringFromValuedText(txtWdg:GetValuedText())
+	local currValue = txtWdg:GetValuedText():ToWString()
 	return GetSwitchIndexByName(m_actionSwitch, currValue)
 end
 

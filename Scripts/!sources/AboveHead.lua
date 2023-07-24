@@ -3,7 +3,7 @@ local m_usingPanels = {}
 local m_zeroPos = {posX=0, posY=0, posZ=0}
 local m_wdg3dSize = { sizeX = 1, sizeY = 0 }
 
-local m_wtControl3D = stateMainForm:GetChildChecked( "MainAddonMainForm", false ):GetChildChecked( "MainScreenControl3D", false )
+local m_wtControl3D = common.GetAddonMainForm("Main"):GetChildChecked( "MainScreenControl3D", false )
 
 Global("HIGH_PRIORITY_PANELS", 102)
 Global("NORMAL_PRIORITY_PANELS", 101)

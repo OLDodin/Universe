@@ -7,8 +7,6 @@ function PlayerCanSelect:Init(anID)
 	self.unitParams = {}
 	self.canSelect = true
 	self.lastCanSelect = -1
-	self.SKIP_UPDATES_CNT = 2
-	self.skipCnt = 0
 	
 	self.eventFunc = self:GetEventFunc()
 	
@@ -49,13 +47,9 @@ function PlayerCanSelect:TryDestroy()
 end
 
 function PlayerCanSelect:UpdateValueIfNeeded()
-	if self.skipCnt == 0 then
-		self.skipCnt = self.SKIP_UPDATES_CNT
-	else
-		self.skipCnt = self.skipCnt - 1
-		return
-	end
+end
 
+function PlayerCanSelect:UpdateValueIfNeededInternal()
 	self.canSelect = cachedCanSelectTarget(self.playerID)
 	if self.lastCanSelect ~= self.canSelect then
 		self.lastCanSelect = self.canSelect
@@ -66,14 +60,14 @@ end
 
 function PlayerCanSelect:GetEventFunc()
 	return function(aParams)
-
+		local playerID = aParams.unitId or aParams.objectId
+		self:UpdateValueIfNeededInternal()
+		--LogInfo("SELECTABLE_CHANGED ", playerID, " canselect = ", cachedCanSelectTarget(playerID))
 	end
 end
 
 function PlayerCanSelect:RegisterEvent(anID)
-
 end
 
 function PlayerCanSelect:UnRegisterEvent()
-
 end

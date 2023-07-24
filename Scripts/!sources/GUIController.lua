@@ -51,7 +51,8 @@ local m_lastTargetType = ALL_TARGETS
 local m_targetUnitsByType = {}
 local m_targetUnselectable = {}
 
-
+local m_needRedrawTargeter = false
+local m_targeterUnderMouseNow = false
 
 
 function DeleteProfile(aWdg)
@@ -374,13 +375,13 @@ local function OnRaidFilter(aParams)
 			end
 		end
 	end
-	RaidChanged()
+	RaidChanged(nil, true)
 end
 
 local function OnShopChange()
 	GetBuffConditionForRaid():SwitchShowShop()
 	
-	RaidChanged()
+	RaidChanged(nil, true)
 end
 
 local function OnAssertChange(aParams)
@@ -682,7 +683,7 @@ local function MakeBindAction(aParams, aPlayerBar, aLeftClick, aTypeBind)
 		return nil 
 	end
 	
-	if bindAction and not common.IsEmptyWString(bindAction) then
+	if bindAction and not bindAction:IsEmpty() then
 		local res = cast(bindAction, aPlayerBar.playerID) or useItem(bindAction, aPlayerBar.playerID)
 	end
 end
@@ -739,9 +740,12 @@ end
 local function OnPlayerBarPointing(aParams)
 	local playerBar = nil
 	playerBar = FindClickedInRaid(aParams.widget)
-	
+	m_targeterUnderMouseNow = false
 	if not playerBar then
 		playerBar = FindClickedInTarget(aParams.widget)
+		if playerBar then
+			m_targeterUnderMouseNow = aParams.active
+		end
 	end
 	if playerBar then
 		if aParams.active then
@@ -1045,7 +1049,7 @@ function OnInterfaceToggle(aParams)
 	end
 end
 
-local function BuildRaidGUI(aCurrentRaid)
+local function BuildRaidGUI(aCurrentRaid, aReusedRaidListeners)
 	local profile = GetCurrentProfile()
 	
 	if aCurrentRaid.type == SOLO_TYPE then
@@ -1065,11 +1069,14 @@ local function BuildRaidGUI(aCurrentRaid)
 			if m_raidPartyButtons[1].active then
 				local playerBar = m_raidPlayerPanelList[0][i]
 				playerBar.isUsed = true
-				SetBaseInfoPlayerPanel(playerBar, playerInfo, (i == leaderInd),  profile.raidFormSettings, FRIEND_PANEL)
-				if playerInfo.state == GROUP_MEMBER_STATE_OFFLINE then 
-					playerInfo.id = nil
+				if (playerInfo.id and not aReusedRaidListeners[playerInfo.id]) or not playerInfo.id then
+					SetBaseInfoPlayerPanel(playerBar, playerInfo, (i == leaderInd),  profile.raidFormSettings, FRIEND_PANEL)
+					if playerInfo.state == GROUP_MEMBER_STATE_OFFLINE then 
+						playerInfo.id = nil
+					end
+				
+					FabricMakeRaidPlayerInfo(playerInfo.id, playerBar)
 				end
-				FabricMakeRaidPlayerInfo(playerInfo.id, playerBar)
 			end
 		end
 		ResizeRaidPanel(1, GetTableSize(aCurrentRaid.members))
@@ -1090,11 +1097,14 @@ local function BuildRaidGUI(aCurrentRaid)
 					local playerInfo = subParty[j]
 					local playerBar = m_raidPlayerPanelList[partyCnt][j]
 					playerBar.isUsed = true
-					SetBaseInfoPlayerPanel(playerBar, playerInfo, playerInfo.uniqueId:IsEqual(raidLeaderID),  profile.raidFormSettings, FRIEND_PANEL)
-					if playerInfo.state == RAID_MEMBER_STATE_OFFLINE then 
-						playerInfo.id = nil
+					if (playerInfo.id and not aReusedRaidListeners[playerInfo.id]) or not playerInfo.id then
+						SetBaseInfoPlayerPanel(playerBar, playerInfo, playerInfo.uniqueId:IsEqual(raidLeaderID),  profile.raidFormSettings, FRIEND_PANEL)
+						if playerInfo.state == RAID_MEMBER_STATE_OFFLINE then 
+							playerInfo.id = nil
+						end
+					
+						FabricMakeRaidPlayerInfo(playerInfo.id, playerBar)
 					end
-					FabricMakeRaidPlayerInfo(playerInfo.id, playerBar)
 				end
 				partyCnt = partyCnt + 1
 			end
@@ -1154,8 +1164,69 @@ function ShowReadyCheck(aCheckInfo, aCurrentRaid)
 	end
 end
 
-function RaidChanged(aParams)
-	UnsubscribeRaidListeners()
+function RaidChanged(aParams, aFullUpdate)
+	local prevRaidType = m_currentRaid.type
+	local prevRaidMembers = m_currentRaid.members
+	local prevLeaderUniqueID = m_currentRaid.currentLeaderUniqueID
+	if raid.IsExist() then
+		local members = raid.GetMembers()
+		m_currentRaid.type = RAID_TYPE
+		m_currentRaid.members = members
+		m_currentRaid.currentLeaderUniqueID = raid.GetLeader()
+		ShowPartyBtns(GetTableSize(members))
+	elseif group.IsExist() then
+		local members = group.GetMembers()
+		m_currentRaid.type = PARTY_TYPE
+		m_currentRaid.members = members
+		m_currentRaid.currentLeaderUniqueID = group.GetLeaderUniqueId()
+		ShowPartyBtns(1)
+		StopMove()
+	else
+		m_currentRaid.type = SOLO_TYPE
+		m_currentRaid.members = {}
+		m_currentRaid.currentLeaderUniqueID = nil
+		StopMove()
+		HidePartyBtns()
+	end
+	
+	local reusedRaidListeners = {}
+	if not aFullUpdate and m_currentRaid.type == prevRaidType and m_currentRaid.type ~= SOLO_TYPE and prevLeaderUniqueID and prevLeaderUniqueID:IsEqual(m_currentRaid.currentLeaderUniqueID) then
+		if raid.IsExist() then
+			for i=0, GetTableSize(prevRaidMembers)-1 do
+				local subParty = prevRaidMembers[i]
+				for j=0, GetTableSize(subParty)-1 do
+					local prevRaidMember = subParty[j]
+					if m_currentRaid.members and m_currentRaid.members[i] then
+						local newRaidMember = m_currentRaid.members[i][j]	
+						if prevRaidMember.id then
+							local noChangesInPos = newRaidMember and prevRaidMember and newRaidMember.id == prevRaidMember.id and newRaidMember.state == prevRaidMember.state 
+							if not noChangesInPos then
+								UnsubscribeRaidListeners(prevRaidMember.id)
+							else
+								reusedRaidListeners[prevRaidMember.id] = true
+							end
+						end
+					end
+				end
+			end
+		elseif group.IsExist() then
+			for j=0, GetTableSize(prevRaidMembers)-1 do
+				local prevRaidMember = prevRaidMembers[j]
+				local newRaidMember = m_currentRaid.members and m_currentRaid.members[j]		
+				
+				if prevRaidMember.id then
+					local noChangesInPos = newRaidMember and prevRaidMember and newRaidMember.id == prevRaidMember.id and newRaidMember.state == prevRaidMember.state 
+					if not noChangesInPos then
+						UnsubscribeRaidListeners(prevRaidMember.id)
+					else
+						reusedRaidListeners[prevRaidMember.id] = true
+					end
+				end
+			end
+		end
+	else
+		UnsubscribeRaidListeners()
+	end
 	
 	for i=0, GetTableSize(m_raidPlayerPanelList)-1 do
 		local subParty = m_raidPlayerPanelList[i]
@@ -1165,26 +1236,7 @@ function RaidChanged(aParams)
 		end
 	end
 	
-	local raidList = {}
-	if raid.IsExist() then
-		local members = raid.GetMembers()
-		m_currentRaid.type = RAID_TYPE
-		m_currentRaid.members = members
-		ShowPartyBtns(GetTableSize(members))
-	elseif group.IsExist() then
-		local members = group.GetMembers()
-		m_currentRaid.type = PARTY_TYPE
-		m_currentRaid.members = members
-		ShowPartyBtns(1)
-		StopMove()
-	else
-		m_currentRaid.type = SOLO_TYPE
-		m_currentRaid.members = {}
-		StopMove()
-		HidePartyBtns()
-	end
-	
-	BuildRaidGUI(m_currentRaid)
+	BuildRaidGUI(m_currentRaid, reusedRaidListeners)
 	ReadyCheckChanged()
 	
 	local canMovePlayers = CanMovePlayers(avatar.GetUniqueId())
@@ -1240,7 +1292,7 @@ function StartMove(anUniqueID)
 	m_movingUniqueID = anUniqueID
 	
 	--ShowMoveIfNeeded()
-	RaidChanged()
+	RaidChanged(nil, true)
 end
 
 
@@ -1289,7 +1341,6 @@ local function EraseTarget(anObjID)
 	EraseTargetInListTarget(anObjID, FRIEND_PETS_TARGETS)
 	EraseTargetInListTarget(anObjID, MY_SETTINGS_TARGETS)
 	
-
 	m_targetUnselectable[anObjID] = nil
 end
 
@@ -1335,14 +1386,15 @@ local function SetNecessaryTargets(anObjID, anInCombat)
 	local profile = GetCurrentProfile()
 	local isPlayer = unit.IsPlayer(anObjID)
 	local isPet = isPlayer and false or unit.IsPet(anObjID)
+	local isCanSelect = unit.CanSelectTarget(anObjID)
 	if profile.targeterFormSettings.hideUnselectableButton and not isPlayer and not isPet then
-		if not unit.CanSelectTarget(anObjID) then
+		if not isCanSelect then
 			m_targetUnselectable[anObjID] = true
 			return
 		end
 	end
 	m_targetUnselectable[anObjID] = nil
-	--object.CanAttack(
+	
 	local isEnemy = object.IsEnemy(anObjID)
 	local isFriend = isEnemy and false or object.IsFriend(anObjID)
 	local isNeitral = not isEnemy and not isFriend
@@ -1350,6 +1402,8 @@ local function SetNecessaryTargets(anObjID, anInCombat)
 	local newValue = {}
 	newValue.objID = anObjID
 	newValue.inCombat = anInCombat
+	newValue.isCanSelect = ((isPlayer or isCanSelect) and 0) or 1
+
 
 	newValue.objName = object.GetName(newValue.objID)
 	newValue.objNameLower = toLowerString(newValue.objName)
@@ -1483,7 +1537,7 @@ local function LoadTargeterData()
 		SetNecessaryTargets(objID, isCombat)
 	end
 	
-	SetTargetType(m_currTargetType, true)
+	RedrawTargeter(m_currTargetType, true)
 end
 
 local function TargetWorkSwitch()
@@ -1523,7 +1577,7 @@ local function SelectTargetTypePressed(aParams)
 	local indexStr = pressedWdgName:sub(prefixStr:len()+1, pressedWdgName:len())
 	
 	m_currTargetType = tonumber(indexStr)
-	SetTargetType(m_currTargetType, true)
+	RedrawTargeter(m_currTargetType, true)
 	local profile = GetCurrentProfile()
 	profile.targeterFormSettings.lastTargetType = m_currTargetType
 	SaveAll()
@@ -1539,7 +1593,7 @@ local function ShowSelectTargetTypePanel()
 end
 
 local function SeparateTargeterPanelList(anObjList, aPanelListShift)
-	local finededList = {} 
+	local findedList = {} 
 	local freeList = {}
 	for i = aPanelListShift, TARGETS_LIMIT+aPanelListShift-1 do
 		local playerBar = m_targeterPlayerPanelList[i]
@@ -1548,7 +1602,7 @@ local function SeparateTargeterPanelList(anObjList, aPanelListShift)
 			if playerBar.playerID == info.objID
 			and (playerBar.formSettings.classColorModeButton or playerBar.panelColorType == info.relationType)
 			then
-				finededList[playerBar.playerID] = playerBar
+				findedList[playerBar.playerID] = playerBar
 				found = true
 				break
 			end			
@@ -1557,7 +1611,7 @@ local function SeparateTargeterPanelList(anObjList, aPanelListShift)
 			table.insert(freeList, playerBar)
 		end
 	end
-	return finededList, freeList
+	return findedList, freeList
 end
 
 local function SortBySettings(anArr)
@@ -1575,18 +1629,22 @@ local function SortBySettings(anArr)
 			info.sortWeight = info.sortWeight + info.hp * TARGETS_LIMIT
 		end
 	end
-	
+	local classShiftMult = 101 * TARGETS_LIMIT
 	if profile.targeterFormSettings.sortByClass then
-		local shiftMult = 101 * TARGETS_LIMIT
 		for _, info in ipairs(anArr) do
-			info.sortWeight = info.sortWeight + info.classPriority * shiftMult
+			info.sortWeight = info.sortWeight + info.classPriority * classShiftMult
 		end
 	end
 	
+	local selectShiftMult = classShiftMult * (GetTableSize(g_classPriority) + 1)
+	for _, info in ipairs(anArr) do
+		info.sortWeight = info.sortWeight + info.isCanSelect * selectShiftMult
+	end
+	
+	local deadShiftMult = selectShiftMult * 2
 	if profile.targeterFormSettings.sortByDead then
-		local shiftMult = 101 * TARGETS_LIMIT * (GetTableSize(g_classPriority) + 1)
 		for _, info in ipairs(anArr) do
-			info.sortWeight = info.sortWeight + info.isDead * shiftMult
+			info.sortWeight = info.sortWeight + info.isDead * deadShiftMult
 		end
 	end
 	
@@ -1710,8 +1768,17 @@ local function MakeTargetUnion(aType, aStatus)
 	end
 	return targetUnion
 end
+
+function TryRedrawTargeter(aType)
+	if not m_targeterUnderMouseNow then
+		RedrawTargeter(aType)
+		m_needRedrawTargeter = false
+	else
+		m_needRedrawTargeter = true
+	end
+end
 	
-function SetTargetType(aType, anIsTypeChanged)
+function RedrawTargeter(aType, anIsTypeChanged)
 	if m_currTargetType == TARGETS_DISABLE then
 		return
 	end
@@ -1773,7 +1840,7 @@ local function RelationChanged(aParams)
 		if FindTarget(paramsID) then
 			EraseTarget(paramsID)
 			SetNecessaryTargets(paramsID, aParams.inCombat)
-			SetTargetType(m_currTargetType)
+			TryRedrawTargeter(m_currTargetType)
 		end
 	end
 end
@@ -1790,29 +1857,36 @@ local function InitTargeterData()
 	SwitchTargetsBtn(m_currTargetType)
 end
 
-local function UnitHPChanged(aParams)
+--есть существа которые враждено-нейтральные и становятся враждебными без уведомлений
+--поэтому затычка - при изменении хп проверяем существ всегда, не только при включенной сортировке по хп
+local function UnitsHPChanged(aParams)
 	local profile = GetCurrentProfile()
-	if not profile.targeterFormSettings.sortByHP then
-		return
-	end
 	if not m_targetSubSystemLoaded then
 		return
 	end
 	if m_currTargetType == TARGETS_DISABLE then
 		return
 	end
-	local playerID = aParams.unitId or aParams.id
-	if isExist(playerID) then
-		-- пока не получили EVENT_UNITS_CHANGED данные по могут быть невалидными
-		if FindTarget(playerID) then
-			EraseTarget(playerID)
-			local isCombat = false
-			if profile.targeterFormSettings.twoColumnMode then
-				isCombat = object.IsInCombat(playerID)
+	if not aParams then
+		return
+	end
+	local someTargetUpdated = false
+	for _, playerID in ipairs(aParams) do 
+		if isExist(playerID) then
+			-- пока не получили EVENT_UNITS_CHANGED данные по могут быть невалидными
+			if FindTarget(playerID) then
+				EraseTarget(playerID)
+				local isCombat = false
+				if profile.targeterFormSettings.twoColumnMode then
+					isCombat = object.IsInCombat(playerID)
+				end
+				SetNecessaryTargets(playerID, isCombat)
+				someTargetUpdated = true
 			end
-			SetNecessaryTargets(playerID, isCombat)
-			SetTargetType(m_currTargetType)
 		end
+	end
+	if someTargetUpdated then
+		TryRedrawTargeter(m_currTargetType)
 	end
 end
 
@@ -1836,7 +1910,7 @@ local function UnitDeadChanged(aParams)
 				isCombat = object.IsInCombat(aParams.unitId)
 			end
 			SetNecessaryTargets(aParams.unitId, isCombat)
-			SetTargetType(m_currTargetType)
+			TryRedrawTargeter(m_currTargetType)
 		end
 	end
 end
@@ -1877,7 +1951,7 @@ local function ProgressStart(aParams, aPanelList)
 	
 	local progressName = aParams.buffName or aParams.name
 	for _, ignoreObj in pairs(profile.castFormSettings.ignoreList) do
-		if common.CompareWString(progressName, ignoreObj.name) == 0 then
+		if progressName == ignoreObj.name then
 			return
 		end
 	end
@@ -1970,7 +2044,7 @@ local function UnitChanged(aParams)
 		--[[ по заверению разработчика такое невозможно
 		--если один и тот же объект в spawned и в despawned, то нужно обязательно вызвать отписку всех для despawned, а лишь затем обработать spawned
 		if CheckSpawnAndDespawnAtSameTime(aParams) then
-			SetTargetType(m_currTargetType)
+			RedrawTargeter(m_currTargetType)
 		end]]
 	end
 	
@@ -1999,7 +2073,7 @@ local function UnitChanged(aParams)
 			SetNecessaryTargets(objID, isCombat)
 		end
 			
-		SetTargetType(m_currTargetType)
+		TryRedrawTargeter(m_currTargetType)
 	end
 	
 	if m_castSubSystemLoaded and profile.castFormSettings.showImportantCasts then
@@ -2024,6 +2098,22 @@ local function UnitNameChanged(aParams)
 	if isExist(aParams.id) then
 		UnitChanged(param)
 	end
+end
+
+local function UpdateUnselectable(aParams)
+	if m_targetSubSystemLoaded then
+		if isExist(aParams.objectId) and m_targetUnselectable[aParams.objectId] then
+			local profile = GetCurrentProfile()
+			local isCombat = false
+			if profile.targeterFormSettings.twoColumnMode then
+				isCombat = object.IsInCombat(aParams.objectId)
+			end
+			EraseTarget(aParams.objectId)
+			SetNecessaryTargets(aParams.objectId, isCombat)
+			TryRedrawTargeter(m_currTargetType)
+		end
+	end
+	SelectableChanged(aParams)
 end
 
 local function SwitchPartyGUIToRaidGUI()
@@ -2062,14 +2152,14 @@ local function ApplyUnloadRaidSettings(anIsUnloadRaidSubsystem)
 	local profile = GetCurrentProfile()
 	if anIsUnloadRaidSubsystem or profile.raidFormSettings.showStandartRaidButton then
 		if raid.IsExist() or group.IsExist() then
-			show(getChild(stateMainForm, "Raid"))
-			show(getChild(getChild(stateMainForm, "Raid"), "Raid"))
+			show(common.GetAddonMainForm("Raid"))
+			show(getChild(common.GetAddonMainForm("Raid"), "Raid"))
 		end
 	else
 		SwitchPartyGUIToRaidGUI()
 
-		hide(getChild(stateMainForm, "Raid"))
-		hide(getChild(getChild(stateMainForm, "Raid"), "Raid"))
+		hide(common.GetAddonMainForm("Raid"))
+		hide(getChild(common.GetAddonMainForm("Raid"), "Raid"))
 	end	
 end
 
@@ -2098,10 +2188,16 @@ local function GUIInit()
 end
 
 local function OnEventSecondTimer()
+	--при таргетере под курсором мыши перерисовываем лишь раз в секунду (чтобы легче выбрать)
+	if m_needRedrawTargeter then
+		RedrawTargeter(m_currTargetType)
+		m_needRedrawTargeter = false
+	end
+	
 	-- затычка №1 - скрываем дефолтовый интерфейс рейда, тк он переодически появляется
 	local profile = GetCurrentProfile()
 	if not profile.raidFormSettings.showStandartRaidButton and m_raidSubSystemLoaded then
-		local raidForm = getChild(stateMainForm, "Raid")
+		local raidForm = common.GetAddonMainForm("Raid")
 		hide(raidForm)
 		hide(getChild(raidForm, "Raid"))
 	end
@@ -2128,7 +2224,7 @@ local function OnEventSecondTimer()
 		end
 			
 		if eraseSomeTarget then
-			SetTargetType(m_currTargetType)
+			RedrawTargeter(m_currTargetType)
 		end
 	end
 	if m_buffGroupSubSystemLoaded then
@@ -2137,40 +2233,9 @@ local function OnEventSecondTimer()
 	FabicLogInfo()
 end
 
-local m_unselectableCheckTick = true
-local function UpdateUnselectable()
-	--проверяем что CanSelectTarget для проигнорированных изменился через 1 update
-	if m_targetSubSystemLoaded then
-		if m_unselectableCheckTick then
-			local unitList = avatar.GetUnitList()
-			local eraseSomeTarget = false
-			local profile = GetCurrentProfile()
-			for _, objID in pairs(unitList) do
-				if objID and m_targetUnselectable[objID] then
-					if object.IsExist(objID) and unit.CanSelectTarget(objID) then
-						local isCombat = false
-						if profile.targeterFormSettings.twoColumnMode then
-							isCombat = object.IsInCombat(objID)
-						end
-						EraseTarget(objID)
-						SetNecessaryTargets(objID, isCombat)
-						eraseSomeTarget = true
-					end
-				end
-			end
-			
-			if eraseSomeTarget then
-				SetTargetType(m_currTargetType)
-			end
-		end
-		m_unselectableCheckTick = not m_unselectableCheckTick
-	end
-end
-
 local function Update()
 	g_myAvatarID = avatar.GetId()
 	updateCachedTimestamp()
-	UpdateUnselectable()
 	UpdateFabric()
 end
 
@@ -2181,21 +2246,36 @@ function InitRaidSubSystem()
 	m_raidSubSystemLoaded = true
 	CreateRaidPanelCache()
 	
+	--Событие на изменение состава группы (включая создание и роспуск).
 	common.RegisterEventHandler(RaidChanged, "EVENT_GROUP_CHANGED")
+	--Уведомление о смене агрегатного состояния группы: группа -> отряд, отряд -> группа.
 	common.RegisterEventHandler(RaidChanged, "EVENT_GROUP_CONVERTED")
+	--Событие на появление группы. Присылается не только на действительное создание группы, но и при вхождении игрока в состав уже существующей.
 	common.RegisterEventHandler(RaidChanged, "EVENT_GROUP_APPEARED")
+	--Событие на исчезновение группы. Присылается не только на роспуск группы, но и при выходе игрока из состава существующей.
 	common.RegisterEventHandler(RaidChanged, "EVENT_GROUP_DISAPPEARED")
+	--Уведомление о смене лидера группы главного игрока.
 	common.RegisterEventHandler(RaidChanged, "EVENT_GROUP_LEADER_CHANGED")
+	--Событие приходит при появлении нового члена группы.
 	common.RegisterEventHandler(RaidChanged, "EVENT_GROUP_MEMBER_ADDED")
+	--Событие на изменение состояния члена группы (онлайн-офлайн, лидер).
 	common.RegisterEventHandler(RaidChanged, "EVENT_GROUP_MEMBER_CHANGED")
+	--Событие приходит при выходе члена группы из ее состава.
 	common.RegisterEventHandler(RaidChanged, "EVENT_GROUP_MEMBER_REMOVED")
 	
+	--Событие на появление рейда. Присылается не только на действительное создание рейда, но и при вхождении игрока в состав уже существующего.
 	common.RegisterEventHandler(RaidChanged, "EVENT_RAID_APPEARED")
+	--Событие на изменение состава рейда (включая создание и роспуск).
 	common.RegisterEventHandler(RaidChanged, "EVENT_RAID_CHANGED")
+	--Событие на исчезновение рейда. Присылается не только на роспуск рейда, но и при выходе игрока из состава существующего.
 	common.RegisterEventHandler(RaidChanged, "EVENT_RAID_DISAPPEARED")
+	--Присылается в случае изменения лидера рейда.
 	common.RegisterEventHandler(RaidChanged, "EVENT_RAID_LEADER_CHANGED")
+	--Присылается в случае появления игрока в отряде.
 	common.RegisterEventHandler(RaidChanged, "EVENT_RAID_MEMBER_ADDED")
+	--Присылается в случае изменения один или более параметров члена рейда
 	common.RegisterEventHandler(RaidChanged, "EVENT_RAID_MEMBER_CHANGED")
+	--Присылается в случае удаления или ухода игрока из отряда.
 	common.RegisterEventHandler(RaidChanged, "EVENT_RAID_MEMBER_REMOVED")
 	
 	common.RegisterEventHandler(ReadyCheckEnded, "EVENT_GROUP_APPEARED")
@@ -2208,7 +2288,7 @@ function InitRaidSubSystem()
 	
 	DnD.ShowWdg(m_raidPanel)
 	
-	RaidChanged()
+	RaidChanged(nil, true)
 	
 	ApplyUnloadRaidSettings()
 end
@@ -2542,9 +2622,7 @@ function GUIControllerInit()
 	common.RegisterEventHandler(RelationChanged, "EVENT_UNIT_RELATION_CHANGED")
 	common.RegisterEventHandler(RelationChanged, "EVENT_OBJECT_COMBAT_STATUS_CHANGED")
 	
-	
-	common.RegisterEventHandler(UnitHPChanged, "EVENT_UNIT_HEALTH_CHANGED")
-	common.RegisterEventHandler(UnitHPChanged, "EVENT_OBJECT_HEALTH_CHANGED")
+	common.RegisterEventHandler(UnitsHPChanged, "EVENT_OBJECTS_HEALTH_CHANGED")
 
 	common.RegisterEventHandler(OnDragTo, "EVENT_DND_DRAG_TO")
 	common.RegisterEventHandler(OnDragEnd, "EVENT_DND_DROP_ATTEMPT")
@@ -2554,12 +2632,15 @@ function GUIControllerInit()
 	common.RegisterEventHandler(effectDone, "EVENT_EFFECT_FINISHED")
 	
 	common.RegisterEventHandler(OnInterfaceToggle, "EVENT_INTERFACE_TOGGLE" )
+	
+	--EVENT_TRACK_ADDED
 
 	
 	--из-за лимита в 500 подписок на события какие не требуют привязки по ID вынесены из PlayerInfo
 	common.RegisterEventHandler(AfkChanged, "EVENT_AFK_STATE_CHANGED")
 	common.RegisterEventHandler(UnitDead, "EVENT_UNIT_DEAD_CHANGED")
 	common.RegisterEventHandler(WoundsChanged, "EVENT_UNIT_WOUNDS_COMPLEXITY_CHANGED")
+	common.RegisterEventHandler(UpdateUnselectable, "EVENT_OBJECT_SELECTABLE_CHANGED")
 	
 	common.RegisterReactionHandler(OnLeftClick, "OnPlayerBarLeftClick")
 	common.RegisterReactionHandler(OnRightClick, "OnPlayerBarRightClick" )

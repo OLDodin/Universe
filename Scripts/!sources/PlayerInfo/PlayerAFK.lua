@@ -48,6 +48,9 @@ function PlayerAFK:TryDestroy()
 end
 
 function PlayerAFK:UpdateValueIfNeeded()
+end
+
+function PlayerAFK:UpdateValueIfNeededInternal()
 	if self.isAfk ~= self.lastAfk then
 		self.lastAfk = self.isAfk
 		local res = self.base.guiRaidListener and self.base.guiRaidListener.listenerAfk(self.isAfk, self.base.guiRaidListener)
@@ -61,6 +64,7 @@ function PlayerAFK:GetEventFunc()
 		if aParams.isAfk == nil and aParams.unitId and isExist(aParams.unitId) and cachedIsPlayer(aParams.unitId) then
 			self.isAfk = cachedIsAfk(aParams.unitId)
 		end
+		self:UpdateValueIfNeededInternal()
 	end
 end
 

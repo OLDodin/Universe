@@ -49,6 +49,9 @@ function PlayerMana:TryDestroy()
 end
 
 function PlayerMana:UpdateValueIfNeeded()
+end
+
+function PlayerMana:UpdateValueIfNeededInternal()
 	if self.mana ~= self.lastMana then
 		self.lastMana = self.mana
 		local res = self.base.guiRaidListener and self.base.guiRaidListener.listenerMana(self.mana, self.base.guiRaidListener)
@@ -59,7 +62,7 @@ end
 function PlayerMana:GetEventFunc()
 	return function(aParams)
 		self.mana = cachedGetManaPercentage( aParams.unitId )
-		--LogInfo("EVENT_UNIT_MANA_PERCENTAGE_CHANGED ", self.playerID)
+		self:UpdateValueIfNeededInternal()
 	end
 end
 

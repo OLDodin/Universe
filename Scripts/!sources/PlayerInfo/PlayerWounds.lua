@@ -48,6 +48,9 @@ function PlayerWounds:TryDestroy()
 end
 
 function PlayerWounds:UpdateValueIfNeeded()
+end
+
+function PlayerWounds:UpdateValueIfNeededInternal()
 	local res = nil
 	if self.woundsComplexity ~= self.lastWoundsComplexity then
 		self.lastWoundsComplexity = self.woundsComplexity
@@ -59,7 +62,7 @@ end
 function PlayerWounds:GetEventFunc()
 	return function(aParams)
 		self.woundsComplexity = 100*(1-1/((1+cachedGetRuneWoundsComplexity(aParams.unitId)/10)*(cachedGetRelativeWoundsComplexity(aParams.unitId)))) or 0
-		--LogInfo("EVENT_UNIT_WOUNDS_COMPLEXITY_CHANGED ", self.woundsComplexity)
+		self:UpdateValueIfNeededInternal()
 	end
 end
 

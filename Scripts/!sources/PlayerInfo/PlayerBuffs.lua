@@ -4,6 +4,7 @@ local cachedGetBuffInfo = object.GetBuffInfo
 local cachedGetBuffsWithProperties = object.GetBuffsWithProperties
 local cachedRegisterEventHandler = common.RegisterEventHandler
 local cachedUnRegisterEventHandler = common.UnRegisterEventHandler
+local cachedGetBuffsInfo = object.GetBuffsInfo
 
 function PlayerBuffs:Init(anID)
 	self.playerID = anID
@@ -132,14 +133,19 @@ end
 
 function PlayerBuffs:GetReadAllEventFunc(aParams, aListener, aCondition, aRaidType, anIgnoreBuffsList)
 	if aListener and aCondition then
-		--local unitBuffs = object.GetBuffs(aParams.unitId)
 		local unitBuffs = cachedGetBuffsWithProperties(aParams.unitId, true, true)
-		for i, buffID in pairs(unitBuffs) do
-			self:CallListenerIfNeeded(buffID, aListener, aCondition, aRaidType, anIgnoreBuffsList)
+		if next(unitBuffs) then
+			local buffsInfo = cachedGetBuffsInfo(unitBuffs)
+			for buffID, buffInfo in pairs(buffsInfo or {}) do
+				self:CallListenerIfNeeded(buffID, aListener, aCondition, aRaidType, anIgnoreBuffsList, buffInfo)
+			end
 		end
 		unitBuffs = cachedGetBuffsWithProperties(aParams.unitId, false, true)
-		for i, buffID in pairs(unitBuffs) do
-			self:CallListenerIfNeeded(buffID, aListener, aCondition, aRaidType, anIgnoreBuffsList)
+		if next(unitBuffs) then
+			local buffsInfo = cachedGetBuffsInfo(unitBuffs)
+			for buffID, buffInfo in pairs(buffsInfo or {}) do
+				self:CallListenerIfNeeded(buffID, aListener, aCondition, aRaidType, anIgnoreBuffsList, buffInfo)
+			end
 		end
 	end
 end

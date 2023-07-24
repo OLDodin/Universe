@@ -56,6 +56,9 @@ function PlayerHP:TryDestroy()
 end
 
 function PlayerHP:UpdateValueIfNeeded()
+end
+
+function PlayerHP:UpdateValueIfNeededInternal()
 	local res = nil
 	local profile = GetCurrentProfile()
 	
@@ -93,6 +96,8 @@ function PlayerHP:GetEventFunc()
 			local healthInfo = cachedGetHealthInfo(playerID)
 			self.shield = healthInfo and healthInfo.additionalPercents 
 			self.hp = healthInfo and healthInfo.valuePercents
+			
+			self:UpdateValueIfNeededInternal()
 		end
 	end
 end

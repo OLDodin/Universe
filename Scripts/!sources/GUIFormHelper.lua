@@ -166,7 +166,7 @@ end
 function AddElementFromFormWithText(aTable, aForm, aText, aContainer)
 	local text = aText
 	local textLowerStr = toLowerString(text)
-	if not aTable or not text or common.IsEmptyWString(text) then 
+	if not aTable or not text or text:IsEmpty() then 
 		return false 
 	end
 	table.insert(aTable, { name=text, nameLowerStr=textLowerStr } )

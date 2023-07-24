@@ -285,3 +285,12 @@ function WoundsChanged(aParams)
 		end
 	end
 end
+
+function SelectableChanged(aParams)
+	if aParams.objectId then
+		local playerInfo = m_players[aParams.objectId]
+		if playerInfo and playerInfo.canSelect then
+			playerInfo.canSelect.eventFunc(aParams)
+		end
+	end
+end

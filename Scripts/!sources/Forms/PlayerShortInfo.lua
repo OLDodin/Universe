@@ -43,7 +43,7 @@ function InitPlayerShortInfoForm(aPlayerID)
 	local shardName = m_emptyWStr
 	if isPlayer then
 		shardName = unit.GetPlayerShardName(aPlayerID)
-		shardName = shardName and common.GetShortString(shardName) or m_emptyWStr
+		shardName = shardName and shardName:ToAbbr() or m_emptyWStr
 		nameStr = ConcatWString(m_shardBeginWStr, shardName, m_shardEndWStr, object.GetName(aPlayerID))
 	else
 		nameStr = object.GetName(aPlayerID)
@@ -99,10 +99,10 @@ function InitPlayerShortInfoForm(aPlayerID)
 
 	local lvl = unit.GetLevel(aPlayerID)
 	if lvl then
-		infoStr = ConcatWString(infoStr, m_spaceWStr, toWString(lvl))
+		infoStr = ConcatWString(infoStr, m_spaceWStr, lvl)
 	end
 	if soulLvl then 
-		infoStr = ConcatWString(infoStr, m_bracketBeginWStr, toWString(soulLvl), m_bracketEndWStr)
+		infoStr = ConcatWString(infoStr, m_bracketBeginWStr, soulLvl, m_bracketEndWStr)
 	end
 	
 	setText(m_infoWdg, infoStr)
@@ -118,7 +118,7 @@ function InitPlayerShortInfoForm(aPlayerID)
 	
 	local cnt = 0
 	for i = 0, 2 do
-		if not common.IsEmptyWString(additionalLines[i].wdgStr) then
+		if not additionalLines[i].wdgStr:IsEmpty() then
 			move(additionalLines[i].wdg, nil, 60+cnt*20)
 			cnt = cnt + 1
 		end

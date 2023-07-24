@@ -167,7 +167,7 @@ end
 
 -- Deserialize a wstring to a table
 function StartDeserialize(aWStr)
-	if not aWStr or type(aWStr) ~= "userdata" or not common.IsWString(aWStr) or common.IsEmptyWString(aWStr) then
+	if not aWStr or type(aWStr) ~= "userdata" or not common.IsWString(aWStr) or aWStr:IsEmpty() then
 		return nil
 	end
 

@@ -443,16 +443,16 @@ function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettin
 		if --[[cartographer.IsOnCommon() and ]]aPlayerInfo.id and isPlayerExist and unit.IsPlayer(aPlayerInfo.id) then
 			shardName = unit.GetPlayerShardName(aPlayerInfo.id)
 			if shardName then 
-				shardName = common.GetShortString(shardName)
+				shardName = shardName:ToAbbr()
 			end
 		end
 		if not shardName then
 			shardName = m_emptyWStr
 		end
 		
-		if common.CompareWString(aPlayerBar.optimizeInfo.shardName, shardName)~=0 then
+		if aPlayerBar.optimizeInfo.shardName ~= shardName then
 			aPlayerBar.optimizeInfo.shardName = shardName
-			if not common.IsEmptyWString(shardName) then
+			if not shardName:IsEmpty() then
 				shardName = ConcatWString(m_shardBeginWStr, shardName, m_shardEndWStr)
 			end
 			aPlayerBar.textWdg:SetVal("Server", shardName)
@@ -468,7 +468,7 @@ function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettin
 		aPlayerBar.textWdg:SetVal("Afk-off", offAfkWStr)
 	end
 
-	if common.CompareWString(aPlayerBar.optimizeInfo.name, aPlayerInfo.name)~=0 then
+	if aPlayerBar.optimizeInfo.name ~= aPlayerInfo.name then
 		aPlayerBar.optimizeInfo.name = aPlayerInfo.name
 		aPlayerBar.textWdg:SetVal("Name", aPlayerInfo.name)
 	end

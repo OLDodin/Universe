@@ -1,13 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <UIAddon>
 	<AutoStart>true</AutoStart>
-	<Forms>
-		<Item>
-			<Id>Main</Id>
-			<Form href="Widgets/Form.xdb#xpointer(/WidgetForm)"/>
-		</Item>
-	</Forms>
-	<MainFormId>Main</MainFormId>
+	<Form href="Widgets/Form.xdb#xpointer(/WidgetForm)"/>
 	<Name>Universe</Name>
 	<localizedNameFileRef href="name.txt"/>
 	<localizedDescFileRef href="desc.txt"/>

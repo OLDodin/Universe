@@ -1,6 +1,6 @@
 --------------------------------------------------------------------------------
 -- LibDnD.lua // "Drag&Drop Library" by SLA, version 2011-05-28
---                                   updated version 2014-10-29 by hal.dll
+--                                   updated version 2023-07-11 by oldodin
 -- Help, support and updates: 
 -- https://alloder.pro/topic/260-how-to-libdndlua-biblioteka-dragdrop/
 --------------------------------------------------------------------------------
@@ -55,7 +55,11 @@ function DnD.Init( wtMovable, wtReacting, fUseCfg, fLockedToParentArea, Padding,
 			InitialPlace.posY = Cfg.posY or InitialPlace.posY
 			InitialPlace.highPosX = Cfg.highPosX or InitialPlace.highPosX
 			InitialPlace.highPosY = Cfg.highPosY or InitialPlace.highPosY
-			DnD.Widgets[ ID ].wtMovable:SetPlacementPlain( DnD.NormalizePlacement( InitialPlace, LimitMin, LimitMax ) )
+			if DnD.Widgets[ ID ].fLockedToParentArea then
+				DnD.Widgets[ ID ].wtMovable:SetPlacementPlain( DnD.NormalizePlacement( InitialPlace, LimitMin, LimitMax ) )
+			else
+				DnD.Widgets[ ID ].wtMovable:SetPlacementPlain( InitialPlace )
+			end
 		end
 	end
 	DnD.Widgets[ ID ].Initial = { X = InitialPlace.posX, Y = InitialPlace.posY, HX = InitialPlace.highPosX, HY = InitialPlace.highPosY }

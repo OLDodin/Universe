@@ -56,10 +56,10 @@ b.add = function(self,a) -- Insert given element, return it if successful
 	if not self or not self.value then
 		return a,newLeaf(a)
 	else
-		local resCmp = common.CompareWString(a.name, self.value.name)
-		if resCmp == -1 then
+		local resCmp = a.name:Compare(self.value.name)
+		if resCmp < 0 then
 			a,self.left   = b.add(self.left,a)
-		elseif resCmp == 1 then
+		elseif resCmp > 0 then
 			a,self.right  = b.add(self.right,a)
 		else a = nil end
 		return a,updateSubtree(self)
@@ -69,7 +69,7 @@ end
 b.delete = function(self,a)
 	if self then 
 		local v = self.value
-		local resCmp = common.CompareWString(a.name, v.name)
+		local resCmp = a.name:Compare(v.name)
 		if resCmp == 0 then 
 			if not self.left or not self.right then
 				return self.left or self.right
@@ -83,7 +83,7 @@ b.delete = function(self,a)
 				return self
 			end
 		else
-			if resCmp == -1 then
+			if resCmp < 0 then
 				self.left   = b.delete(self.left,a)
 			else
 				self.right  = b.delete(self.right,a)
@@ -113,10 +113,10 @@ end
 
 b.get = function(self,a)
 	if self then
-		local resCmp = common.CompareWString(a.name, self.value.name)
+		local resCmp = a.name:Compare(self.value.name)
 		if resCmp == 0 then
 			return self.value
-		elseif resCmp == -1 then
+		elseif resCmp < 0 then
 			return b.get(self.left,a)
 		else
 			return b.get(self.right,a)
