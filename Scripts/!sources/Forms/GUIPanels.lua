@@ -361,6 +361,8 @@ function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettin
 	aPlayerBar.optimizeInfo.currDist = -1
 	aPlayerBar.panelColorType = aRelationType
 	
+	local isPlayerExist = isExist(aPlayerInfo.id)
+	aPlayerBar.isPlayerExist = isPlayerExist
 	
 	aPlayerBar.usedBuffSlotCnt = 0
 	for i = 1, GetTableSize(aPlayerBar.buffSlots) do 
@@ -380,7 +382,6 @@ function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettin
 	hide(aPlayerBar.clearBarWdg)
 	
 	local barColor = { r = 0.1; g = 0.8; b = 0; a = 1.0 }
-	local isPlayerExist = isExist(aPlayerInfo.id)
 	if isPlayerExist and (aFormSettings.showManaButton or aFormSettings.classColorModeButton) then
 		local playerClass = unit.GetClass(aPlayerInfo.id)
 		if playerClass and playerClass.className then 	

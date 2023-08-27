@@ -1198,8 +1198,9 @@ function RaidChanged(aParams, aFullUpdate)
 					local prevRaidMember = subParty[j]
 					if m_currentRaid.members and m_currentRaid.members[i] then
 						local newRaidMember = m_currentRaid.members[i][j]	
+						local playerBar = m_raidPlayerPanelList[i][j]
 						if prevRaidMember.id then
-							local noChangesInPos = newRaidMember and prevRaidMember and newRaidMember.id == prevRaidMember.id and newRaidMember.state == prevRaidMember.state 
+							local noChangesInPos = newRaidMember and prevRaidMember and newRaidMember.id == prevRaidMember.id and newRaidMember.state == prevRaidMember.state and playerBar.isPlayerExist == isExist(prevRaidMember.id)
 							if not noChangesInPos then
 								UnsubscribeRaidListeners(prevRaidMember.id)
 							else
