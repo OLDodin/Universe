@@ -91,6 +91,12 @@ local function SaveProfileByIndex(anIndex, aList)
 	SaveProfiles(aList)
 end
 
+function OnTalentsChanged()
+	LoadLastUsedSetting()
+	LoadForms()
+	ReloadAll()
+end
+
 function ReloadAll()
 	LoadLastUsedSetting()
 	
@@ -2633,6 +2639,7 @@ function GUIControllerInit()
 	common.RegisterEventHandler(effectDone, "EVENT_EFFECT_FINISHED")
 	
 	common.RegisterEventHandler(OnInterfaceToggle, "EVENT_INTERFACE_TOGGLE" )
+	common.RegisterEventHandler(OnTalentsChanged, "EVENT_TALENTS_CHANGED" )
 	
 	--EVENT_TRACK_ADDED
 

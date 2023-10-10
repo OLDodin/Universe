@@ -10,9 +10,23 @@ local function GetMyUserInd()
 	return userID.."_"..buildID
 end
 
+local function FindProfileIndForMyUser()
+	local userID = avatar.GetServerId() or ""
+	local lastUsedProfiles = userMods.GetGlobalConfigSection("TR_LastProfileArr")
+	for i = 0, 2 do
+		local existInd = lastUsedProfiles[userID.."_"..tostring(i)]
+		if existInd ~= nil then
+			return existInd
+		end
+	end
+end
+
 local function LoadCurrentProfileInd()
 	local lastUsedProfiles = userMods.GetGlobalConfigSection("TR_LastProfileArr")
 	local currentInd = lastUsedProfiles[GetMyUserInd()]
+	if currentInd == nil then
+		currentInd = FindProfileIndForMyUser()
+	end
 	if currentInd == nil or currentInd == 0 then
 		currentInd = 1
 	end
