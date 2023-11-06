@@ -909,7 +909,7 @@ local function ResizePanelForm(aGroupsCnt, aMaxPeopleCnt, aFormSettings, aForm, 
 	if aLastSize.w ~= width or aLastSize.h ~= height then
 		aLastSize.w = width
 		aLastSize.h = height
-		
+	
 		width = math.max(200, width)
 		height = math.max(370, height)
 		resize(aForm, width, height)
@@ -992,6 +992,7 @@ function OnDragEnd(aParams)
 	if not m_moveMode then
 		return
 	end
+
 	if aParams.targetWidget then
 		local playerBar = FindClickedInRaid(aParams.targetWidget)
 		if playerBar then
@@ -1016,7 +1017,7 @@ function OnDNDPickAttempt(aParams)
 	if playerBar then
 		CloneBaseInfoPlayerPanel(playerBar, m_raidPlayerMovePanel)
 		
-		DnD.ShowWdg(m_raidPlayerMovePanel.wdg)
+		show(m_raidPlayerMovePanel.wdg)
 		priority(m_raidPlayerMovePanel.wdg, 300)
 		local panelWidth = tonumber(profile.raidFormSettings.raidWidthText)
 		local panelHeight = tonumber(profile.raidFormSettings.raidHeightText)
@@ -1194,7 +1195,7 @@ function RaidChanged(aParams, aFullUpdate)
 		StopMove()
 		HidePartyBtns()
 	end
-	
+
 	local reusedRaidListeners = {}
 	if not aFullUpdate and m_currentRaid.type == prevRaidType and m_currentRaid.type ~= SOLO_TYPE and prevLeaderUniqueID and prevLeaderUniqueID:IsEqual(m_currentRaid.currentLeaderUniqueID) then
 		if raid.IsExist() then
@@ -1242,10 +1243,10 @@ function RaidChanged(aParams, aFullUpdate)
 			playerBar.isUsed = false
 		end
 	end
-	
+
 	BuildRaidGUI(m_currentRaid, reusedRaidListeners)
 	ReadyCheckChanged()
-	
+
 	local canMovePlayers = CanMovePlayers(avatar.GetUniqueId())
 	for i=0, GetTableSize(m_raidPlayerPanelList)-1 do
 		local subParty = m_raidPlayerPanelList[i]
@@ -1283,7 +1284,7 @@ function StopMove()
 	end
 	HideMove()
 	if m_raidPlayerMovePanel then 
-		DnD.HideWdg(m_raidPlayerMovePanel.wdg)
+		hide(m_raidPlayerMovePanel.wdg)
 	end
 	m_moveMode = false
 	m_movingUniqueID = nil
@@ -2428,7 +2429,7 @@ end
 
 local function InitCastPanel(aPanel)
 	local profile = GetCurrentProfile()
-	resize(aPanel, tonumber(profile.castFormSettings.panelWidthText), tonumber(profile.castFormSettings.panelHeightText)*PROGRESS_PANELS_LIMIT)
+	resize(aPanel, tonumber(profile.castFormSettings.panelWidthText), tonumber(profile.castFormSettings.panelHeightText+1)*PROGRESS_PANELS_LIMIT)
 	if profile.castFormSettings.fixed then
 		DnD.HideWdg(getChild(aPanel, "MoveModePanel"))
 	else

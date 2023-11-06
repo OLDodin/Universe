@@ -1301,5 +1301,21 @@
       <name>aboveHeadNotFriendMobsButton</name>
       <resource href="aboveHeadNotFriendMobsButton.txt"/>
     </Item>
+	<Item>
+      <name>makeAllLeaderHelperMenuButton</name>
+      <resource href="makeAllLeaderHelperMenuButton.txt"/>
+    </Item>
+	<Item>
+      <name>readyCheckMenuButton</name>
+      <resource href="readyCheckMenuButton.txt"/>
+    </Item>
+	<Item>
+      <name>tradeMenuButton</name>
+      <resource href="tradeMenuButton.txt"/>
+    </Item>
+	<Item>
+      <name>followMenuButton</name>
+      <resource href="followMenuButton.txt"/>
+    </Item>
   </items>
 </UIRelatedTexts>

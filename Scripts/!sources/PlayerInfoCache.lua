@@ -63,8 +63,9 @@ local function FabricMakePlayerInfo(anID, aListener, anIsRaidInfo)
 	else
 		player.hp:SubscribeTargetGui(aListener)
 	end
-	
-	if settings.woundsShowButton then
+	--[[
+	--15.0 unit.GetRelativeWoundsComplexity removed
+	if settings.woundsShowButton and unit.GetRelativeWoundsComplexity then
 		if not player.wounds then
 			player.wounds = CreatePlayerSubInfo(anID, PlayerWounds)
 		end
@@ -73,7 +74,7 @@ local function FabricMakePlayerInfo(anID, aListener, anIsRaidInfo)
 		else
 			player.wounds:SubscribeTargetGui(aListener)
 		end
-	end
+	end]]
 	if anIsRaidInfo then
 		if not player.afk then
 			player.afk = CreatePlayerSubInfo(anID, PlayerAFK)	

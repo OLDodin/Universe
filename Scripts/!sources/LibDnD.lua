@@ -1,6 +1,6 @@
 --------------------------------------------------------------------------------
 -- LibDnD.lua // "Drag&Drop Library" by SLA, version 2011-05-28
---                                   updated version 2023-07-11 by oldodin
+--                                   updated version 2023-11-04 by oldodin
 -- Help, support and updates: 
 -- https://alloder.pro/topic/260-how-to-libdndlua-biblioteka-dragdrop/
 --------------------------------------------------------------------------------
@@ -312,10 +312,21 @@ end
 
 DnD.ShowWdg = function(aWdg)
 	aWdg:Show(true)
-	DnD.Register(aWdg, true)
+	if not DnD.Widgets then return end
+	local ID = DnD.GetWidgetID(aWdg)
+	if ID then
+		DnD.Widgets[ ID ].Enabled = true
+		DnD.Register(aWdg, true)
+	end
 end
 
 DnD.HideWdg = function(aWdg)
 	aWdg:Show(false)
-	DnD.Register(aWdg, false)
+	if not DnD.Widgets then return end
+	local ID = DnD.GetWidgetID(aWdg)
+	if ID then
+		DnD.Widgets[ ID ].Enabled = false
+		--при aWdg:Show(false)  DNDUnregister выполнит сам движок
+		--DnD.Register(aWdg, false)
+	end
 end

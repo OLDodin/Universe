@@ -6,7 +6,7 @@
 		<X>
 			<Align>WIDGET_ALIGN_BOTH</Align>
 			<Pos>23</Pos>
-			<HighPos>80</HighPos>
+			<HighPos>60</HighPos>
 		</X>
 		<Y>
 			<Align>WIDGET_ALIGN_HIGH</Align>

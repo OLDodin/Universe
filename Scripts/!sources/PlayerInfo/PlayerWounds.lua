@@ -1,4 +1,8 @@
 Global( "PlayerWounds", {} )
+--EVENT_HEAL_ABSORB_POOL_APPEARED
+--EVENT_HEAL_ABSORB_POOL_CHANGED
+--EVENT_HEAL_ABSORB_POOL_DISAPPEARED
+--unit.GetHealAbsorbPoolInfo
 
 local cachedGetRuneWoundsComplexity = unit.GetRuneWoundsComplexity
 local cachedGetRelativeWoundsComplexity = unit.GetRelativeWoundsComplexity

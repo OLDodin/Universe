@@ -625,7 +625,6 @@ function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings, aNum)
 	
 	DnD.HideWdg(playerBar.wdg)
 	
-	
 	local buffSlotCnt = math.floor((panelWidth)*0.85 / buffSize)
 	
 	playerBar.buffSlots = {}

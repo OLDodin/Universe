@@ -79,33 +79,36 @@ function GenerateMenuInfos(aPlayerBar, aMyUniqueID)
 	local iamHelper = CheckHelper(aMyUniqueID)
 	m_menuInfos = {}
 	local name = aPlayerBar.optimizeInfo.name
-	local isAvatar = avatar.GetId()==playerID
-	local canWhisper = isExist(playerID) and unit.IsPlayer(playerID) and isFriend(playerID) and not isAvatar
+	local isClickOnAvatar = avatar.GetId()==playerID
+	local canWhisper = isExist(playerID) and unit.IsPlayer(playerID) and isFriend(playerID) and not isClickOnAvatar
 	local canInvite = canWhisper and not raid.IsAutomatic() and not group.IsAutomatic()
-	local isLeader = aPlayerBar.optimizeInfo.isLeader
+	local isClickOnLeader = aPlayerBar.optimizeInfo.isLeader
 
+	if isClickOnAvatar and (isRaid() or isGroup() and group.IsCreatureInGroup(playerID)) then
+		if isClickOnLeader or iamHelper then AddToMenu("readyCheckMenuButton", function () raid.StartReadyCheck() CloseMenu() end) end
+	end
 	
-	if isAvatar and (isRaid() or isGroup()) then
+	if isClickOnAvatar and (isRaid() or isGroup() and group.IsCreatureInGroup(playerID)) and loot.CanSetLootScheme() then
 		local lootScheme=loot.GetLootScheme()
 		if lootScheme then
-			if lootScheme==LOOT_SCHEME_TYPE_FREE_FOR_ALL 	then AddToMenu("freeLootMenuButton", function () if isLeader then loot.SetLootScheme(LOOT_SCHEME_TYPE_MASTER) CloseMenu() end end) end
-			if lootScheme==LOOT_SCHEME_TYPE_MASTER 			then AddToMenu("masterLootMenuButton", function () if isLeader then loot.SetLootScheme(LOOT_SCHEME_TYPE_GROUP) CloseMenu() end end) end
-			if lootScheme==LOOT_SCHEME_TYPE_GROUP 			then AddToMenu("groupLootMenuButton", function () if isLeader then loot.SetLootScheme(LOOT_SCHEME_TYPE_FREE_FOR_ALL) CloseMenu() end end) end
+			if lootScheme==LOOT_SCHEME_TYPE_FREE_FOR_ALL 	then AddToMenu("freeLootMenuButton", function () if isClickOnLeader then loot.SetLootScheme(LOOT_SCHEME_TYPE_MASTER) CloseMenu() end end) end
+			if lootScheme==LOOT_SCHEME_TYPE_MASTER 			then AddToMenu("masterLootMenuButton", function () if isClickOnLeader then loot.SetLootScheme(LOOT_SCHEME_TYPE_GROUP) CloseMenu() end end) end
+			if lootScheme==LOOT_SCHEME_TYPE_GROUP 			then AddToMenu("groupLootMenuButton", function () if isClickOnLeader then loot.SetLootScheme(LOOT_SCHEME_TYPE_FREE_FOR_ALL) CloseMenu() end end) end
 		end
 		local quality=loot.GetMinItemQualityForLootScheme()
 		if quality then
-			if quality==ITEM_QUALITY_JUNK			 	then AddToMenu("junkLootMenuButton", function () if isLeader then loot.SetMinItemQualityForLootScheme(ITEM_QUALITY_GOODS) CloseMenu() end end) end
-			if quality==ITEM_QUALITY_GOODS	 			then AddToMenu("goodsLootMenuButton", function () if isLeader then loot.SetMinItemQualityForLootScheme(ITEM_QUALITY_COMMON) CloseMenu() end end) end
-			if quality==ITEM_QUALITY_COMMON	 			then AddToMenu("commonLootMenuButton", function () if isLeader then loot.SetMinItemQualityForLootScheme(ITEM_QUALITY_UNCOMMON) CloseMenu() end end) end
-			if quality==ITEM_QUALITY_UNCOMMON			then AddToMenu("uncommonLootMenuButton", function () if isLeader then loot.SetMinItemQualityForLootScheme(ITEM_QUALITY_RARE) CloseMenu() end end) end
-			if quality==ITEM_QUALITY_RARE	 			then AddToMenu("rareLootMenuButton", function () if isLeader then loot.SetMinItemQualityForLootScheme(ITEM_QUALITY_EPIC) CloseMenu() end end) end
-			if quality==ITEM_QUALITY_EPIC	 			then AddToMenu("epicLootMenuButton", function () if isLeader then loot.SetMinItemQualityForLootScheme(ITEM_QUALITY_LEGENDARY) CloseMenu() end end) end
-			if quality==ITEM_QUALITY_LEGENDARY	 		then AddToMenu("legendaryLootMenuButton", function () if isLeader then loot.SetMinItemQualityForLootScheme(ITEM_QUALITY_RELIC) CloseMenu() end end) end
-			if quality==ITEM_QUALITY_RELIC	 			then AddToMenu("relicLootMenuButton", function () if isLeader then loot.SetMinItemQualityForLootScheme(ITEM_QUALITY_JUNK) CloseMenu() end end) end
+			if quality==ITEM_QUALITY_JUNK			 	then AddToMenu("junkLootMenuButton", function () if isClickOnLeader then loot.SetMinItemQualityForLootScheme(ITEM_QUALITY_GOODS) CloseMenu() end end) end
+			if quality==ITEM_QUALITY_GOODS	 			then AddToMenu("goodsLootMenuButton", function () if isClickOnLeader then loot.SetMinItemQualityForLootScheme(ITEM_QUALITY_COMMON) CloseMenu() end end) end
+			if quality==ITEM_QUALITY_COMMON	 			then AddToMenu("commonLootMenuButton", function () if isClickOnLeader then loot.SetMinItemQualityForLootScheme(ITEM_QUALITY_UNCOMMON) CloseMenu() end end) end
+			if quality==ITEM_QUALITY_UNCOMMON			then AddToMenu("uncommonLootMenuButton", function () if isClickOnLeader then loot.SetMinItemQualityForLootScheme(ITEM_QUALITY_RARE) CloseMenu() end end) end
+			if quality==ITEM_QUALITY_RARE	 			then AddToMenu("rareLootMenuButton", function () if isClickOnLeader then loot.SetMinItemQualityForLootScheme(ITEM_QUALITY_EPIC) CloseMenu() end end) end
+			if quality==ITEM_QUALITY_EPIC	 			then AddToMenu("epicLootMenuButton", function () if isClickOnLeader then loot.SetMinItemQualityForLootScheme(ITEM_QUALITY_LEGENDARY) CloseMenu() end end) end
+			if quality==ITEM_QUALITY_LEGENDARY	 		then AddToMenu("legendaryLootMenuButton", function () if isClickOnLeader then loot.SetMinItemQualityForLootScheme(ITEM_QUALITY_RELIC) CloseMenu() end end) end
+			if quality==ITEM_QUALITY_RELIC	 			then AddToMenu("relicLootMenuButton", function () if isClickOnLeader then loot.SetMinItemQualityForLootScheme(ITEM_QUALITY_JUNK) CloseMenu() end end) end
 		end
 	end
 --[[
-	if not isAvatar and playerID ~= nil then
+	if not isClickOnAvatar and playerID ~= nil then
 		AddToMenu("inspectButton", function () if avatar.IsInspectAllowed() then avatar.StartInspect(playerID) end CloseMenu() end)
 	end
 ]]
@@ -120,45 +123,69 @@ function GenerateMenuInfos(aPlayerBar, aMyUniqueID)
 			CloseMenu() end)
 	end
 
+	if not isClickOnAvatar and (isRaid() or isGroup()) and not interaction.HasExchange() then AddToMenu("tradeMenuButton", function () if isExist(playerID) then interaction.InviteToExchange(object.GetName(playerID)) end CloseMenu() end) end
+	if not isClickOnAvatar and (isRaid() or isGroup()) and matchMaking.GetCurrentBattleInfo() == nil then AddToMenu("followMenuButton", function () if isExist(playerID) then avatar.SelectTarget(playerID) avatar.SetFollowTarget(true) end CloseMenu() end) end
+
 	if isRaid() then
-		local rights = raid.GetMemberRights(uniqueID)
-		local isHelper = rights and (rights[0] and rights[0]==RAID_MEMBER_RIGHT_LEADER_HELPER or rights[1] and rights[1]==RAID_MEMBER_RIGHT_LEADER_HELPER)
-		if raid.IsPlayerInAvatarsRaidById(uniqueID) then
+		if uniqueID and raid.IsPlayerInAvatarsRaidById(uniqueID) then
+			local rights = raid.GetMemberRights(uniqueID)
+			local isHelper = rights and (rights[0] and rights[0]==RAID_MEMBER_RIGHT_LEADER_HELPER or rights[1] and rights[1]==RAID_MEMBER_RIGHT_LEADER_HELPER)
 			local isMaster = rights and (rights[0] and rights[0]==RAID_MEMBER_RIGHT_LOOT_MASTER or rights[1] and rights[1]==RAID_MEMBER_RIGHT_LOOT_MASTER)
-			if isAvatar 		then AddToMenu("raidLeaveMenuButton", function () raid.Leave() CloseMenu() end) end
+			if isClickOnAvatar then 
+				if raid.IsLeader() and not raid.IsAutomatic() then
+					AddToMenu("makeAllLeaderHelperMenuButton", 
+						function ()
+							local members = raid.GetMembers()
+							for i=0, GetTableSize(members)-1 do
+								local subParty = members[i]
+								for j=0, GetTableSize(subParty)-1 do
+									if members[i][j].uniqueId and members[i][j].id ~= avatar.GetId() then
+										raid.AddRight(members[i][j].uniqueId, RAID_MEMBER_RIGHT_LEADER_HELPER)
+										CloseMenu() 
+									end
+								end
+							end
+						end)
+				end
+			end
 			if raid.IsLeader() 			then
-				if not isAvatar and playerID ~= nil 	then
+				if not isClickOnAvatar and playerID ~= nil 	then
 					AddToMenu("leaderMenuButton", function () raid.ChangeLeader(uniqueID) CloseMenu() end)
 					if not isHelper then AddToMenu("addLeaderHelperMenuButton", function () raid.AddRight(uniqueID, RAID_MEMBER_RIGHT_LEADER_HELPER) CloseMenu() end)
 					else 				 AddToMenu("deleteLeaderHelperMenuButton", function () raid.RemoveRight(uniqueID, RAID_MEMBER_RIGHT_LEADER_HELPER) CloseMenu() end) end
 					if not isMaster then AddToMenu("addMasterLootMenuButton", function () raid.AddRight(uniqueID, RAID_MEMBER_RIGHT_LOOT_MASTER) CloseMenu() end)
 					else 				 AddToMenu("deleteMasterLootMenuButton", function () raid.RemoveRight(uniqueID, RAID_MEMBER_RIGHT_LOOT_MASTER) CloseMenu() end) end
 				end
-				if not raid.IsAutomatic() then
-					if not isAvatar 	then AddToMenu("kickMenuButton", function () raid.Kick(uniqueID) CloseMenu() end) end
-					AddToMenu("disbandMenuButton", function () raid.Disband() CloseMenu() end)
-				end
 				AddToMenu("moveMenuButton", function () StartMove(uniqueID) CloseMenu() end)
-
+				if not raid.IsAutomatic() then
+					if not isClickOnAvatar then AddToMenu("kickMenuButton", function () raid.Kick(uniqueID) CloseMenu() end) end
+					if isClickOnAvatar then AddToMenu("disbandMenuButton", function () raid.Disband() CloseMenu() end) end
+				end
 			elseif iamHelper then
-				AddToMenu("disbandMenuButton", function () raid.Disband() CloseMenu() end)
 				AddToMenu("moveMenuButton", function () StartMove(uniqueID) CloseMenu() end)
 			end
+			if isClickOnAvatar then AddToMenu("raidLeaveMenuButton", function () raid.Leave() CloseMenu() end) end
 		else
-			if canInvite and (isHelper or raid.IsLeader()) then AddToMenu("inviteMenuButton", function () raid.Invite(playerID) CloseMenu() end) end
+			if canInvite and (iamHelper or raid.IsLeader()) then AddToMenu("inviteMenuButton", function () raid.Invite(playerID) CloseMenu() end) end
 		end
 	elseif isGroup() then
-		local memberInfo = group.GetMemberInfoById(uniqueID)
-		if memberInfo or group.IsCreatureInGroup(playerID) then
-			if isAvatar 		then
-				AddToMenu("leaveMenuButton", function () group.Leave() CloseMenu() end)
+		if (playerID and group.IsCreatureInGroup(playerID)) or (uniqueID and group.GetMemberInfoById(uniqueID)) then
+			if isClickOnAvatar 		then
 				if group.IsLeader() and not group.IsAutomatic() then
 					AddToMenu("createRaidMenuButton", function () raid.Create() CloseMenu() end)
 					AddToMenu("createSmallRaidMenuButton", function () raid.CreateSmall() CloseMenu() end)
 				end
+				AddToMenu("leaveMenuButton", function () group.Leave() CloseMenu() end)
 			else
-				if group.CanKickMember() 	then AddToMenu("kickMenuButton", function () group.KickMember(name) CloseMenu() end) end
-				if group.IsLeader() and playerID ~= nil 		then AddToMenu("leaderMenuButton", function () group.SetLeader(uniqueID) CloseMenu() end) end
+				if group.IsLeader() and isExist(playerID) and unit.IsPlayer(playerID) then AddToMenu("leaderMenuButton", function () group.SetLeader(uniqueID) CloseMenu() end) end
+				if  isExist(playerID) and not unit.IsPlayer(playerID) then AddToMenu("kickMenuButton", function () group.KickMerc(playerID) CloseMenu() end) end
+				if  isExist(playerID) then 
+					if not unit.IsPlayer(playerID) then AddToMenu("kickMenuButton", function () group.KickMerc(playerID) CloseMenu() end) end
+					if unit.IsPlayer(playerID) and group.CanKickMember() then AddToMenu("kickMenuButton", function () group.KickMember(name) CloseMenu() end) end
+				else
+					if group.CanKickMember() then AddToMenu("kickMenuButton", function () group.KickMember(name) CloseMenu() end) end
+				end
+				
 			end
 		else
 			if canInvite and group.CanInvite()	then AddToMenu("inviteMenuButton", function () group.Invite(playerID) CloseMenu() end) end

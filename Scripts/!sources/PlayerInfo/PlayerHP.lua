@@ -74,9 +74,8 @@ function PlayerHP:UpdateValueIfNeededInternal()
 		res = self.base.guiRaidListener and self.base.guiRaidListener.listenerHP(self.hp, self.base.guiRaidListener)
 		res = self.base.guiTargetListener and self.base.guiTargetListener.listenerHP(self.hp, self.base.guiTargetListener)
 
-		
-		if profile.raidFormSettings.woundsShowButton or profile.targeterFormSettings.woundsShowButton then
-			self.woundsComplexity = 100*(1-1/((1+unit.GetRuneWoundsComplexity(self.playerID)/10)*(unit.GetRelativeWoundsComplexity(self.playerID)))) or 0
+		if (profile.raidFormSettings.woundsShowButton or profile.targeterFormSettings.woundsShowButton) then
+			self.woundsComplexity = 100*(1-1/(1+unit.GetRuneWoundsComplexity(self.playerID)/10)) or 0
 			if self.hp == 100 then
 				self.woundsComplexity = 0
 			end

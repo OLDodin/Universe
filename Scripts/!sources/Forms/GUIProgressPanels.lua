@@ -1,4 +1,4 @@
-Global("PROGRESS_PANELS_LIMIT", 15)
+Global("PROGRESS_PANELS_LIMIT", 12)
 
 Global("ACTION_PROGRESS", 2)
 Global("BUFF_PROGRESS", 3)
@@ -67,7 +67,7 @@ end
 function SetBaseInfoProgressCastPanel(aBar, aInfo, aType)
 	local correctInfo = false
 	local buffInfo = aInfo.buffId and object.GetBuffInfo(aInfo.buffId)
-	if buffInfo and buffInfo.remainingMs > 0 then
+	if buffInfo and buffInfo.remainingMs > 0 and buffInfo.durationMs > 0 then
 		correctInfo = true
 	end
 	if aInfo.spellId and aInfo.duration - aInfo.progress > 0 then
