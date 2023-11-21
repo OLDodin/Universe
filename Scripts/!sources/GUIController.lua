@@ -2124,44 +2124,62 @@ local function UpdateUnselectable(aParams)
 	SelectableChanged(aParams)
 end
 
-local function SwitchPartyGUIToRaidGUI()
+local function GetPartyGUIToRaidGUIOptionsID()
 	options.Update()
 	local pageIds = options.GetPageIds()
-	for pageIndex = 0, GetTableSize( pageIds ) - 1 do
-		local pageId = pageIds[pageIndex]
-		if pageIndex == 1 or pageIndex == 3 then
-			local groupIds = options.GetGroupIds(pageId)
-			if groupIds then
-				for groupIndex = 0, GetTableSize( groupIds ) - 1 do
-					local groupId = groupIds[groupIndex]
-					local blockIds = options.GetBlockIds( groupId )
-					for blockIndex = 0, GetTableSize( blockIds ) - 1 do
-						local blockId = blockIds[blockIndex]
-						
-						
-						local optionIds = options.GetOptionIds( blockId )
-						for optionIndex = 0, GetTableSize( optionIds ) - 1 do
-							local optionId = optionIds[optionIndex]
-							local optionInfo = options.GetOptionInfo( optionId )
-	
-							if pageIndex == 3 and blockIndex == 0 and optionIndex == 6 then 
-								options.SetOptionCurrentIndex( optionId, 1 )
-							end
+	local pageId = pageIds[3]
+	if pageId then
+		local groupIds = options.GetGroupIds(pageId)
+		if groupIds then
+			for groupIndex = 0, GetTableSize( groupIds ) - 1 do
+				local groupId = groupIds[groupIndex]
+				local blockIds = options.GetBlockIds( groupId )
+				for blockIndex = 0, GetTableSize( blockIds ) - 1 do
+					local blockId = blockIds[blockIndex]
+					local optionIds = options.GetOptionIds( blockId )
+					for optionIndex = 0, GetTableSize( optionIds ) - 1 do
+						local optionId = optionIds[optionIndex]
+
+						if blockIndex == 0 and optionIndex == 6 then 
+							return optionId
 						end
 					end
-				end		
-			end
-			options.Apply( pageId )
+				end
+			end		
 		end
 	end
+end
+
+local function SwitchPartyGUIToRaidGUI()
+	local optionId = GetPartyGUIToRaidGUIOptionsID()
+	if optionId then
+		options.SetOptionCurrentIndex( optionId, 1 )
+		local pageIds = options.GetPageIds()
+		local pageId = pageIds[3]
+		options.Apply(pageId)
+	end
+end
+
+local function IsRaidGUIEnabled()
+	local optionId = GetPartyGUIToRaidGUIOptionsID()
+	if optionId then
+		local optionInfo = options.GetOptionInfo( optionId )
+		return optionInfo.currentIndex == 1
+	end
+	return false
 end
 
 local function ApplyUnloadRaidSettings(anIsUnloadRaidSubsystem)
 	local profile = GetCurrentProfile()
 	if anIsUnloadRaidSubsystem or profile.raidFormSettings.showStandartRaidButton then
 		if raid.IsExist() or group.IsExist() then
-			show(common.GetAddonMainForm("Raid"))
-			show(getChild(common.GetAddonMainForm("Raid"), "Raid"))
+			if IsRaidGUIEnabled() or raid.IsExist() then
+				show(common.GetAddonMainForm("Raid"))
+				show(getChild(common.GetAddonMainForm("Raid"), "Raid"))
+			else
+				show(getChild(common.GetAddonMainForm("Plates"), "Party"))
+				show(getChild(common.GetAddonMainForm("Buffs"), "Party"))
+			end
 		end
 	else
 		SwitchPartyGUIToRaidGUI()
