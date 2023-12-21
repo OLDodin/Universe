@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <WidgetForm>
 	<Name>Universe</Name>
-	<Priority>4000</Priority>
+	<Priority>4600</Priority>
 	<Children>
 		<Item href="Bars/FormProgressAction.xdb#xpointer(/WidgetPanel)"/>
 		<Item href="Bars/FormProgressBuff.xdb#xpointer(/WidgetPanel)"/>
