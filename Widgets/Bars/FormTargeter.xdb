@@ -5,7 +5,6 @@
 	<Children>
 		<Item href="TopTargeterPanel/TopPanel.xdb#xpointer(/WidgetButton)"/>
 		<Item href="Bar/Bar.xdb#xpointer(/WidgetButton)"/>
-		<Item href="TopTargeterPanel/ModePanel/ModeSelectPanel.xdb#xpointer(/WidgetPanel)" />
 	</Children>
 	<BackLayer href="" />
 	<FrontLayer href="" />

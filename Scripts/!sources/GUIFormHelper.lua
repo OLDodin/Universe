@@ -1,4 +1,5 @@
 local m_reactions={}
+local m_rightClickReactions={}
 local m_template = getChild(mainForm, "Template")
 
 function AddReaction(aName, aFunc)
@@ -8,13 +9,23 @@ function AddReaction(aName, aFunc)
 	m_reactions[aName] = aFunc
 end
 
-local function RunReaction(anWidget)
-	local name=getName(anWidget)
-	if name == "GetModeBtn" then
-		name=getName(getParent(anWidget))
+function AddRightClickReaction(aName, aFunc)
+	if not m_rightClickReactions then
+		m_rightClickReactions = {} 
 	end
+	m_rightClickReactions[aName] = aFunc
+end
+
+local function RunRightClickReaction(anWidget)
+	local name=getName(anWidget)
+	if not name or not m_rightClickReactions or not m_rightClickReactions[name] then return end
+	m_rightClickReactions[name](anWidget)
+end
+
+local function RunReaction(anWidget, aParams)
+	local name=getName(anWidget)
 	if not name or not m_reactions or not m_reactions[name] then return end
-	m_reactions[name](anWidget)
+	m_reactions[name](anWidget, aParams)
 end
 
 function ButtonPressed(aParams)
@@ -30,8 +41,97 @@ function CheckBoxChangedOff(aParams)
 	changeCheckBox(aParams.widget)
 end
 
+function DropDownBtnPressed(aParams)
+	local dropDownPanel = getParent(getParent(aParams.widget))
+	if aParams.widget:GetVariant() == 1 then
+		return
+	end
+	local selectPanel = getChild(dropDownPanel, "DropDownSelectPanel")
+	if selectPanel:IsVisible() then
+		dropDownPanel:SetPriority(dropDownPanel:GetPriority() - 1000)
+	else
+		dropDownPanel:SetPriority(dropDownPanel:GetPriority() + 1000)
+	end
+	swap(selectPanel)
+end
+
+function DropDownBtnRightClick(aParams)
+	local dropDownPanel = getParent(getParent(aParams.widget))
+	RunRightClickReaction(dropDownPanel)
+end
+
+function SelectDropDownBtnPressed(aParams)
+	local pressedWdgName = getName(aParams.widget)
+	local prefixStr = "modeBtn"
+	local indexStr = pressedWdgName:sub(prefixStr:len()+1, pressedWdgName:len())
+	local pressedIndex = tonumber(indexStr)
+	
+	local dropDownPanel = getParent(getParent(aParams.widget))
+	HideDropDownSelectPanel(getChild(dropDownPanel, "DropDownSelectPanel"))
+	setText(getChild(getChild(dropDownPanel, "DropDownHeaderPanel"), "ModeNameTextView"), aParams.widget:GetWString(), "Neutral", "left", 11)
+	
+	RunReaction(dropDownPanel, pressedIndex)
+end
+
+
+
+
 
 local defaultMessage = Locales["enterName"]
+
+function HideDropDownSelectPanel(anWidget)
+	if anWidget:IsVisible() then
+		local dropDownPanel = getParent(anWidget)
+		dropDownPanel:SetPriority(dropDownPanel:GetPriority() - 1000)
+		hide(anWidget)
+	end
+end
+
+function GenerateBtnForDropDown(anWidget, aTextArr, aDefaultIndex, aColor)
+	local selectPanel = getChild(anWidget, "DropDownSelectPanel")
+	setTemplateWidget(selectPanel)
+	if not aColor then
+		aColor = { a = 1, r = 1, g = 1, b = 1 }
+	end
+	local cnt = 0
+	for i, txt in ipairs(aTextArr) do
+		local btn = createWidget(selectPanel, "modeBtn"..tostring(i), "SelectButton", WIDGET_ALIGN_BOTH, WIDGET_ALIGN_LOW, nil, 25, 0, 24*(i-1)+2)
+		setText(btn, txt)
+		btn:SetTextColor(nil, aColor)
+		show(btn)
+		cnt = cnt + 1
+	end
+	
+	if not aDefaultIndex then
+		aDefaultIndex = 1
+	end
+	setText(getChild(getChild(anWidget, "DropDownHeaderPanel"), "ModeNameTextView"), aTextArr[aDefaultIndex], "Neutral", "left", 11)
+	
+	resize(anWidget, nil, 24*(cnt+1))
+	setTemplateWidget(m_template)
+	
+	return anWidget
+end
+
+function CheckDropDownOrientation(anWidget)
+	local wdgParent = getParent(anWidget)
+	local selectPanel = getChild(anWidget, "DropDownSelectPanel")
+	local dropDownHeaderPanel = getChild(anWidget, "DropDownHeaderPanel")
+	
+	local parentPlacement = wdgParent:GetPlacementPlain()
+	local dropDownPanelPlacement = anWidget:GetPlacementPlain()
+	local selectPanelPlacement = selectPanel:GetPlacementPlain()
+	
+	if dropDownPanelPlacement.posY + dropDownPanelPlacement.sizeY > parentPlacement.sizeY then
+		if dropDownPanelPlacement.posY > dropDownPanelPlacement.sizeY then
+			align(selectPanel, nil, WIDGET_ALIGN_LOW)
+			resize(selectPanel, nil, dropDownPanelPlacement.sizeY - 24)
+			move(selectPanel, nil, 0)
+			move(anWidget, nil, dropDownPanelPlacement.posY - dropDownPanelPlacement.sizeY + 24)
+			align(dropDownHeaderPanel, nil, WIDGET_ALIGN_HIGH)
+		end
+	end
+end
 
 function GetIndexForWidget(anWidget)
 	local parent = getParent(anWidget)

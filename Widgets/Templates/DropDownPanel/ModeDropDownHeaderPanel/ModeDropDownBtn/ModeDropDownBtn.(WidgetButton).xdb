@@ -29,8 +29,16 @@
 				<LayerMain href="ModeDropDownBtnDisable.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)" />
 			</StateDisabled>
 			<ReactionOnUp>true</ReactionOnUp>
-			<Reaction>execute</Reaction>
-			<ReactionRightClick>executeRightClick</ReactionRightClick>
+			<Reaction>DropDownBtnPressed</Reaction>
+			<ReactionRightClick>DropDownBtnRightClick</ReactionRightClick>
+		</Item>
+		<Item>
+			<PushedOffset x="-2" y="2" />
+			<StateNormal>
+				<LayerMain href="ModeDropDownBtnDisable.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)" />
+			</StateNormal>
+			<ReactionOnUp>true</ReactionOnUp>
+			<ReactionRightClick>DropDownBtnRightClick</ReactionRightClick>
 		</Item>
 	</Variants>
 </WidgetButton>

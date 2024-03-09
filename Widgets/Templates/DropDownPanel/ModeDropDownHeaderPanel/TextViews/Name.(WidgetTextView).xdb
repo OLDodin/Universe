@@ -17,6 +17,5 @@
 	<TransparentInput>true</TransparentInput>
 	<Visible>true</Visible>
 	<Enabled>true</Enabled>
-	<FormatFileRef href="Name.txt" />
 	<TextValues />
 </WidgetTextView>

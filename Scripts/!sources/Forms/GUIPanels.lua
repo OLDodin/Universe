@@ -766,7 +766,7 @@ function CreateRaidPartyBtn(aRaidPanel)
 	return raidPartyButtons
 end
 
-local m_locale = getLocale()
+local m_locale = Locales
 local m_modeBtn = nil
 local m_targetLockBtn = nil
 local m_targetModeName = nil
@@ -808,12 +808,12 @@ m_targetSwitchArr[NEITRAL_MOBS_TARGETS] = m_locale["NEITRAL_MOBS_TARGETS"]
 m_targetSwitchArr[NOT_FRIENDS_TARGETS] = m_locale["NOT_FRIENDS_TARGETS"]
 m_targetSwitchArr[NOT_FRIENDS_PLAYERS_TARGETS] = m_locale["NOT_FRIENDS_PLAYERS_TARGETS"]
 
-function GetTargetModeSelectPanel()
-	return m_modeSelectPanel
+function HideTargetDropDownSelectPanel()
+	HideDropDownSelectPanel(m_modeSelectPanel)
 end
 
 function SwitchTargetsBtn(aNewTargetInd)
-	m_targetModeName:SetVal("Name", m_targetSwitchArr[aNewTargetInd])
+	setText(m_targetModeName, m_targetSwitchArr[aNewTargetInd], "Neutral", "left", 11)
 end
 
 function TargetLockBtn(aTopPanelForm)
@@ -823,7 +823,7 @@ function TargetLockBtn(aTopPanelForm)
 	
 	local wtTopPanel = getChild(aTopPanelForm, "TopTargeterPanel")
 	DnD.Enable(wtTopPanel, activeNum==0)
-	hide(m_modeSelectPanel)
+	HideTargetDropDownSelectPanel()
 end
 
 function ApplyTargetSettingsToGUI(aTopPanelForm)
@@ -833,14 +833,6 @@ function ApplyTargetSettingsToGUI(aTopPanelForm)
 	
 	local wtTopPanel = getChild(aTopPanelForm, "TopTargeterPanel")
 	DnD.Enable(wtTopPanel, activeNum==0)
-	
-	--[[local profile = GetCurrentProfile()
-	local wtTopPanel = getChild(aTopPanelForm, "TopTargeterPanel")
-	if profile.targeterFormSettings.twoColumnMode then
-		align(wtTopPanel, WIDGET_ALIGN_HIGH)
-	else
-		align(wtTopPanel, WIDGET_ALIGN_LOW)
-	end]]
 end
 
 function CreateTargeterPanel()
@@ -849,31 +841,30 @@ function CreateTargeterPanel()
 	local wtTopPanel = getChild(targeterPanel, "TopTargeterPanel")
 	DnD.Init(targeterPanel, wtTopPanel, true, true, {0,-50,-50,0})
 	resize(wtTopPanel, 200, nil)
-
-	local modePanel = getChild(wtTopPanel, "ModePanel")
-	m_targetModeName = getChild(modePanel, "ModeNameTextView")
+	
+	setTemplateWidget(m_template)
+	local modePanel = createWidget(targeterPanel, "targeterDropDown", "DropDownPanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 170, 20, 20, 240)
+	m_targetModeName = getChild(getChild(modePanel, "DropDownHeaderPanel"), "ModeNameTextView")
 	m_targetLockBtn = getChild(wtTopPanel, "ButtonLocker")
 	move(modePanel, 25, 3)
-	resize(modePanel, 130, 20)
-	m_modeBtn = getChild(modePanel, "GetModeBtn")
+	
+	m_modeBtn = getChild(getChild(modePanel, "DropDownHeaderPanel"), "GetModeBtn")
+	
+	local textArr = {}
+	for i = ALL_TARGETS, MY_SETTINGS_TARGETS do
+		table.insert(textArr, m_targetSwitchArr[i])
+	end
+	GenerateBtnForDropDown(modePanel, textArr)
+	
+	m_modeSelectPanel = getChild(modePanel, "DropDownSelectPanel")	
+
+	local headerPanel = getChild(modePanel, "DropDownHeaderPanel")
+	align(headerPanel, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)
+	resize(headerPanel, 130, 20)
+	
 	
 	TargetLockBtn(targeterPanel)
 	DnD.HideWdg(targeterPanel)
-	
-	
-	m_modeSelectPanel = getChild(targeterPanel, "ModeSelectPanel")	
-	move(m_modeSelectPanel, 23, 26)
-	resize(m_modeSelectPanel, 170, 24*(MY_SETTINGS_TARGETS+1))
-	hide(m_modeSelectPanel)
-	setTemplateWidget(m_modeSelectPanel)
-	for i = ALL_TARGETS, MY_SETTINGS_TARGETS do
-		local btn = createWidget(m_modeSelectPanel, "modeBtn"..tostring(i), "SelectButton", WIDGET_ALIGN_BOTH, WIDGET_ALIGN_LOW, nil, 25, 0, 24*i)
-		setText(btn, m_targetSwitchArr[i])
-		btn:SetTextColor(nil,  { a = 1, r = 1, g = 1, b = 1 })
-		show(btn)
-	end
-	
-	setTemplateWidget(m_template)
 	
 	return targeterPanel
 end

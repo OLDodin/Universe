@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<WidgetPanel>
+	<Name>DropDownPanel</Name>
+	<Priority>101</Priority>
+	<Children>
+		<Item href="ModeDropDownHeaderPanel/ModeDropDownHeaderPanel.xdb" />
+		<Item href="ModeSelectPanel/ModeSelectPanel.xdb" />
+	</Children>
+	<BackLayer href="" />
+	<Placement>
+		<X>
+			<Align>WIDGET_ALIGN_LOW</Align>
+			<Size>150</Size>
+			<Pos>0</Pos>
+		</X>
+		<Y>
+			<Align>WIDGET_ALIGN_LOW</Align>
+			<Size>220</Size>
+			<Pos>0</Pos>
+		</Y>
+	</Placement>
+	<PickChildrenOnly>true</PickChildrenOnly>
+	<Visible>true</Visible>
+</WidgetPanel>

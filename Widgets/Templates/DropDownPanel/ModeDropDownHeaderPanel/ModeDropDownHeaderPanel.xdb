@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <WidgetPanel>
-	<Name>ModePanel</Name>
+	<Name>DropDownHeaderPanel</Name>
+	<Priority>2</Priority>
 	<Children>
 		<Item href="ModeDropDownBtn/ModeDropDownBtn.(WidgetButton).xdb#xpointer(/WidgetButton)" />
 		<Item href="TextViews/Name.(WidgetTextView).xdb#xpointer(/WidgetTextView)" />
@@ -8,14 +9,13 @@
 	<BackLayer href="ModeDropDownPanel.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)" />
 	<Placement>
 		<X>
-			<Align>WIDGET_ALIGN_LOW</Align>
-			<Size>120</Size>
-			<Pos>37</Pos>
+			<Align>WIDGET_ALIGN_BOTH</Align>
+			<Pos>0</Pos>
 		</X>
 		<Y>
 			<Align>WIDGET_ALIGN_LOW</Align>
 			<Size>22</Size>
-			<Pos>2</Pos>
+			<Pos>0</Pos>
 		</Y>
 	</Placement>
 </WidgetPanel>

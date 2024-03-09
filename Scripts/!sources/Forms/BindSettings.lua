@@ -94,35 +94,40 @@ function CreateBindSettingsForm()
 	setLocaleText(createWidget(group3, "rightClick", "TextView", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 5, 365))
 	setLocaleText(createWidget(group3, "rightClick", "TextView", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 5, 485))
 	
-	createWidget(group1, "actionLeftSwitchRaidSimple", "ModePanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 95)
-	createWidget(group1, "actionLeftSwitchRaidShift", "ModePanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 215)
-	createWidget(group1, "actionLeftSwitchRaidAlt", "ModePanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 335)
-	createWidget(group1, "actionLeftSwitchRaidCtrl", "ModePanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 455)
+	local textArr = {}
+	for i = DISABLE_CLICK, AUTOCAST_CLICK do
+		table.insert(textArr, m_actionSwitch[i])
+	end
 	
-	createWidget(group1, "actionRightSwitchRaidSimple", "ModePanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 125)
-	createWidget(group1, "actionRightSwitchRaidShift", "ModePanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 245)
-	createWidget(group1, "actionRightSwitchRaidAlt", "ModePanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 365)
-	createWidget(group1, "actionRightSwitchRaidCtrl", "ModePanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 485)
+	GenerateBtnForDropDown(createWidget(group1, "actionLeftSwitchRaidSimple", "DropDownPanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 95), textArr)
+	GenerateBtnForDropDown(createWidget(group1, "actionLeftSwitchRaidShift", "DropDownPanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 215), textArr)
+	GenerateBtnForDropDown(createWidget(group1, "actionLeftSwitchRaidAlt", "DropDownPanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 335), textArr)
+	CheckDropDownOrientation(GenerateBtnForDropDown(createWidget(group1, "actionLeftSwitchRaidCtrl", "DropDownPanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 455), textArr))
 	
-	createWidget(group2, "actionLeftSwitchTargetSimple", "ModePanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 95)
-	createWidget(group2, "actionLeftSwitchTargetShift", "ModePanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 215)
-	createWidget(group2, "actionLeftSwitchTargetAlt", "ModePanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 335)
-	createWidget(group2, "actionLeftSwitchTargetCtrl", "ModePanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 455)
+	GenerateBtnForDropDown(createWidget(group1, "actionRightSwitchRaidSimple", "DropDownPanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 125), textArr)
+	GenerateBtnForDropDown(createWidget(group1, "actionRightSwitchRaidShift", "DropDownPanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 245), textArr)
+	CheckDropDownOrientation(GenerateBtnForDropDown(createWidget(group1, "actionRightSwitchRaidAlt", "DropDownPanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 365), textArr))
+	CheckDropDownOrientation(GenerateBtnForDropDown(createWidget(group1, "actionRightSwitchRaidCtrl", "DropDownPanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 485), textArr))
+	
+	GenerateBtnForDropDown(createWidget(group2, "actionLeftSwitchTargetSimple", "DropDownPanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 95), textArr)
+	GenerateBtnForDropDown(createWidget(group2, "actionLeftSwitchTargetShift", "DropDownPanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 215), textArr)
+	GenerateBtnForDropDown(createWidget(group2, "actionLeftSwitchTargetAlt", "DropDownPanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 335), textArr)
+	CheckDropDownOrientation(GenerateBtnForDropDown(createWidget(group2, "actionLeftSwitchTargetCtrl", "DropDownPanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 455), textArr))
 
-	createWidget(group2, "actionRightSwitchTargetSimple", "ModePanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 125)
-	createWidget(group2, "actionRightSwitchTargetShift", "ModePanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 245)
-	createWidget(group2, "actionRightSwitchTargetAlt", "ModePanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 365)
-	createWidget(group2, "actionRightSwitchTargetCtrl", "ModePanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 485)
+	GenerateBtnForDropDown(createWidget(group2, "actionRightSwitchTargetSimple", "DropDownPanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 125), textArr)
+	GenerateBtnForDropDown(createWidget(group2, "actionRightSwitchTargetShift", "DropDownPanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 245), textArr)
+	CheckDropDownOrientation(GenerateBtnForDropDown(createWidget(group2, "actionRightSwitchTargetAlt", "DropDownPanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 365), textArr))
+	CheckDropDownOrientation(GenerateBtnForDropDown(createWidget(group2, "actionRightSwitchTargetCtrl", "DropDownPanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 485), textArr))
 	
-	createWidget(group3, "actionLeftSwitchProgressCastSimple", "ModePanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 95)
-	createWidget(group3, "actionLeftSwitchProgressCastShift", "ModePanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 215)
-	createWidget(group3, "actionLeftSwitchProgressCastAlt", "ModePanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 335)
-	createWidget(group3, "actionLeftSwitchProgressCastCtrl", "ModePanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 455)
+	GenerateBtnForDropDown(createWidget(group3, "actionLeftSwitchProgressCastSimple", "DropDownPanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 95), textArr)
+	GenerateBtnForDropDown(createWidget(group3, "actionLeftSwitchProgressCastShift", "DropDownPanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 215), textArr)
+	GenerateBtnForDropDown(createWidget(group3, "actionLeftSwitchProgressCastAlt", "DropDownPanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 335), textArr)
+	CheckDropDownOrientation(GenerateBtnForDropDown(createWidget(group3, "actionLeftSwitchProgressCastCtrl", "DropDownPanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 455), textArr))
 
-	createWidget(group3, "actionRightSwitchProgressCastSimple", "ModePanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 125)
-	createWidget(group3, "actionRightSwitchProgressCastShift", "ModePanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 245)
-	createWidget(group3, "actionRightSwitchProgressCastAlt", "ModePanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 365)
-	createWidget(group3, "actionRightSwitchProgressCastCtrl", "ModePanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 485)
+	GenerateBtnForDropDown(createWidget(group3, "actionRightSwitchProgressCastSimple", "DropDownPanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 125), textArr)
+	GenerateBtnForDropDown(createWidget(group3, "actionRightSwitchProgressCastShift", "DropDownPanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 245), textArr)
+	CheckDropDownOrientation(GenerateBtnForDropDown(createWidget(group3, "actionRightSwitchProgressCastAlt", "DropDownPanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 365), textArr))
+	CheckDropDownOrientation(GenerateBtnForDropDown(createWidget(group3, "actionRightSwitchProgressCastCtrl", "DropDownPanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 100, 25, 115, 485), textArr))
 	
 	
 	createWidget(group1, "actionLeftRaidSimpleBind", "EditLine", nil, nil, 180, 25, 225, 95, nil, nil)
@@ -296,8 +301,8 @@ function GetSwitchIndexByName(anArr, aName)
 end
 
 function GetCurrentSwitchIndex(aWdg)
-	local txtWdg = getChild(aWdg, "ModeNameTextView")
-	local currValue = txtWdg:GetValuedText():ToWString()
+	local txtWdg = getChild(getChild(aWdg, "DropDownHeaderPanel"), "ModeNameTextView")
+	local currValue = txtWdg:GetWString()
 	return GetSwitchIndexByName(m_actionSwitch, currValue)
 end
 
@@ -306,8 +311,8 @@ function SetSwitchIndex(aWdg, anIndex)
 		anIndex = 0
 	end
 	
-	local txtWdg = getChild(aWdg, "ModeNameTextView")
-	txtWdg:SetVal("Name", m_actionSwitch[anIndex])
+	local txtWdg = getChild(getChild(aWdg, "DropDownHeaderPanel"), "ModeNameTextView")
+	setText(txtWdg, m_actionSwitch[anIndex], "Neutral", "left", 11)
 end
 
 function SwitchActionClickBtn(aWdg)

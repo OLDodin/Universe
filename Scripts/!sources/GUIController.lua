@@ -645,7 +645,7 @@ local function MakeBindAction(aParams, aPlayerBar, aLeftClick, aTypeBind)
 				actionType = profile.bindFormSettings.actionLeftSwitchProgressCastCtrl
 				bindAction = profile.bindFormSettings.actionLeftProgressCastCtrlBind
 			else
-				actionType = profile.bindFormSettings.actionRightSwitchProgressCastSimple
+				actionType = profile.bindFormSettings.actionLeftSwitchProgressCastSimple
 				bindAction = profile.bindFormSettings.actionLeftProgressCastSimpleBind
 			end
 		else
@@ -1554,8 +1554,7 @@ local function TargetWorkSwitch()
 		SwitchTargetsBtn(TARGETS_DISABLE)
 		ClearTargetPanels()
 		
-		local selectPanelWdg = GetTargetModeSelectPanel()
-		hide(selectPanelWdg)
+		HideTargetDropDownSelectPanel()
 		
 		profile.targeterFormSettings.lastTargetType = m_lastTargetType
 		profile.targeterFormSettings.lastTargetWasActive = false
@@ -1569,32 +1568,18 @@ local function TargetWorkSwitch()
 	end
 end
 
-local function SelectTargetTypePressed(aParams)
-	local selectPanelWdg = GetTargetModeSelectPanel()
-	hide(selectPanelWdg)
+local function SelectTargetTypePressed(aWdg, anIndex)
+	HideTargetDropDownSelectPanel()
 	
 	if m_currTargetType == TARGETS_DISABLE then
 		return
 	end
-	
-	local pressedWdgName = getName(aParams.widget)
-	local prefixStr = "modeBtn"
-	local indexStr = pressedWdgName:sub(prefixStr:len()+1, pressedWdgName:len())
-	
-	m_currTargetType = tonumber(indexStr)
+		
+	m_currTargetType = anIndex-1
 	RedrawTargeter(m_currTargetType, true)
 	local profile = GetCurrentProfile()
 	profile.targeterFormSettings.lastTargetType = m_currTargetType
 	SaveAll()
-end
-
-local function ShowSelectTargetTypePanel()
-	if m_currTargetType == TARGETS_DISABLE then
-		return
-	end
-	
-	local selectPanelWdg = GetTargetModeSelectPanel()
-	swap(selectPanelWdg)
 end
 
 local function SeparateTargeterPanelList(anObjList, aPanelListShift)
@@ -2537,6 +2522,9 @@ function GUIControllerInit()
 	common.RegisterReactionHandler(ButtonPressed, "execute")
 	common.RegisterReactionHandler(CheckBoxChangedOn, "CheckBoxChangedOn")
 	common.RegisterReactionHandler(CheckBoxChangedOff, "CheckBoxChangedOff")
+	common.RegisterReactionHandler(DropDownBtnPressed, "DropDownBtnPressed")
+	common.RegisterReactionHandler(DropDownBtnRightClick, "DropDownBtnRightClick")
+	common.RegisterReactionHandler(SelectDropDownBtnPressed, "SelectDropDownBtnPressed")
 	
 	AddReaction("closeButton", function (aWdg) DnD.SwapWdg(getParent(aWdg)) end)
 	AddReaction("UniverseButton", UniverseBtnPressed)
@@ -2573,6 +2561,7 @@ function GUIControllerInit()
 	AddReaction("deleteButtonbuffPanelSettingsContainer", DeleteBuffGroup)
 	AddReaction("addBuffsButton", AddBuffsInsideGroupButton)
 	AddReaction("deleteButtongroupBuffContainer", DeleteBuffInsideGroup)
+	--[[
 	AddReaction("actionLeftSwitchRaidSimple", SwitchActionBtn)
 	AddReaction("actionLeftSwitchRaidShift", SwitchActionBtn)
 	AddReaction("actionLeftSwitchRaidAlt", SwitchActionBtn)
@@ -2597,6 +2586,7 @@ function GUIControllerInit()
 	AddReaction("actionRightSwitchProgressCastShift", SwitchActionBtn)
 	AddReaction("actionRightSwitchProgressCastAlt", SwitchActionBtn)
 	AddReaction("actionRightSwitchProgressCastCtrl", SwitchActionBtn)
+	]]
 	AddReaction("setHighlightColorButtongroupBuffContainer", SetColorBuffGroup)
 	AddReaction("setHighlightColorButtonraidBuffContainer", SetColorBuffRaid)
 	AddReaction("setHighlightColorButtontargetBuffContainer", SetColorBuffTargeter)
@@ -2608,6 +2598,9 @@ function GUIControllerInit()
 	AddReaction("buffOnMe", BuffOnMeCheckedOn)
 	AddReaction("buffOnTarget", BuffOnTargetCheckedOn)
 	AddReaction("colorDebuffButton", СolorDebuffButtonCheckedOn)
+	AddReaction("targeterDropDown", SelectTargetTypePressed)
+	
+	AddRightClickReaction("targeterDropDown", TargetWorkSwitch)
 	
 	local profile = GetCurrentProfile()
 	if profile.mainFormSettings.useRaidSubSystem then
@@ -2672,9 +2665,6 @@ function GUIControllerInit()
 	common.RegisterReactionHandler(OnRightClick, "OnProgressBarRightClick" )
 	common.RegisterReactionHandler(OnPlayerBarPointing, "OnPlayerBarPointing" )
 	common.RegisterReactionHandler(MoveModeClick, "addClick")
-	common.RegisterReactionHandler(ShowSelectTargetTypePanel, "GetModeBtnReaction")
-	common.RegisterReactionHandler(SelectTargetTypePressed, "SelectModeBtnReaction")
-	common.RegisterReactionHandler(TargetWorkSwitch, "GetModeBtnRightClick")
 	common.RegisterReactionHandler(TargetLockChanged, "OnTargetLockChanged")
 	common.RegisterReactionHandler(function () RaidLockBtn(m_raidPanel) end, "OnRaidLockChanged")
 	common.RegisterReactionHandler(function () DnD.SwapWdg(m_raidSettingsForm) end, "OnConfigRaidChange")

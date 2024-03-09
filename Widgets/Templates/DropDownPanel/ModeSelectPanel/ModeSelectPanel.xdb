@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<WidgetPanel>
+	<Name>DropDownSelectPanel</Name>
+	<Priority>3</Priority>
+	<BackLayer href="../ModeDropDownHeaderPanel/ModeDropDownPanel.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)" />
+	<Children>
+		<Item href="SelectButton/SelectButton.xdb#xpointer(/WidgetButton)"/>
+	</Children>
+	<Placement>
+		<X>
+			<Align>WIDGET_ALIGN_BOTH</Align>
+			<Pos>0</Pos>
+		</X>
+		<Y>
+			<Align>WIDGET_ALIGN_BOTH</Align>
+			<Pos>24</Pos>
+		</Y>
+	</Placement>
+	<Visible>false</Visible>
+	<PickChildrenOnly>true</PickChildrenOnly>
+</WidgetPanel>
