@@ -20,10 +20,10 @@
 	<TransparentInput>false</TransparentInput>
 	<Variants>
 		<Item>
-			<LayerHighlight href="Textures/CheckLight.xdb#xpointer(/WidgetLayerTiledTexture)" />
+			<LayerHighlight href="Textures/CheckLight.xdb" />
 			<PushedOffset x="-1" y="1" />
 			<StateNormal>
-				<LayerMain href="Textures/Check.xdb#xpointer(/WidgetLayerTiledTexture)" />
+				<LayerMain href="Textures/Check.xdb" />
 			</StateNormal>
 			<ReactionOnUp>true</ReactionOnUp>
 			<Reaction>OnCheckChange</Reaction>

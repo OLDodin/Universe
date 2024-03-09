@@ -2,15 +2,13 @@
 <WidgetPanel>
 	<Priority>2</Priority>
 	<Name>DotIcon</Name>
-	<BackLayer href="Textures/DotIcon.xdb#xpointer(/WidgetLayerTiledTexture)" />
+	<BackLayer href="Textures/iconTexture.xdb" />
 	<Placement>
 		<X>
-			<Align>WIDGET_ALIGN_LOW</Align>
-			<Size>16</Size>
+			<Align>WIDGET_ALIGN_BOTH</Align>
 		</X>
 		<Y>
-			<Align>WIDGET_ALIGN_LOW</Align>
-			<Size>16</Size>
+			<Align>WIDGET_ALIGN_BOTH</Align>
 		</Y>
 	</Placement>
 	<TransparentInput>true</TransparentInput>

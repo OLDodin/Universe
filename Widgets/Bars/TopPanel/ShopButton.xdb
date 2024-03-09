@@ -18,10 +18,10 @@
 	<TransparentInput>false</TransparentInput>
 	<Variants>
 		<Item>
-			<LayerHighlight href="Textures/ShopLight.xdb#xpointer(/WidgetLayerTiledTexture)" />
+			<LayerHighlight href="Textures/ShopLight.xdb" />
 			<PushedOffset x="-1" y="1" />
 			<StateNormal>
-				<LayerMain href="Textures/Shop.xdb#xpointer(/WidgetLayerTiledTexture)" />
+				<LayerMain href="Textures/Shop.xdb" />
 			</StateNormal>
 			<ReactionOnUp>true</ReactionOnUp>
 			<Reaction>OnShopChange</Reaction>

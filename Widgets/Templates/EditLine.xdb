@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <WidgetEditLine>
 	<Name>EditLine</Name>
-	<BackLayer href="Button/HButtonPressed.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)" />
-	<Cursor1Layer href="Button/HButtonHighlighted.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)" />
-	<Cursor2Layer href="Button/HButtonPressed.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)" />
-	<selectionLayer  href="Button/TextEditHighlighted.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)" />
+	<BackLayer href="EditLine/Back.(WidgetLayerSimpleTexture).xdb" />
+	<Cursor1Layer href="EditLine/Cursor1.(WidgetLayerSimpleTexture).xdb" />
+	<Cursor2Layer href="EditLine/Cursor2.(WidgetLayerSimpleTexture).xdb" />
+	<selectionLayer  href="EditLine/TextEditSelection.(WidgetLayerSimpleTexture).xdb" />
 	<ReactionEsc>EditLineEsc</ReactionEsc>
 	<ReactionEnter>EditLineEsc</ReactionEnter>
 </WidgetEditLine>

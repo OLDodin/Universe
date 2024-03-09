@@ -2,7 +2,7 @@
 <WidgetPanel>
 	<Priority>2</Priority>
 	<Name>ImageBox</Name>
-	<BackLayer href="Textures/ImageBox.xdb#xpointer(/WidgetLayerSimpleTexture)" />
+	<BackLayer href="Textures/iconTexture.xdb" />
 	<Placement>
 		<X>
 			<Align>WIDGET_ALIGN_LOW</Align>

@@ -1,5 +1,6 @@
 local m_groupBuffPanels = {}
 local m_lastTargetID = nil
+local m_template = getChild(mainForm, "Template")
 
 local function GetTextSizeByBuffSize(aSize)
 	return math.floor(aSize/2.5)
@@ -227,8 +228,8 @@ function CreateGroupBuffPanel(aForm, aSettings, anIsAboveHead, aPosInPlateIndex)
 		else
 			DnD.Init(groupBuffPanel.panelWdg, groupBuffTopPanel, true, false)
 		end
-			
-		setTemplateWidget(getChild(aForm, "BuffGroup"))
+				
+		setTemplateWidget(m_template)
 		for j=1, num do
 			local x = ((j-1)%w)*size
 			local y = math.floor((j-1)/w)*size
@@ -236,18 +237,21 @@ function CreateGroupBuffPanel(aForm, aSettings, anIsAboveHead, aPosInPlateIndex)
 			local currBuff = {}
 			currBuff.buffFinishedTime_h = 0
 			currBuff.info = {}
-			currBuff.buffWdg = createWidget(groupBuffPanel.panelWdg, nil, "Buff", buffAlign, nil, nil, nil, x, 30+y)
-			hide(currBuff.buffWdg)
-			resize(currBuff.buffWdg, size, size)
-			resize(getChild(currBuff.buffWdg, "DotText"), size, round(size/2.4))
-			resize(getChild(currBuff.buffWdg, "DotStackText"), size, GetTextSizeByBuffSize(size))
-						
+			currBuff.buffWdg = createWidget(groupBuffPanel.panelWdg, "b"..tostring(j), "BuffTemplate", buffAlign, nil, nil, nil, x, 30+y)
 			currBuff.info.buffIcon = getChild(currBuff.buffWdg, "DotIcon")
 			currBuff.info.buffHighlight = getChild(currBuff.buffWdg, "DotHighlight")
 			currBuff.info.buffTimerWdg = getChild(currBuff.buffWdg, "DotText")
 			currBuff.info.buffStackCntWdg = getChild(currBuff.buffWdg, "DotStackText")
 			currBuff.info.buffSize = size
 			
+			hide(currBuff.buffWdg)
+			resize(currBuff.buffWdg, currBuff.info.buffSize, currBuff.info.buffSize)
+			resize(currBuff.info.buffTimerWdg, currBuff.info.buffSize, round(currBuff.info.buffSize/2.4)+1)
+			resize(currBuff.info.buffStackCntWdg, currBuff.info.buffSize, GetTextSizeByBuffSize(currBuff.info.buffSize)+1)
+			align(currBuff.info.buffStackCntWdg, WIDGET_ALIGN_LOW, WIDGET_ALIGN_HIGH)
+			move(currBuff.info.buffTimerWdg, 1, 1)
+			move(currBuff.info.buffStackCntWdg, 1, 1)
+						
 			groupBuffPanel.buffList[j] = currBuff
 		end		
 	end
@@ -272,7 +276,7 @@ function ResetPanelPos(aInd)
 	end
 	local groupBuffTopPanel = getChild(m_groupBuffPanels[aInd].panelWdg, "MoveModePanel")
 	DnD.Remove(groupBuffTopPanel)
-	SetConfig("DnD:"..DnD.GetWidgetTreePath(m_groupBuffPanels[aInd].panelWdg), {posX = 500, posY = 400, highPosX = 0, highPosY = 0})
+	SetConfig("DnD:"..DnD.GetWidgetTreePath(m_groupBuffPanels[aInd].panelWdg), {posX = 500, posY = 400, highPosX = 500, highPosY = 0})
 	DnD.Init(m_groupBuffPanels[aInd].panelWdg, groupBuffTopPanel, true, false)
 end
 

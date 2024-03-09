@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<UISingleTexture>
+	<singleTexture href="MsgBoxBtnCrossPressed.(UITexture).xdb" />
+	<permanentCache>0</permanentCache>
+	<sourceFile href="//Mods/SampleCommon/Elements/MsgBox/Textures/MsgBoxBtnCrossPressed.tga" />
+	<sourceFileCRC>-75574066</sourceFileCRC>
+</UISingleTexture>

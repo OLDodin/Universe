@@ -2,6 +2,6 @@
 <WidgetTextView>
 	<Name>DotStackText</Name>
 	<Priority>3</Priority>
-	
+
 	<TransparentInput>true</TransparentInput>
 </WidgetTextView>

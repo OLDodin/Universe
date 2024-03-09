@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<WidgetButton>
+	<Header>
+		<isPrototype>true</isPrototype>
+	</Header>
+	<Name>Cross</Name>
+	<Placement>
+		<X>
+			<Align>WIDGET_ALIGN_HIGH</Align>
+			<HighPos>8</HighPos>
+			<Size>16</Size>
+		</X>
+		<Y>
+			<Align>WIDGET_ALIGN_LOW</Align>
+			<Pos>8</Pos>
+			<Size>16</Size>
+		</Y>
+	</Placement>
+	<IgnoreDblClick>true</IgnoreDblClick>
+	
+	<Variants>
+		<Item>
+			<StateNormal>
+				<LayerMain href="Textures/MsgBoxBtnCrossNormal.(WidgetLayerSimpleTexture).xdb" />
+			</StateNormal>
+			<StatePushed>
+				<LayerMain href="Textures/MsgBoxBtnCrossPressed.(WidgetLayerSimpleTexture).xdb" />
+			</StatePushed>
+			<StateHighlighted>
+				<LayerMain href="Textures/MsgBoxBtnCrossHighlighted.(WidgetLayerSimpleTexture).xdb" />
+			</StateHighlighted>
+			<Reaction>execute</Reaction>
+			<ReactionRightClick>execute</ReactionRightClick>
+			<ReactionOnUp>true</ReactionOnUp>
+		</Item>
+	</Variants>
+</WidgetButton>

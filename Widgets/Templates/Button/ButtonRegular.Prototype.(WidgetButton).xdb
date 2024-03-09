@@ -8,7 +8,6 @@
 	<TextTag>button_label</TextTag>
 	<Variants>
 		<Item>
-			<TextFileRef href="ButtonExecute.txt" />
 			<LayerHighlight href="ButtonRegularHighlighted.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)" />
 			<PushedOffset x="-2" y="2" />
 			<StateNormal>

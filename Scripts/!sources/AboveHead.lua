@@ -92,6 +92,7 @@ function InitPanelsCache(aForm)
 	if settings then
 		for i=1, CACHE_PANELS_SIZE do
 			local panelContainer = CreateGroupBuffPanel(aForm, settings, true, 100001)
+			hide(panelContainer.panelWdg)
 			panelContainer.ai = i
 			table.insert(m_cachePanels, panelContainer)
 		end

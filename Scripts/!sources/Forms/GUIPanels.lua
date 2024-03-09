@@ -79,7 +79,8 @@ local function PlayerHPChanged(anInfo, aPlayerBar)
 	newPanelW = math.max(newPanelW, 1)
 	resize(aPlayerBar.barWdg, newPanelW)
 	if aPlayerBar.formSettings.raidBuffs.colorDebuffButton then
-		resize(aPlayerBar.clearBarWdg, newPanelW)
+	--чтобы лучше видно было хп убавим на 1 пиксель
+		resize(aPlayerBar.clearBarWdg, newPanelW-1)
 	end
 	if aPlayerBar.formSettings.showProcentButton then
 		setText(aPlayerBar.procTextWdg, tostring(anInfo).."%", "LogColorYellow")
@@ -485,6 +486,7 @@ function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettin
 		if aPlayerBar.optimizeInfo.textureIndexForIcon ~= textureIndexForIcon then
 			aPlayerBar.optimizeInfo.textureIndexForIcon = textureIndexForIcon
 			setBackgroundTexture(aPlayerBar.classIconWdg, g_texIcons[textureIndexForIcon])
+			show(aPlayerBar.classIconWdg)
 		end
 	end
 
@@ -526,7 +528,7 @@ function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings, aNum)
 
 	local playerBar = {}
 	if aRaidMode then
-		local raidMoveBar = createWidget(aParentPanel, nil, "AddBar", nil, nil, panelWidth, panelHeight, posX, posY)
+		local raidMoveBar = createWidget(aParentPanel, "raidPanelAddBar", "AddBar", nil, nil, panelWidth, panelHeight, posX, posY)
 		resize(getChild(raidMoveBar, "HealthBarBackground"), panelWidth, panelHeight)
 		DnD.HideWdg(raidMoveBar)
 		DnD.Init(raidMoveBar, raidMoveBar, false)
@@ -590,7 +592,7 @@ function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings, aNum)
 	resize(playerBar.farBarBackgroundWdg, panelWidth-4, panelHeight-4)
 	resize(playerBar.farColoredBarWdg, panelWidth-4, panelHeight-4)
 	resize(playerBar.barWdg, panelWidth-4, panelHeight-4)
-	resize(playerBar.clearBarWdg, panelWidth-4, panelHeight-4)
+	resize(playerBar.clearBarWdg, panelWidth-5, panelHeight-4)
 	resize(playerBar.buffPanelWdg, panelWidth, panelHeight)
 	resize(playerBar.buffPanelNegativeWdg, panelWidth, panelHeight)
 
@@ -602,6 +604,7 @@ function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings, aNum)
 	
 	hide(playerBar.distTextWdg)
 	hide(playerBar.arrowIconWdg)
+	hide(playerBar.classIconWdg)
 	
 	align(playerBar.procTextWdg, WIDGET_ALIGN_CENTER, WIDGET_ALIGN_LOW)
 	move(playerBar.arrowIconWdg, 6)
@@ -619,7 +622,7 @@ function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings, aNum)
 	setBackgroundColor(playerBar.farColoredBarWdg, { r = 0.3; g = 0.3; b = 0.3; a = 0.7 }) 
 	hide(playerBar.farColoredBarWdg)
 	
-	barColor = { r = 0; g = 0; b = 0; a = 1.0 }
+	barColor = { r = 0; g = 0.03; b = 0.2; a = 1.0 }
 	setBackgroundColor(playerBar.clearBarWdg, barColor) 
 	hide(playerBar.clearBarWdg)
 	
@@ -670,11 +673,12 @@ function CreateBuffSlot(aParent, aBuffSize, anResArray, anIndex, anAlign)
 	buffSlot.buffIcon = getChild(buffSlot.buffWdg, "DotIcon")
 	buffSlot.buffHighlight = getChild(buffSlot.buffWdg, "DotHighlight")
 	buffSlot.buffStackCnt = getChild(buffSlot.buffWdg, "DotStackText")
-	align(buffSlot.buffStackCnt, WIDGET_ALIGN_HIGH, WIDGET_ALIGN_HIGH)
-	resize(buffSlot.buffStackCnt, aBuffSize, GetTextSizeByBuffSize(aBuffSize))
-	resize(buffSlot.buffIcon, aBuffSize, aBuffSize)
+	buffSlot.buffTime = getChild(buffSlot.buffWdg, "DotText")
+	align(buffSlot.buffStackCnt, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)
+	resize(buffSlot.buffStackCnt, aBuffSize, GetTextSizeByBuffSize(aBuffSize)+1)
+	resize(buffSlot.buffWdg, aBuffSize, aBuffSize)
 	show(buffSlot.buffIcon)
-	resize(buffSlot.buffHighlight, aBuffSize, aBuffSize)
+	hide(buffSlot.buffTime)
 
 	if anResArray then
 		table.insert(anResArray, buffSlot)	
@@ -742,6 +746,7 @@ function CreateRaidPanel()
 	RaidLockBtn(raidPanel)
 	
 	hide(getChild(wtTopPanel, "PartyButton"))
+	
 	return raidPanel
 end
 
@@ -751,7 +756,7 @@ function CreateRaidPartyBtn(aRaidPanel)
 	setTemplateWidget(wtTopPanel)
 	for i = 1, 4 do
 		raidPartyButtons[i] = {}
-		raidPartyButtons[i].wdg = createWidget(wtTopPanel, nil, "PartyButton", nil, nil, nil, nil, (i-1)*20+37, nil, nil, nil)
+		raidPartyButtons[i].wdg = createWidget(wtTopPanel, "UTargetTopPanel", "PartyButton", nil, nil, nil, nil, (i-1)*20+37, nil, nil, nil)
 		raidPartyButtons[i].active = true
 		raidPartyButtons[i].showed = false
 		setBackgroundTexture(raidPartyButtons[i].wdg, g_texParty[i])

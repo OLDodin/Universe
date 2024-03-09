@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<WidgetTextView>
+	<Name>DotText</Name>
+	<Priority>4</Priority>
+
+	<TransparentInput>true</TransparentInput>
+</WidgetTextView>

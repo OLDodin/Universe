@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <WidgetPanel>
 	<Name>MoveModeTopPanel</Name>
-	<BackLayer href="Textures/TopPanel.xdb#xpointer(/WidgetLayerTiledTexture)" />
+	<BackLayer href="../../../Bars/Textures/TopPanel.xdb" />
 	<Placement>
 		<X>
 			<Align>WIDGET_ALIGN_BOTH</Align>

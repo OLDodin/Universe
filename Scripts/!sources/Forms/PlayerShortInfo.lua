@@ -18,6 +18,7 @@ function CreatePlayerShortInfoForm()
 	priority(form, 508)
 	hide(form)
 
+	createWidget(form, "closeShortInfo", "Cross",  WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 15, 15, 6, 6)
 	m_nameWdg = createWidget(form, "name", "TextView",  WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 286, 20, 50, 10)
 	m_classImgWdg = createWidget(form, "classImg", "ImageBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 30, 30, 15, 10)
 	m_infoWdg = createWidget(form, "info", "TextView",  WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 320, 20, 15, 40)

@@ -16,17 +16,16 @@ function CreateProgressCastSettingsForm()
 	createWidget(form, "showOnlyMyTarget", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 330, 25, 20, 200)
 	
 	setLocaleText(createWidget(form, "panelWidthText", "TextView", nil, nil, 200, 25, 20, 230))
-	createWidget(form, "panelWidthEdit", "EditLine", nil, nil, 80, 25, 270, 230)
+	createWidget(form, "panelWidthEdit", "EditLine", nil, nil, 70, 25, 280, 230)
 	
 	setLocaleText(createWidget(form, "panelHeightText", "TextView", nil, nil, 200, 25, 20, 260))
-	createWidget(form, "panelHeightEdit", "EditLine", nil, nil, 80, 25, 270, 260)
+	createWidget(form, "panelHeightEdit", "EditLine", nil, nil, 70, 25, 280, 260)
 	
 	setLocaleText(createWidget(form, "resetPanelCastPosButton", "Button", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 200, 30, 20, 290))
 	
 	setLocaleText(createWidget(form, "ignoreListTxt", "TextView", nil, nil, 200, 25, 370, 50))
-	createWidget(form, "container1", "ScrollableContainer", nil, nil, 310, 215, 370, 70)
-	setLocaleText(createWidget(form, "addIgnoreCastsButton", "Button", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 110, 25, 570, 290))
-	createWidget(form, "EditLine1", "EditLine", nil, nil, 200, 25, 360, 290)
+	createWidget(form, "ignoreListContainer", "ScrollableContainer", nil, nil, 310, 215, 370, 70)
+	setLocaleText(createWidget(form, "addIgnoreCastsButton", "Button", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 280, 25, 385, 290))
 	
 	DnD.Init(form, form, true)
 		
@@ -47,7 +46,7 @@ function SaveProgressCastFormSettings(aForm)
 	mySettings.panelWidthText = getTextString(getChild(aForm, "panelWidthEdit"))
 	mySettings.panelHeightText = getTextString(getChild(aForm, "panelHeightEdit"))
 	
-	UpdateTableValuesFromContainer(mySettings.ignoreList, aForm, getChild(aForm, "container1"))
+	UpdateTableValuesFromContainer(mySettings.ignoreList, aForm, getChild(aForm, "ignoreListContainer"))
 	
 	return mySettings
 end
@@ -70,5 +69,5 @@ function LoadProgressCastFormSettings(aForm)
 	setText(getChild(aForm, "panelWidthEdit"), mySettings.panelWidthText)
 	setText(getChild(aForm, "panelHeightEdit"), mySettings.panelHeightText)
 	
-	ShowValuesFromTable(mySettings.ignoreList, aForm, getChild(aForm, "container1"))
+	ShowValuesFromTable(mySettings.ignoreList, aForm, getChild(aForm, "ignoreListContainer"))
 end

@@ -8,7 +8,7 @@ function CreateExportProfilesForm()
 
 
 	setLocaleText(createWidget(form, "closeExprotBtn", "Button", WIDGET_ALIGN_CENTER, WIDGET_ALIGN_HIGH, 150, 25, 0, 10))
-	createWidget(form, "EditBox1", "EditBox", nil, nil, 560, 180, 20, 50)
+	createWidget(form, "EditBox1", "EditBoxFix", nil, nil, 560, 180, 20, 50)
 	
 
 	DnD.Init(form, form, true)
@@ -17,6 +17,6 @@ function CreateExportProfilesForm()
 end
 
 function SetEditText(aForm, aTxt)
-	setText(getChild(aForm, "EditBox1"), aTxt)
+	setText(getChild(getChild(aForm, "EditBox1"), "EditBox"), aTxt)
 	DnD.ShowWdg(aForm)
 end

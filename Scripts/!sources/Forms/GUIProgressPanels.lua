@@ -101,7 +101,12 @@ function SetBaseInfoProgressCastPanel(aBar, aInfo, aType)
 	if buffInfo then
 		local buffCreatorID = buffInfo.producer and buffInfo.producer.casterId or nil
 		aBar.castedByMe = g_myAvatarID == buffCreatorID
-		setBackgroundTexture(aBar.iconWdg, buffInfo.texture)
+		if buffInfo.texture then
+			setBackgroundTexture(aBar.iconWdg, buffInfo.texture)
+			show(aBar.iconWdg)
+		else
+			hide(aBar.iconWdg)
+		end
 		resize(aBar.barWdg, fromPlacement.sizeX * (buffInfo.remainingMs / buffInfo.durationMs))
 		fromPlacement = aBar.barWdg:GetPlacementPlain()
 		aBar.barWdg:FinishResizeEffect()
@@ -113,7 +118,13 @@ function SetBaseInfoProgressCastPanel(aBar, aInfo, aType)
 	end
 	
 	if aInfo.spellId then
-		setBackgroundTexture(aBar.iconWdg, getSpellTextureFromCache(aInfo.spellId))
+		local texture = getSpellTextureFromCache(aInfo.spellId)
+		if texture then
+			setBackgroundTexture(aBar.iconWdg, texture)
+			show(aBar.iconWdg)
+		else
+			hide(aBar.iconWdg)
+		end
 		resize(aBar.barWdg, fromPlacement.sizeX * ((aInfo.duration - aInfo.progress) / aInfo.duration))
 		fromPlacement = aBar.barWdg:GetPlacementPlain()
 		aBar.barWdg:FinishResizeEffect()

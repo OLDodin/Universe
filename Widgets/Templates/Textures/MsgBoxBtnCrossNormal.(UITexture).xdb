@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<UITexture>
+	<mipSW>-1</mipSW>
+	<mipsNumber>1</mipsNumber>
+	<generateMipChain>false</generateMipChain>
+	<type>DXT5</type>
+	<width>16</width>
+	<height>16</height>
+	<realWidth>16</realWidth>
+	<realHeight>16</realHeight>
+	<disableLODControl>false</disableLODControl>
+	<alphaTex>true</alphaTex>
+	<binaryFileSize>164</binaryFileSize>
+	<binaryFile href="MsgBoxBtnCrossNormal.(UITexture).bin" />
+	<sourceFile href="//Mods/SampleCommon/Elements/MsgBox/Textures/MsgBoxBtnCrossNormal.tga" />
+	<sourceFileCRC>-956016466</sourceFileCRC>
+	<wrap>false</wrap>
+	<pool>UNDEFINED</pool>
+</UITexture>

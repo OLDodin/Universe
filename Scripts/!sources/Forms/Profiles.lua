@@ -8,7 +8,7 @@ function CreateProfilesForm()
 	setLocaleText(createWidget(form, "configProfilesHeader", "TextView",  WIDGET_ALIGN_CENTER, nil, 250, 20, nil, 20))
 	setText(createWidget(form, "closeButton", "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 20, 20, 20, 20), "x")
 
-	createWidget(form, "container", "ScrollableContainer", nil, nil, 560, 150, 20, 42)
+	createWidget(form, "configProfilesContainer", "ScrollableContainer", nil, nil, 560, 150, 20, 42)
 
 	setLocaleText(createWidget(form, "saveAsProfileButton", "Button", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 330, 25, 20, 200))
 	setLocaleText(createWidget(form, "importProfileButton", "Button", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 330, 25, 20, 230))
@@ -18,4 +18,9 @@ function CreateProfilesForm()
 	DnD.Init(form, form, true)
 
 	return form
+end
+
+function LoadProfilesFormSettings(aForm)
+	local allProfiles = GetAllProfiles()
+	ShowValuesFromTable(allProfiles, aForm, getChild(aForm, "configProfilesContainer"))
 end

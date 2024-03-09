@@ -4,7 +4,6 @@
 	<Priority>250</Priority>
 	<Children>
 		<Item href="TopPanel/Panel.xdb#xpointer(/WidgetPanel)"/>
-		<Item href="Buff/Buff.xdb#xpointer(/WidgetPanel)"/>
 	</Children>
 	<Placement>
 		<X>

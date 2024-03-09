@@ -3,6 +3,11 @@ local cachedFromWString = userMods.FromWString
 local cachedIsWString = common.IsWString
 local cachedIsExist = object.IsExist
 local cachedIsUnit = object.IsUnit
+
+--init global Locales
+getLocale()
+local cachedTimeAbbr = {}
+
 --------------------------------------------------------------------------------
 -- Integer functions
 --------------------------------------------------------------------------------
@@ -144,16 +149,23 @@ function compare(name1, name2)
 	return name1:Compare(name2, true) == 0
 end
 
+function initTimeAbbr()
+	table.insert(cachedTimeAbbr, toString(Locales["s"]))
+	table.insert(cachedTimeAbbr, toString(Locales["m"]))
+	table.insert(cachedTimeAbbr, toString(Locales["h"]))
+	table.insert(cachedTimeAbbr, toString(Locales["d"]))
+end
+
 function getTimeString(ms)
-	if		ms<1000	then return "0."..tostring(round(ms/100)).."s"
+	if		ms<1000	then return "0."..tostring(round(ms/100))..cachedTimeAbbr[1]
 	else   	ms=round(ms/1000) end
-	if		ms<60	then return tostring(ms).."s"
+	if		ms<60	then return tostring(ms)..cachedTimeAbbr[1]
 	else    ms=math.floor(ms/60) end
-	if		ms<60	then return tostring(ms).."m"
+	if		ms<60	then return tostring(ms)..cachedTimeAbbr[2]
 	else    ms=round(ms/60) end
-	if		ms<24	then return tostring(ms).."h"
+	if		ms<24	then return tostring(ms)..cachedTimeAbbr[3]
 	else    ms=round(ms/24) end
-	return tostring(ms).."d"
+	return tostring(ms)..cachedTimeAbbr[4]
 end
 
 function makeColorMoreGray(aColor)
@@ -300,10 +312,17 @@ end
 function setText(widget, text, color, align, fontSize, shadow, outline, fontName)
 	if not widget then return nil end
 	text=toWString(text or "")
-	if widget.SetVal 		then widget:SetVal("button_label", text)  end
-	--if widget.SetTextColor	then widget:SetTextColor("button_label", { a = 1, r = 1, g = 0, b = 0 } ) end --ENUM_ColorType_SHADOW
-	if widget.SetText		then widget:SetText(text) end
-	if widget.SetValuedText then widget:SetValuedText(toValuedText(text, color or "ColorWhite", align, fontSize, shadow, outline, fontName)) end
+	--textview
+	if widget.SetValuedText then 
+		widget:SetValuedText(toValuedText(text, color or "ColorWhite", align, fontSize, shadow, outline, fontName)) 
+	--textedit
+	elseif widget.SetText then		
+		widget:SetText(text)
+	--buttons
+	elseif widget.SetVal then
+		widget:SetVal("button_label", text) 
+		if widget.SetClassVal then widget:SetClassVal( "color", color or "ColorWhite" ) end
+	end
 end
 
 function setBackgroundTexture(widget, texture)
@@ -332,22 +351,19 @@ function getParent(widget, num)
 	return getParent(parent, num-1)
 end
 
-function getForm(widget)
-	if not widget then return nil end
-	if not widget.CreateWidgetByDesc then
-		return getForm(getParent(widget))
-	end
-	return widget
-end
-
 function createWidget(parent, widgetName, templateName, alignX, alignY, width, height, posX, posY, noParent)
 	local widget = nil
-	local owner=getForm(parent)
-
 	local desc = getDesc(templateName)
-	if not desc and parent then return nil end
-	widget = owner and owner:CreateWidgetByDesc(desc)
-	if parent and widget and not noParent then parent:AddChild(widget) end
+	if not desc then
+		LogInfo("Not found WidgetDesc of ", templateName)
+		return
+	end
+	widget = mainForm:CreateWidgetByDesc(desc)
+	if not widget or not widget:IsValid() then
+		LogInfo("Fail create widget type of ", templateName)
+		return
+	end
+	if parent and not noParent then parent:AddChild(widget) end
 	setName(widget, widgetName)
 	align(widget, alignX, alignY)
 	move(widget, posX, posY)
@@ -384,7 +400,10 @@ end
 function setCheckBox(widget, value)
 	if not widget or not widget.SetVariant or not widget.GetVariantCount then return end
 	if widget:GetVariantCount()<2 then return end
-	if 		value 	then 	widget:SetVariant(1) return end
+	if 	value then 	
+		widget:SetVariant(1) 
+		return 
+	end
 	widget:SetVariant(0)
 end
 
@@ -515,14 +534,14 @@ end
 -- Locales functions
 --------------------------------------------------------------------------------
 
-local locale=nil
+initTimeAbbr()
 
 function setLocaleTextEx(widget, checked, color, align, fontSize, shadow, outline, fontName)
-	if not locale then
-		locale=getLocale()
+	if not Locales then
+		getLocale()
 	end
 	local name=getName(widget)
-	local text=name and locale[name]
+	local text=name and Locales[name]
 	if not text then
 		text = name
 	end
@@ -531,12 +550,13 @@ function setLocaleTextEx(widget, checked, color, align, fontSize, shadow, outlin
 			text=formatText(text, align)
 			setCheckBox(widget, checked)
 		end
+		
 		setText(widget, text, color, align, fontSize, shadow, outline, fontName)
 	end
 end
 
 function setLocaleText(widget, checked)
-	setLocaleTextEx(widget, checked, "ColorWhite",  "left")
+	setLocaleTextEx(widget, checked, "ColorWhite", "left")
 end
 
 --------------------------------------------------------------------------------
@@ -727,7 +747,7 @@ end
 function ressurect(targetId, ressurectName)
 	local arrNames = {}
 	for i = 1, 4 do
-		local defaultName = getLocale()["defaultRessurectNames"..i]
+		local defaultName = Locales["defaultRessurectNames"..i]
 		if defaultName then
 			table.insert(arrNames, defaultName)
 		end

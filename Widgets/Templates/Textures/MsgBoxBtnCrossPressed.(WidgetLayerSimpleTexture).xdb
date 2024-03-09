@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<WidgetLayerSimpleTexture>
+	<Color>0xffffffff</Color>
+	<Grayed>false</Grayed>
+	<BlendEffect>BLEND_EFFECT_ALPHABLND</BlendEffect>
+	<flatPlacement>false</flatPlacement>
+	<lazyLoad>false</lazyLoad>
+	<textureItem href="MsgBoxBtnCrossPressed.(UISingleTexture).xdb" />
+	<textureMask href="" />
+	<Scaling>true</Scaling>
+</WidgetLayerSimpleTexture>

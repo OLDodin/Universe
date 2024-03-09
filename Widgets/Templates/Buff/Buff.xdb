@@ -6,6 +6,7 @@
 		<Item href="DotHighlight.xdb#xpointer(/WidgetPanel)"/>
 		<Item href="DotIcon.xdb#xpointer(/WidgetPanel)"/>
 		<Item href="DotStackText.xdb#xpointer(/WidgetTextView)"/>
+		<Item href="DotText.xdb#xpointer(/WidgetTextView)"/>
 	</Children>
 	<TransparentInput>true</TransparentInput>
 </WidgetPanel>

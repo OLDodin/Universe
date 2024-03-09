@@ -2,7 +2,7 @@
 <WidgetPanel>
 	<Priority>130</Priority>
 	<Name>ClassIcon</Name>
-	<BackLayer href="../Textures/ClassIcon.xdb#xpointer(/WidgetLayerSimpleTexture)" />
+	<BackLayer href="../Textures/iconTexture.xdb" />
 	<Placement>
 		<X>
 			<Align>WIDGET_ALIGN_LOW</Align>

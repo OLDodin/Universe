@@ -802,15 +802,19 @@
       <resource href="twoxtwoModeButton.txt"/>
     </Item>
     <Item>
-      <name>setHighlightColorButtonconfigGroupBuffsForm</name>
+      <name>setHighlightColorButtongroupBuffContainer</name>
       <resource href="setHighlightColorButtonconfigGroupBuffsForm.txt"/>
     </Item>
     <Item>
-      <name>setHighlightColorButtonraidSettingsForm</name>
+      <name>setHighlightColorButtonraidBuffContainer</name>
       <resource href="setHighlightColorButtonraidSettingsForm.txt"/>
     </Item>
     <Item>
-      <name>setHighlightColorButtontargeterSettingsForm</name>
+      <name>setHighlightColorButtontargetBuffContainer</name>
+      <resource href="setHighlightColorButtontargeterSettingsForm.txt"/>
+    </Item>
+	<Item>
+      <name>setHighlightColorButtonmyTargetsContainer</name>
       <resource href="setHighlightColorButtontargeterSettingsForm.txt"/>
     </Item>
     <Item>
@@ -1316,6 +1320,26 @@
 	<Item>
       <name>followMenuButton</name>
       <resource href="followMenuButton.txt"/>
+    </Item>
+	<Item>
+      <name>s</name>
+      <resource href="s.txt"/>
+    </Item>
+	<Item>
+      <name>m</name>
+      <resource href="m.txt"/>
+    </Item>
+	<Item>
+      <name>h</name>
+      <resource href="h.txt"/>
+    </Item>
+	<Item>
+      <name>d</name>
+      <resource href="d.txt"/>
+    </Item>
+	<Item>
+      <name>enterName</name>
+      <resource href="enterName.txt"/>
     </Item>
   </items>
 </UIRelatedTexts>

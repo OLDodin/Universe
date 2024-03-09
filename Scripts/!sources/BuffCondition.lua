@@ -16,7 +16,7 @@ function BuffCondition:Init(aSettings)
 	
 	self.avlCustomTree  = GetAVLWStrTree()
 	for _, element in pairs(self.settings.customBuffs) do
-		if element.name then
+		if element.name and not element.name:IsEmpty() then
 			self.avlCustomTree:add(element)
 		end
 	end

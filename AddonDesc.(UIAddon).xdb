@@ -31,7 +31,6 @@
 		<Item href="Scripts/Forms/GUITexturesAndColors.lua"/>
 		<Item href="Scripts/Forms/MainSettings.lua"/>
 		<Item href="Scripts/Forms/Profiles.lua"/>
-		<Item href="Scripts/Forms/DistanceSettingsForm.lua"/>
 		<Item href="Scripts/Forms/RaidSettings.lua"/>
 		<Item href="Scripts/Forms/TargeterSettings.lua"/>
 		<Item href="Scripts/Forms/BuffSettings.lua"/>

@@ -31,7 +31,7 @@ function CheckBoxChangedOff(aParams)
 end
 
 
-
+local defaultMessage = Locales["enterName"]
 
 function GetIndexForWidget(anWidget)
 	local parent = getParent(anWidget)
@@ -48,92 +48,84 @@ function GetIndexForWidget(anWidget)
 	return index
 end
 
-local function GenerateWidgetForTable(aTable, aContainer, anIndex)
+local function GenerateWidgetForContainer(anElement, aContainer, anIndex)
 	setTemplateWidget(m_template)	
-	local panel=createWidget(aContainer, nil, "Panel", WIDGET_ALIGN_BOTH, WIDGET_ALIGN_LOW, nil, 30, nil, nil, true)
+	local panel=createWidget(aContainer, "containerPanel"..tostring(anIndex), "Panel", WIDGET_ALIGN_BOTH, WIDGET_ALIGN_LOW, nil, 30, nil, nil, true)
 	setBackgroundColor(panel, {r=1, g=1, b=1, a=0.5})
 	setText(createWidget(panel, "Id", "TextView", WIDGET_ALIGN_LOW, WIDGET_ALIGN_CENTER, 30, 20, 10), anIndex)
-	local containerParentName = getName(getParent(aContainer))
+	local containerName = getName(aContainer)
 	
-	if aTable.name then
+	if anElement.name then
 		local editLineWidth = 150
-		if containerParentName == "configProfilesForm" then
+		if containerName == "configProfilesContainer" then
 			editLineWidth = 290
-		elseif containerParentName == "configGroupBuffsForm" then
+		elseif containerName == "groupBuffContainer" then
 			editLineWidth = 250
-		elseif containerParentName == "raidSettingsForm" then
+		elseif containerName == "raidBuffContainer" then
 			editLineWidth = 200
-		elseif containerParentName == "targeterSettingsForm" then
-			editLineWidth = 160
-			if getName(aContainer) == "container1" then
-				editLineWidth = 150
-			end
-		elseif containerParentName == "buffSettingsForm" then
+		elseif containerName == "myTargetsContainer" then
+			editLineWidth = 170
+		elseif containerName == "targetBuffContainer" then
+			editLineWidth = 170
+		elseif containerName == "buffPanelSettingsContainer" then
 			editLineWidth = 380
-		elseif containerParentName == "castSettingsForm" then
+		elseif containerName == "ignoreListContainer" then
 			editLineWidth = 200
 		end
 		
 		local nameWidget=createWidget(panel, "Name"..tostring(anIndex), "EditLineTransparent", WIDGET_ALIGN_LOW, WIDGET_ALIGN_CENTER, editLineWidth, 20, 35)
-		setText(nameWidget, aTable.name)
+		setText(nameWidget, anElement.name)
 	end
 	
-	if containerParentName == "configProfilesForm" then
+	if containerName == "configProfilesContainer" then
 		setText(createWidget(panel, "exportProfileButton", "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 50, 15, 140), "Export") 
 		if anIndex ~= GetCurrentProfileInd() then 
 			setText(createWidget(panel, "loadProfileButton", "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 50, 15, 30), "Load") 
 		else
 			setText(createWidget(panel, "saveProfileButton", "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 50, 15, 85), "Save") 
 		end
-	elseif containerParentName == "configGroupBuffsForm" then
-		if aTable.isBuff==nil then aTable.isBuff=true end
-		if aTable.castByMe==nil then aTable.castByMe=false end
-		if aTable.isSpell==nil then aTable.isSpell=false end
+	elseif containerName == "groupBuffContainer" then
+		if anElement.isBuff==nil then anElement.isBuff=true end
+		if anElement.castByMe==nil then anElement.castByMe=false end
+		if anElement.isSpell==nil then anElement.isSpell=false end
 
-		setCheckBox(createWidget(panel, "isBuff"..tostring(anIndex), "CheckBox", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 25, 25, 140), aTable.isBuff)
-		setCheckBox(createWidget(panel, "castByMe"..tostring(anIndex), "CheckBox", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 25, 25, 90), aTable.castByMe)
-		setCheckBox(createWidget(panel, "isSpell"..tostring(anIndex), "CheckBox", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 25, 25, 40), aTable.isSpell)
+		setCheckBox(createWidget(panel, "isBuff"..tostring(anIndex), "CheckBox", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 25, 25, 140), anElement.isBuff)
+		setCheckBox(createWidget(panel, "castByMe"..tostring(anIndex), "CheckBox", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 25, 25, 90), anElement.castByMe)
+		setCheckBox(createWidget(panel, "isSpell"..tostring(anIndex), "CheckBox", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 25, 25, 40), anElement.isSpell)
 		
-		setLocaleText(createWidget(panel, "setHighlightColorButton"..containerParentName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 30, 25, 190))
-	elseif containerParentName == "raidSettingsForm" then
-		setLocaleText(createWidget(panel, "setHighlightColorButton"..containerParentName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 30, 25, 30))
-	elseif containerParentName == "targeterSettingsForm" then
-		if getName(aContainer) == "container1" then
-			if aTable.castByMe==nil then aTable.castByMe=false end
-			setCheckBox(createWidget(panel, "castByMe"..tostring(anIndex), "CheckBox", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 25, 25, 60), aTable.castByMe)
-		end
-		setLocaleText(createWidget(panel, "setHighlightColorButton"..containerParentName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 30, 25, 30))
-	elseif containerParentName == "buffSettingsForm" then
-		setText(createWidget(panel, "editButton"..containerParentName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 15, 15, 30), "e")
+		setLocaleText(createWidget(panel, "setHighlightColorButton"..containerName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 30, 25, 190))
+	elseif containerName == "raidBuffContainer" then
+		setLocaleText(createWidget(panel, "setHighlightColorButton"..containerName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 30, 25, 30))
+	elseif containerName == "targetBuffContainer" then
+		if anElement.castByMe==nil then anElement.castByMe=false end
+		setCheckBox(createWidget(panel, "castByMe"..tostring(anIndex), "CheckBox", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 25, 25, 60), anElement.castByMe)
+		setLocaleText(createWidget(panel, "setHighlightColorButton"..containerName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 30, 25, 30))
+	elseif containerName == "buffPanelSettingsContainer" then
+		setText(createWidget(panel, "editButton"..containerName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 15, 15, 30), "e")
 		--вечный пункт для над головой
 		if anIndex ~= 1 then
-			setText(createWidget(panel, "deleteButton"..containerParentName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 15, 15, 10), "x")
+			setText(createWidget(panel, "deleteButton"..containerName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 15, 15, 10), "x")
 		end
 		return panel
 	end
 	
-	setText(createWidget(panel, "deleteButton"..containerParentName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 15, 15, 10), "x")
+	setText(createWidget(panel, "deleteButton"..containerName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 15, 15, 10), "x")
 
 	return panel
 end
 
 function ShowValuesFromTable(aTable, aForm, aContainer)
-	local container = aContainer
-	if not aContainer then 
-		container = getChild(aForm, "container") 
-	end
-	if not aTable or not container then 
+	if not aTable or not aContainer then 
 		return nil 
 	end
-	if container.RemoveItems then 
-		container:RemoveItems() 
+	if aContainer.RemoveItems then 
+		aContainer:RemoveItems()
 	end
+	local lastWdg = nil
 	for i, element in ipairs(aTable) do
-		if container.PushBack then
-			local widget=GenerateWidgetForTable(element, container, i)
-			if widget then 
-				container:PushBack(widget) 
-			end
+		lastWdg = GenerateWidgetForContainer(element, aContainer, i)
+		if lastWdg then 
+			aContainer:PushBack(lastWdg) 
 		end
 	end
 end
@@ -146,19 +138,20 @@ function DeleteContainer(aTable, anWidget, aForm)
 		container:RemoveAt(index)
 		table.remove(aTable, index+1)
 	end
+	container:ForceReposition()
+	local offset = container:GetContainerOffset()
+	--update index 
 	ShowValuesFromTable(aTable, aForm, container)
+	
+	container:SetContainerOffset(offset)
 end
 
 function UpdateTableValuesFromContainer(aTable, aForm, aContainer)
-	local container = aContainer
-	if not aContainer then 
-		container = getChild(aForm, "container") 
-	end
-	if not container or not aTable then 
+	if not aContainer or not aTable then 
 		return nil 
 	end
 	for i, j in ipairs(aTable) do
-		j.name = getText(getChild(container, "Name"..tostring(i), true))
+		j.name = getText(getChild(aContainer, "Name"..tostring(i), true))
 		j.nameLowerStr = toLowerString(j.name)
 	end
 end
@@ -169,15 +162,57 @@ function AddElementFromFormWithText(aTable, aForm, aText, aContainer)
 	if not aTable or not text or text:IsEmpty() then 
 		return false 
 	end
+	if not aContainer then 
+		return false 
+	end
 	table.insert(aTable, { name=text, nameLowerStr=textLowerStr } )
-	ShowValuesFromTable(aTable, aForm, aContainer)
+
+	local wdg = GenerateWidgetForContainer({ name=text, nameLowerStr=textLowerStr }, aContainer, GetTableSize(aTable))
+	if wdg then 
+		aContainer:PushBack(wdg) 
+		aContainer:ForceReposition()
+		aContainer:EnsureVisible(wdg)
+	end
 	return true
 end
 
-function AddElementFromForm(aTable, aForm, aTextedit, aContainer)
-	if not aTextedit then aTextedit="EditLine1" end
-	local text = getText(getChild(aForm, aTextedit))
+function AddElementFromForm(aTable, aForm, aContainer)
+	if not aTable then 
+		return false 
+	end
+
+	local newElement = { name=defaultMessage, nameLowerStr=toLowerString(defaultMessage) }
+	table.insert(aTable, newElement )
+	
+	local index = GetTableSize(aTable)
+	local wdg = GenerateWidgetForContainer(newElement, aContainer, index)
+	if wdg then 
+		aContainer:PushBack(wdg) 
+		aContainer:ForceReposition()
+		aContainer:EnsureVisible(wdg)
+		getChild(wdg, "Name"..tostring(index), false):SetFocus(true)
+	end
+	
+	return true
+end
+
+function AddElementFromFormWithEditLine(aTable, aForm, aEditLine, aContainer)
+	local text = getText(aEditLine)
+	if not text or text:IsEmpty() then
+		setText(aEditLine, defaultMessage)
+		aEditLine:SetFocus(true)
+		return false 
+	end
 	local res = AddElementFromFormWithText(aTable, aForm, text, aContainer)
-	setText(getChild(aForm, aTextedit), "")
+	setText(aEditLine, "")
 	return res
+end
+
+function FindWdgInContainer(aContainer, aWdgName)
+	for i = 0, aContainer:GetElementCount() - 1 do
+		local wdg = aContainer:At(i)
+		if getName(wdg) == aWdgName then
+			return wdg
+		end
+	end
 end
