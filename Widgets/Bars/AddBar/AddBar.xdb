@@ -14,5 +14,5 @@
 		</Item>
 	</Variants>
 	<reactionOnPointing>OnAddBarPointing</reactionOnPointing>
-	
+	<Visible>false</Visible>
 </WidgetButton>

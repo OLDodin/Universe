@@ -18,6 +18,7 @@
 		<Item href="ImageBox/ImageBox.xdb#xpointer(/WidgetPanel)" />
 		<Item href="MsgBoxBtnCross.xdb#xpointer(/WidgetButton)" />
 		<Item href="DropDownPanel/DropDownPanel.xdb"/>
+		<Item href="PanelTransparent.xdb" />
 	</Children>
 	<PickChildrenOnly>true</PickChildrenOnly>
 	<Visible>false</Visible>

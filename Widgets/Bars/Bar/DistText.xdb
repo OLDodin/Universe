@@ -5,14 +5,17 @@
 	<Placement>
 		<X>
 			<Align>WIDGET_ALIGN_HIGH</Align>
-			<Size>20</Size>
+			<Size>35</Size>
+			<Pos>0</Pos>
 			<HighPos>0</HighPos>
 		</X>
 		<Y>
-			<Align>WIDGET_ALIGN_CENTER</Align>
+			<Align>WIDGET_ALIGN_LOW</Align>
 			<Size>20</Size>
 			<Pos>0</Pos>
+			<HighPos>0</HighPos>
 		</Y>
 	</Placement>
 	<TransparentInput>true</TransparentInput>
+	<Visible>false</Visible>
 </WidgetTextView>

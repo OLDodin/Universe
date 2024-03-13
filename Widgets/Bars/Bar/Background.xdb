@@ -7,14 +7,10 @@
 	<BackLayer href="Textures/Background.xdb#xpointer(/WidgetLayerTiledTexture)" />
 	<Placement>
 		<X>
-			<Align>WIDGET_ALIGN_LOW</Align>
-			<Size>250</Size>
-			<Pos>0</Pos>
+			<Align>WIDGET_ALIGN_BOTH</Align>
 		</X>
 		<Y>
-			<Align>WIDGET_ALIGN_LOW</Align>
-			<Size>20</Size>
-			<Pos>0</Pos>
+			<Align>WIDGET_ALIGN_BOTH</Align>
 		</Y>
 	</Placement>
 	<TransparentInput>true</TransparentInput>

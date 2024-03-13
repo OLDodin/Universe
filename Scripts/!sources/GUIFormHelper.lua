@@ -134,9 +134,8 @@ function CheckDropDownOrientation(anWidget)
 end
 
 function GetIndexForWidget(anWidget)
-	local parent = getParent(anWidget)
-	local container = getParent(getParent(getParent(parent)))
-	if not parent or not container then 
+	local container = getParent(anWidget, 5)
+	if not container then 
 		return nil
 	end
 	local index = nil
@@ -150,8 +149,9 @@ end
 
 local function GenerateWidgetForContainer(anElement, aContainer, anIndex)
 	setTemplateWidget(m_template)	
-	local panel=createWidget(aContainer, "containerPanel"..tostring(anIndex), "Panel", WIDGET_ALIGN_BOTH, WIDGET_ALIGN_LOW, nil, 30, nil, nil, true)
-	setBackgroundColor(panel, {r=1, g=1, b=1, a=0.5})
+	local ownerPanel=createWidget(nil, "containerMainPanel"..tostring(anIndex), "Panel", WIDGET_ALIGN_BOTH, WIDGET_ALIGN_LOW, nil, 30, nil, nil, true)
+	setBackgroundColor(ownerPanel, {r=1, g=1, b=1, a=0.5})
+	local panel=createWidget(ownerPanel, "containerPanel", "PanelTransparent", WIDGET_ALIGN_BOTH, WIDGET_ALIGN_LOW, nil, 30, 0, 0)
 	setText(createWidget(panel, "Id", "TextView", WIDGET_ALIGN_LOW, WIDGET_ALIGN_CENTER, 30, 20, 10), anIndex)
 	local containerName = getName(aContainer)
 	
@@ -167,8 +167,6 @@ local function GenerateWidgetForContainer(anElement, aContainer, anIndex)
 			editLineWidth = 170
 		elseif containerName == "targetBuffContainer" then
 			editLineWidth = 170
-		elseif containerName == "buffPanelSettingsContainer" then
-			editLineWidth = 380
 		elseif containerName == "ignoreListContainer" then
 			editLineWidth = 200
 		end
@@ -200,18 +198,11 @@ local function GenerateWidgetForContainer(anElement, aContainer, anIndex)
 		if anElement.castByMe==nil then anElement.castByMe=false end
 		setCheckBox(createWidget(panel, "castByMe"..tostring(anIndex), "CheckBox", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 25, 25, 60), anElement.castByMe)
 		setLocaleText(createWidget(panel, "setHighlightColorButton"..containerName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 30, 25, 30))
-	elseif containerName == "buffPanelSettingsContainer" then
-		setText(createWidget(panel, "editButton"..containerName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 15, 15, 30), "e")
-		--вечный пункт для над головой
-		if anIndex ~= 1 then
-			setText(createWidget(panel, "deleteButton"..containerName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 15, 15, 10), "x")
-		end
-		return panel
 	end
 	
 	setText(createWidget(panel, "deleteButton"..containerName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 15, 15, 10), "x")
 
-	return panel
+	return ownerPanel
 end
 
 function ShowValuesFromTable(aTable, aForm, aContainer)
@@ -231,13 +222,17 @@ function ShowValuesFromTable(aTable, aForm, aContainer)
 end
 
 function DeleteContainer(aTable, anWidget, aForm)
-	local parent = getParent(anWidget)
-	local container = getParent(getParent(getParent(parent)))
+	local container = getParent(anWidget, 5)
 	local index = GetIndexForWidget(anWidget)
-	if container and index and aTable then
-		container:RemoveAt(index)
-		table.remove(aTable, index+1)
+	if not container or not aTable or not index then
+		return
 	end
+	--update names
+	UpdateTableValuesFromContainer(aTable, aForm, container)
+
+	container:RemoveAt(index)
+	table.remove(aTable, index+1)
+
 	container:ForceReposition()
 	local offset = container:GetContainerOffset()
 	--update index 
@@ -290,7 +285,7 @@ function AddElementFromForm(aTable, aForm, aContainer)
 		aContainer:PushBack(wdg) 
 		aContainer:ForceReposition()
 		aContainer:EnsureVisible(wdg)
-		getChild(wdg, "Name"..tostring(index), false):SetFocus(true)
+		getChild(wdg, "Name"..tostring(index), true):SetFocus(true)
 	end
 	
 	return true

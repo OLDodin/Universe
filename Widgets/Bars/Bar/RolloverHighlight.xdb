@@ -8,14 +8,13 @@
 	<Placement>
 		<X>
 			<Align>WIDGET_ALIGN_BOTH</Align>
-			<Size>10</Size>
 			<Pos>0</Pos>
 		</X>
 		<Y>
 			<Align>WIDGET_ALIGN_BOTH</Align>
-			<Size>10</Size>
 			<Pos>0</Pos>
 		</Y>
 	</Placement>
 	<TransparentInput>true</TransparentInput>
+	<Visible>false</Visible>
 </WidgetPanel>

@@ -7,15 +7,16 @@
 	<BackLayer href="Textures/far.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)" />
 	<Placement>
 		<X>
-			<Align>WIDGET_ALIGN_LOW</Align>
-			<Size>250</Size>
-			<Pos>0</Pos>
+			<Align>WIDGET_ALIGN_BOTH</Align>
+			<Pos>2</Pos>
+			<HighPos>2</HighPos>
 		</X>
 		<Y>
-			<Align>WIDGET_ALIGN_LOW</Align>
-			<Size>20</Size>
-			<Pos>0</Pos>
+			<Align>WIDGET_ALIGN_BOTH</Align>
+			<Pos>2</Pos>
+			<HighPos>2</HighPos>
 		</Y>
 	</Placement>
 	<TransparentInput>true</TransparentInput>
+	<Visible>false</Visible>
 </WidgetPanel>

@@ -266,13 +266,32 @@ function resize(widget, width, height)
 	if widget.SetPlacementPlain then widget:SetPlacementPlain(BarPlace) end
 end
 
-function align(widget, alignX, alingY)
+function align(widget, alignX, alignY)
 	if not widget then return end
 	local BarPlace=widget.GetPlacementPlain and widget:GetPlacementPlain()
 	if not BarPlace then return nil end
 	if alignX then BarPlace.alignX = alignX end
-	if alingY then BarPlace.alignY = alingY end
+	if alignY then BarPlace.alignY = alignY end
 	if widget.SetPlacementPlain then widget:SetPlacementPlain(BarPlace) end
+end
+
+function updatePlacementPlain(widget, alignX, alignY, posX, posY, width, height)
+	if not widget then return end
+	local BarPlace=widget.GetPlacementPlain and widget:GetPlacementPlain()
+	if not BarPlace then return nil end
+	if alignX then BarPlace.alignX = alignX end
+	if alignY then BarPlace.alignY = alignY end
+	if posX then
+		BarPlace.posX = posX
+		BarPlace.highPosX = posX
+	end
+	if posY then
+		BarPlace.posY = posY
+		BarPlace.highPosY = posY
+	end
+	if width then BarPlace.sizeX = width end
+	if height then BarPlace.sizeY = height end
+	widget:SetPlacementPlain(BarPlace)
 end
 
 function priority(widget, priority)
@@ -365,9 +384,7 @@ function createWidget(parent, widgetName, templateName, alignX, alignY, width, h
 	end
 	if parent and not noParent then parent:AddChild(widget) end
 	setName(widget, widgetName)
-	align(widget, alignX, alignY)
-	move(widget, posX, posY)
-	resize(widget, width, height)
+	updatePlacementPlain(widget, alignX, alignY, posX, posY, width, height)
 	return widget
 end
 
@@ -903,6 +920,13 @@ function copyTable(t)
     result[k] = v
   end
   return result
+end
+
+function deepCopyTable(t)
+	if type( t ) ~= "table" then return t end
+	local c = {}
+	for i, v in pairs( t ) do c[ i ] = deepCopyTable( v ) end
+	return c
 end
 
 local m_spellTextureCache = {}

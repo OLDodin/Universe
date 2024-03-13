@@ -18,4 +18,5 @@
 		</Y>
 	</Placement>
 	<TransparentInput>true</TransparentInput>
+	<Visible>false</Visible>
 </WidgetPanel>

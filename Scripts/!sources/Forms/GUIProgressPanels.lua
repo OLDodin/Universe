@@ -1,4 +1,4 @@
-Global("PROGRESS_PANELS_LIMIT", 12)
+Global("PROGRESS_PANELS_LIMIT", 11)
 
 Global("ACTION_PROGRESS", 2)
 Global("BUFF_PROGRESS", 3)
@@ -37,7 +37,7 @@ function CreateProgressCastPanel(aParentPanel, aY)
 	local posY = aY*(panelHeight+1)
 	
 	local progressBar = {}
-	progressBar.wdg = createWidget(aParentPanel, nil, "ProgressBar", nil, nil, panelWidth, panelHeight, 0, posY)
+	progressBar.wdg = createWidget(aParentPanel, "ProgressBar"..tostring(aY), "ProgressBar", nil, nil, panelWidth, panelHeight, 0, posY)
 	progressBar.barWdg = getChild(progressBar.wdg, "TimeBar")
 	progressBar.backgroundWdg = getChild(progressBar.wdg, "BackgroundBar")
 	progressBar.iconWdg = getChild(progressBar.wdg, "ProgressIcon")
@@ -47,20 +47,13 @@ function CreateProgressCastPanel(aParentPanel, aY)
 	progressBar.fontScale = panelHeight / m_defaultPanelHeight
 	
 	resize(progressBar.barWdg, panelWidth, panelHeight)
-	resize(progressBar.backgroundWdg, panelWidth, panelHeight)
+	resize(progressBar.iconWdg, panelHeight-10, panelHeight-10)
 	
 	setBackgroundColor(progressBar.backgroundWdg, {r = 0; g = 0; b = 0; a = 0.6 })
-	resize(progressBar.iconWdg, panelHeight-10, panelHeight-10)
-	move(progressBar.iconWdg, 5, nil)
-	resize(progressBar.nameMobWdg, panelWidth-panelHeight, 16*progressBar.fontScale)
-	resize(progressBar.nameTargetWdg, panelWidth, 16*progressBar.fontScale)
-	resize(progressBar.nameProgressWdg, panelWidth-panelHeight, 20*progressBar.fontScale)
-	move(progressBar.nameMobWdg, panelHeight, 2)
-	move(progressBar.nameTargetWdg, 0, 2)
-	move(progressBar.nameProgressWdg, panelHeight, 0)
-	
-	hide(progressBar.wdg)
-	
+	updatePlacementPlain(progressBar.nameMobWdg, nil, nil, panelHeight, 2, panelWidth-panelHeight, 16*progressBar.fontScale)
+	updatePlacementPlain(progressBar.nameTargetWdg, nil, nil, 0, 2, panelWidth, 16*progressBar.fontScale)
+	updatePlacementPlain(progressBar.nameProgressWdg, nil, nil, panelHeight, 0, panelWidth-panelHeight, 20*progressBar.fontScale)
+		
 	return progressBar
 end
 

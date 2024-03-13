@@ -1,9 +1,11 @@
+local m_currentFormSettings = nil
+
 function CreateRaidSettingsForm()
-	local form=createWidget(mainForm, "raidSettingsForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 730, 620, 200, 100)
+	local form=createWidget(mainForm, "raidSettingsForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 730, 660, 200, 100)
 	hide(form)
 	priority(form, 505)
 	
-	local settingsContainer = createWidget(form, "settingsContainer", "ScrollableContainer", nil, nil, 350, 525, 5, 40)
+	local settingsContainer = createWidget(form, "settingsContainer", "ScrollableContainer", nil, nil, 350, 545, 5, 40)
 	
 	local group1 = createWidget(form, "group1", "Panel")
 	align(group1, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)
@@ -32,7 +34,7 @@ function CreateRaidSettingsForm()
 	
 	local group7 = createWidget(form, "group7", "Panel")
 	align(group7, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)
-	resize(group7, 365, 304)
+	resize(group7, 365, 344)
 	move(group7, 355, 257)
 	
 	setLocaleText(createWidget(form, "raidSettingsFormHeader", "TextView",  WIDGET_ALIGN_CENTER, nil, 150, 20, nil, 16))
@@ -83,7 +85,7 @@ function CreateRaidSettingsForm()
 	createWidget(group6, "checkMovementsButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 350, 25, 5, 183)
 	
 	setLocaleText(createWidget(group7, "raidBuffsList", "TextView", nil, nil, 200, 25, 75, 3))
-	createWidget(group7, "raidBuffContainer", "ScrollableContainer", nil, nil, 350, 245, 5, 23)
+	createWidget(group7, "raidBuffContainer", "ScrollableContainer", nil, nil, 350, 285, 5, 23)
 	setLocaleText(createWidget(group7, "addRaidBuffButton", "Button", WIDGET_ALIGN_BOTH, WIDGET_ALIGN_HIGH, nil, 25, 25, 5))
 	
 	
@@ -111,42 +113,39 @@ function SaveRaidFormSettings(aForm)
 	local group6 = getChild(aForm, "group6")
 	local group7 = getChild(aForm, "group7")
 	
-	local mySettings = {}
-	local profile = GetCurrentProfile()
-	mySettings = profile.raidFormSettings
-	
-	mySettings.showStandartRaidButton = getCheckBoxState(getChild(group1, "showStandartRaidButton"))
-	mySettings.gorisontalModeButton = getCheckBoxState(getChild(group2, "gorisontalModeButton"))
-	mySettings.showRollOverInfo = getCheckBoxState(getChild(group2, "showRollOverInfoButton"))
-	mySettings.classColorModeButton = getCheckBoxState(getChild(group3, "classColorModeButton"))
-	mySettings.showServerNameButton = getCheckBoxState(getChild(group3, "showServerNameButton"))
-	mySettings.showManaButton = getCheckBoxState(getChild(group3, "showManaButton"))
-	mySettings.showShieldButton = getCheckBoxState(getChild(group3, "showShieldButton"))
-	mySettings.showClassIconButton = getCheckBoxState(getChild(group3, "showClassIconButton"))
-	mySettings.showDistanceButton = getCheckBoxState(getChild(group3, "showDistanceButton"))
-	mySettings.showProcentButton = getCheckBoxState(getChild(group3, "showProcentButton"))
-	mySettings.showArrowButton = getCheckBoxState(getChild(group3, "showArrowButton"))
-	mySettings.woundsShowButton = getCheckBoxState(getChild(group3, "woundsShowButton"))
-	
-	mySettings.raidWidthText = getTextString(getChild(group4, "raidWidthEdit"))
-	mySettings.raidHeightText = getTextString(getChild(group4, "raidHeightEdit"))
-	mySettings.buffSize = getTextString(getChild(group4, "buffSizeEdit"))
-	
-	mySettings.distanceText = getTextString(getChild(group5, "distanceEdit"))
-	mySettings.showGrayOnDistanceButton = getCheckBoxState(getChild(group5, "showGrayOnDistanceButton"))
-	mySettings.showFrameStripOnDistanceButton = getCheckBoxState(getChild(group5, "showFrameStripOnDistanceButton"))
 
-	mySettings.raidBuffs.autoDebuffModeButton = getCheckBoxState(getChild(group6, "autoDebuffModeButton"))
-	mySettings.raidBuffs.checkFriendCleanableButton = getCheckBoxState(getChild(group6, "checkFriendCleanableButton"))
-	mySettings.raidBuffs.showImportantButton = getCheckBoxState(getChild(group6, "showImportantButton"))
-	mySettings.raidBuffs.checkControlsButton = getCheckBoxState(getChild(group6, "checkControlsButton"))
-	mySettings.raidBuffs.checkMovementsButton = getCheckBoxState(getChild(group6, "checkMovementsButton"))
-	mySettings.raidBuffs.colorDebuffButton = getCheckBoxState(getChild(group6, "colorDebuffButton"))
+	m_currentFormSettings.showStandartRaidButton = getCheckBoxState(getChild(group1, "showStandartRaidButton"))
+	m_currentFormSettings.gorisontalModeButton = getCheckBoxState(getChild(group2, "gorisontalModeButton"))
+	m_currentFormSettings.showRollOverInfo = getCheckBoxState(getChild(group2, "showRollOverInfoButton"))
+	m_currentFormSettings.classColorModeButton = getCheckBoxState(getChild(group3, "classColorModeButton"))
+	m_currentFormSettings.showServerNameButton = getCheckBoxState(getChild(group3, "showServerNameButton"))
+	m_currentFormSettings.showManaButton = getCheckBoxState(getChild(group3, "showManaButton"))
+	m_currentFormSettings.showShieldButton = getCheckBoxState(getChild(group3, "showShieldButton"))
+	m_currentFormSettings.showClassIconButton = getCheckBoxState(getChild(group3, "showClassIconButton"))
+	m_currentFormSettings.showDistanceButton = getCheckBoxState(getChild(group3, "showDistanceButton"))
+	m_currentFormSettings.showProcentButton = getCheckBoxState(getChild(group3, "showProcentButton"))
+	m_currentFormSettings.showArrowButton = getCheckBoxState(getChild(group3, "showArrowButton"))
+	m_currentFormSettings.woundsShowButton = getCheckBoxState(getChild(group3, "woundsShowButton"))
+	
+	m_currentFormSettings.raidWidthText = getTextString(getChild(group4, "raidWidthEdit"))
+	m_currentFormSettings.raidHeightText = getTextString(getChild(group4, "raidHeightEdit"))
+	m_currentFormSettings.buffSize = getTextString(getChild(group4, "buffSizeEdit"))
+	
+	m_currentFormSettings.distanceText = getTextString(getChild(group5, "distanceEdit"))
+	m_currentFormSettings.showGrayOnDistanceButton = getCheckBoxState(getChild(group5, "showGrayOnDistanceButton"))
+	m_currentFormSettings.showFrameStripOnDistanceButton = getCheckBoxState(getChild(group5, "showFrameStripOnDistanceButton"))
+
+	m_currentFormSettings.raidBuffs.autoDebuffModeButton = getCheckBoxState(getChild(group6, "autoDebuffModeButton"))
+	m_currentFormSettings.raidBuffs.checkFriendCleanableButton = getCheckBoxState(getChild(group6, "checkFriendCleanableButton"))
+	m_currentFormSettings.raidBuffs.showImportantButton = getCheckBoxState(getChild(group6, "showImportantButton"))
+	m_currentFormSettings.raidBuffs.checkControlsButton = getCheckBoxState(getChild(group6, "checkControlsButton"))
+	m_currentFormSettings.raidBuffs.checkMovementsButton = getCheckBoxState(getChild(group6, "checkMovementsButton"))
+	m_currentFormSettings.raidBuffs.colorDebuffButton = getCheckBoxState(getChild(group6, "colorDebuffButton"))
 
 	
-	UpdateTableValuesFromContainer(mySettings.raidBuffs.customBuffs, aForm, getChild(group7, "raidBuffContainer"))
+	UpdateTableValuesFromContainer(m_currentFormSettings.raidBuffs.customBuffs, aForm, getChild(group7, "raidBuffContainer"))
 		
-	return mySettings
+	return m_currentFormSettings
 end
 
 function LoadRaidFormSettings(aForm)
@@ -160,37 +159,73 @@ function LoadRaidFormSettings(aForm)
 	local group7 = getChild(aForm, "group7")
 	
 	local profile = GetCurrentProfile()
-	local mySettings = profile.raidFormSettings
-	if mySettings.raidBuffs.colorDebuffButton == nil then mySettings.raidBuffs.colorDebuffButton = false end
-	if mySettings.raidBuffs.checkFriendCleanableButton == nil then mySettings.raidBuffs.checkFriendCleanableButton = false end
+	m_currentFormSettings = deepCopyTable(profile.raidFormSettings)
+	if m_currentFormSettings.raidBuffs.colorDebuffButton == nil then m_currentFormSettings.raidBuffs.colorDebuffButton = false end
+	if m_currentFormSettings.raidBuffs.checkFriendCleanableButton == nil then m_currentFormSettings.raidBuffs.checkFriendCleanableButton = false end
 	
-	setLocaleText(getChild(group1, "showStandartRaidButton"), mySettings.showStandartRaidButton)
-	setLocaleText(getChild(group2, "gorisontalModeButton"), mySettings.gorisontalModeButton)
-	setLocaleText(getChild(group2, "showRollOverInfoButton"), mySettings.showRollOverInfo)
-	setLocaleText(getChild(group3, "classColorModeButton"), mySettings.classColorModeButton)
-	setLocaleText(getChild(group3, "showServerNameButton"), mySettings.showServerNameButton)
-	setLocaleText(getChild(group3, "showManaButton"), mySettings.showManaButton)
-	setLocaleText(getChild(group3, "showShieldButton"), mySettings.showShieldButton)
-	setLocaleText(getChild(group3, "showClassIconButton"), mySettings.showClassIconButton)
-	setLocaleText(getChild(group3, "showDistanceButton"), mySettings.showDistanceButton)
-	setLocaleText(getChild(group3, "showProcentButton"), mySettings.showProcentButton)
-	setLocaleText(getChild(group3, "showArrowButton"), mySettings.showArrowButton)
-	setLocaleText(getChild(group3, "woundsShowButton"), mySettings.woundsShowButton)
+	setLocaleText(getChild(group1, "showStandartRaidButton"), m_currentFormSettings.showStandartRaidButton)
+	setLocaleText(getChild(group2, "gorisontalModeButton"), m_currentFormSettings.gorisontalModeButton)
+	setLocaleText(getChild(group2, "showRollOverInfoButton"), m_currentFormSettings.showRollOverInfo)
+	setLocaleText(getChild(group3, "classColorModeButton"), m_currentFormSettings.classColorModeButton)
+	setLocaleText(getChild(group3, "showServerNameButton"), m_currentFormSettings.showServerNameButton)
+	setLocaleText(getChild(group3, "showManaButton"), m_currentFormSettings.showManaButton)
+	setLocaleText(getChild(group3, "showShieldButton"), m_currentFormSettings.showShieldButton)
+	setLocaleText(getChild(group3, "showClassIconButton"), m_currentFormSettings.showClassIconButton)
+	setLocaleText(getChild(group3, "showDistanceButton"), m_currentFormSettings.showDistanceButton)
+	setLocaleText(getChild(group3, "showProcentButton"), m_currentFormSettings.showProcentButton)
+	setLocaleText(getChild(group3, "showArrowButton"), m_currentFormSettings.showArrowButton)
+	setLocaleText(getChild(group3, "woundsShowButton"), m_currentFormSettings.woundsShowButton)
 	
-	setText(getChild(group4, "raidWidthEdit"), mySettings.raidWidthText)
-	setText(getChild(group4, "raidHeightEdit"), mySettings.raidHeightText)
-	setText(getChild(group4, "buffSizeEdit"), mySettings.buffSize)
+	setText(getChild(group4, "raidWidthEdit"), m_currentFormSettings.raidWidthText)
+	setText(getChild(group4, "raidHeightEdit"), m_currentFormSettings.raidHeightText)
+	setText(getChild(group4, "buffSizeEdit"), m_currentFormSettings.buffSize)
 	
-	setText(getChild(group5, "distanceEdit"), mySettings.distanceText)
-	setLocaleText(getChild(group5, "showGrayOnDistanceButton"), mySettings.showGrayOnDistanceButton)
-	setLocaleText(getChild(group5, "showFrameStripOnDistanceButton"), mySettings.showFrameStripOnDistanceButton)
+	setText(getChild(group5, "distanceEdit"), m_currentFormSettings.distanceText)
+	setLocaleText(getChild(group5, "showGrayOnDistanceButton"), m_currentFormSettings.showGrayOnDistanceButton)
+	setLocaleText(getChild(group5, "showFrameStripOnDistanceButton"), m_currentFormSettings.showFrameStripOnDistanceButton)
 	
-	setLocaleText(getChild(group6, "autoDebuffModeButton"), mySettings.raidBuffs.autoDebuffModeButton)
-	setLocaleText(getChild(group6, "checkFriendCleanableButton"), mySettings.raidBuffs.checkFriendCleanableButton)
-	setLocaleText(getChild(group6, "colorDebuffButton"), mySettings.raidBuffs.colorDebuffButton)
-	setLocaleText(getChild(group6, "showImportantButton"), mySettings.raidBuffs.showImportantButton)
-	setLocaleText(getChild(group6, "checkControlsButton"), mySettings.raidBuffs.checkControlsButton)
-	setLocaleText(getChild(group6, "checkMovementsButton"), mySettings.raidBuffs.checkMovementsButton)
+	setLocaleText(getChild(group6, "autoDebuffModeButton"), m_currentFormSettings.raidBuffs.autoDebuffModeButton)
+	setLocaleText(getChild(group6, "checkFriendCleanableButton"), m_currentFormSettings.raidBuffs.checkFriendCleanableButton)
+	setLocaleText(getChild(group6, "colorDebuffButton"), m_currentFormSettings.raidBuffs.colorDebuffButton)
+	setLocaleText(getChild(group6, "showImportantButton"), m_currentFormSettings.raidBuffs.showImportantButton)
+	setLocaleText(getChild(group6, "checkControlsButton"), m_currentFormSettings.raidBuffs.checkControlsButton)
+	setLocaleText(getChild(group6, "checkMovementsButton"), m_currentFormSettings.raidBuffs.checkMovementsButton)
 	
-	ShowValuesFromTable(mySettings.raidBuffs.customBuffs, aForm, getChild(group7, "raidBuffContainer"))
+	ShowValuesFromTable(m_currentFormSettings.raidBuffs.customBuffs, aForm, getChild(group7, "raidBuffContainer"))
+end
+
+function AddRaidBuffToSroller(aForm)
+	local group7 = getChild(aForm, "group7")
+	AddElementFromForm(m_currentFormSettings.raidBuffs.customBuffs, aForm, getChild(group7, "raidBuffContainer")) 
+end
+
+function DeleteRaidBuffFromSroller(aForm, aDeletingWdg)
+	DeleteContainer(m_currentFormSettings.raidBuffs.customBuffs, aDeletingWdg, aForm)
+end
+
+function CreateColorSettingsForRaidBuffScroller(aForm, anIndex)
+	local raidBuffContainer = getChild(getChild(aForm, "group7"), "raidBuffContainer")
+	local panelOfElement = raidBuffContainer:At(anIndex)
+	
+	local colorForm = getChild(panelOfElement, "colorSettingsForm")
+	if colorForm then
+		destroy(colorForm)
+		resize(panelOfElement, nil, 30)		
+	else
+		colorForm = CreateColorSettingsForm(m_currentFormSettings.raidBuffs.customBuffs[anIndex+1])
+		resize(panelOfElement, nil, GetColorSettingsHeight())
+		panelOfElement:AddChild(colorForm)
+	end
+	raidBuffContainer:ForceReposition()
+end
+
+function UpdateColorSettingsForRaidBuffScroller(aForm, anIndex)
+	local raidBuffContainer = getChild(getChild(aForm, "group7"), "raidBuffContainer")
+	local panelOfElement = raidBuffContainer:At(anIndex)
+
+	local colorForm = getChild(panelOfElement, "colorSettingsForm")
+	SaveBuffColorHighlight(colorForm, m_currentFormSettings.raidBuffs.customBuffs[anIndex+1])
+	destroy(colorForm)
+	resize(panelOfElement, nil, 30)
+	raidBuffContainer:ForceReposition()
 end

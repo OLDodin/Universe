@@ -8,5 +8,6 @@
 		<Item href="DotStackText.xdb#xpointer(/WidgetTextView)"/>
 		<Item href="DotText.xdb#xpointer(/WidgetTextView)"/>
 	</Children>
+	<Visible>false</Visible>
 	<TransparentInput>true</TransparentInput>
 </WidgetPanel>

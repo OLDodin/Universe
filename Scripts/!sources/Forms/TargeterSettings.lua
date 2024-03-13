@@ -1,5 +1,5 @@
 local m_template = nil
-
+local m_currentFormSettings = nil
 
 
 function CreateTargeterSettingsForm()
@@ -15,7 +15,7 @@ function CreateTargeterSettingsForm()
 	
 	local group2 = createWidget(form, "group2", "Panel")
 	align(group2, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)
-	resize(group2, 315, 121)
+	resize(group2, 315, 151)
 	
 	local group3 = createWidget(form, "group3", "Panel")
 	align(group3, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)
@@ -109,58 +109,54 @@ function SaveTargeterFormSettings(aForm)
 	local group6 = getChild(aForm, "group6")
 	local group7 = getChild(aForm, "group7")
 	
-	local mySettings = {}
-	local profile = GetCurrentProfile()
-	mySettings = profile.targeterFormSettings
+	m_currentFormSettings.classColorModeButton = getCheckBoxState(getChild(group1, "classColorModeButton"))
+	m_currentFormSettings.showServerNameButton = getCheckBoxState(getChild(group1, "showServerNameButton"))
+	m_currentFormSettings.showManaButton = getCheckBoxState(getChild(group1, "showManaButton"))
+	m_currentFormSettings.showEnergyButton = false
+	m_currentFormSettings.showShieldButton = getCheckBoxState(getChild(group1, "showShieldButton"))
+	m_currentFormSettings.showClassIconButton = getCheckBoxState(getChild(group1, "showClassIconButton"))
+	m_currentFormSettings.showProcentButton = getCheckBoxState(getChild(group1, "showProcentButton"))
+	m_currentFormSettings.woundsShowButton = getCheckBoxState(getChild(group1, "woundsShowButton"))
 	
-	mySettings.classColorModeButton = getCheckBoxState(getChild(group1, "classColorModeButton"))
-	mySettings.showServerNameButton = getCheckBoxState(getChild(group1, "showServerNameButton"))
-	mySettings.showManaButton = getCheckBoxState(getChild(group1, "showManaButton"))
-	mySettings.showEnergyButton = false
-	mySettings.showShieldButton = getCheckBoxState(getChild(group1, "showShieldButton"))
-	mySettings.showClassIconButton = getCheckBoxState(getChild(group1, "showClassIconButton"))
-	mySettings.showProcentButton = getCheckBoxState(getChild(group1, "showProcentButton"))
-	mySettings.woundsShowButton = getCheckBoxState(getChild(group1, "woundsShowButton"))
+	m_currentFormSettings.gorisontalModeButton = getCheckBoxState(getChild(group2, "gorisontalModeButton"))
+	m_currentFormSettings.showRollOverInfo = getCheckBoxState(getChild(group2, "showRollOverInfoButton"))
+	m_currentFormSettings.hideUnselectableButton = getCheckBoxState(getChild(group2, "hideUnselectableButton"))
+	m_currentFormSettings.separateBuffDebuff = getCheckBoxState(getChild(group2, "separateBuffDebuff"))
+	m_currentFormSettings.twoColumnMode = getCheckBoxState(getChild(group2, "twoColumnMode"))
 	
-	mySettings.gorisontalModeButton = getCheckBoxState(getChild(group2, "gorisontalModeButton"))
-	mySettings.showRollOverInfo = getCheckBoxState(getChild(group2, "showRollOverInfoButton"))
-	mySettings.hideUnselectableButton = getCheckBoxState(getChild(group2, "hideUnselectableButton"))
-	mySettings.separateBuffDebuff = getCheckBoxState(getChild(group2, "separateBuffDebuff"))
-	mySettings.twoColumnMode = getCheckBoxState(getChild(group2, "twoColumnMode"))
+	m_currentFormSettings.sortByName = getCheckBoxState(getChild(group3, "sortByName"))
+	m_currentFormSettings.sortByHP = getCheckBoxState(getChild(group3, "sortByHP"))
+	m_currentFormSettings.sortByClass = getCheckBoxState(getChild(group3, "sortByClass"))
+	m_currentFormSettings.sortByDead = getCheckBoxState(getChild(group3, "sortByDead"))
 	
-	mySettings.sortByName = getCheckBoxState(getChild(group3, "sortByName"))
-	mySettings.sortByHP = getCheckBoxState(getChild(group3, "sortByHP"))
-	mySettings.sortByClass = getCheckBoxState(getChild(group3, "sortByClass"))
-	mySettings.sortByDead = getCheckBoxState(getChild(group3, "sortByDead"))
-	
-	mySettings.raidWidthText = getTextString(getChild(group4, "targeterWidthEdit"))
-	mySettings.raidHeightText = getTextString(getChild(group4, "targeterHeightEdit"))
-	mySettings.buffSize = getTextString(getChild(group4, "buffSizeEdit"))
-	mySettings.targetLimit = getTextString(getChild(group4, "targetLimitEdit"))
-	local limit = tonumber(mySettings.targetLimit)
+	m_currentFormSettings.raidWidthText = getTextString(getChild(group4, "targeterWidthEdit"))
+	m_currentFormSettings.raidHeightText = getTextString(getChild(group4, "targeterHeightEdit"))
+	m_currentFormSettings.buffSize = getTextString(getChild(group4, "buffSizeEdit"))
+	m_currentFormSettings.targetLimit = getTextString(getChild(group4, "targetLimitEdit"))
+	local limit = tonumber(m_currentFormSettings.targetLimit)
 	if limit > 30 then
-		mySettings.targetLimit = "30"
+		m_currentFormSettings.targetLimit = "30"
 	end
 	if limit < 1 then
-		mySettings.targetLimit = "1"
+		m_currentFormSettings.targetLimit = "1"
 	end
-	setText(getChild(group4, "targetLimitEdit"), mySettings.targetLimit)
+	setText(getChild(group4, "targetLimitEdit"), m_currentFormSettings.targetLimit)
 
-	mySettings.raidBuffs.checkEnemyCleanable = getCheckBoxState(getChild(group5, "checkEnemyCleanable"))
-	mySettings.raidBuffs.checkControlsButton = getCheckBoxState(getChild(group5, "checkControlsButton"))
-	mySettings.raidBuffs.checkMovementsButton = getCheckBoxState(getChild(group5, "checkMovementsButton"))
+	m_currentFormSettings.raidBuffs.checkEnemyCleanable = getCheckBoxState(getChild(group5, "checkEnemyCleanable"))
+	m_currentFormSettings.raidBuffs.checkControlsButton = getCheckBoxState(getChild(group5, "checkControlsButton"))
+	m_currentFormSettings.raidBuffs.checkMovementsButton = getCheckBoxState(getChild(group5, "checkMovementsButton"))
 	
 	local container = getChild(group6, "targetBuffContainer")
-	if container and mySettings.raidBuffs.customBuffs then
-		for i, j in ipairs(mySettings.raidBuffs.customBuffs) do
+	if container and m_currentFormSettings.raidBuffs.customBuffs then
+		for i, j in ipairs(m_currentFormSettings.raidBuffs.customBuffs) do
 			j.name = getText(getChild(container, "Name"..tostring(i), true))
 			j.castByMe = getCheckBoxState(getChild(container, "castByMe"..tostring(i), true))
 		end
 	end
 
-	UpdateTableValuesFromContainer(mySettings.myTargets, aForm, getChild(group7, "myTargetsContainer"))
+	UpdateTableValuesFromContainer(m_currentFormSettings.myTargets, aForm, getChild(group7, "myTargetsContainer"))
 
-	return mySettings
+	return m_currentFormSettings
 end
 
 function LoadTargeterFormSettings(aForm)
@@ -174,43 +170,97 @@ function LoadTargeterFormSettings(aForm)
 	local group7 = getChild(aForm, "group7")
 	
 	local profile = GetCurrentProfile()
-	local mySettings = profile.targeterFormSettings
-	if mySettings.separateBuffDebuff == nil then mySettings.separateBuffDebuff = false end
-	if mySettings.twoColumnMode == nil then mySettings.twoColumnMode = false end
-	if mySettings.sortByName == nil then mySettings.sortByName = true end
-	if mySettings.sortByHP == nil then mySettings.sortByHP = false end
-	if mySettings.sortByClass == nil then mySettings.sortByClass = false end
-	if mySettings.sortByDead == nil then mySettings.sortByDead = false end
-	if mySettings.targetLimit == nil then mySettings.targetLimit = "12" end
+	m_currentFormSettings = deepCopyTable(profile.targeterFormSettings)
 	
-	setLocaleText(getChild(group1, "classColorModeButton"), mySettings.classColorModeButton)
-	setLocaleText(getChild(group1, "showServerNameButton"), mySettings.showServerNameButton)
-	setLocaleText(getChild(group1, "showManaButton"), mySettings.showManaButton)
-	setLocaleText(getChild(group1, "showShieldButton"), mySettings.showShieldButton)
-	setLocaleText(getChild(group1, "showClassIconButton"), mySettings.showClassIconButton)
-	setLocaleText(getChild(group1, "showProcentButton"), mySettings.showProcentButton)
-	setLocaleText(getChild(group1, "woundsShowButton"), mySettings.woundsShowButton)
+	if m_currentFormSettings.separateBuffDebuff == nil then m_currentFormSettings.separateBuffDebuff = false end
+	if m_currentFormSettings.twoColumnMode == nil then m_currentFormSettings.twoColumnMode = false end
+	if m_currentFormSettings.sortByName == nil then m_currentFormSettings.sortByName = true end
+	if m_currentFormSettings.sortByHP == nil then m_currentFormSettings.sortByHP = false end
+	if m_currentFormSettings.sortByClass == nil then m_currentFormSettings.sortByClass = false end
+	if m_currentFormSettings.sortByDead == nil then m_currentFormSettings.sortByDead = false end
+	if m_currentFormSettings.targetLimit == nil then m_currentFormSettings.targetLimit = "12" end
 	
-	setLocaleText(getChild(group2, "gorisontalModeButton"), mySettings.gorisontalModeButton)
-	setLocaleText(getChild(group2, "showRollOverInfoButton"), mySettings.showRollOverInfo)
-	setLocaleText(getChild(group2, "hideUnselectableButton"), mySettings.hideUnselectableButton)
-	setLocaleText(getChild(group2, "separateBuffDebuff"), mySettings.separateBuffDebuff)
-	setLocaleText(getChild(group2, "twoColumnMode"), mySettings.twoColumnMode)
+	setLocaleText(getChild(group1, "classColorModeButton"), m_currentFormSettings.classColorModeButton)
+	setLocaleText(getChild(group1, "showServerNameButton"), m_currentFormSettings.showServerNameButton)
+	setLocaleText(getChild(group1, "showManaButton"), m_currentFormSettings.showManaButton)
+	setLocaleText(getChild(group1, "showShieldButton"), m_currentFormSettings.showShieldButton)
+	setLocaleText(getChild(group1, "showClassIconButton"), m_currentFormSettings.showClassIconButton)
+	setLocaleText(getChild(group1, "showProcentButton"), m_currentFormSettings.showProcentButton)
+	setLocaleText(getChild(group1, "woundsShowButton"), m_currentFormSettings.woundsShowButton)
 	
-	setLocaleText(getChild(group3, "sortByName"), mySettings.sortByName)
-	setLocaleText(getChild(group3, "sortByHP"), mySettings.sortByHP)
-	setLocaleText(getChild(group3, "sortByClass"), mySettings.sortByClass)
-	setLocaleText(getChild(group3, "sortByDead"), mySettings.sortByDead)
+	setLocaleText(getChild(group2, "gorisontalModeButton"), m_currentFormSettings.gorisontalModeButton)
+	setLocaleText(getChild(group2, "showRollOverInfoButton"), m_currentFormSettings.showRollOverInfo)
+	setLocaleText(getChild(group2, "hideUnselectableButton"), m_currentFormSettings.hideUnselectableButton)
+	setLocaleText(getChild(group2, "separateBuffDebuff"), m_currentFormSettings.separateBuffDebuff)
+	setLocaleText(getChild(group2, "twoColumnMode"), m_currentFormSettings.twoColumnMode)
 	
-	setText(getChild(group4, "targeterWidthEdit"), mySettings.raidWidthText)
-	setText(getChild(group4, "targeterHeightEdit"), mySettings.raidHeightText)
-	setText(getChild(group4, "buffSizeEdit"), mySettings.buffSize)
-	setText(getChild(group4, "targetLimitEdit"), mySettings.targetLimit)
+	setLocaleText(getChild(group3, "sortByName"), m_currentFormSettings.sortByName)
+	setLocaleText(getChild(group3, "sortByHP"), m_currentFormSettings.sortByHP)
+	setLocaleText(getChild(group3, "sortByClass"), m_currentFormSettings.sortByClass)
+	setLocaleText(getChild(group3, "sortByDead"), m_currentFormSettings.sortByDead)
 	
-	setLocaleText(getChild(group5, "checkEnemyCleanable"), mySettings.raidBuffs.checkEnemyCleanable)
-	setLocaleText(getChild(group5, "checkControlsButton"), mySettings.raidBuffs.checkControlsButton)
-	setLocaleText(getChild(group5, "checkMovementsButton"), mySettings.raidBuffs.checkMovementsButton)
+	setText(getChild(group4, "targeterWidthEdit"), m_currentFormSettings.raidWidthText)
+	setText(getChild(group4, "targeterHeightEdit"), m_currentFormSettings.raidHeightText)
+	setText(getChild(group4, "buffSizeEdit"), m_currentFormSettings.buffSize)
+	setText(getChild(group4, "targetLimitEdit"), m_currentFormSettings.targetLimit)
+	
+	setLocaleText(getChild(group5, "checkEnemyCleanable"), m_currentFormSettings.raidBuffs.checkEnemyCleanable)
+	setLocaleText(getChild(group5, "checkControlsButton"), m_currentFormSettings.raidBuffs.checkControlsButton)
+	setLocaleText(getChild(group5, "checkMovementsButton"), m_currentFormSettings.raidBuffs.checkMovementsButton)
 
-	ShowValuesFromTable(profile.targeterFormSettings.raidBuffs.customBuffs, aForm, getChild(group6, "targetBuffContainer"))
-	ShowValuesFromTable(profile.targeterFormSettings.myTargets, aForm, getChild(group7, "myTargetsContainer"))
+	ShowValuesFromTable(m_currentFormSettings.raidBuffs.customBuffs, aForm, getChild(group6, "targetBuffContainer"))
+	ShowValuesFromTable(m_currentFormSettings.myTargets, aForm, getChild(group7, "myTargetsContainer"))
+end
+
+function AddTargetBuffToSroller(aForm)
+	local group6 = getChild(aForm, "group6")
+	AddElementFromForm(m_currentFormSettings.raidBuffs.customBuffs, aForm, getChild(group6, "targetBuffContainer")) 
+end
+
+function AddMyTargetsToSroller(aForm)
+	local group7 = getChild(aForm, "group7")
+	AddElementFromForm(m_currentFormSettings.myTargets, aForm, getChild(group7, "myTargetsContainer")) 
+end
+
+function DeleteTargetBuffFromSroller(aForm, aDeletingWdg)
+	DeleteContainer(m_currentFormSettings.raidBuffs.customBuffs, aDeletingWdg, aForm)
+end
+
+function DeleteMyTargetsFromSroller(aForm, aDeletingWdg)
+	DeleteContainer(m_currentFormSettings.myTargets, aDeletingWdg, aForm)
+end
+
+function CreateColorSettingsForTargetBuffScroller(aForm, anIndex)
+	local container = getChild(getChild(aForm, "group6"), "targetBuffContainer")
+	local panelOfElement = container:At(anIndex)
+	
+	local colorForm = getChild(panelOfElement, "colorSettingsForm")
+	if colorForm then
+		destroy(colorForm)
+		resize(panelOfElement, nil, 30)		
+	else
+		colorForm = CreateColorSettingsForm(m_currentFormSettings.raidBuffs.customBuffs[anIndex+1])
+		resize(panelOfElement, nil, GetColorSettingsHeight())
+		panelOfElement:AddChild(colorForm)
+	end
+	container:ForceReposition()
+end
+
+function UpdateColorSettingsForTargetBuffScroller(aForm, anIndex)
+	local container = getChild(getChild(aForm, "group6"), "targetBuffContainer")
+	local panelOfElement = container:At(anIndex)
+
+	local colorForm = getChild(panelOfElement, "colorSettingsForm")
+	SaveBuffColorHighlight(colorForm, m_currentFormSettings.raidBuffs.customBuffs[anIndex+1])
+	destroy(colorForm)
+	resize(panelOfElement, nil, 30)
+	container:ForceReposition()
+end
+
+function UpdateLastTargetType(aType)
+	m_currentFormSettings.lastTargetType = aType
+end
+
+function UpdateLastTargetWasActive(aParam)
+	m_currentFormSettings.lastTargetWasActive = aParam
 end

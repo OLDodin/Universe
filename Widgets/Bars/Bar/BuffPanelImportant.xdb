@@ -2,5 +2,13 @@
 <WidgetPanel>
 	<Name>BuffPanelImportant</Name>
 	<Priority>190</Priority>
+	<Placement>
+		<X>
+			<Align>WIDGET_ALIGN_BOTH</Align>
+		</X>
+		<Y>
+			<Align>WIDGET_ALIGN_BOTH</Align>
+		</Y>
+	</Placement>
 	<TransparentInput>true</TransparentInput>
 </WidgetPanel>

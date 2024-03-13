@@ -1,3 +1,5 @@
+local m_currentFormSettings = nil
+
 function CreateProgressCastSettingsForm()
 	local form=createWidget(mainForm, "castSettingsForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 700, 410, 200, 100)
 	hide(form)
@@ -33,41 +35,45 @@ function CreateProgressCastSettingsForm()
 end
 
 function SaveProgressCastFormSettings(aForm)
-	local mySettings = {}
-	local profile = GetCurrentProfile()
-	mySettings = profile.castFormSettings
+	m_currentFormSettings.showImportantCasts = getCheckBoxState(getChild(aForm, "showImportantCasts"))
+	m_currentFormSettings.showImportantBuffs = getCheckBoxState(getChild(aForm, "showImportantBuffs"))
+	m_currentFormSettings.selectable = getCheckBoxState(getChild(aForm, "selectablePanel"))
+	m_currentFormSettings.fixed = not getCheckBoxState(getChild(aForm, "fixedPanel"))
+	m_currentFormSettings.showOnlyMyTarget = getCheckBoxState(getChild(aForm, "showOnlyMyTarget"))
 	
-	mySettings.showImportantCasts = getCheckBoxState(getChild(aForm, "showImportantCasts"))
-	mySettings.showImportantBuffs = getCheckBoxState(getChild(aForm, "showImportantBuffs"))
-	mySettings.selectable = getCheckBoxState(getChild(aForm, "selectablePanel"))
-	mySettings.fixed = not getCheckBoxState(getChild(aForm, "fixedPanel"))
-	mySettings.showOnlyMyTarget = getCheckBoxState(getChild(aForm, "showOnlyMyTarget"))
+	m_currentFormSettings.panelWidthText = getTextString(getChild(aForm, "panelWidthEdit"))
+	m_currentFormSettings.panelHeightText = getTextString(getChild(aForm, "panelHeightEdit"))
 	
-	mySettings.panelWidthText = getTextString(getChild(aForm, "panelWidthEdit"))
-	mySettings.panelHeightText = getTextString(getChild(aForm, "panelHeightEdit"))
+	UpdateTableValuesFromContainer(m_currentFormSettings.ignoreList, aForm, getChild(aForm, "ignoreListContainer"))
 	
-	UpdateTableValuesFromContainer(mySettings.ignoreList, aForm, getChild(aForm, "ignoreListContainer"))
-	
-	return mySettings
+	return m_currentFormSettings
 end
 
 function LoadProgressCastFormSettings(aForm)
-	local mySettings = {}
 	local profile = GetCurrentProfile()
-	mySettings = profile.castFormSettings
+
+	m_currentFormSettings = deepCopyTable(profile.castFormSettings)
 	
-	if mySettings.showOnlyMyTarget == nil then
-		mySettings.showOnlyMyTarget = false
+	if m_currentFormSettings.showOnlyMyTarget == nil then
+		m_currentFormSettings.showOnlyMyTarget = false
 	end
 		
-	setLocaleText(getChild(aForm, "showImportantCasts"), mySettings.showImportantCasts)
-	setLocaleText(getChild(aForm, "showImportantBuffs"), mySettings.showImportantBuffs)
-	setLocaleText(getChild(aForm, "selectablePanel"), mySettings.selectable)
-	setLocaleText(getChild(aForm, "fixedPanel"), not mySettings.fixed)
-	setLocaleText(getChild(aForm, "showOnlyMyTarget"), mySettings.showOnlyMyTarget)
+	setLocaleText(getChild(aForm, "showImportantCasts"), m_currentFormSettings.showImportantCasts)
+	setLocaleText(getChild(aForm, "showImportantBuffs"), m_currentFormSettings.showImportantBuffs)
+	setLocaleText(getChild(aForm, "selectablePanel"), m_currentFormSettings.selectable)
+	setLocaleText(getChild(aForm, "fixedPanel"), not m_currentFormSettings.fixed)
+	setLocaleText(getChild(aForm, "showOnlyMyTarget"), m_currentFormSettings.showOnlyMyTarget)
 	
-	setText(getChild(aForm, "panelWidthEdit"), mySettings.panelWidthText)
-	setText(getChild(aForm, "panelHeightEdit"), mySettings.panelHeightText)
+	setText(getChild(aForm, "panelWidthEdit"), m_currentFormSettings.panelWidthText)
+	setText(getChild(aForm, "panelHeightEdit"), m_currentFormSettings.panelHeightText)
 	
-	ShowValuesFromTable(mySettings.ignoreList, aForm, getChild(aForm, "ignoreListContainer"))
+	ShowValuesFromTable(m_currentFormSettings.ignoreList, aForm, getChild(aForm, "ignoreListContainer"))
+end
+
+function AddIgnoreCastToSroller(aForm)
+	AddElementFromForm(m_currentFormSettings.ignoreList, aForm, getChild(aForm, "ignoreListContainer")) 
+end
+
+function DeleteIgnoreCastFromSroller(aForm, aDeletingWdg)
+	DeleteContainer(m_currentFormSettings.ignoreList, aDeletingWdg, aForm)
 end

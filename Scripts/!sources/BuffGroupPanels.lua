@@ -201,12 +201,13 @@ function CreateGroupBuffPanel(aForm, aSettings, anIsAboveHead, aPosInPlateIndex)
 		local num = math.min(w*h, table.getn(aSettings.buffs))
 		if num == 0 then num = w*h end
 		setTemplateWidget(aForm)
+		local panelWidth = math.max(size*math.min(w, num), GetMinGroupPanelSize(anIsAboveHead))
+		local panelHeight = size*math.min(h, math.ceil(num/w))+30
 		if anIsAboveHead then
-			groupBuffPanel.panelWdg = createWidget(mainForm, "BuffGroup"..tostring(aPosInPlateIndex), "BuffGroup")			
+			groupBuffPanel.panelWdg = createWidget(mainForm, "BuffGroup"..tostring(aPosInPlateIndex), "BuffGroup", nil, nil, panelWidth, panelHeight)			
 		else
-			groupBuffPanel.panelWdg = createWidget(aForm, aSettings.buffGroupWdgName, "BuffGroup")
+			groupBuffPanel.panelWdg = createWidget(aForm, aSettings.buffGroupWdgName, "BuffGroup", nil, nil, panelWidth, panelHeight)
 		end
-		resize(groupBuffPanel.panelWdg, math.max(size*math.min(w, num), GetMinGroupPanelSize(anIsAboveHead)), size*math.min(h, math.ceil(num/w))+30)
 
 		local groupBuffTopPanel = getChild(groupBuffPanel.panelWdg, "MoveModePanel", true)
 		if aSettings.fixed or anIsAboveHead then
@@ -229,7 +230,7 @@ function CreateGroupBuffPanel(aForm, aSettings, anIsAboveHead, aPosInPlateIndex)
 			DnD.Init(groupBuffPanel.panelWdg, groupBuffTopPanel, true, false)
 		end
 				
-		setTemplateWidget(m_template)
+		setTemplateWidget(m_template)	
 		for j=1, num do
 			local x = ((j-1)%w)*size
 			local y = math.floor((j-1)/w)*size
@@ -237,23 +238,18 @@ function CreateGroupBuffPanel(aForm, aSettings, anIsAboveHead, aPosInPlateIndex)
 			local currBuff = {}
 			currBuff.buffFinishedTime_h = 0
 			currBuff.info = {}
-			currBuff.buffWdg = createWidget(groupBuffPanel.panelWdg, "b"..tostring(j), "BuffTemplate", buffAlign, nil, nil, nil, x, 30+y)
+			currBuff.info.buffSize = size
+			currBuff.buffWdg = createWidget(groupBuffPanel.panelWdg, "b"..tostring(j), "BuffTemplate", buffAlign, nil, currBuff.info.buffSize, currBuff.info.buffSize, x, 30+y)
 			currBuff.info.buffIcon = getChild(currBuff.buffWdg, "DotIcon")
 			currBuff.info.buffHighlight = getChild(currBuff.buffWdg, "DotHighlight")
 			currBuff.info.buffTimerWdg = getChild(currBuff.buffWdg, "DotText")
 			currBuff.info.buffStackCntWdg = getChild(currBuff.buffWdg, "DotStackText")
-			currBuff.info.buffSize = size
 			
-			hide(currBuff.buffWdg)
-			resize(currBuff.buffWdg, currBuff.info.buffSize, currBuff.info.buffSize)
-			resize(currBuff.info.buffTimerWdg, currBuff.info.buffSize, round(currBuff.info.buffSize/2.4)+1)
-			resize(currBuff.info.buffStackCntWdg, currBuff.info.buffSize, GetTextSizeByBuffSize(currBuff.info.buffSize)+1)
-			align(currBuff.info.buffStackCntWdg, WIDGET_ALIGN_LOW, WIDGET_ALIGN_HIGH)
-			move(currBuff.info.buffTimerWdg, 1, 1)
-			move(currBuff.info.buffStackCntWdg, 1, 1)
+			updatePlacementPlain(currBuff.info.buffTimerWdg, nil, nil, 1, 0, currBuff.info.buffSize, round(currBuff.info.buffSize/2.4)+1)
+			updatePlacementPlain(currBuff.info.buffStackCntWdg, WIDGET_ALIGN_LOW, WIDGET_ALIGN_HIGH, 1, 1, currBuff.info.buffSize, GetTextSizeByBuffSize(currBuff.info.buffSize)+1)
 						
 			groupBuffPanel.buffList[j] = currBuff
-		end		
+		end
 	end
 	return groupBuffPanel
 end
@@ -291,8 +287,7 @@ end
 function SetPanelFixed(aFromWdg)
 	local settingIndex = FindIndexByWdg(aFromWdg)
 	if settingIndex then
-		local profile = GetCurrentProfile()
-		profile.buffFormSettings.buffGroups[settingIndex].fixed = true
+		UpdateConfigGroupBuffsFormPanelFixed(settingIndex)
 	end
 end
 

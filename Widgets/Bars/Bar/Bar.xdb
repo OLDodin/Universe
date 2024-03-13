@@ -33,4 +33,5 @@
 	</Variants>
 	<reactionOnPointing>OnPlayerBarPointing</reactionOnPointing>
 	<BackLayer href="" />
+	<Visible>false</Visible>
 </WidgetButton>

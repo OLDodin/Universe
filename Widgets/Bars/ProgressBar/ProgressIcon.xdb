@@ -6,9 +6,13 @@
 	<Placement>
 		<X>
 			<Align>WIDGET_ALIGN_LOW</Align>
+			<Pos>5</Pos>
+			<HighPos>5</HighPos>
 		</X>
 		<Y>
 			<Align>WIDGET_ALIGN_CENTER</Align>
+			<Pos>0</Pos>
+			<HighPos>0</HighPos>
 		</Y>
 	</Placement>
 	<TransparentInput>true</TransparentInput>

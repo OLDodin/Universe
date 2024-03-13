@@ -1,4 +1,5 @@
 local m_template = nil
+local m_currentFormSettings = nil
 
 function CreateMainSettingsForm()
 	local form=createWidget(mainForm, "mainSettingsForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 600, 360, 200, 100)
@@ -29,28 +30,27 @@ function CreateMainSettingsForm()
 end
 
 function SaveMainFormSettings(aForm)
-	local mySettings = {}
-	mySettings.useRaidSubSystem = getCheckBoxState(getChild(aForm, "useRaidSubSystem"))
-	mySettings.useTargeterSubSystem = getCheckBoxState(getChild(aForm, "useTargeterSubSystem"))
-	mySettings.useBuffMngSubSystem = getCheckBoxState(getChild(aForm, "useBuffMngSubSystem"))
-	mySettings.useBindSubSystem = getCheckBoxState(getChild(aForm, "useBindSubSystem"))
-	mySettings.useCastSubSystem = getCheckBoxState(getChild(aForm, "useCastSubSystem"))
+	m_currentFormSettings.useRaidSubSystem = getCheckBoxState(getChild(aForm, "useRaidSubSystem"))
+	m_currentFormSettings.useTargeterSubSystem = getCheckBoxState(getChild(aForm, "useTargeterSubSystem"))
+	m_currentFormSettings.useBuffMngSubSystem = getCheckBoxState(getChild(aForm, "useBuffMngSubSystem"))
+	m_currentFormSettings.useBindSubSystem = getCheckBoxState(getChild(aForm, "useBindSubSystem"))
+	m_currentFormSettings.useCastSubSystem = getCheckBoxState(getChild(aForm, "useCastSubSystem"))
 	
-	return mySettings
+	return m_currentFormSettings
 end
 
 function LoadMainFormSettings(aForm)
 	local profile = GetCurrentProfile()
-	local mySettings = profile.mainFormSettings
-	if mySettings.useCastSubSystem == nil then 
-		mySettings.useCastSubSystem = false 
+	m_currentFormSettings = deepCopyTable(profile.mainFormSettings)
+	if m_currentFormSettings.useCastSubSystem == nil then 
+		m_currentFormSettings.useCastSubSystem = false 
 	end
 	
-	setLocaleText(getChild(aForm, "useRaidSubSystem"), mySettings.useRaidSubSystem, true)
-	setLocaleText(getChild(aForm, "useTargeterSubSystem"), mySettings.useTargeterSubSystem, true)
-	setLocaleText(getChild(aForm, "useBuffMngSubSystem"), mySettings.useBuffMngSubSystem, true)
-	setLocaleText(getChild(aForm, "useBindSubSystem"), mySettings.useBindSubSystem, true)
-	setLocaleText(getChild(aForm, "useCastSubSystem"), mySettings.useCastSubSystem, true)
+	setLocaleText(getChild(aForm, "useRaidSubSystem"), m_currentFormSettings.useRaidSubSystem, true)
+	setLocaleText(getChild(aForm, "useTargeterSubSystem"), m_currentFormSettings.useTargeterSubSystem, true)
+	setLocaleText(getChild(aForm, "useBuffMngSubSystem"), m_currentFormSettings.useBuffMngSubSystem, true)
+	setLocaleText(getChild(aForm, "useBindSubSystem"), m_currentFormSettings.useBindSubSystem, true)
+	setLocaleText(getChild(aForm, "useCastSubSystem"), m_currentFormSettings.useCastSubSystem, true)
 end
 
 

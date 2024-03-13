@@ -18,4 +18,5 @@
 	</Variants>
 	<reactionOnPointing>OnPointing</reactionOnPointing>
 	<BackLayer href="" />
+	<Visible>false</Visible>
 </WidgetButton>

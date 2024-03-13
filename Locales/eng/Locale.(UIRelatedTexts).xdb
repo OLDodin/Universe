@@ -1317,5 +1317,13 @@
       <name>enterName</name>
       <resource href="enterName.txt"/>
     </Item>
+	<Item>
+      <name>changeGroupBuffName</name>
+      <resource href="changeGroupBuffName.txt"/>
+    </Item>
+	<Item>
+      <name>deleteGroupBuffsButton</name>
+      <resource href="deleteGroupBuffsButton.txt"/>
+    </Item>
   </items>
 </UIRelatedTexts>

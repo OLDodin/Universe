@@ -4,12 +4,12 @@
 	<Priority>151</Priority>
 	<Placement>
 		<X>
-			<Align>WIDGET_ALIGN_HIGH</Align>
+			<Align>WIDGET_ALIGN_CENTER</Align>
 			<Size>38</Size>
 			<HighPos>40</HighPos>
 		</X>
 		<Y>
-			<Align>WIDGET_ALIGN_CENTER</Align>
+			<Align>WIDGET_ALIGN_LOW</Align>
 			<Size>20</Size>
 			<Pos>0</Pos>
 		</Y>

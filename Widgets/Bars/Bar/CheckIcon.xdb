@@ -7,13 +7,16 @@
 		<X>
 			<Align>WIDGET_ALIGN_LOW</Align>
 			<Size>24</Size>
+			<Pos>2</Pos>
 			<HighPos>2</HighPos>
 		</X>
 		<Y>
 			<Align>WIDGET_ALIGN_CENTER</Align>
 			<Size>24</Size>
+			<Pos>10</Pos>
 			<HighPos>10</HighPos>
 		</Y>
 	</Placement>
 	<TransparentInput>true</TransparentInput>
+	<Visible>false</Visible>
 </WidgetPanel>

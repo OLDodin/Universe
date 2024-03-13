@@ -79,8 +79,8 @@ local function PlayerHPChanged(anInfo, aPlayerBar)
 	newPanelW = math.max(newPanelW, 1)
 	resize(aPlayerBar.barWdg, newPanelW)
 	if aPlayerBar.formSettings.raidBuffs.colorDebuffButton then
-	--чтобы лучше видно было хп убавим на 1 пиксель
-		resize(aPlayerBar.clearBarWdg, newPanelW-1)
+		--чтобы лучше видно было хп убавим на 2 пикселя
+		resize(aPlayerBar.clearBarWdg, math.max(newPanelW - 2, 1))
 	end
 	if aPlayerBar.formSettings.showProcentButton then
 		setText(aPlayerBar.procTextWdg, tostring(anInfo).."%", "LogColorYellow")
@@ -93,7 +93,12 @@ local function PlayerShieldChanged(anInfo, aPlayerBar)
 	end
 	aPlayerBar.optimizeInfo.currShield = anInfo
 	local shieldWidth = anInfo/100 * tonumber(aPlayerBar.formSettings.raidWidthText) - 5
-	resize(aPlayerBar.shieldBarWdg, shieldWidth)
+	if shieldWidth > 0 then
+		resize(aPlayerBar.shieldBarWdg, shieldWidth)
+		show(aPlayerBar.shieldBarWdg)
+	else
+		hide(aPlayerBar.shieldBarWdg)
+	end
 end
 
 local function PlayerManaChanged(anInfo, aPlayerBar)
@@ -103,7 +108,12 @@ local function PlayerManaChanged(anInfo, aPlayerBar)
 
 	aPlayerBar.optimizeInfo.currMana = anInfo
 	local manaBarWidth = anInfo/100 * tonumber(aPlayerBar.formSettings.raidWidthText) - 5
-	resize(aPlayerBar.manaBarWdg, manaBarWidth)	
+	if manaBarWidth > 0 then
+		resize(aPlayerBar.manaBarWdg, manaBarWidth)	
+		show(aPlayerBar.manaBarWdg)
+	else
+		hide(aPlayerBar.manaBarWdg)
+	end
 end
 
 local function PlayerWoundsChanged(anInfo, aPlayerBar)
@@ -518,6 +528,7 @@ end
 function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings, aNum)
 	setTemplateWidget(aParentPanel)
 	local barColor = { r = 0.8; g = 0.8; b = 0; a = 1.0 }
+	--local shieldBarColor = { r=1, g=1, b=1, a=1.0 }
 	local panelWidth = tonumber(aFormSettings.raidWidthText)
 	local panelHeight = tonumber(aFormSettings.raidHeightText)
 	local buffSize = tonumber(aFormSettings.buffSize)
@@ -529,12 +540,9 @@ function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings, aNum)
 	local playerBar = {}
 	if aRaidMode then
 		local raidMoveBar = createWidget(aParentPanel, "raidPanelAddBar", "AddBar", nil, nil, panelWidth, panelHeight, posX, posY)
-		resize(getChild(raidMoveBar, "HealthBarBackground"), panelWidth, panelHeight)
-		DnD.HideWdg(raidMoveBar)
 		DnD.Init(raidMoveBar, raidMoveBar, false)
 		playerBar.raidMoveWdg = raidMoveBar
 		playerBar.raidMoveHighlightWdg = getChild(raidMoveBar, "Highlight")
-		hide(playerBar.raidMoveHighlightWdg)
 	end
 	playerBar.wdg = createWidget(aParentPanel, "PlayerBar"..tostring(aNum)..tostring(aRaidMode), "PlayerBar", nil, nil, panelWidth, panelHeight, posX, posY)
 	playerBar.barWdg = getChild(playerBar.wdg, "HealthBar")
@@ -570,64 +578,21 @@ function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings, aNum)
 	playerBar.panelColorType = FRIEND_PANEL
 	
 	if aFormSettings.showClassIconButton then
-		move(playerBar.textWdg, 24, 0)
-		resize(playerBar.textWdg, panelWidth-24)
+		updatePlacementPlain(playerBar.textWdg, WIDGET_ALIGN_LOW, nil, 24, 0, panelWidth-24, nil)
 	else
-		move(playerBar.textWdg, 6, 0)
-		resize(playerBar.textWdg, panelWidth-6)
+		updatePlacementPlain(playerBar.textWdg, WIDGET_ALIGN_LOW, nil, 6, 0, panelWidth-6, nil)
 	end
-	
-	playerBar.textWdg:SetEllipsis(true)
-	
-	hide(playerBar.rollOverHighlightWdg)
-	hide(playerBar.highlightWdg)
-	
-	hide(playerBar.manaBarWdg)
-	resize(playerBar.shieldBarWdg, 0)
-	resize(playerBar.distTextWdg, 35)
-		
-	hide(playerBar.checkIconWdg)
-	move(playerBar.checkIconWdg, 2, 10)
-	resize(playerBar.barBackgroundWdg, panelWidth, panelHeight)
-	resize(playerBar.farBarBackgroundWdg, panelWidth-4, panelHeight-4)
-	resize(playerBar.farColoredBarWdg, panelWidth-4, panelHeight-4)
-	resize(playerBar.barWdg, panelWidth-4, panelHeight-4)
-	resize(playerBar.clearBarWdg, panelWidth-5, panelHeight-4)
-	resize(playerBar.buffPanelWdg, panelWidth, panelHeight)
-	resize(playerBar.buffPanelNegativeWdg, panelWidth, panelHeight)
 
-	move(playerBar.barWdg, 2, 2)
-	local shieldBarColor = { r=1, g=1, b=1, a=1.0 }
-	setBackgroundColor(playerBar.shieldBarWdg, shieldBarColor)
-	
-	setBackgroundColor(playerBar.barWdg, barColor) 
-	
-	hide(playerBar.distTextWdg)
-	hide(playerBar.arrowIconWdg)
-	hide(playerBar.classIconWdg)
-	
-	align(playerBar.procTextWdg, WIDGET_ALIGN_CENTER, WIDGET_ALIGN_LOW)
-	move(playerBar.arrowIconWdg, 6)
-	align(playerBar.distTextWdg, WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW)
-	move(playerBar.distTextWdg, 0)
-	align(playerBar.textWdg, WIDGET_ALIGN_LOW)
-		
 	show(playerBar.woundsTextWdg)
-	
-	align(playerBar.farBarBackgroundWdg, WIDGET_ALIGN_LOW, WIDGET_ALIGN_HIGH)
-	move(playerBar.farBarBackgroundWdg, 2, 2)
-	hide(playerBar.farBarBackgroundWdg)
-	align(playerBar.farColoredBarWdg, WIDGET_ALIGN_LOW, WIDGET_ALIGN_HIGH)
-	move(playerBar.farColoredBarWdg, 2, 2)
+	resize(playerBar.barWdg, panelWidth-4, panelHeight-4)
+	setBackgroundColor(playerBar.barWdg, barColor)
+	--setBackgroundColor(playerBar.shieldBarWdg, shieldBarColor)
 	setBackgroundColor(playerBar.farColoredBarWdg, { r = 0.3; g = 0.3; b = 0.3; a = 0.7 }) 
-	hide(playerBar.farColoredBarWdg)
 	
 	barColor = { r = 0; g = 0.03; b = 0.2; a = 1.0 }
-	setBackgroundColor(playerBar.clearBarWdg, barColor) 
-	hide(playerBar.clearBarWdg)
-	
-	DnD.HideWdg(playerBar.wdg)
-	
+	setBackgroundColor(playerBar.clearBarWdg, barColor)
+	resize(playerBar.clearBarWdg, panelWidth-6, panelHeight-4)
+		
 	local buffSlotCnt = math.floor((panelWidth)*0.85 / buffSize)
 	
 	playerBar.buffSlots = {}
@@ -644,11 +609,8 @@ function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings, aNum)
 	end
 	
 	local importantSize = panelHeight-16
-	resize(playerBar.buffPanelImportantWdg, panelWidth, panelHeight)
 	playerBar.importantBuff = CreateBuffSlot(playerBar.buffPanelImportantWdg, importantSize, nil, 0, WIDGET_ALIGN_CENTER)
 	move(playerBar.importantBuff.buffWdg, 0, 0)
-	align(playerBar.buffPanelImportantWdg, WIDGET_ALIGN_CENTER, WIDGET_ALIGN_CENTER)
-	hide(playerBar.importantBuff.buffWdg)
 	
 	playerBar.listenerHP = PlayerHPChanged
 	playerBar.listenerShield = PlayerShieldChanged
@@ -674,10 +636,8 @@ function CreateBuffSlot(aParent, aBuffSize, anResArray, anIndex, anAlign)
 	buffSlot.buffHighlight = getChild(buffSlot.buffWdg, "DotHighlight")
 	buffSlot.buffStackCnt = getChild(buffSlot.buffWdg, "DotStackText")
 	buffSlot.buffTime = getChild(buffSlot.buffWdg, "DotText")
-	align(buffSlot.buffStackCnt, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)
-	resize(buffSlot.buffStackCnt, aBuffSize, GetTextSizeByBuffSize(aBuffSize)+1)
-	resize(buffSlot.buffWdg, aBuffSize, aBuffSize)
-	show(buffSlot.buffIcon)
+	
+	updatePlacementPlain(buffSlot.buffStackCnt, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 0, 0, aBuffSize, GetTextSizeByBuffSize(aBuffSize)+1)
 	hide(buffSlot.buffTime)
 
 	if anResArray then

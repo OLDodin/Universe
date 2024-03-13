@@ -7,15 +7,16 @@
 	<BackLayer href="../Textures/iconTexture.xdb" />
 	<Placement>
 		<X>
-			<Align>WIDGET_ALIGN_LOW</Align>
-			<Size>120</Size>
+			<Align>WIDGET_ALIGN_BOTH</Align>
 			<Pos>2</Pos>
+			<HighPos>2</HighPos>
 		</X>
 		<Y>
-			<Align>WIDGET_ALIGN_LOW</Align>
-			<Size>16</Size>
+			<Align>WIDGET_ALIGN_BOTH</Align>
 			<Pos>2</Pos>
+			<HighPos>2</HighPos>
 		</Y>
 	</Placement>
 	<TransparentInput>true</TransparentInput>
+	<Visible>false</Visible>
 </WidgetPanel>

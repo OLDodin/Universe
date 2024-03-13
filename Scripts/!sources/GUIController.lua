@@ -8,7 +8,6 @@ local m_mainSettingForm = nil
 local m_profilesForm = nil
 local m_raidSettingsForm = nil
 local m_targeterSettingsForm = nil
-local m_buffSettingsForm = nil
 local m_configGroupBuffForm = nil
 local m_progressCastSettingsForm = nil
 local m_helpForm = nil
@@ -22,7 +21,6 @@ local m_buffsGroupParentForm=nil
 local m_bindSettingsForm  = nil
 local m_exportProfileForm = nil
 local m_importProfileForm = nil
-local m_colorForm = nil
 local m_importErrorForm = nil
 
 local m_progressActionPanelList = {}
@@ -77,7 +75,6 @@ local function SaveProfileByIndex(anIndex, aList)
 	aList[anIndex].mainFormSettings = SaveMainFormSettings(m_mainSettingForm)
 	aList[anIndex].raidFormSettings = SaveRaidFormSettings(m_raidSettingsForm)
 	aList[anIndex].targeterFormSettings = SaveTargeterFormSettings(m_targeterSettingsForm)
-	aList[anIndex].buffFormSettings = SaveBuffFormSettings(m_buffSettingsForm)
 	aList[anIndex].buffFormSettings = SaveConfigGroupBuffsForm(m_configGroupBuffForm, true)
 	aList[anIndex].bindFormSettings = SaveBindFormSettings(m_bindSettingsForm)
 	aList[anIndex].castFormSettings = SaveProgressCastFormSettings(m_progressCastSettingsForm)
@@ -197,41 +194,36 @@ function LoadForms()
 	LoadBindFormSettings(m_bindSettingsForm)
 	LoadProgressCastFormSettings(m_progressCastSettingsForm)
 	LoadTargeterFormSettings(m_targeterSettingsForm)
-	LoadBuffFormSettings(m_buffSettingsForm)
-	DnD.HideWdg(m_configGroupBuffForm)
-	ResetConfigGroupBuffsActiveNum()
-	DestroyColorForm()
+	LoadConfigGroupBuffsForm(m_configGroupBuffForm, 1, true)
 end
 
 function UndoAll()
 	LoadForms()
 end
 
-function DestroyColorForm()
-	if m_colorForm then
-		DnD.Remove(m_colorForm)
-		destroy(m_colorForm)
-	end
-	m_colorForm = nil
-end
-
 function SetColorBuffGroup(aWdg)
-	SetColorBuffHighlight(aWdg, GROUP_COLOR_TYPE)
+	CreateColorSettingsForBuffsGroupScroller(m_configGroupBuffForm, GetIndexForWidget(aWdg))
 end
 
 function SetColorBuffRaid(aWdg)
-	SetColorBuffHighlight(aWdg, RAID_COLOR_TYPE)
+	CreateColorSettingsForRaidBuffScroller(m_raidSettingsForm, GetIndexForWidget(aWdg))
 end
 
 function SetColorBuffTargeter(aWdg)
-	SetColorBuffHighlight(aWdg, TARGET_COLOR_TYPE)
+	CreateColorSettingsForTargetBuffScroller(m_targeterSettingsForm, GetIndexForWidget(aWdg))
 end
 
-function SetColorBuffHighlight(aWdg, aSaveLoadType)
-	DestroyColorForm()
+function ApplyColor(aWdg)
+	local container = getParent(aWdg, 5)
+	local containerName = getName(container)
 	local index = GetIndexForWidget(aWdg)
-	m_colorForm = CreateColorSettingsForm(aSaveLoadType, GetConfigGroupBuffsActiveNum(), index+1)
-	DnD.ShowWdg(m_colorForm)
+	if containerName == "groupBuffContainer" then
+		UpdateColorSettingsForBuffsGroupScroller(m_configGroupBuffForm, index)
+	elseif containerName == "raidBuffContainer" then
+		UpdateColorSettingsForRaidBuffScroller(m_raidSettingsForm, index)
+	elseif containerName == "targetBuffContainer" then
+		UpdateColorSettingsForTargetBuffScroller(m_targeterSettingsForm, index)
+	end
 end
 
 function ResetGroupBuffPanelPos(aWdg)
@@ -252,86 +244,63 @@ end
 
 
 function AddRaidBuffButton(aWdg)
-	local profile = GetCurrentProfile()
-	AddElementFromForm(profile.raidFormSettings.raidBuffs.customBuffs, m_raidSettingsForm, getChild(m_raidSettingsForm, "raidBuffContainer", true) ) 
+	AddRaidBuffToSroller(m_raidSettingsForm)
 end
 
 function AddTargetBuffButton(aWdg)
-	local profile = GetCurrentProfile()
-	AddElementFromForm(profile.targeterFormSettings.raidBuffs.customBuffs, m_targeterSettingsForm, getChild(m_targeterSettingsForm, "targetBuffContainer", true) ) 
+	AddTargetBuffToSroller(m_targeterSettingsForm)
 end
 
 function AddTargetButton(aWdg)
-	local profile = GetCurrentProfile()
-	AddElementFromForm(profile.targeterFormSettings.myTargets, m_targeterSettingsForm, getChild(m_targeterSettingsForm, "myTargetsContainer", true) ) 
+	AddMyTargetsToSroller(m_targeterSettingsForm)
 end
 
 function AddBuffsGroupButton(aWdg)
-	local profile = GetCurrentProfile()
-	local result = AddElementFromForm(profile.buffFormSettings.buffGroups, m_buffSettingsForm, getChild(m_buffSettingsForm, "buffPanelSettingsContainer", true) ) 
-	if not result then
-		return
-	end
-	local buffGroupCnt = GetTableSize(profile.buffFormSettings.buffGroups)
-	profile.buffFormSettings.buffGroupsUnicCnt = profile.buffFormSettings.buffGroupsUnicCnt + 1
-	profile.buffFormSettings.buffGroups[buffGroupCnt].buffGroupWdgName = BUFF_GROUP_WDG_NAME_PREFIX..tostring(profile.buffFormSettings.buffGroupsUnicCnt)
-	LoadConfigGroupBuffsForm(m_configGroupBuffForm, buffGroupCnt)
-	DnD.ShowWdg(m_configGroupBuffForm)
+	LoadConfigGroupBuffsForm(m_configGroupBuffForm, AddBuffsGroup(m_configGroupBuffForm))
 end
 
 function AddBuffsInsideGroupButton(aWdg)
-	local profile = GetCurrentProfile()
-	profile.buffFormSettings = SaveBuffFormSettings(m_buffSettingsForm)
-	profile.buffFormSettings = SaveConfigGroupBuffsForm(m_configGroupBuffForm, false)
-	AddElementFromForm(profile.buffFormSettings.buffGroups[GetConfigGroupBuffsActiveNum()].buffs, m_configGroupBuffForm, getChild(m_configGroupBuffForm, "groupBuffContainer", true) ) 
+	AddBuffsInsideGroupToSroller(m_configGroupBuffForm)
 end
 
 function AddIgnoreCastsButton(aWdg)
-	local profile = GetCurrentProfile()
-	AddElementFromForm(profile.castFormSettings.ignoreList, m_progressCastSettingsForm, getChild(m_progressCastSettingsForm, "ignoreListContainer") ) 
+	AddIgnoreCastToSroller(m_progressCastSettingsForm)
 end
 
 function DeleteIgnoreCastElement(aWdg)
-	local profile = GetCurrentProfile()
-	DeleteContainer(profile.castFormSettings.ignoreList, aWdg, m_progressCastSettingsForm)
+	DeleteIgnoreCastFromSroller(m_progressCastSettingsForm, aWdg)
 end
 
 function DeleteRaidBuffElement(aWdg)
-	local profile = GetCurrentProfile()
-	DeleteContainer(profile.raidFormSettings.raidBuffs.customBuffs, aWdg, m_raidSettingsForm)
+	DeleteRaidBuffFromSroller(m_raidSettingsForm, aWdg)
 end
 
 function DeleteTargetBuffElement(aWdg)
-	local profile = GetCurrentProfile()
-	--local container = getParent(getParent(getParent(getParent(aWdg))))
-	DeleteContainer(profile.targeterFormSettings.raidBuffs.customBuffs, aWdg, m_targeterSettingsForm)
+	DeleteTargetBuffFromSroller(m_targeterSettingsForm, aWdg)
 end
 
 function DeleteMyTargetsElement(aWdg)
-	local profile = GetCurrentProfile()
-	DeleteContainer(profile.targeterFormSettings.myTargets, aWdg, m_targeterSettingsForm)
+	DeleteMyTargetsFromSroller(m_targeterSettingsForm, aWdg)
 end
 
-function EditBuffGroup(aWdg)
-	local index = GetIndexForWidget(aWdg) + 1
-	LoadConfigGroupBuffsForm(m_configGroupBuffForm, index)
-	DnD.ShowWdg(m_configGroupBuffForm)
+function ShowEditBuffGroup(aWdg)
+	if not m_configGroupBuffForm:IsVisible() then
+		LoadConfigGroupBuffsForm(m_configGroupBuffForm, 1, true)
+	end
+	DnD.SwapWdg(m_configGroupBuffForm)
 end
 
-function DeleteBuffGroup(aWdg)
-	local profile = GetCurrentProfile()
-	DeleteContainer(profile.buffFormSettings.buffGroups, aWdg, m_buffSettingsForm)
+function EditBuffGroup(aWdg, anIndex)
+	LoadConfigGroupBuffsForm(m_configGroupBuffForm, anIndex)
+end
+
+function DeleteBuffsGroup(aWdg)
+	DeleteCurrentBuffsGroup(m_configGroupBuffForm)
+	LoadConfigGroupBuffsForm(m_configGroupBuffForm, 1)
 end
 
 function DeleteBuffInsideGroup(aWdg)
-	local profile = GetCurrentProfile()
-	profile.buffFormSettings = SaveBuffFormSettings(m_buffSettingsForm)
-	profile.buffFormSettings = SaveConfigGroupBuffsForm(m_configGroupBuffForm, false)
-	DeleteContainer(profile.buffFormSettings.buffGroups[GetConfigGroupBuffsActiveNum()].buffs, aWdg, m_configGroupBuffForm)
-end
-
-function SwitchActionBtn(aWdg)
-	SwitchActionClickBtn(getParent(aWdg))
+	DeleteBuffsInsideGroupFromSroller(m_configGroupBuffForm, aWdg)
 end
 
 function BuffOnMeCheckedOn()
@@ -1493,11 +1462,13 @@ local function CreateTargeterPanelCache()
 		end
 	end
 	
-	for i = TARGETS_LIMIT, TARGETS_LIMIT*2-1 do
-		local playerPanel = CreatePlayerPanel(m_targetPanel, 1, i, false, profile.targeterFormSettings, i)
-		m_targeterPlayerPanelList[i] = playerPanel
-		if profile.targeterFormSettings.twoColumnMode then
-			align(playerPanel.wdg, WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW)
+	if profile.targeterFormSettings.twoColumnMode then
+		for i = TARGETS_LIMIT, TARGETS_LIMIT*2-1 do
+			local playerPanel = CreatePlayerPanel(m_targetPanel, 1, i, false, profile.targeterFormSettings, i)
+			m_targeterPlayerPanelList[i] = playerPanel
+			if profile.targeterFormSettings.twoColumnMode then
+				align(playerPanel.wdg, WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW)
+			end
 		end
 	end
 end
@@ -1546,7 +1517,6 @@ local function LoadTargeterData()
 end
 
 local function TargetWorkSwitch()
-	local profile = GetCurrentProfile()
 	if m_currTargetType ~= TARGETS_DISABLE then
 		m_lastTargetType = m_currTargetType
 		m_currTargetType = TARGETS_DISABLE
@@ -1556,14 +1526,14 @@ local function TargetWorkSwitch()
 		
 		HideTargetDropDownSelectPanel()
 		
-		profile.targeterFormSettings.lastTargetType = m_lastTargetType
-		profile.targeterFormSettings.lastTargetWasActive = false
+		UpdateLastTargetType(m_lastTargetType)
+		UpdateLastTargetWasActive(false)
 		SaveAll()
 	else
 		m_currTargetType = m_lastTargetType
 		LoadTargeterData()
 		
-		profile.targeterFormSettings.lastTargetWasActive = true
+		UpdateLastTargetWasActive(true)
 		SaveAll()
 	end
 end
@@ -1577,8 +1547,7 @@ local function SelectTargetTypePressed(aWdg, anIndex)
 		
 	m_currTargetType = anIndex-1
 	RedrawTargeter(m_currTargetType, true)
-	local profile = GetCurrentProfile()
-	profile.targeterFormSettings.lastTargetType = m_currTargetType
+	UpdateLastTargetType(m_currTargetType)
 	SaveAll()
 end
 
@@ -2178,7 +2147,6 @@ local function GUIInit()
 	m_raidSettingsForm = CreateRaidSettingsForm()
 	m_targeterSettingsForm = CreateTargeterSettingsForm()
 	m_bindSettingsForm = CreateBindSettingsForm()
-	m_buffSettingsForm = CreateBuffSettingsForm()
 	m_configGroupBuffForm = CreateConfigGroupBuffsForm()
 	m_buffsGroupParentForm = CreateGroupsParentForm()
 	m_exportProfileForm = CreateExportProfilesForm()
@@ -2332,7 +2300,6 @@ function UnloadRaidSubSystem()
 	common.UnRegisterEventHandler(ReadyCheckChanged, "EVENT_READY_CHECK_INFO_CHANGED")
 	common.UnRegisterEventHandler(ReadyCheckEnded, "EVENT_READY_CHECK_ENDED")
 	
-	DestroyColorForm()
 	UnsubscribeRaidListeners()
 	FabricDestroyUnused()
 	StopMove()
@@ -2372,7 +2339,6 @@ function UnloadTargeterSubSystem()
 	end
 	m_targetSubSystemLoaded = false
 	
-	DestroyColorForm()
 	ClearTargetPanels()
 	for i = 0, GetTableSize(m_targeterPlayerPanelList)-1 do
 		DestroyPlayerPanel(m_targeterPlayerPanelList[i])
@@ -2408,7 +2374,6 @@ function UnloadGroupBuffSubSystem()
 	common.UnRegisterEventHandler(CannotAttachPanelAboveHead, "EVENT_CANNOT_ATTACH_WIDGET_3D")
 	
 	hide(m_buffsGroupParentForm)
-	DestroyColorForm()
 	UnsubscribeGroupBuffListeners()
 	DestroyGroupBuffPanels()
 	m_buffGroupSubSystemLoaded = false
@@ -2556,41 +2521,14 @@ function GUIControllerInit()
 	AddReaction("deleteButtonmyTargetsContainer", DeleteMyTargetsElement)
 	AddReaction("deleteButtontargetBuffContainer", DeleteTargetBuffElement)
 	AddReaction("deleteButtonraidBuffContainer", DeleteRaidBuffElement)
-	AddReaction("buffsButton", function () DnD.SwapWdg(m_buffSettingsForm) end)
-	AddReaction("editButtonbuffPanelSettingsContainer", EditBuffGroup)
-	AddReaction("deleteButtonbuffPanelSettingsContainer", DeleteBuffGroup)
+	AddReaction("buffsButton", ShowEditBuffGroup)
+	AddReaction("deleteGroupBuffsButton", DeleteBuffsGroup)
 	AddReaction("addBuffsButton", AddBuffsInsideGroupButton)
 	AddReaction("deleteButtongroupBuffContainer", DeleteBuffInsideGroup)
-	--[[
-	AddReaction("actionLeftSwitchRaidSimple", SwitchActionBtn)
-	AddReaction("actionLeftSwitchRaidShift", SwitchActionBtn)
-	AddReaction("actionLeftSwitchRaidAlt", SwitchActionBtn)
-	AddReaction("actionLeftSwitchRaidCtrl", SwitchActionBtn)
-	AddReaction("actionLeftSwitchTargetSimple", SwitchActionBtn)
-	AddReaction("actionLeftSwitchTargetShift", SwitchActionBtn)
-	AddReaction("actionLeftSwitchTargetAlt", SwitchActionBtn)
-	AddReaction("actionLeftSwitchTargetCtrl", SwitchActionBtn)
-	AddReaction("actionRightSwitchRaidSimple", SwitchActionBtn)
-	AddReaction("actionRightSwitchRaidShift", SwitchActionBtn)
-	AddReaction("actionRightSwitchRaidAlt", SwitchActionBtn)
-	AddReaction("actionRightSwitchRaidCtrl", SwitchActionBtn)
-	AddReaction("actionRightSwitchTargetSimple", SwitchActionBtn)
-	AddReaction("actionRightSwitchTargetShift", SwitchActionBtn)
-	AddReaction("actionRightSwitchTargetAlt", SwitchActionBtn)
-	AddReaction("actionRightSwitchTargetCtrl", SwitchActionBtn)
-	AddReaction("actionLeftSwitchProgressCastSimple", SwitchActionBtn)
-	AddReaction("actionLeftSwitchProgressCastShift", SwitchActionBtn)
-	AddReaction("actionLeftSwitchProgressCastAlt", SwitchActionBtn)
-	AddReaction("actionLeftSwitchProgressCastCtrl", SwitchActionBtn)
-	AddReaction("actionRightSwitchProgressCastSimple", SwitchActionBtn)
-	AddReaction("actionRightSwitchProgressCastShift", SwitchActionBtn)
-	AddReaction("actionRightSwitchProgressCastAlt", SwitchActionBtn)
-	AddReaction("actionRightSwitchProgressCastCtrl", SwitchActionBtn)
-	]]
 	AddReaction("setHighlightColorButtongroupBuffContainer", SetColorBuffGroup)
 	AddReaction("setHighlightColorButtonraidBuffContainer", SetColorBuffRaid)
 	AddReaction("setHighlightColorButtontargetBuffContainer", SetColorBuffTargeter)
-	AddReaction("setColorButton", function (aWdg) DnD.SwapWdg(getParent(aWdg)) SaveBuffColorHighlight(m_colorForm) DestroyColorForm() end)
+	AddReaction("setColorButton", ApplyColor)
 	AddReaction("resetPanelBuffPosButton", ResetGroupBuffPanelPos)
 	AddReaction("resetPanelCastPosButton", ResetProgressCastPanelPos)
 	AddReaction("nextHelpBtn", NextHelp)
@@ -2599,6 +2537,7 @@ function GUIControllerInit()
 	AddReaction("buffOnTarget", BuffOnTargetCheckedOn)
 	AddReaction("colorDebuffButton", СolorDebuffButtonCheckedOn)
 	AddReaction("targeterDropDown", SelectTargetTypePressed)
+	AddReaction("groupBuffSelector", EditBuffGroup)
 	
 	AddRightClickReaction("targeterDropDown", TargetWorkSwitch)
 	
