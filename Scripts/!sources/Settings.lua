@@ -306,13 +306,41 @@ function LoadSettings(aProfileInd)
 		
 		m_currentProfile.buffFormSettings.buffGroupsUnicCnt = GetTableSize(m_currentProfile.buffFormSettings.buffGroups) + 1
 	end
+	
+	if m_currentProfile.version < 2.9 or m_currentProfile.version == nil then
+		m_currentProfile.raidFormSettings.showBuffTimeButton = false
+		m_currentProfile.targeterFormSettings.showBuffTimeButton = false
+		
+		local wStr = common.GetEmptyWString()
+		for _, element in ipairs(m_currentProfile.castFormSettings.ignoreList) do
+			element.exceptionsEditText = wStr
+		end
+		
+		m_currentProfile.raidFormSettings.buffsOpacityText = 1.0
+		m_currentProfile.raidFormSettings.friendColor = g_relationColors[FRIEND_PANEL]
+		m_currentProfile.raidFormSettings.clearColor = g_needClearColor
+		m_currentProfile.raidFormSettings.selectionColor = g_selectionColor
+		m_currentProfile.raidFormSettings.farColor = g_farColor
+		m_currentProfile.raidFormSettings.showProcentShieldButton = false
+		
+		m_currentProfile.targeterFormSettings.buffsOpacityText = 1.0
+		m_currentProfile.targeterFormSettings.friendColor = g_relationColors[FRIEND_PANEL]
+		m_currentProfile.targeterFormSettings.enemyColor = g_relationColors[ENEMY_PANEL]
+		m_currentProfile.targeterFormSettings.neitralColor = g_relationColors[NEITRAL_PANEL]
+		m_currentProfile.targeterFormSettings.selectionColor = g_selectionColor
+		m_currentProfile.targeterFormSettings.showProcentShieldButton = true
+		
+		for i, buffGroupSettings in ipairs(m_currentProfile.buffFormSettings.buffGroups) do
+			buffGroupSettings.buffsOpacity = 1.0
+		end
+	end
 end
 
 function ProfileWasDeleted(anInd)
 	local lastUsedProfiles = userMods.GetGlobalConfigSection("TR_LastProfileArr")
 	for i, index in pairs(lastUsedProfiles) do
 		if index == anInd then
-			lastUsedProfiles[i] = 0 
+			lastUsedProfiles[i] = 0
 		elseif index > anInd and index > 0 then
 			lastUsedProfiles[i] = index - 1 
 		end
@@ -321,7 +349,7 @@ function ProfileWasDeleted(anInd)
 	LoadLastUsedSetting()
 end
 
-function SaveProfiles(aProfileList)
+function SaveAllSettings(aProfileList)
 	userMods.SetGlobalConfigSection("TR_ProfilesArr", aProfileList)
 end
 
@@ -343,5 +371,5 @@ function ExportProfileByIndex(anInd)
 end
 
 function GetSettingsVersion()
-	return 2.7;
+	return 2.9;
 end

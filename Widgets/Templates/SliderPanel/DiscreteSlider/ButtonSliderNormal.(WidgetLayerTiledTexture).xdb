@@ -14,6 +14,6 @@
 		<MiddleY>48</MiddleY>
 		<BottomY>8</BottomY>
 	</Layout>
-	<layoutTypeX>WIDGET_LAYER_TILED_LAYOUT_TYPE_TILED</layoutTypeX>
-	<layoutTypeY>WIDGET_LAYER_TILED_LAYOUT_TYPE_TILED</layoutTypeY>
+	<layoutTypeX>WIDGET_LAYER_TILED_LAYOUT_TYPE_SCALED</layoutTypeX>
+	<layoutTypeY>WIDGET_LAYER_TILED_LAYOUT_TYPE_SCALED</layoutTypeY>
 </WidgetLayerTiledTexture>

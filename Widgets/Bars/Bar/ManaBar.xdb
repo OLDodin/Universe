@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <WidgetPanel>
-	<Priority>151</Priority>
+	<Priority>140</Priority>
 	<Name>ManaBar</Name>
 	<Children>
 	</Children>

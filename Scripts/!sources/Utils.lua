@@ -69,6 +69,16 @@ function toLowerWString(text)
 	return toWString(text)
 end
 
+function splitString(text, delimeter)
+	text=toLowerString(text)
+	local regxEverythingExceptDelimeter = '([^'..delimeter..']+)'
+	local res = {}
+	for x in string.gmatch(text, regxEverythingExceptDelimeter) do
+		table.insert(res, x)
+	end
+	return res
+end
+
 function find(text, word)
 	text=toStringUtils(text)
 	word=toStringUtils(word)
@@ -156,11 +166,11 @@ function initTimeAbbr()
 	table.insert(cachedTimeAbbr, toString(Locales["d"]))
 end
 
-function getTimeString(ms)
-	if		ms<1000	then return "0."..tostring(round(ms/100))..cachedTimeAbbr[1]
+function getTimeString(ms, withoutFraction)
+	if		ms<1000 and not withoutFraction	then return "0."..tostring(round(ms/100))..cachedTimeAbbr[1]
 	else   	ms=round(ms/1000) end
 	if		ms<60	then return tostring(ms)..cachedTimeAbbr[1]
-	else    ms=math.floor(ms/60) end
+	else    ms=round(ms/60) end
 	if		ms<60	then return tostring(ms)..cachedTimeAbbr[2]
 	else    ms=round(ms/60) end
 	if		ms<24	then return tostring(ms)..cachedTimeAbbr[3]
@@ -943,6 +953,7 @@ function getSpellTextureFromCache(aSpellID)
 	
 	return newSpellTexInfo.texture
 end
+
 
 
 function LogToChat(aMessage)

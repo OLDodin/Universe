@@ -24,3 +24,7 @@ function LoadProfilesFormSettings(aForm)
 	local allProfiles = GetAllProfiles()
 	ShowValuesFromTable(allProfiles, aForm, getChild(aForm, "configProfilesContainer"))
 end
+
+function SaveProfilesFormSettings(aForm, aList)
+	UpdateTableValuesFromContainer(aList, aForm, getChild(aForm, "configProfilesContainer"))
+end

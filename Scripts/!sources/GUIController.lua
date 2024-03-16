@@ -49,6 +49,7 @@ local m_lastTargetType = ALL_TARGETS
 local m_targetUnitsByType = {}
 local m_targetUnselectable = {}
 
+local m_redrawPauseCnt = 0
 local m_needRedrawTargeter = false
 local m_targeterUnderMouseNow = false
 
@@ -61,7 +62,7 @@ function DeleteProfile(aWdg)
 	
 	local allProfiles = GetAllProfiles()
 	DeleteContainer(allProfiles, aWdg, m_profilesForm)
-	SaveProfiles(allProfiles)
+	SaveAllSettings(allProfiles)
 	ProfileWasDeleted(index+1)
 	LoadForms()
 	ReloadAll()
@@ -79,8 +80,10 @@ local function SaveProfileByIndex(anIndex, aList)
 	aList[anIndex].bindFormSettings = SaveBindFormSettings(m_bindSettingsForm)
 	aList[anIndex].castFormSettings = SaveProgressCastFormSettings(m_progressCastSettingsForm)
 	aList[anIndex].version = GetSettingsVersion()
-	
-	SaveProfiles(aList)
+	--save profiles names
+	SaveProfilesFormSettings(m_profilesForm, aList)
+		
+	SaveAllSettings(aList)
 end
 
 function OnTalentsChanged()
@@ -130,9 +133,10 @@ end
 
 function SaveProfileAs()
 	local allProfiles = GetAllProfiles()
-	AddElementFromFormWithEditLine(allProfiles, m_profilesForm, getChild(m_profilesForm, "EditLine1"), getChild(m_profilesForm, "configProfilesContainer"))
-	
-	SaveProfileByIndex(GetTableSize(allProfiles), allProfiles)
+	local res = AddElementFromFormWithEditLine(allProfiles, m_profilesForm, getChild(m_profilesForm, "EditLine1"), getChild(m_profilesForm, "configProfilesContainer"))
+	if res then
+		SaveProfileByIndex(GetTableSize(allProfiles), allProfiles)
+	end
 end
 
 function LoadProfile(aWdg)
@@ -146,7 +150,6 @@ end
 
 function SaveProfile(aWdg)
 	local index = GetIndexForWidget(aWdg)
-
 	SaveProfileByIndex(index+1)
 end
 
@@ -177,7 +180,7 @@ function ImportProfile()
 		AddElementFromFormWithText(allProfiles, m_profilesForm, importedProfile.name, getChild(m_profilesForm, "configProfilesContainer"))
 		
 		allProfiles[GetTableSize(allProfiles)] = importedProfile
-		SaveProfiles(allProfiles)
+		SaveAllSettings(allProfiles)
 		
 		DnD.HideWdg(m_importProfileForm)
 	end
@@ -1732,6 +1735,7 @@ function TryRedrawTargeter(aType)
 	if not m_targeterUnderMouseNow then
 		RedrawTargeter(aType)
 		m_needRedrawTargeter = false
+		m_redrawPauseCnt = 0
 	else
 		m_needRedrawTargeter = true
 	end
@@ -1908,10 +1912,22 @@ local function ProgressStart(aParams, aPanelList)
 		return
 	end
 	
-	local progressName = aParams.buffName or aParams.name
-	for _, ignoreObj in pairs(profile.castFormSettings.ignoreList) do
-		if progressName == ignoreObj.name then
-			return
+	if isExist(aParams.objectId or aParams.id) then
+		local progressName = aParams.buffName or aParams.name
+		local objNameLower = toLowerString(object.GetName(aParams.objectId or aParams.id))
+		for _, ignoreObj in ipairs(profile.castFormSettings.ignoreList) do
+			if progressName == ignoreObj.name then
+				local skipIgnoreName = false
+				for _, exceptionName in ipairs(splitString(ignoreObj.exceptionsEditText, ',')) do
+					if objNameLower == exceptionName then
+						skipIgnoreName = true
+						break
+					end
+				end
+				if not skipIgnoreName then
+					return
+				end
+			end
 		end
 	end
 	local panel = GetProgressCastPanel(aParams.objectId or aParams.id, aPanelList)
@@ -2153,7 +2169,7 @@ local function GUIInit()
 	m_importProfileForm = CreateImportProfilesForm()
 	m_importErrorForm = CreateImportError()
 	m_progressCastSettingsForm = CreateProgressCastSettingsForm()
-	m_helpForm = CreateHelpForm()
+	
 	m_playerShortInfoForm = CreatePlayerShortInfoForm()
 
 	m_raidPanel = CreateRaidPanel()
@@ -2166,8 +2182,12 @@ end
 local function OnEventSecondTimer()
 	--при таргетере под курсором мыши перерисовываем лишь раз в секунду (чтобы легче выбрать)
 	if m_needRedrawTargeter then
-		RedrawTargeter(m_currTargetType)
-		m_needRedrawTargeter = false
+		m_redrawPauseCnt = m_redrawPauseCnt + 1
+		if m_redrawPauseCnt == 2 then
+			RedrawTargeter(m_currTargetType)
+			m_needRedrawTargeter = false
+			m_redrawPauseCnt = 0
+		end
 	end
 	
 	-- затычка №1 - скрываем дефолтовый интерфейс рейда, тк он переодически появляется
@@ -2200,7 +2220,7 @@ local function OnEventSecondTimer()
 		end
 			
 		if eraseSomeTarget then
-			RedrawTargeter(m_currTargetType)
+			TryRedrawTargeter(m_currTargetType)
 		end
 	end
 	if m_buffGroupSubSystemLoaded then
@@ -2474,6 +2494,7 @@ function GUIControllerInit()
 	InitClassIconsTexture()
 	InitCheckTextures()
 	InitButtonTextures()
+	InitBackgroundsTextures()
 	
 	GUIInit()
 	
@@ -2509,7 +2530,7 @@ function GUIControllerInit()
 	AddReaction("targeterButton", function () DnD.SwapWdg(m_targeterSettingsForm) end)
 	AddReaction("bindButton", function () DnD.SwapWdg(m_bindSettingsForm) end)
 	AddReaction("progressCastButton", function () DnD.SwapWdg(m_progressCastSettingsForm) end)
-	AddReaction("helpButton", function () DnD.SwapWdg(m_helpForm) end)
+	AddReaction("helpButton", function () if not m_helpForm then m_helpForm = CreateHelpForm() end DnD.SwapWdg(m_helpForm) end)
 	AddReaction("closeSomeSettingsButton", function (aWdg) DnD.SwapWdg(getParent(aWdg)) UndoAll() end)
 	AddReaction("closeShortInfo", function (aWdg) hide(getParent(aWdg)) end)
 	AddReaction("addRaidBuffButton", AddRaidBuffButton)

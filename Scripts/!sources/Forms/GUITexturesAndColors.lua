@@ -1,8 +1,12 @@
 Global("g_texIcons", {})
 Global("g_texCheckState", {})
 Global("g_texParty", {})
+Global("g_texColorBack", {})
 Global("g_classColors", {})
 Global("g_relationColors", {})
+Global("g_needClearColor", { r = 0; g = 0.03; b = 0.2; a = 1 })
+Global("g_selectionColor", { r = 1; g = 0; b = 0.6; a = 1 })
+Global("g_farColor", { r = 0.3; g = 0.3; b = 0.3; a = 0.7 })
 
 Global("FRIEND_PANEL", 1)
 Global("NEITRAL_PANEL", 2)
@@ -36,6 +40,9 @@ function InitCheckTextures()
 	g_texCheckState[READY_CHECK_READY_STATE_NOT_READY] = common.GetAddonRelatedTextureGroup("common"):GetTexture("False")
 end
 
+function InitBackgroundsTextures()
+	g_texColorBack = common.GetAddonRelatedTextureGroup("common"):GetTexture("colorBack")
+end
 
 g_classColors={
 	["WARRIOR"]		= { r = 143/255; g = 119/255; b = 075/255; a = 1 },
@@ -57,3 +64,4 @@ g_relationColors={
 	[ENEMY_PANEL]		= { r = 1; g = 0; b = 0; a = 1 },
 	[NEITRAL_PANEL]		= { r = 0.8; g = 0.8; b = 0.1; a = 1 },
 }
+

@@ -92,6 +92,12 @@ function PlayerBuffs:UpdateValueIfNeeded()
 	if self.base.guiAboveHeadListener then
 		self.base.guiAboveHeadListener.listenerUpdateTick(self.base.guiAboveHeadListener)
 	end
+	if self.base.guiRaidListener then
+		self.base.guiRaidListener.listenerUpdateTick(self.base.guiRaidListener)
+	end
+	if self.base.guiTargetListener then
+		self.base.guiTargetListener.listenerUpdateTick(self.base.guiTargetListener)
+	end
 end
 
 function PlayerBuffs:InitIgnorePlatesBuffsList(anIndex)

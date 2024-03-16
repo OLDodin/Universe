@@ -63,7 +63,7 @@ local function PlayerAddBuff(aBuffInfo, aGroupBuffBar, anInfoObj)
 	
 	buffSlot.buffID = aBuffInfo.id
 	buffSlot.buffFinishedTime_h = aBuffInfo.remainingMs + g_cachedTimestamp
-	setFade(buffSlot.info.buffIcon, 1.0)
+	setFade(buffSlot.info.buffIcon, buffSlot.info.settingsOpacity)
 	
 	if aBuffInfo.stackCount <= 1 then 
 		hide(buffSlot.info.buffStackCntWdg)
@@ -74,7 +74,7 @@ local function PlayerAddBuff(aBuffInfo, aGroupBuffBar, anInfoObj)
 	
 	if aBuffInfo.remainingMs > 0 then
 		local buffTimeStr = getTimeString(aBuffInfo.remainingMs)
-		setText(buffSlot.info.buffTimerWdg, buffTimeStr, "ColorWhite", "center", math.floor(buffSlot.info.buffSize/2.5), 1, 1)
+		setText(buffSlot.info.buffTimerWdg, buffTimeStr, "ColorWhite", "center", GetTextSizeByBuffSize(buffSlot.info.buffSize), 1, 1)
 		buffSlot.info.buffTimeStr = buffTimeStr
 		show(buffSlot.info.buffTimerWdg)
 	else
@@ -133,7 +133,7 @@ local function UpdateTick(aGroupBuffBar)
 			if remainingMs > 0 then
 				local buffTimeStr = getTimeString(remainingMs)
 				if buffSlot.info.buffTimeStr ~= buffTimeStr then 
-					setText(buffSlot.info.buffTimerWdg, buffTimeStr, "ColorWhite", "center", math.floor(buffSlot.info.buffSize/2.5), 1, 1)
+					setText(buffSlot.info.buffTimerWdg, buffTimeStr, "ColorWhite", "center", GetTextSizeByBuffSize(buffSlot.info.buffSize), 1, 1)
 					buffSlot.info.buffTimeStr = buffTimeStr
 				end
 			else
@@ -156,8 +156,12 @@ local function SpellChanged(aSpellInfo, aGroupBuffBar, anInfoObj)
 	aSpellInfo.id = aSpellInfo.objectId
 	
 	local buffSlot = PlayerAddBuff(aSpellInfo, aGroupBuffBar, anInfoObj)
-	if buffSlot and aSpellInfo.remainingMs > 0 then
-		setFade(buffSlot.info.buffIcon, 0.4)
+	if buffSlot then
+		if aSpellInfo.remainingMs > 0 then
+			setFade(buffSlot.info.buffIcon, 0.4)
+		else
+			setFade(buffSlot.info.buffIcon, 1)
+		end
 	end
 end
 
@@ -244,6 +248,12 @@ function CreateGroupBuffPanel(aForm, aSettings, anIsAboveHead, aPosInPlateIndex)
 			currBuff.info.buffHighlight = getChild(currBuff.buffWdg, "DotHighlight")
 			currBuff.info.buffTimerWdg = getChild(currBuff.buffWdg, "DotText")
 			currBuff.info.buffStackCntWdg = getChild(currBuff.buffWdg, "DotStackText")
+			currBuff.info.settingsOpacity = aSettings.buffsOpacity
+			
+			if currBuff.info.settingsOpacity ~= 1 then
+				setFade(currBuff.info.buffIcon, aSettings.buffsOpacity)
+				setFade(currBuff.info.buffHighlight, aSettings.buffsOpacity)
+			end
 			
 			updatePlacementPlain(currBuff.info.buffTimerWdg, nil, nil, 1, 0, currBuff.info.buffSize, round(currBuff.info.buffSize/2.4)+1)
 			updatePlacementPlain(currBuff.info.buffStackCntWdg, WIDGET_ALIGN_LOW, WIDGET_ALIGN_HIGH, 1, 1, currBuff.info.buffSize, GetTextSizeByBuffSize(currBuff.info.buffSize)+1)

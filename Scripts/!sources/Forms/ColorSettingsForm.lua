@@ -4,6 +4,55 @@ function GetColorSettingsHeight()
 	return 245
 end
 
+function CreateSimpleColorSettingsForm(aColor, aHeaderName)
+	setTemplateWidget(m_template)
+	
+	local form=createWidget(nil, "colorSettingsForm", "PanelTransparent", WIDGET_ALIGN_CENTER, WIDGET_ALIGN_BOTH, 290, nil, 0, 0, true)
+	setLocaleTextEx(createWidget(form, aHeaderName, "TextView", WIDGET_ALIGN_BOTH, WIDGET_ALIGN_LOW, nil, 25, 0, 10), nil, "ColorWhite", "center")
+	
+	local backPreview = createWidget(form, "backPreview", "ImageBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 76, 76, 207, 52)
+	local colorPreview = createWidget(form, "colorPreview", "ImageBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 70, 70, 210, 55)
+	
+	local redWdg = CreateSlider(form, "redSlider", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 200, 25, 10, 40, 80)
+	local greenWdg = CreateSlider(form, "greenSlider", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 200, 25, 10, 65, 80)
+	local blueWdg = CreateSlider(form, "blueSlider", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 200, 25, 10, 90, 80)
+	local alphaWdg = CreateSlider(form, "alphaSlider", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 200, 25, 10, 115, 80)
+	
+	local sliderParams	= {
+							valueMin	= 0,
+							valueMax	= 1.0,
+							stepsCount	= 20,
+							value		= 1.0,
+							execute		= function( value ) 
+								local color = {}
+								color.r = redWdg:Get()
+								color.g = greenWdg:Get()
+								color.b = blueWdg:Get()
+								color.a = alphaWdg:Get()
+								colorPreview:SetBackgroundColor(color) 
+							end
+						}
+	
+	
+	sliderParams.description = getLocale()["red"]
+	sliderParams.value = aColor.r
+	redWdg:Set(sliderParams)
+	sliderParams.description = getLocale()["green"]
+	sliderParams.value = aColor.g
+	greenWdg:Set(sliderParams)
+	sliderParams.description = getLocale()["blue"]
+	sliderParams.value = aColor.b
+	blueWdg:Set(sliderParams)
+	sliderParams.description = getLocale()["alpha"]
+	sliderParams.value = aColor.a
+	alphaWdg:Set(sliderParams)
+	
+	colorPreview:SetBackgroundColor(aColor)
+	backPreview:SetBackgroundTexture(g_texColorBack)
+	
+	return form
+end
+
 function CreateColorSettingsForm(anInfo)
 	if anInfo.useHighlightBuff == nil then
 		anInfo.useHighlightBuff = false
@@ -11,6 +60,7 @@ function CreateColorSettingsForm(anInfo)
 	if anInfo.blinkHighlight == nil then
 		anInfo.blinkHighlight = false
 	end
+
 	if anInfo.highlightColor == nil then
 		anInfo.highlightColor = {r=0, g=1, b=0, a=1}
 	end

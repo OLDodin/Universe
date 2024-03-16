@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <WidgetPanel>
-	<Priority>150</Priority>
+	<Priority>152</Priority>
 	<Name>ShieldBar</Name>
 	<Children>
+		<Item href="ShieldContainer.xdb"/>
+		<Item href="ShieldText.xdb"/>
 	</Children>
-	<BackLayer href="Textures/Health.xdb#xpointer(/WidgetLayerSimpleTexture)" />
+	
 	<Placement>
 		<X>
-			<Align>WIDGET_ALIGN_LOW</Align>
-			<Size>120</Size>
+			<Align>WIDGET_ALIGN_BOTH</Align>
 			<Pos>2</Pos>
+			<HighPos>2</HighPos>
 		</X>
 		<Y>
 			<Align>WIDGET_ALIGN_LOW</Align>
-			<Size>6</Size>
+			<Size>10</Size>
 			<Pos>0</Pos>
+			<HighPos>0</HighPos>
 		</Y>
 	</Placement>
 	<TransparentInput>true</TransparentInput>

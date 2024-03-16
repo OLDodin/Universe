@@ -4,7 +4,7 @@
 	<Name>RolloverHighlight</Name>
 	<Children>
 	</Children>
-	<BackLayer href="../Textures/Highlighted.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)" />
+	<BackLayer href="../Textures/Highlighted3.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)" />
 	<Placement>
 		<X>
 			<Align>WIDGET_ALIGN_BOTH</Align>

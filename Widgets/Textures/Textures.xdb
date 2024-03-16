@@ -89,5 +89,10 @@
 			<name>help2</name>
 			<textureItem href="Help/U2.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
 		</Item>
+		
+		<Item>
+			<name>colorBack</name>
+			<textureItem href="ColorBack/forest.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
+		</Item>
 	</Items>
 </UIRelatedTextures>

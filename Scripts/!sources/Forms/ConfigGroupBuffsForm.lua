@@ -28,7 +28,7 @@ function CreateConfigGroupBuffsForm()
 	
 	m_group1 = createWidget(form, "group1", "Panel")
 	align(m_group1, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)
-	resize(m_group1, 335, 98)
+	resize(m_group1, 335, 128)
 	
 	m_group2 = createWidget(form, "group2", "Panel")
 	align(m_group2, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)
@@ -62,9 +62,11 @@ function CreateConfigGroupBuffsForm()
 	setLocaleText(createWidget(m_group1, "widthBuffCntText", "TextView", nil, nil, 200, 25, 5, 8))
 	setLocaleText(createWidget(m_group1, "heightBuffCntText", "TextView", nil, nil, 200, 25, 5, 38))
 	setLocaleText(createWidget(m_group1, "sizeBuffGroupText", "TextView", nil, nil, 200, 25, 5, 68))
+	setLocaleText(createWidget(m_group1, "buffsOpacityText", "TextView", nil, nil, 220, 25, 5, 98))
 	createWidget(m_group1, "widthBuffCntEdit", "EditLine", nil, nil, 70, 25, 260, 8)
 	createWidget(m_group1, "heightBuffCntEdit", "EditLine", nil, nil, 70, 25, 260, 38)
 	createWidget(m_group1, "sizeBuffGroupEdit", "EditLine", nil, nil, 70, 25, 260, 68)
+	createWidget(m_group1, "buffsOpacityEdit", "EditLine", nil, nil, 70, 25, 260, 98)
 	
 	setLocaleText(createWidget(m_group2, "buffOnMe", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 320, 25, 5, 3), true)
 	setLocaleText(createWidget(m_group2, "buffOnTarget", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 320, 25, 5, 33), true)
@@ -126,6 +128,8 @@ function SaveConfigGroupBuffsForm(aForm, aClose)
 	m_currentFormSettings.w = tonumber(getTextString(getChild(m_group1, "widthBuffCntEdit")))
 	m_currentFormSettings.h = tonumber(getTextString(getChild(m_group1, "heightBuffCntEdit")))
 	m_currentFormSettings.size = tonumber(getTextString(getChild(m_group1, "sizeBuffGroupEdit")))
+	local buffsOpacityEdit = getChild(m_group1, "buffsOpacityEdit")
+	m_currentFormSettings.buffsOpacity = CheckEditVal(tonumber(getTextString(buffsOpacityEdit)), 1.0, 0.1, 1.0, buffsOpacityEdit)
 	
 	m_currentFormSettings.buffOnMe = getCheckBoxState(getChild(m_group2, "buffOnMe"))
 	m_currentFormSettings.buffOnTarget = getCheckBoxState(getChild(m_group2, "buffOnTarget"))
@@ -190,6 +194,11 @@ function LoadConfigGroupBuffsForm(aForm, anIndex, aInitLoad)
 	setText(getChild(m_group1, "widthBuffCntEdit"), m_currentFormSettings.w or 5)
 	setText(getChild(m_group1, "heightBuffCntEdit"), m_currentFormSettings.h or 1)
 	setText(getChild(m_group1, "sizeBuffGroupEdit"), m_currentFormSettings.size or 50)
+	if m_currentFormSettings.buffsOpacity == 1 then
+		setText(getChild(m_group1, "buffsOpacityEdit"), "1.0")
+	else
+		setText(getChild(m_group1, "buffsOpacityEdit"), m_currentFormSettings.buffsOpacity or "1.0")
+	end
 
 	if m_currentFormSettings.buffOnMe == nil then 
 		m_currentFormSettings.buffOnMe = true
@@ -327,7 +336,16 @@ function AddBuffsInsideGroupToSroller(aForm)
 end
 
 function DeleteBuffsInsideGroupFromSroller(aForm, aDeletingWdg)
-	DeleteContainer(m_currentFormSettings.buffs, aDeletingWdg, aForm)
+	local groupBuffContainer = getChild(getChild(aForm, "group5"), "groupBuffContainer")
+	local panelOfElement = groupBuffContainer:At(GetIndexForWidget(aDeletingWdg))
+	local colorForm = getChild(panelOfElement, "colorSettingsForm")
+	if colorForm then
+		destroy(colorForm)
+		resize(panelOfElement, nil, 30)	
+		groupBuffContainer:ForceReposition()
+	else
+		DeleteContainer(m_currentFormSettings.buffs, aDeletingWdg, aForm)
+	end
 end
 
 function AddBuffsGroup(aForm)

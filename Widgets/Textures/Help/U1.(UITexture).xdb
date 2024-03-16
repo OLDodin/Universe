@@ -6,18 +6,17 @@
 	<type>DXT1</type>
 	<width>2048</width>
 	<height>1024</height>
-	<realWidth>1920</realWidth>
-	<realHeight>1024</realHeight>
+	<realWidth>1160</realWidth>
+	<realHeight>768</realHeight>
 	<disableLODControl>false</disableLODControl>
 	<alphaTex>true</alphaTex>
-	<binaryFileSize>359546</binaryFileSize>
+	<binaryFileSize>171191</binaryFileSize>
 	<binaryFile href="U1.(UITexture).bin" />
 	<binaryFileSize2>0</binaryFileSize2>
 	<binaryFile2 href="" />
 	<sourceFile href="U1.tga" />
-	<sourceFileCRC>129268960</sourceFileCRC>
+	<sourceFileCRC>-777875413</sourceFileCRC>
 	<wrap>false</wrap>
-	<LocalizationInfo />
 	<atlasPart>true</atlasPart>
 	<pool>UNDEFINED</pool>
 </UITexture>

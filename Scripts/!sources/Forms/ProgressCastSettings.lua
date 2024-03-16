@@ -44,7 +44,13 @@ function SaveProgressCastFormSettings(aForm)
 	m_currentFormSettings.panelWidthText = getTextString(getChild(aForm, "panelWidthEdit"))
 	m_currentFormSettings.panelHeightText = getTextString(getChild(aForm, "panelHeightEdit"))
 	
-	UpdateTableValuesFromContainer(m_currentFormSettings.ignoreList, aForm, getChild(aForm, "ignoreListContainer"))
+	local container = getChild(aForm, "ignoreListContainer")
+	if container and m_currentFormSettings.ignoreList then
+		for i, j in ipairs(m_currentFormSettings.ignoreList) do
+			j.name = getText(getChild(container, "Name"..tostring(i), true))
+			j.exceptionsEditText = getText(getChild(aForm, "exceptionsEdit"..tostring(i), true))
+		end
+	end
 	
 	return m_currentFormSettings
 end

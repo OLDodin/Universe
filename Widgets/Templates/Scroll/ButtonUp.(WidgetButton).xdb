@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <WidgetButton>
 	<Name />
-	<!--<Header>
-		<isPrototype>true</isPrototype>
-	</Header>-->
 	<Priority>8</Priority>
 	<Placement>
 		<X>
@@ -20,15 +17,15 @@
 	<IgnoreDblClick>true</IgnoreDblClick>	
 	<Variants>
 		<Item>
-			<LayerHighlight href="Button/ButtonHighlight.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)" />
+			<LayerHighlight href="Button/ButtonHighlight.(WidgetLayerSimpleTexture).xdb#xpointer(/WidgetLayerSimpleTexture)" />
 			<StateNormal>
-				<LayerMain href="ButtonUp/ButtonUpNormal.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)" />				
+				<LayerMain href="ButtonUp/ButtonUpNormal.(WidgetLayerSimpleTexture).xdb#xpointer(/WidgetLayerSimpleTexture)" />				
 			</StateNormal>
 			<StatePushed>
-				<LayerMain href="ButtonUp/ButtonUpPressed.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)" />
+				<LayerMain href="ButtonUp/ButtonUpPressed.(WidgetLayerSimpleTexture).xdb#xpointer(/WidgetLayerSimpleTexture)" />
 			</StatePushed>
 			<StateDisabled>
-				<LayerMain href="Button/ButtonDisabled.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)" />				
+				<LayerMain href="Button/ButtonDisabled.(WidgetLayerSimpleTexture).xdb#xpointer(/WidgetLayerSimpleTexture)" />				
 			</StateDisabled>
 			<!--<ReactionOnUp>true</ReactionOnUp>-->
 		</Item>

@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<WidgetPanel>
+	<Priority>1</Priority>
+	<Name>ShieldLine</Name>
+	<Children>
+	</Children>
+	<BackLayer href="../Textures/iconTexture.xdb" />
+	<Placement>
+		<X>
+			<Align>WIDGET_ALIGN_LOW</Align>
+			<Size>10</Size>
+			<Pos>2</Pos>
+			<HighPos>2</HighPos>
+		</X>
+		<Y>
+			<Align>WIDGET_ALIGN_BOTH</Align>
+			
+			<Pos>2</Pos>
+			<HighPos>2</HighPos>
+		</Y>
+	</Placement>
+	<TransparentInput>true</TransparentInput>
+</WidgetPanel>

@@ -11,7 +11,7 @@ function CreateTargeterSettingsForm()
 
 	local group1 = createWidget(form, "group1", "Panel")
 	align(group1, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)
-	resize(group1, 315, 211)
+	resize(group1, 315, 241)
 	
 	local group2 = createWidget(form, "group2", "Panel")
 	align(group2, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)
@@ -23,7 +23,7 @@ function CreateTargeterSettingsForm()
 	
 	local group4 = createWidget(form, "group4", "Panel")
 	align(group4, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)
-	resize(group4, 315, 128)
+	resize(group4, 315, 188)
 	
 	local group5 = createWidget(form, "group5", "Panel")
 	align(group5, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)
@@ -40,6 +40,24 @@ function CreateTargeterSettingsForm()
 	resize(group7, 295, 595)
 	move(group7, 695, 47)	
 
+	--colors
+	local group8 = createWidget(form, "group8", "Panel")
+	align(group8, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)
+	resize(group8, 315, 151)
+	
+	local group9 = createWidget(form, "group9", "Panel")
+	align(group9, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)
+	resize(group9, 315, 151)
+	
+	local group10 = createWidget(form, "group10", "Panel")
+	align(group10, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)
+	resize(group10, 315, 151)
+	
+	local group11 = createWidget(form, "group11", "Panel")
+	align(group11, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)
+	resize(group11, 315, 151)
+
+	
 	setLocaleText(createWidget(form, "targeterSettingsFormHeader", "TextView",  WIDGET_ALIGN_CENTER, nil, 200, 20, nil, 16))
 	setText(createWidget(form, "closeSomeSettingsButton", "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 20, 20, 20, 20), "x")
 		
@@ -48,8 +66,9 @@ function CreateTargeterSettingsForm()
 	createWidget(group1, "showClassIconButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 300, 25, 5, 63)
 	createWidget(group1, "showProcentButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 300, 25, 5, 93)
 	createWidget(group1, "showShieldButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 300, 25, 5, 123)
-	createWidget(group1, "woundsShowButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 300, 25, 5, 153)
-	createWidget(group1, "showManaButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 300, 25, 5, 183)
+	createWidget(group1, "showProcentShieldButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 300, 25, 5, 153)
+	createWidget(group1, "woundsShowButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 300, 25, 5, 183)
+	createWidget(group1, "showManaButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 300, 25, 5, 213)
 	
 	createWidget(group2, "gorisontalModeButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 300, 25, 5, 3)
 	createWidget(group2, "showRollOverInfoButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 300, 25, 5, 33)
@@ -66,15 +85,24 @@ function CreateTargeterSettingsForm()
 	setLocaleText(createWidget(group4, "raidWidthText", "TextView", nil, nil, 200, 25, 5, 38))
 	setLocaleText(createWidget(group4, "raidHeightText", "TextView", nil, nil, 200, 25, 5, 68))
 	setLocaleText(createWidget(group4, "buffSizeText", "TextView", nil, nil, 200, 25, 5, 98))
+	setLocaleText(createWidget(group4, "buffsOpacityText", "TextView", nil, nil, 220, 25, 5, 128))
 	createWidget(group4, "targetLimitEdit", "EditLine", nil, nil, 70, 25, 235, 8)
 	createWidget(group4, "targeterWidthEdit", "EditLine", nil, nil, 70, 25, 235, 38)
 	createWidget(group4, "targeterHeightEdit", "EditLine", nil, nil, 70, 25, 235, 68)
 	createWidget(group4, "buffSizeEdit", "EditLine", nil, nil, 70, 25, 235, 98)
+	createWidget(group4, "buffsOpacityEdit", "EditLine", nil, nil, 70, 25, 235, 128)
+	createWidget(group4, "showBuffTimeButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 300, 25, 5, 158)
+
 	
 	settingsContainer:PushBack(group1)
 	settingsContainer:PushBack(group2)
 	settingsContainer:PushBack(group3)
 	settingsContainer:PushBack(group4)
+	settingsContainer:PushBack(group8)
+	settingsContainer:PushBack(group9)
+	settingsContainer:PushBack(group10)
+	settingsContainer:PushBack(group11)
+
 	
 	setLocaleText(createWidget(group5, "raidBuffsButton", "TextView", nil, nil, 200, 25, 75, 3))
 	createWidget(group5, "checkEnemyCleanable", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 300, 25, 5, 33)
@@ -108,12 +136,17 @@ function SaveTargeterFormSettings(aForm)
 	local group5 = getChild(aForm, "group5")
 	local group6 = getChild(aForm, "group6")
 	local group7 = getChild(aForm, "group7")
+	local group8 = settingsContainer:At(4)
+	local group9 = settingsContainer:At(5)
+	local group10 = settingsContainer:At(6)
+	local group11 = settingsContainer:At(7)
 	
 	m_currentFormSettings.classColorModeButton = getCheckBoxState(getChild(group1, "classColorModeButton"))
 	m_currentFormSettings.showServerNameButton = getCheckBoxState(getChild(group1, "showServerNameButton"))
 	m_currentFormSettings.showManaButton = getCheckBoxState(getChild(group1, "showManaButton"))
 	m_currentFormSettings.showEnergyButton = false
 	m_currentFormSettings.showShieldButton = getCheckBoxState(getChild(group1, "showShieldButton"))
+	m_currentFormSettings.showProcentShieldButton = getCheckBoxState(getChild(group1, "showProcentShieldButton"))
 	m_currentFormSettings.showClassIconButton = getCheckBoxState(getChild(group1, "showClassIconButton"))
 	m_currentFormSettings.showProcentButton = getCheckBoxState(getChild(group1, "showProcentButton"))
 	m_currentFormSettings.woundsShowButton = getCheckBoxState(getChild(group1, "woundsShowButton"))
@@ -132,15 +165,13 @@ function SaveTargeterFormSettings(aForm)
 	m_currentFormSettings.raidWidthText = getTextString(getChild(group4, "targeterWidthEdit"))
 	m_currentFormSettings.raidHeightText = getTextString(getChild(group4, "targeterHeightEdit"))
 	m_currentFormSettings.buffSize = getTextString(getChild(group4, "buffSizeEdit"))
-	m_currentFormSettings.targetLimit = getTextString(getChild(group4, "targetLimitEdit"))
-	local limit = tonumber(m_currentFormSettings.targetLimit)
-	if limit > 30 then
-		m_currentFormSettings.targetLimit = "30"
-	end
-	if limit < 1 then
-		m_currentFormSettings.targetLimit = "1"
-	end
-	setText(getChild(group4, "targetLimitEdit"), m_currentFormSettings.targetLimit)
+	
+	local buffsOpacityEdit = getChild(group4, "buffsOpacityEdit")
+	m_currentFormSettings.buffsOpacityText = CheckEditVal(tonumber(getTextString(buffsOpacityEdit)), 1.0, 0.1, 1.0, buffsOpacityEdit)
+	local targetLimitEdit = getChild(group4, "targetLimitEdit")
+	m_currentFormSettings.targetLimit = tostring(CheckEditVal(tonumber(getTextString(targetLimitEdit)), 12, 1, 30, targetLimitEdit))
+
+	m_currentFormSettings.showBuffTimeButton = getCheckBoxState(getChild(group4, "showBuffTimeButton"))
 
 	m_currentFormSettings.raidBuffs.checkEnemyCleanable = getCheckBoxState(getChild(group5, "checkEnemyCleanable"))
 	m_currentFormSettings.raidBuffs.checkControlsButton = getCheckBoxState(getChild(group5, "checkControlsButton"))
@@ -150,11 +181,21 @@ function SaveTargeterFormSettings(aForm)
 	if container and m_currentFormSettings.raidBuffs.customBuffs then
 		for i, j in ipairs(m_currentFormSettings.raidBuffs.customBuffs) do
 			j.name = getText(getChild(container, "Name"..tostring(i), true))
-			j.castByMe = getCheckBoxState(getChild(container, "castByMe"..tostring(i), true))
+			j.isCastName = getCheckBoxState(getChild(container, "isCastName"..tostring(i), true))
+			j.isMobName = getCheckBoxState(getChild(container, "isMobName"..tostring(i), true))
+			if not j.isCastName and not j.isMobName then
+				j.isCastName = true
+			end
 		end
 	end
 
 	UpdateTableValuesFromContainer(m_currentFormSettings.myTargets, aForm, getChild(group7, "myTargetsContainer"))
+	
+	
+	m_currentFormSettings.friendColor = getChild(getChild(group8, "colorSettingsForm"), "colorPreview"):GetBackgroundColor()
+	m_currentFormSettings.neitralColor = getChild(getChild(group9, "colorSettingsForm"), "colorPreview"):GetBackgroundColor()
+	m_currentFormSettings.enemyColor = getChild(getChild(group10, "colorSettingsForm"), "colorPreview"):GetBackgroundColor()
+	m_currentFormSettings.selectionColor = getChild(getChild(group11, "colorSettingsForm"), "colorPreview"):GetBackgroundColor()
 
 	return m_currentFormSettings
 end
@@ -168,6 +209,10 @@ function LoadTargeterFormSettings(aForm)
 	local group5 = getChild(aForm, "group5")
 	local group6 = getChild(aForm, "group6")
 	local group7 = getChild(aForm, "group7")
+	local group8 = settingsContainer:At(4)
+	local group9 = settingsContainer:At(5)
+	local group10 = settingsContainer:At(6)
+	local group11 = settingsContainer:At(7)
 	
 	local profile = GetCurrentProfile()
 	m_currentFormSettings = deepCopyTable(profile.targeterFormSettings)
@@ -187,6 +232,7 @@ function LoadTargeterFormSettings(aForm)
 	setLocaleText(getChild(group1, "showClassIconButton"), m_currentFormSettings.showClassIconButton)
 	setLocaleText(getChild(group1, "showProcentButton"), m_currentFormSettings.showProcentButton)
 	setLocaleText(getChild(group1, "woundsShowButton"), m_currentFormSettings.woundsShowButton)
+	setLocaleText(getChild(group1, "showProcentShieldButton"), m_currentFormSettings.showProcentShieldButton)
 	
 	setLocaleText(getChild(group2, "gorisontalModeButton"), m_currentFormSettings.gorisontalModeButton)
 	setLocaleText(getChild(group2, "showRollOverInfoButton"), m_currentFormSettings.showRollOverInfo)
@@ -203,6 +249,12 @@ function LoadTargeterFormSettings(aForm)
 	setText(getChild(group4, "targeterHeightEdit"), m_currentFormSettings.raidHeightText)
 	setText(getChild(group4, "buffSizeEdit"), m_currentFormSettings.buffSize)
 	setText(getChild(group4, "targetLimitEdit"), m_currentFormSettings.targetLimit)
+	if m_currentFormSettings.buffsOpacityText == 1 then
+		setText(getChild(group4, "buffsOpacityEdit"), "1.0")
+	else
+		setText(getChild(group4, "buffsOpacityEdit"), m_currentFormSettings.buffsOpacityText)
+	end
+	setLocaleText(getChild(group4, "showBuffTimeButton"), m_currentFormSettings.showBuffTimeButton)
 	
 	setLocaleText(getChild(group5, "checkEnemyCleanable"), m_currentFormSettings.raidBuffs.checkEnemyCleanable)
 	setLocaleText(getChild(group5, "checkControlsButton"), m_currentFormSettings.raidBuffs.checkControlsButton)
@@ -210,6 +262,23 @@ function LoadTargeterFormSettings(aForm)
 
 	ShowValuesFromTable(m_currentFormSettings.raidBuffs.customBuffs, aForm, getChild(group6, "targetBuffContainer"))
 	ShowValuesFromTable(m_currentFormSettings.myTargets, aForm, getChild(group7, "myTargetsContainer"))
+	
+	destroy(getChild(group8, "colorSettingsForm"))
+	destroy(getChild(group9, "colorSettingsForm"))
+	destroy(getChild(group10, "colorSettingsForm"))
+	destroy(getChild(group11, "colorSettingsForm"))
+	
+	local colorForm = CreateSimpleColorSettingsForm(m_currentFormSettings.friendColor, "friendColorHeader")
+	group8:AddChild(colorForm)
+	
+	colorForm = CreateSimpleColorSettingsForm(m_currentFormSettings.neitralColor, "neitralColorHeader")
+	group9:AddChild(colorForm)
+	
+	colorForm = CreateSimpleColorSettingsForm(m_currentFormSettings.enemyColor, "enemyColorHeader")
+	group10:AddChild(colorForm)
+	
+	colorForm = CreateSimpleColorSettingsForm(m_currentFormSettings.selectionColor, "selectionColorHeader")
+	group11:AddChild(colorForm)
 end
 
 function AddTargetBuffToSroller(aForm)
@@ -223,7 +292,16 @@ function AddMyTargetsToSroller(aForm)
 end
 
 function DeleteTargetBuffFromSroller(aForm, aDeletingWdg)
-	DeleteContainer(m_currentFormSettings.raidBuffs.customBuffs, aDeletingWdg, aForm)
+	local container = getChild(getChild(aForm, "group6"), "targetBuffContainer")
+	local panelOfElement = container:At(GetIndexForWidget(aDeletingWdg))
+	local colorForm = getChild(panelOfElement, "colorSettingsForm")
+	if colorForm then
+		destroy(colorForm)
+		resize(panelOfElement, nil, 30)
+		container:ForceReposition()
+	else
+		DeleteContainer(m_currentFormSettings.raidBuffs.customBuffs, aDeletingWdg, aForm)
+	end
 end
 
 function DeleteMyTargetsFromSroller(aForm, aDeletingWdg)

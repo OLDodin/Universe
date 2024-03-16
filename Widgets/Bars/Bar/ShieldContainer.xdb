@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<WidgetPanel>
+	<Priority>1</Priority>
+	<Name>ShieldContainer</Name>
+	<Children>
+		<Item href="ShieldLine.xdb"/>
+	</Children>
+	<BackLayer href="Textures/Background.xdb#xpointer(/WidgetLayerTiledTexture)" />
+	<Placement>
+		<X>
+			<Align>WIDGET_ALIGN_BOTH</Align>
+			<Pos>0</Pos>
+			<HighPos>0</HighPos>
+		</X>
+		<Y>
+			<Align>WIDGET_ALIGN_BOTH</Align>
+			<Size>6</Size>
+			<Pos>0</Pos>
+			<HighPos>4</HighPos>
+		</Y>
+	</Placement>
+	<TransparentInput>true</TransparentInput>
+</WidgetPanel>

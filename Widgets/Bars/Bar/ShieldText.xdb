@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<WidgetTextView>
+	<Name>ShieldText</Name>
+	<Priority>3</Priority>
+	<Placement>
+		<X>
+			<Align>WIDGET_ALIGN_BOTH</Align>
+			<Pos>0</Pos>
+			<HighPos>0</HighPos>
+		</X>
+		<Y>
+			<Align>WIDGET_ALIGN_BOTH</Align>
+			
+			<Pos>-2</Pos>
+			<HighPos>0</HighPos>
+		</Y>
+	</Placement>
+	<TransparentInput>true</TransparentInput>
+</WidgetTextView>

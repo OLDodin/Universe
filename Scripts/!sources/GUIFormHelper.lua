@@ -198,6 +198,10 @@ local function GenerateWidgetForContainer(anElement, aContainer, anIndex)
 		if anElement.castByMe==nil then anElement.castByMe=false end
 		setCheckBox(createWidget(panel, "castByMe"..tostring(anIndex), "CheckBox", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 25, 25, 60), anElement.castByMe)
 		setLocaleText(createWidget(panel, "setHighlightColorButton"..containerName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 30, 25, 30))
+	elseif containerName == "ignoreListContainer" then		
+		resize(ownerPanel, nil, 80)
+		setLocaleText(createWidget(ownerPanel, "ignoreListExceptionsHeader", "TextView",  WIDGET_ALIGN_BOTH, WIDGET_ALIGN_LOW, nil, 20, 10, 25))
+		setText(createWidget(ownerPanel, "exceptionsEdit"..tostring(anIndex), "EditLine", WIDGET_ALIGN_BOTH, WIDGET_ALIGN_LOW, nil, 22, 10, 50), anElement.exceptionsEditText)
 	end
 	
 	setText(createWidget(panel, "deleteButton"..containerName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 15, 15, 10), "x")
@@ -246,7 +250,9 @@ function UpdateTableValuesFromContainer(aTable, aForm, aContainer)
 		return nil 
 	end
 	for i, j in ipairs(aTable) do
-		j.name = getText(getChild(aContainer, "Name"..tostring(i), true))
+		local editLine = getChild(aContainer, "Name"..tostring(i), true)
+		editLine:SetFocus(false)
+		j.name = getText(editLine)
 		j.nameLowerStr = toLowerString(j.name)
 	end
 end
@@ -310,4 +316,12 @@ function FindWdgInContainer(aContainer, aWdgName)
 			return wdg
 		end
 	end
+end
+
+function CheckEditVal(aVal, aDefaultVal, aMinVal, aMaxVal, aWdg)
+	if not aVal or aVal < aMinVal or aVal > aMaxVal then
+		aVal = aDefaultVal
+		setText(aWdg, aVal)
+	end
+	return aVal
 end

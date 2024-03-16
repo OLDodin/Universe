@@ -17,12 +17,6 @@
 			<StateNormal>
 				<LayerMain href="ButtonSliderNormal.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)" />
 			</StateNormal>
-			<!--<StatePushed>
-				<LayerMain href="ButtonSliderHighlight.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)" />
-			</StatePushed>-->
-			<!--<StateDisabled>
-				<LayerMain href="Textures/ButtonSliderDisabled.(WidgetLayerSimpleTexture).xdb#xpointer(/WidgetLayerSimpleTexture)" />
-			</StateDisabled>-->
 		</Item>
 	</Variants>
 </WidgetButton>

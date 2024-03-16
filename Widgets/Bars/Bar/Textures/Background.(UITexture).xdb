@@ -10,14 +10,13 @@
 	<realHeight>20</realHeight>
 	<disableLODControl>false</disableLODControl>
 	<alphaTex>true</alphaTex>
-	<binaryFileSize>150</binaryFileSize>
+	<binaryFileSize>126</binaryFileSize>
 	<binaryFile href="Background.(UITexture).bin" />
 	<binaryFileSize2>0</binaryFileSize2>
 	<binaryFile2 href="" />
 	<sourceFile href="Background.tga" />
-	<sourceFileCRC>-219143060</sourceFileCRC>
+	<sourceFileCRC>1463403379</sourceFileCRC>
 	<wrap>false</wrap>
-	<LocalizationInfo />
 	<atlasPart>true</atlasPart>
 	<pool>UNDEFINED</pool>
 </UITexture>

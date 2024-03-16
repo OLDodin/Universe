@@ -1325,5 +1325,49 @@
       <name>deleteGroupBuffsButton</name>
       <resource href="deleteGroupBuffsButton.txt"/>
     </Item>
+	<Item>
+      <name>showBuffTimeButton</name>
+      <resource href="showBuffTimeButton.txt"/>
+    </Item>
+	<Item>
+      <name>ignoreListExceptionsHeader</name>
+      <resource href="ignoreListExceptionsHeader.txt"/>
+    </Item>
+	<Item>
+      <name>bindCastNotify</name>
+      <resource href="bindCastNotify.txt"/>
+    </Item>
+	<Item>
+      <name>buffsOpacityText</name>
+      <resource href="buffsOpacityText.txt"/>
+    </Item>
+	<Item>
+      <name>friendColorHeader</name>
+      <resource href="friendColorHeader.txt"/>
+    </Item>
+	<Item>
+      <name>neitralColorHeader</name>
+      <resource href="neitralColorHeader.txt"/>
+    </Item>
+	<Item>
+      <name>enemyColorHeader</name>
+      <resource href="enemyColorHeader.txt"/>
+    </Item>
+	<Item>
+      <name>needClearColorHeader</name>
+      <resource href="needClearColorHeader.txt"/>
+    </Item>
+	<Item>
+      <name>selectionColorHeader</name>
+      <resource href="selectionColorHeader.txt"/>
+    </Item>
+	<Item>
+      <name>farColorHeader</name>
+      <resource href="farColorHeader.txt"/>
+    </Item>
+	<Item>
+      <name>showProcentShieldButton</name>
+      <resource href="showProcentShieldButton.txt"/>
+    </Item>
   </items>
 </UIRelatedTexts>

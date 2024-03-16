@@ -6,8 +6,8 @@
 	<type>DXT5</type>
 	<width>32</width>
 	<height>32</height>
-	<realWidth>32</realWidth>
-	<realHeight>32</realHeight>
+	<realWidth>18</realWidth>
+	<realHeight>18</realHeight>
 	<disableLODControl>false</disableLODControl>
 	<alphaTex>true</alphaTex>
 	<binaryFileSize>272</binaryFileSize>

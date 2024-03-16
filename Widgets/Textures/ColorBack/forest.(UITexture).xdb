@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<UITexture>
+	<mipSW>-1</mipSW>
+	<mipsNumber>1</mipsNumber>
+	<generateMipChain>false</generateMipChain>
+	<type>DXT1</type>
+	<width>64</width>
+	<height>64</height>
+	<realWidth>64</realWidth>
+	<realHeight>64</realHeight>
+	<disableLODControl>false</disableLODControl>
+	<alphaTex>false</alphaTex>
+	<binaryFileSize>2054</binaryFileSize>
+	<binaryFile href="forest.(UITexture).bin" />
+	<binaryFileSize2>0</binaryFileSize2>
+	<binaryFile2 href="" />
+	<sourceFile href="forest.tga" />
+	<sourceFileCRC>-684620286</sourceFileCRC>
+	<wrap>false</wrap>
+	<atlasPart>true</atlasPart>
+	<pool>UNDEFINED</pool>
+</UITexture>

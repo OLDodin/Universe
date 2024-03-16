@@ -158,6 +158,10 @@ function CreateBindSettingsForm()
 	createWidget(group3, "actionRightProgressCastAltBind", "EditLine", nil, nil, 180, 25, 225, 365, nil, nil)
 	createWidget(group3, "actionRightProgressCastCtrlBind", "EditLine", nil, nil, 180, 25, 225, 485, nil, nil)
 	
+	local bindCastNotifyWdg = createWidget(form, "bindCastNotify", "TextView",  WIDGET_ALIGN_HIGH, WIDGET_ALIGN_HIGH, 415, 40, 10, 20)
+	bindCastNotifyWdg:SetMultiline(true)
+	setLocaleTextEx(bindCastNotifyWdg, nil, "ColorGray", "left")
+	
 	setLocaleText(createWidget(form, "saveButton", "Button", WIDGET_ALIGN_CENTER, WIDGET_ALIGN_HIGH, 200, 30, nil, 20))
 	
 	DnD.Init(form, form, true)
