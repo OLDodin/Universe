@@ -830,7 +830,7 @@
       <resource href="selectablePanel.txt"/>
     </Item>
     <Item>
-      <name>fixedPanel</name>
+      <name>progressCastFixButton</name>
       <resource href="fixedPanel.txt"/>
     </Item>
     <Item>

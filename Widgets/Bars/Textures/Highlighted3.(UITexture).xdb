@@ -10,12 +10,12 @@
 	<realHeight>64</realHeight>
 	<disableLODControl>false</disableLODControl>
 	<alphaTex>true</alphaTex>
-	<binaryFileSize>233</binaryFileSize>
+	<binaryFileSize>235</binaryFileSize>
 	<binaryFile href="Highlighted3.(UITexture).bin" />
 	<binaryFileSize2>0</binaryFileSize2>
 	<binaryFile2 href="" />
 	<sourceFile href="Highlighted3.tga" />
-	<sourceFileCRC>-1608246717</sourceFileCRC>
+	<sourceFileCRC>1055964267</sourceFileCRC>
 	<wrap>false</wrap>
 	<atlasPart>true</atlasPart>
 	<pool>UNDEFINED</pool>

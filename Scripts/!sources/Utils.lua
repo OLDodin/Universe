@@ -915,7 +915,7 @@ end
 
 
 function getTimestamp()
-	return common.GetMsFromDateTime( common.GetLocalDateTime() )
+	return common.GetLocalDateTimeMs()
 end
 
 Global("g_cachedTimestamp", getTimestamp())

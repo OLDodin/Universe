@@ -7,6 +7,8 @@ Global("g_relationColors", {})
 Global("g_needClearColor", { r = 0; g = 0.03; b = 0.2; a = 1 })
 Global("g_selectionColor", { r = 1; g = 0; b = 0.6; a = 1 })
 Global("g_farColor", { r = 0.3; g = 0.3; b = 0.3; a = 0.7 })
+Global("g_shieldContainerNormalColor", { r = 0, g = 0, b = 0, a = 1 })
+Global("g_shieldContainerCleanableColor", { r = 0.39, g = 0.19, b = 0, a = 1 })
 
 Global("FRIEND_PANEL", 1)
 Global("NEITRAL_PANEL", 2)

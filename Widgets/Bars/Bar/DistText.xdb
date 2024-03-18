@@ -12,8 +12,8 @@
 		<Y>
 			<Align>WIDGET_ALIGN_LOW</Align>
 			<Size>20</Size>
-			<Pos>0</Pos>
-			<HighPos>0</HighPos>
+			<Pos>1</Pos>
+			<HighPos>1</HighPos>
 		</Y>
 	</Placement>
 	<TransparentInput>true</TransparentInput>

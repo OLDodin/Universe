@@ -218,8 +218,8 @@ function CreateGroupBuffPanel(aForm, aSettings, anIsAboveHead, aPosInPlateIndex)
 			DnD.HideWdg(groupBuffTopPanel)
 		else
 			DnD.ShowWdg(groupBuffTopPanel)
-			setText(getChild(groupBuffTopPanel, "PanelNameText"), aSettings.name, "ColorWhite", "center", 17, true, true)
 		end
+		setText(getChild(groupBuffTopPanel, "PanelNameText"), aSettings.name, "ColorWhite", "center", 17, true, true)
 		setFade(groupBuffTopPanel, 0.7)
 		
 		local buffAlign = WIDGET_ALIGN_LOW
@@ -273,7 +273,6 @@ function CreateGroupBuffPanels(aForm)
 			m_groupBuffPanels[i] = CreateGroupBuffPanel(aForm, group, false, i)
 		end
 	end
-	
 end
 
 function ResetPanelPos(aInd)
@@ -286,6 +285,31 @@ function ResetPanelPos(aInd)
 	DnD.Init(m_groupBuffPanels[aInd].panelWdg, groupBuffTopPanel, true, false)
 end
 
+function UpdateVisibleForGroupBuffTopPanel(aSettings)
+	for i, groupBuffPanel in pairs(m_groupBuffPanels) do
+		if groupBuffPanel.panelWdg then
+			local groupBuffTopPanel = getChild(groupBuffPanel.panelWdg, "MoveModePanel")
+			if aSettings.buffGroups[i].fixed then
+				DnD.HideWdg(groupBuffTopPanel)
+			else
+				DnD.ShowWdg(groupBuffTopPanel)
+			end
+		end
+	end
+end
+
+function SetVisibleForGroupBuffTopPanel(aInd, aVisible)
+	if not m_groupBuffPanels[aInd] or not m_groupBuffPanels[aInd].panelWdg then
+		return
+	end
+	local groupBuffTopPanel = getChild(m_groupBuffPanels[aInd].panelWdg, "MoveModePanel")
+	if aVisible then
+		DnD.ShowWdg(groupBuffTopPanel)
+	else
+		DnD.HideWdg(groupBuffTopPanel)
+	end
+end
+
 local function FindIndexByWdg(aWdg)
 	for _, panel in pairs(m_groupBuffPanels) do
 		if panel.panelWdg:IsEqual(aWdg) then
@@ -294,7 +318,7 @@ local function FindIndexByWdg(aWdg)
 	end
 end
 
-function SetPanelFixed(aFromWdg)
+function SetGroupBuffPanelFixed(aFromWdg)
 	local settingIndex = FindIndexByWdg(aFromWdg)
 	if settingIndex then
 		UpdateConfigGroupBuffsFormPanelFixed(settingIndex)

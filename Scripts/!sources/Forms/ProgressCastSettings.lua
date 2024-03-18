@@ -14,7 +14,7 @@ function CreateProgressCastSettingsForm()
 	createWidget(form, "showImportantCasts", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 330, 25, 20, 80)
 	createWidget(form, "showImportantBuffs", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 330, 25, 20, 110)
 	createWidget(form, "selectablePanel", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 330, 25, 20, 140)
-	createWidget(form, "fixedPanel", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 330, 25, 20, 170)
+	createWidget(form, "progressCastFixButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 330, 25, 20, 170)
 	createWidget(form, "showOnlyMyTarget", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 330, 25, 20, 200)
 	
 	setLocaleText(createWidget(form, "panelWidthText", "TextView", nil, nil, 200, 25, 20, 230))
@@ -38,7 +38,7 @@ function SaveProgressCastFormSettings(aForm)
 	m_currentFormSettings.showImportantCasts = getCheckBoxState(getChild(aForm, "showImportantCasts"))
 	m_currentFormSettings.showImportantBuffs = getCheckBoxState(getChild(aForm, "showImportantBuffs"))
 	m_currentFormSettings.selectable = getCheckBoxState(getChild(aForm, "selectablePanel"))
-	m_currentFormSettings.fixed = not getCheckBoxState(getChild(aForm, "fixedPanel"))
+	m_currentFormSettings.fixed = not getCheckBoxState(getChild(aForm, "progressCastFixButton"))
 	m_currentFormSettings.showOnlyMyTarget = getCheckBoxState(getChild(aForm, "showOnlyMyTarget"))
 	
 	m_currentFormSettings.panelWidthText = getTextString(getChild(aForm, "panelWidthEdit"))
@@ -67,13 +67,18 @@ function LoadProgressCastFormSettings(aForm)
 	setLocaleText(getChild(aForm, "showImportantCasts"), m_currentFormSettings.showImportantCasts)
 	setLocaleText(getChild(aForm, "showImportantBuffs"), m_currentFormSettings.showImportantBuffs)
 	setLocaleText(getChild(aForm, "selectablePanel"), m_currentFormSettings.selectable)
-	setLocaleText(getChild(aForm, "fixedPanel"), not m_currentFormSettings.fixed)
+	setLocaleText(getChild(aForm, "progressCastFixButton"), not m_currentFormSettings.fixed)
 	setLocaleText(getChild(aForm, "showOnlyMyTarget"), m_currentFormSettings.showOnlyMyTarget)
 	
 	setText(getChild(aForm, "panelWidthEdit"), m_currentFormSettings.panelWidthText)
 	setText(getChild(aForm, "panelHeightEdit"), m_currentFormSettings.panelHeightText)
 	
 	ShowValuesFromTable(m_currentFormSettings.ignoreList, aForm, getChild(aForm, "ignoreListContainer"))
+end
+
+function SetProgressCastPanelFixed(aForm)
+	m_currentFormSettings.fixed = true
+	setCheckBox(getChild(aForm, "progressCastFixButton"), not m_currentFormSettings.fixed)
 end
 
 function AddIgnoreCastToSroller(aForm)

@@ -17,7 +17,7 @@ end
 
 function onAOPanelLeftClick( params )
 	if params.sender == common.GetAddonName() then
-		UniverseBtnPressed()
+		SwapMainSettingsForm()
 	end
 end
 

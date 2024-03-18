@@ -96,7 +96,7 @@ local function PlayerShieldChanged(anInfo, aPlayerBar)
 	if shieldWidth > 0 then
 		resize(aPlayerBar.shieldLineWdg, shieldWidth)
 		if aPlayerBar.formSettings.showProcentShieldButton then
-			setText(aPlayerBar.shieldTextWdg, tostring(anInfo).."%", "LogColorYellow", "center", aPlayerBar.shieldTextFontSize)
+			setText(aPlayerBar.shieldTextWdg, tostring(anInfo).."%", "ColorWhite", "center", aPlayerBar.shieldTextFontSize)
 		end
 		show(aPlayerBar.shieldBarWdg)
 	else
@@ -280,6 +280,10 @@ local function PlayerRemoveBuffNegative(aBuffID, aPlayerBar)
 		end
 		if aPlayerBar.cleanableBuffCnt == 0 and aPlayerBar.formSettings.raidBuffs.colorDebuffButton then
 			hide(aPlayerBar.clearBarWdg)
+			if not compareColor(aPlayerBar.optimizeInfo.shieldContainerColor, g_shieldContainerNormalColor) then
+				setBackgroundColor(aPlayerBar.shieldContainerWdg, g_shieldContainerNormalColor)
+				aPlayerBar.optimizeInfo.shieldContainerColor = g_shieldContainerNormalColor
+			end
 		end
 	end
 end
@@ -354,6 +358,10 @@ local function PlayerAddBuffNegative(aBuffInfo, aPlayerBar, anInfoObj)
 		
 		if aPlayerBar.cleanableBuffCnt == 1 and aPlayerBar.formSettings.raidBuffs.colorDebuffButton then
 			show(aPlayerBar.clearBarWdg)
+			if not compareColor(aPlayerBar.optimizeInfo.shieldContainerColor, g_shieldContainerCleanableColor) then
+				setBackgroundColor(aPlayerBar.shieldContainerWdg, g_shieldContainerCleanableColor)
+				aPlayerBar.optimizeInfo.shieldContainerColor = g_shieldContainerCleanableColor
+			end
 		end
 	end
 end
@@ -419,6 +427,7 @@ function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettin
 	aPlayerBar.optimizeInfo.canSelectByDist = true
 	aPlayerBar.optimizeInfo.currDist = -1
 	aPlayerBar.panelColorType = aRelationType
+	aPlayerBar.optimizeInfo.shieldContainerColor = copyTable(g_shieldContainerNormalColor)
 	
 	local isPlayerExist = isExist(aPlayerInfo.id)
 	aPlayerBar.isPlayerExist = isPlayerExist
@@ -443,6 +452,8 @@ function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettin
 	aPlayerBar.importantBuff.buffID = nil
 	
 	hide(aPlayerBar.clearBarWdg)
+	
+	setBackgroundColor(aPlayerBar.shieldContainerWdg, aPlayerBar.optimizeInfo.shieldContainerColor)
 	
 	local barColor = copyTable(aFormSettings.friendColor)
 	if isPlayerExist and (aFormSettings.showManaButton or aFormSettings.classColorModeButton) then
@@ -611,7 +622,8 @@ function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings, aNum)
 	playerBar.barWdg = getChild(playerBar.wdg, "HealthBar")
 	playerBar.manaBarWdg = getChild(playerBar.wdg, "ManaBar")
 	playerBar.shieldBarWdg = getChild(playerBar.wdg, "ShieldBar")
-	playerBar.shieldLineWdg = getChild(getChild(playerBar.shieldBarWdg, "ShieldContainer"), "ShieldLine")
+	playerBar.shieldContainerWdg = getChild(playerBar.shieldBarWdg, "ShieldContainer")
+	playerBar.shieldLineWdg = getChild(playerBar.shieldContainerWdg, "ShieldLine")
 	playerBar.shieldTextWdg = getChild(playerBar.shieldBarWdg, "ShieldText")
 	playerBar.barBackgroundWdg = getChild(playerBar.wdg, "HealthBarBackground")
 	playerBar.classIconWdg = getChild(playerBar.wdg, "ClassIcon")
@@ -634,6 +646,7 @@ function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings, aNum)
 	playerBar.optimizeInfo.name = m_emptyWStr
 	playerBar.optimizeInfo.shardName = m_emptyWStr
 	playerBar.optimizeInfo.barColor = copyTable(barColor)
+	playerBar.optimizeInfo.shieldContainerColor = copyTable(g_shieldContainerNormalColor)
 	playerBar.optimizeInfo.posX = posX
 	playerBar.optimizeInfo.posY = posY
 	playerBar.optimizeInfo.canSelect = true
@@ -658,7 +671,7 @@ function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings, aNum)
 	setBackgroundColor(playerBar.barWdg, barColor)
 	setBackgroundColor(playerBar.highlightWdg, aFormSettings.selectionColor) 
 	
-	setBackgroundColor(getChild(playerBar.shieldBarWdg, "ShieldContainer"), { r=0, g=0, b=0, a=1.0 })
+	setBackgroundColor(playerBar.shieldContainerWdg, playerBar.optimizeInfo.shieldContainerColor)
 	
 	local shieldBarHeight = 10
 	if panelHeight > 69 then

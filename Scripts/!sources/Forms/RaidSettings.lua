@@ -124,10 +124,17 @@ function CreateRaidSettingsForm()
 	return form
 end
 
-function RaidSettingsСolorDebuffButtonCheckedOn(aForm)
+function RaidSettingsСolorDebuffButtonChecked(aForm)
 	local group6 = getChild(aForm, "group6")
 	if getCheckBoxState(getChild(group6, "colorDebuffButton")) then
 		setCheckBox(getChild(group6, "checkFriendCleanableButton"), true)
+	end
+end
+
+function RaidSettingsСheckFriendCleanableButtonChecked(aForm)
+	local group6 = getChild(aForm, "group6")
+	if not getCheckBoxState(getChild(group6, "checkFriendCleanableButton")) then
+		setCheckBox(getChild(group6, "colorDebuffButton"), false)
 	end
 end
 

@@ -39,6 +39,7 @@ end
 
 function CheckBoxChangedOff(aParams)
 	changeCheckBox(aParams.widget)
+	ButtonPressed(aParams)
 end
 
 function DropDownBtnPressed(aParams)

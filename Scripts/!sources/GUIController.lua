@@ -56,14 +56,18 @@ local m_targeterUnderMouseNow = false
 
 function DeleteProfile(aWdg)
 	local index = GetIndexForWidget(aWdg)
-	if index == 0 then
-		return
-	end
 	
 	local allProfiles = GetAllProfiles()
 	DeleteContainer(allProfiles, aWdg, m_profilesForm)
-	SaveAllSettings(allProfiles)
 	ProfileWasDeleted(index+1)
+	if GetTableSize(allProfiles) == 0 then
+		local defaultProfile = GetDefaultSettings()
+		local currentDate = common.GetLocalDateTime()
+		defaultProfile.name = "default_"..tostring(currentDate.y).."_"..tostring(currentDate.m).."_"..tostring(currentDate.d).."_"..tostring(currentDate.h)..":"..tostring(currentDate.m)..":"..tostring(currentDate.s)
+		table.insert(allProfiles, defaultProfile)
+	end
+	SaveAllSettings(allProfiles)
+	LoadLastUsedSetting()
 	LoadForms()
 	ReloadAll()
 end
@@ -139,27 +143,15 @@ function SaveProfileAs()
 	end
 end
 
-function LoadProfile(aWdg)
-	local index = GetIndexForWidget(aWdg)
-	
-	LoadSettings(index+1)
+function LoadProfileBtnPressed(aWdg)
+	LoadSettings(GetIndexForWidget(aWdg) + 1)
 	LoadForms()
 	
 	ReloadAll()
 end
 
-function SaveProfile(aWdg)
-	local index = GetIndexForWidget(aWdg)
-	SaveProfileByIndex(index+1)
-end
-
-function SaveAll()
-	SaveProfileByIndex(GetCurrentProfileInd())
-end
-
-function SaveAllAndApply()
-	SaveProfileByIndex(GetCurrentProfileInd())
-	ReloadAll()
+function SaveProfileBtnPressed(aWdg)
+	SaveProfileByIndex(GetIndexForWidget(aWdg) + 1)
 end
 
 function ExportProfile(aWdg)
@@ -200,8 +192,61 @@ function LoadForms()
 	LoadConfigGroupBuffsForm(m_configGroupBuffForm, 1, true)
 end
 
-function UndoAll()
-	LoadForms()
+local function UndoSubsystemSettingsForm(aForm)
+	local formName = getName(aForm)
+	if formName == "bindSettingsForm" then
+		LoadBindFormSettings(m_bindSettingsForm)
+	elseif formName == "configGroupBuffsForm" then
+		LoadConfigGroupBuffsForm(m_configGroupBuffForm, 1, true)
+		UpdateVisibleForPanelFixed()
+	elseif formName == "castSettingsForm" then
+		LoadProgressCastFormSettings(m_progressCastSettingsForm)
+		ProgressCastFixButtonChecked(getChild(m_progressCastSettingsForm, "progressCastFixButton"))
+	elseif formName == "raidSettingsForm" then
+		LoadRaidFormSettings(m_raidSettingsForm)
+	elseif formName == "targeterSettingsForm" then
+		LoadTargeterFormSettings(m_targeterSettingsForm)
+	elseif formName == "mainSettingsForm" then
+		LoadMainFormSettings(m_mainSettingForm)
+	end
+end
+
+function UndoButtonPressed(aWdg) 
+	DnD.SwapWdg(getParent(aWdg))
+	UndoSubsystemSettingsForm(getParent(aWdg))
+end
+
+function SaveButtonPressed(aWdg)
+	DnD.SwapWdg(getParent(aWdg))
+	local index = GetCurrentProfileInd()
+	local profilesList = GetAllProfiles()
+	
+	local nameSettingForm = getName(getParent(aWdg))
+	if nameSettingForm == "bindSettingsForm" then
+		profilesList[index].bindFormSettings = SaveBindFormSettings(m_bindSettingsForm)
+	elseif nameSettingForm == "configGroupBuffsForm" then
+		profilesList[index].buffFormSettings = SaveConfigGroupBuffsForm(m_configGroupBuffForm, true)
+	elseif findSimpleString(nameSettingForm, "BuffGroup") then
+		profilesList[index].buffFormSettings = SaveConfigGroupBuffsForm(m_configGroupBuffForm, false)
+	elseif nameSettingForm == "castSettingsForm" or nameSettingForm == "ProgressActionPanel" or nameSettingForm == "ProgressBuffPanel" then
+		profilesList[index].castFormSettings = SaveProgressCastFormSettings(m_progressCastSettingsForm)
+	elseif nameSettingForm == "raidSettingsForm" then
+		profilesList[index].raidFormSettings = SaveRaidFormSettings(m_raidSettingsForm)
+	elseif nameSettingForm == "targeterSettingsForm" then
+		profilesList[index].targeterFormSettings = SaveTargeterFormSettings(m_targeterSettingsForm)
+	elseif nameSettingForm == "mainSettingsForm" then
+		profilesList[index].mainFormSettings = SaveMainFormSettings(m_mainSettingForm)
+	end
+	profilesList[index].version = GetSettingsVersion()
+	
+	SaveAllSettings(profilesList)
+	ReloadAll()
+end
+
+function SaveTargeterChanges()
+	local profilesList = GetAllProfiles()
+	profilesList[GetCurrentProfileInd()].targeterFormSettings = SaveTargeterFormSettings(m_targeterSettingsForm)
+	SaveAllSettings(profilesList)
 end
 
 function SetColorBuffGroup(aWdg)
@@ -227,6 +272,13 @@ function ApplyColor(aWdg)
 	elseif containerName == "targetBuffContainer" then
 		UpdateColorSettingsForTargetBuffScroller(m_targeterSettingsForm, index)
 	end
+end
+
+function HelpButtonPressed()
+	if not m_helpForm then 
+		m_helpForm = CreateHelpForm() 
+	end 
+	DnD.SwapWdg(m_helpForm)
 end
 
 function ResetGroupBuffPanelPos(aWdg)
@@ -286,18 +338,47 @@ function DeleteMyTargetsElement(aWdg)
 	DeleteMyTargetsFromSroller(m_targeterSettingsForm, aWdg)
 end
 
-function ShowEditBuffGroup(aWdg)
-	if not m_configGroupBuffForm:IsVisible() then
+local function SwapSettingsForm(aForm)
+	if aForm:IsVisible() then
+		UndoSubsystemSettingsForm(aForm)
+	end
+	DnD.SwapWdg(aForm)
+end
+
+function SwapRaidSettingsForm(aWdg)
+	SwapSettingsForm(m_raidSettingsForm)
+end
+
+function SwapTargeterSettingsForm(aWdg)
+	SwapSettingsForm(m_targeterSettingsForm)
+end
+
+function SwapProgressCastSettingsForm(aWdg)
+	SwapSettingsForm(m_progressCastSettingsForm)
+end
+
+function SwapBindSettingsForm(aWdg)
+	SwapSettingsForm(m_bindSettingsForm)
+end
+
+function SwapGroupBuffsSettingsForm(aWdg)
+	if not m_configGroupBuffForm:IsVisible() then 
 		LoadConfigGroupBuffsForm(m_configGroupBuffForm, 1, true)
 	end
-	DnD.SwapWdg(m_configGroupBuffForm)
+	SwapSettingsForm(m_configGroupBuffForm)
 end
+
+function SwapMainSettingsForm(aWdg)
+	SwapSettingsForm(m_mainSettingForm)
+end
+
 
 function EditBuffGroup(aWdg, anIndex)
 	LoadConfigGroupBuffsForm(m_configGroupBuffForm, anIndex)
 end
 
 function DeleteBuffsGroup(aWdg)
+	SetVisibleForGroupBuffTopPanel(GetConfigGroupBuffsActiveNum(), false)
 	DeleteCurrentBuffsGroup(m_configGroupBuffForm)
 	LoadConfigGroupBuffsForm(m_configGroupBuffForm, 1)
 end
@@ -306,16 +387,40 @@ function DeleteBuffInsideGroup(aWdg)
 	DeleteBuffsInsideGroupFromSroller(m_configGroupBuffForm, aWdg)
 end
 
-function BuffOnMeCheckedOn()
-	ConfigGroupBuffsBuffOnMeCheckedOn(m_configGroupBuffForm)
+function BuffOnMeChecked()
+	ConfigGroupBuffsBuffOnMeChecked(m_configGroupBuffForm)
 end
 
-function BuffOnTargetCheckedOn()
-	ConfigGroupBuffsBuffOnTargetCheckedOn(m_configGroupBuffForm)
+function BuffOnTargetChecked()
+	ConfigGroupBuffsBuffOnTargetChecked(m_configGroupBuffForm)
 end
 
-function СolorDebuffButtonCheckedOn()
-	RaidSettingsСolorDebuffButtonCheckedOn(m_raidSettingsForm)
+function СolorDebuffButtonChecked()
+	RaidSettingsСolorDebuffButtonChecked(m_raidSettingsForm)
+end
+
+function СheckFriendCleanableButtonChecked()
+	RaidSettingsСheckFriendCleanableButtonChecked(m_raidSettingsForm)
+end
+
+function BuffsFixButtonChecked(aWdg)
+	if not m_buffGroupSubSystemLoaded then
+		return
+	end
+	SetVisibleForGroupBuffTopPanel(GetConfigGroupBuffsActiveNum(), getCheckBoxState(aWdg))
+end
+
+function ProgressCastFixButtonChecked(aWdg)
+	if not m_castSubSystemLoaded then
+		return
+	end
+	if getCheckBoxState(aWdg) then
+		DnD.ShowWdg(getChild(m_progressActionPanel, "MoveModePanel"))
+		DnD.ShowWdg(getChild(m_progressBuffPanel, "MoveModePanel"))
+	else
+		DnD.HideWdg(getChild(m_progressActionPanel, "MoveModePanel"))
+		DnD.HideWdg(getChild(m_progressBuffPanel, "MoveModePanel"))
+	end
 end
 
 local function HidePartyBtns()
@@ -357,22 +462,18 @@ local function OnShopChange()
 end
 
 local function OnAssertChange(aParams)
-	local alreadyHandled = false
-	if m_castSubSystemLoaded and (m_progressActionPanel:IsEqual(getParent(aParams.widget, 2)) or m_progressBuffPanel:IsEqual(getParent(aParams.widget, 2))) then
+	local wdgOwnerName = getName(getParent(aParams.widget, 2))
+	if wdgOwnerName == "ProgressActionPanel" or wdgOwnerName == "ProgressBuffPanel" then
 		--пока не подтвердим пложение на обеих панельках не сбрасываем флаг перемещния
 		if isVisible(m_progressActionPanel) and isVisible(m_progressBuffPanel) then
 			DnD.HideWdg(getParent(aParams.widget, 2))
 			return
 		end
-		local profile = GetCurrentProfile()
-		profile.castFormSettings.fixed = true
-		LoadProgressCastFormSettings(m_progressCastSettingsForm)
-		alreadyHandled = true
+		SetProgressCastPanelFixed(m_progressCastSettingsForm)		
+	else
+		SetGroupBuffPanelFixed(getParent(aParams.widget, 2))
 	end
-	if not alreadyHandled then
-		SetPanelFixed(getParent(aParams.widget, 2))
-	end
-	SaveAllAndApply()
+	SaveButtonPressed(getParent(aParams.widget))
 end
 
 local function EditLineEsc(aParams)
@@ -1530,15 +1631,14 @@ local function TargetWorkSwitch()
 		HideTargetDropDownSelectPanel()
 		
 		UpdateLastTargetType(m_lastTargetType)
-		UpdateLastTargetWasActive(false)
-		SaveAll()
+		UpdateLastTargetWasActive(false)		
 	else
 		m_currTargetType = m_lastTargetType
 		LoadTargeterData()
 		
 		UpdateLastTargetWasActive(true)
-		SaveAll()
 	end
+	SaveTargeterChanges()
 end
 
 local function SelectTargetTypePressed(aWdg, anIndex)
@@ -1551,7 +1651,7 @@ local function SelectTargetTypePressed(aWdg, anIndex)
 	m_currTargetType = anIndex-1
 	RedrawTargeter(m_currTargetType, true)
 	UpdateLastTargetType(m_currTargetType)
-	SaveAll()
+	SaveTargeterChanges()
 end
 
 local function SeparateTargeterPanelList(anObjList, aPanelListShift)
@@ -2484,10 +2584,6 @@ function UnloadCastSubSystem()
 end
 
 
-function UniverseBtnPressed()
-	DnD.SwapWdg(m_mainSettingForm)
-end
-
 
 
 function GUIControllerInit()	
@@ -2513,25 +2609,26 @@ function GUIControllerInit()
 	common.RegisterReactionHandler(SelectDropDownBtnPressed, "SelectDropDownBtnPressed")
 	
 	AddReaction("closeButton", function (aWdg) DnD.SwapWdg(getParent(aWdg)) end)
-	AddReaction("UniverseButton", UniverseBtnPressed)
-	AddReaction("okButton", function (aWdg) DnD.SwapWdg(getParent(aWdg)) SaveAllAndApply() end)
+	AddReaction("UniverseButton", SwapMainSettingsForm)
+	AddReaction("okButton", SaveButtonPressed)
 	AddReaction("closeExprotBtn", function (aWdg) DnD.SwapWdg(getParent(aWdg)) end)
 	AddReaction("closeButtonOK", function (aWdg) DnD.SwapWdg(getParent(aWdg)) end)
 	AddReaction("profilesButton", function () DnD.SwapWdg(m_profilesForm) end)
 	AddReaction("deleteButtonconfigProfilesContainer", DeleteProfile)
 	AddReaction("saveAsProfileButton", SaveProfileAs)
-	AddReaction("loadProfileButton", LoadProfile)
-	AddReaction("saveProfileButton", SaveProfile)
+	AddReaction("loadProfileButton", LoadProfileBtnPressed)
+	AddReaction("saveProfileButton", SaveProfileBtnPressed)
 	AddReaction("exportProfileButton", ExportProfile)
 	AddReaction("importProfileButton", ShowImportProfile)
 	AddReaction("importBtn", ImportProfile)
-	AddReaction("raidButton", function () DnD.SwapWdg(m_raidSettingsForm) end)
-	AddReaction("saveButton", function (aWdg) DnD.SwapWdg(getParent(aWdg)) SaveAllAndApply() end)
-	AddReaction("targeterButton", function () DnD.SwapWdg(m_targeterSettingsForm) end)
-	AddReaction("bindButton", function () DnD.SwapWdg(m_bindSettingsForm) end)
-	AddReaction("progressCastButton", function () DnD.SwapWdg(m_progressCastSettingsForm) end)
-	AddReaction("helpButton", function () if not m_helpForm then m_helpForm = CreateHelpForm() end DnD.SwapWdg(m_helpForm) end)
-	AddReaction("closeSomeSettingsButton", function (aWdg) DnD.SwapWdg(getParent(aWdg)) UndoAll() end)
+	AddReaction("raidButton", SwapRaidSettingsForm)
+	AddReaction("saveButton", SaveButtonPressed)
+	AddReaction("targeterButton", SwapTargeterSettingsForm)
+	AddReaction("bindButton", SwapBindSettingsForm)
+	AddReaction("progressCastButton", SwapProgressCastSettingsForm)
+	AddReaction("buffsButton", SwapGroupBuffsSettingsForm)
+	AddReaction("helpButton", HelpButtonPressed)
+	AddReaction("closeSomeSettingsButton", UndoButtonPressed)
 	AddReaction("closeShortInfo", function (aWdg) hide(getParent(aWdg)) end)
 	AddReaction("addRaidBuffButton", AddRaidBuffButton)
 	AddReaction("addTargeterBuffButton", AddTargetBuffButton)
@@ -2542,7 +2639,6 @@ function GUIControllerInit()
 	AddReaction("deleteButtonmyTargetsContainer", DeleteMyTargetsElement)
 	AddReaction("deleteButtontargetBuffContainer", DeleteTargetBuffElement)
 	AddReaction("deleteButtonraidBuffContainer", DeleteRaidBuffElement)
-	AddReaction("buffsButton", ShowEditBuffGroup)
 	AddReaction("deleteGroupBuffsButton", DeleteBuffsGroup)
 	AddReaction("addBuffsButton", AddBuffsInsideGroupButton)
 	AddReaction("deleteButtongroupBuffContainer", DeleteBuffInsideGroup)
@@ -2554,11 +2650,14 @@ function GUIControllerInit()
 	AddReaction("resetPanelCastPosButton", ResetProgressCastPanelPos)
 	AddReaction("nextHelpBtn", NextHelp)
 	AddReaction("prevHelpBtn", PrevHelp)
-	AddReaction("buffOnMe", BuffOnMeCheckedOn)
-	AddReaction("buffOnTarget", BuffOnTargetCheckedOn)
-	AddReaction("colorDebuffButton", СolorDebuffButtonCheckedOn)
+	AddReaction("buffOnMe", BuffOnMeChecked)
+	AddReaction("buffOnTarget", BuffOnTargetChecked)
+	AddReaction("colorDebuffButton", СolorDebuffButtonChecked)
+	AddReaction("checkFriendCleanableButton", СheckFriendCleanableButtonChecked)
 	AddReaction("targeterDropDown", SelectTargetTypePressed)
 	AddReaction("groupBuffSelector", EditBuffGroup)
+	AddReaction("progressCastFixButton", ProgressCastFixButtonChecked)
+	AddReaction("buffsFixButton", BuffsFixButtonChecked)
 	
 	AddRightClickReaction("targeterDropDown", TargetWorkSwitch)
 	
@@ -2627,8 +2726,8 @@ function GUIControllerInit()
 	common.RegisterReactionHandler(MoveModeClick, "addClick")
 	common.RegisterReactionHandler(TargetLockChanged, "OnTargetLockChanged")
 	common.RegisterReactionHandler(function () RaidLockBtn(m_raidPanel) end, "OnRaidLockChanged")
-	common.RegisterReactionHandler(function () DnD.SwapWdg(m_raidSettingsForm) end, "OnConfigRaidChange")
-	common.RegisterReactionHandler(function () DnD.SwapWdg(m_targeterSettingsForm) end, "OnConfigTargeterChange")
+	common.RegisterReactionHandler(SwapRaidSettingsForm, "OnConfigRaidChange")
+	common.RegisterReactionHandler(SwapTargeterSettingsForm, "OnConfigTargeterChange")
 	common.RegisterReactionHandler(OnCheckChange, "OnCheckChange")
 	common.RegisterReactionHandler(OnRaidFilter, "OnRaidFilter")
 	common.RegisterReactionHandler(OnShopChange, "OnShopChange")

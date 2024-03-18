@@ -117,10 +117,9 @@ end
 
 function SaveConfigGroupBuffsForm(aForm, aClose)
 	local group5 = getChild(aForm, "group5")
-	
+
 	if m_loadedWndInd == 0 then
-		local profile = GetCurrentProfile()
-		return profile.buffFormSettings
+		return m_totalGroupsSettings
 	end
 	
 	m_currentFormSettings.name = getText(getChild(aForm, "currentGroupBuffName"))
@@ -318,15 +317,19 @@ function LoadConfigGroupBuffsForm(aForm, anIndex, aInitLoad)
 	end
 end
 
-function ConfigGroupBuffsBuffOnMeCheckedOn(aForm)
-	if getCheckBoxState(getChild(m_group2, "buffOnTarget")) then
-		changeCheckBox(getChild(m_group2, "buffOnTarget"))
+function ConfigGroupBuffsBuffOnMeChecked(aForm)
+	if getCheckBoxState(getChild(m_group2, "buffOnMe")) then
+		setCheckBox(getChild(m_group2, "buffOnTarget"), false)
+	else
+		setCheckBox(getChild(m_group2, "buffOnTarget"), true)
 	end
 end
 
-function ConfigGroupBuffsBuffOnTargetCheckedOn(aForm)
-	if getCheckBoxState(getChild(m_group2, "buffOnMe")) then
-		changeCheckBox(getChild(m_group2, "buffOnMe"))
+function ConfigGroupBuffsBuffOnTargetChecked(aForm)
+	if getCheckBoxState(getChild(m_group2, "buffOnTarget")) then
+		setCheckBox(getChild(m_group2, "buffOnMe"), false)
+	else
+		setCheckBox(getChild(m_group2, "buffOnMe"), true)
 	end
 end
 
@@ -361,6 +364,7 @@ function DeleteCurrentBuffsGroup(aForm)
 		return
 	end
 	table.remove(m_totalGroupsSettings.buffGroups, m_loadedWndInd)
+	m_loadedWndInd = 1
 end
 
 function UpdateConfigGroupBuffsFormPanelFixed(anIndex)
@@ -370,6 +374,10 @@ function UpdateConfigGroupBuffsFormPanelFixed(anIndex)
 			setCheckBox(getChild(m_group7, "buffsFixButton"), not m_currentFormSettings.fixed)
 		end	
 	end
+end
+
+function UpdateVisibleForPanelFixed()
+	UpdateVisibleForGroupBuffTopPanel(m_totalGroupsSettings)
 end
 
 function CreateColorSettingsForBuffsGroupScroller(aForm, anIndex)

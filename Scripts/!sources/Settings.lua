@@ -44,6 +44,7 @@ local function GenerateAboveHeadGroup()
 	correctAboveHeadSettings.w = 5
 	correctAboveHeadSettings.h = 1
 	correctAboveHeadSettings.size = 50
+	correctAboveHeadSettings.buffsOpacity = 1
 	correctAboveHeadSettings.aboveHeadButton = true
 	
 	correctAboveHeadSettings.buffOnMe = false
@@ -69,13 +70,7 @@ local function GenerateAboveHeadGroup()
 	return correctAboveHeadSettings
 end
 
-function InitializeDefaultSetting()
-	local allProfiles = userMods.GetGlobalConfigSection("TR_ProfilesArr")
-	if allProfiles then
-		return
-	end
-	
-	allProfiles = {}
+function GetDefaultSettings()
 	local defaultProfile = {}
 	
 	local mainFormSettings = {}
@@ -85,7 +80,6 @@ function InitializeDefaultSetting()
 	mainFormSettings.useBindSubSystem = false
 	mainFormSettings.useCastSubSystem = true
 	
-	
 	local raidFormSettings = {}
 	raidFormSettings.classColorModeButton = false
 	raidFormSettings.showManaButton = false
@@ -94,6 +88,7 @@ function InitializeDefaultSetting()
 	raidFormSettings.showClassIconButton = true
 	raidFormSettings.showDistanceButton = true
 	raidFormSettings.showProcentButton = false
+	raidFormSettings.showProcentShieldButton = false
 	raidFormSettings.showArrowButton = true
 	raidFormSettings.gorisontalModeButton = false
 	raidFormSettings.woundsShowButton = false
@@ -103,6 +98,7 @@ function InitializeDefaultSetting()
 	raidFormSettings.raidWidthText = "160"
 	raidFormSettings.raidHeightText = "50"
 	raidFormSettings.distanceText = "0"
+	raidFormSettings.showBuffTimeButton = false
 	raidFormSettings.showGrayOnDistanceButton = true
 	raidFormSettings.showFrameStripOnDistanceButton = true
 	raidFormSettings.buffSize = "20"
@@ -113,6 +109,11 @@ function InitializeDefaultSetting()
 	raidFormSettings.raidBuffs.checkMovementsButton = false
 	raidFormSettings.raidBuffs.colorDebuffButton = true
 	raidFormSettings.raidBuffs.checkFriendCleanableButton = true
+	raidFormSettings.buffsOpacityText = 1.0
+	raidFormSettings.friendColor = g_relationColors[FRIEND_PANEL]
+	raidFormSettings.clearColor = g_needClearColor
+	raidFormSettings.selectionColor = g_selectionColor
+	raidFormSettings.farColor = g_farColor	
 	raidFormSettings.raidBuffs.customBuffs = {}
 	
 	local targeterFormSettings = {}
@@ -121,6 +122,7 @@ function InitializeDefaultSetting()
 	targeterFormSettings.showShieldButton = true
 	targeterFormSettings.showClassIconButton = true
 	targeterFormSettings.showProcentButton = false
+	targeterFormSettings.showProcentShieldButton = true
 	targeterFormSettings.gorisontalModeButton = false
 	targeterFormSettings.woundsShowButton = false
 	targeterFormSettings.showServerNameButton = true
@@ -135,6 +137,7 @@ function InitializeDefaultSetting()
 	targeterFormSettings.raidHeightText = "30"
 	targeterFormSettings.buffSize = "16"
 	targeterFormSettings.targetLimit = "12"
+	targeterFormSettings.showBuffTimeButton = true
 	targeterFormSettings.sortByName = true
 	targeterFormSettings.sortByHP = false
 	targeterFormSettings.sortByClass = false
@@ -143,6 +146,11 @@ function InitializeDefaultSetting()
 	targeterFormSettings.raidBuffs.checkEnemyCleanable = true
 	targeterFormSettings.raidBuffs.checkControlsButton = false
 	targeterFormSettings.raidBuffs.checkMovementsButton = false
+	targeterFormSettings.buffsOpacityText = 1.0
+	targeterFormSettings.friendColor = g_relationColors[FRIEND_PANEL]
+	targeterFormSettings.enemyColor = g_relationColors[ENEMY_PANEL]
+	targeterFormSettings.neitralColor = g_relationColors[NEITRAL_PANEL]
+	targeterFormSettings.selectionColor = g_selectionColor
 	targeterFormSettings.raidBuffs.customBuffs = {}
 	targeterFormSettings.myTargets = {}
 	
@@ -199,6 +207,18 @@ function InitializeDefaultSetting()
 	defaultProfile.castFormSettings = castFormSettings
 	
 	defaultProfile.version = GetSettingsVersion()
+	
+	return defaultProfile
+end
+
+function InitializeDefaultSetting()
+	local allProfiles = userMods.GetGlobalConfigSection("TR_ProfilesArr")
+	if allProfiles then
+		return
+	end
+	
+	allProfiles = {}
+	local defaultProfile = GetDefaultSettings()
 	
 	table.insert(allProfiles, defaultProfile)
 	userMods.SetGlobalConfigSection("TR_ProfilesArr", allProfiles)	
@@ -309,7 +329,7 @@ function LoadSettings(aProfileInd)
 	
 	if m_currentProfile.version < 2.9 or m_currentProfile.version == nil then
 		m_currentProfile.raidFormSettings.showBuffTimeButton = false
-		m_currentProfile.targeterFormSettings.showBuffTimeButton = false
+		m_currentProfile.targeterFormSettings.showBuffTimeButton = true
 		
 		local wStr = common.GetEmptyWString()
 		for _, element in ipairs(m_currentProfile.castFormSettings.ignoreList) do
@@ -333,6 +353,11 @@ function LoadSettings(aProfileInd)
 		for i, buffGroupSettings in ipairs(m_currentProfile.buffFormSettings.buffGroups) do
 			buffGroupSettings.buffsOpacity = 1.0
 		end
+	end
+	
+	if m_currentProfile.version < GetSettingsVersion() or m_currentProfile.version == nil then
+		m_currentProfile.version = GetSettingsVersion()
+		SaveAllSettings(allProfiles)
 	end
 end
 
@@ -371,5 +396,5 @@ function ExportProfileByIndex(anInd)
 end
 
 function GetSettingsVersion()
-	return 2.9;
+	return 2.91;
 end
