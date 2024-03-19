@@ -15,7 +15,7 @@ function CreateMainSettingsForm()
 	setLocaleText(createWidget(form, "bindButton", "Button", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 200, 25, 370, 170))
 	setLocaleText(createWidget(form, "progressCastButton", "Button", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 200, 25, 370, 200))
 	setLocaleText(createWidget(form, "profilesButton", "Button", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 200, 25, 370, 230))
-	setLocaleText(createWidget(form, "okButton", "Button", WIDGET_ALIGN_CENTER, WIDGET_ALIGN_HIGH, 200, 30, nil, 30))
+	setLocaleText(createWidget(form, "saveButton", "Button", WIDGET_ALIGN_CENTER, WIDGET_ALIGN_HIGH, 200, 30, nil, 30))
 	setLocaleText(createWidget(form, "helpButton", "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_HIGH, 100, 30, 30, 30))
 	
 	createWidget(form, "useRaidSubSystem", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 330, 25, 20, 80)
@@ -39,6 +39,14 @@ function SaveMainFormSettings(aForm)
 	return m_currentFormSettings
 end
 
+function UpdateMainFormButtons(aForm)
+	getChild(aForm, "raidButton"):Enable(m_currentFormSettings.useRaidSubSystem)
+	getChild(aForm, "targeterButton"):Enable(m_currentFormSettings.useTargeterSubSystem)
+	getChild(aForm, "buffsButton"):Enable(m_currentFormSettings.useBuffMngSubSystem)
+	getChild(aForm, "bindButton"):Enable(m_currentFormSettings.useBindSubSystem)
+	getChild(aForm, "progressCastButton"):Enable(m_currentFormSettings.useCastSubSystem)
+end
+
 function LoadMainFormSettings(aForm)
 	local profile = GetCurrentProfile()
 	m_currentFormSettings = deepCopyTable(profile.mainFormSettings)
@@ -46,11 +54,33 @@ function LoadMainFormSettings(aForm)
 		m_currentFormSettings.useCastSubSystem = false 
 	end
 	
-	setLocaleText(getChild(aForm, "useRaidSubSystem"), m_currentFormSettings.useRaidSubSystem, true)
-	setLocaleText(getChild(aForm, "useTargeterSubSystem"), m_currentFormSettings.useTargeterSubSystem, true)
-	setLocaleText(getChild(aForm, "useBuffMngSubSystem"), m_currentFormSettings.useBuffMngSubSystem, true)
-	setLocaleText(getChild(aForm, "useBindSubSystem"), m_currentFormSettings.useBindSubSystem, true)
-	setLocaleText(getChild(aForm, "useCastSubSystem"), m_currentFormSettings.useCastSubSystem, true)
+	setLocaleText(getChild(aForm, "useRaidSubSystem"), m_currentFormSettings.useRaidSubSystem)
+	setLocaleText(getChild(aForm, "useTargeterSubSystem"), m_currentFormSettings.useTargeterSubSystem)
+	setLocaleText(getChild(aForm, "useBuffMngSubSystem"), m_currentFormSettings.useBuffMngSubSystem)
+	setLocaleText(getChild(aForm, "useBindSubSystem"), m_currentFormSettings.useBindSubSystem)
+	setLocaleText(getChild(aForm, "useCastSubSystem"), m_currentFormSettings.useCastSubSystem)
+	
+	UpdateMainFormButtons(aForm)
+end
+
+function UpdateUseRaidSubSystemMainForm(aForm)
+	getChild(aForm, "raidButton"):Enable(getCheckBoxState(getChild(aForm, "useRaidSubSystem")))
+end
+
+function UpdateUseTargeterSubSystemMainForm(aForm)
+	getChild(aForm, "targeterButton"):Enable(getCheckBoxState(getChild(aForm, "useTargeterSubSystem")))
+end
+
+function UpdateUseBuffMngSubSystemMainForm(aForm)
+	getChild(aForm, "buffsButton"):Enable(getCheckBoxState(getChild(aForm, "useBuffMngSubSystem")))
+end
+
+function UpdateUseBindSubSystemMainForm(aForm)
+	getChild(aForm, "bindButton"):Enable(getCheckBoxState(getChild(aForm, "useBindSubSystem")))
+end
+
+function UpdateUseProgressCastSubSystemMainForm(aForm)
+	getChild(aForm, "progressCastButton"):Enable(getCheckBoxState(getChild(aForm, "useCastSubSystem")))
 end
 
 

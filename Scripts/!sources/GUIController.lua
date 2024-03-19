@@ -71,8 +71,8 @@ function DeleteProfile(aWdg)
 	LoadForms()
 	ReloadAll()
 end
-
-local function SaveProfileByIndex(anIndex, aList)
+--[[
+local function SaveAllByIndex(anIndex, aList)
 	if not aList then 
 		aList = GetAllProfiles()
 	end
@@ -89,7 +89,7 @@ local function SaveProfileByIndex(anIndex, aList)
 		
 	SaveAllSettings(aList)
 end
-
+]]
 function OnTalentsChanged()
 	LoadLastUsedSetting()
 	LoadForms()
@@ -139,19 +139,22 @@ function SaveProfileAs()
 	local allProfiles = GetAllProfiles()
 	local res = AddElementFromFormWithEditLine(allProfiles, m_profilesForm, getChild(m_profilesForm, "EditLine1"), getChild(m_profilesForm, "configProfilesContainer"))
 	if res then
-		SaveProfileByIndex(GetTableSize(allProfiles), allProfiles)
+		allProfiles[GetTableSize(allProfiles)] = deepCopyTable(GetCurrentProfile())
+		SaveAllSettings(allProfiles)
 	end
 end
 
 function LoadProfileBtnPressed(aWdg)
 	LoadSettings(GetIndexForWidget(aWdg) + 1)
 	LoadForms()
-	
 	ReloadAll()
+	HideFormsOfUnusedSubsystems()
 end
 
 function SaveProfileBtnPressed(aWdg)
-	SaveProfileByIndex(GetIndexForWidget(aWdg) + 1)
+	local allProfiles = GetAllProfiles()
+	SaveProfilesFormSettings(m_profilesForm, allProfiles)
+	SaveAllSettings(allProfiles)
 end
 
 function ExportProfile(aWdg)
@@ -190,6 +193,25 @@ function LoadForms()
 	LoadProgressCastFormSettings(m_progressCastSettingsForm)
 	LoadTargeterFormSettings(m_targeterSettingsForm)
 	LoadConfigGroupBuffsForm(m_configGroupBuffForm, 1, true)
+end
+
+function HideFormsOfUnusedSubsystems()
+	local profile = GetCurrentProfile()
+	if not profile.mainFormSettings.useRaidSubSystem then
+		DnD.HideWdg(m_raidSettingsForm)
+	end
+	if not profile.mainFormSettings.useTargeterSubSystem then
+		DnD.HideWdg(m_targeterSettingsForm)
+	end
+	if not profile.mainFormSettings.useBuffMngSubSystem then
+		DnD.HideWdg(m_configGroupBuffForm)
+	end
+	if not profile.mainFormSettings.useBindSubSystem then
+		DnD.HideWdg(m_bindSettingsForm)
+	end
+	if not profile.mainFormSettings.useCastSubSystem then
+		DnD.HideWdg(m_progressCastSettingsForm)
+	end
 end
 
 local function UndoSubsystemSettingsForm(aForm)
@@ -241,6 +263,10 @@ function SaveButtonPressed(aWdg)
 	
 	SaveAllSettings(profilesList)
 	ReloadAll()
+	
+	if nameSettingForm == "mainSettingsForm" then
+		HideFormsOfUnusedSubsystems()
+	end
 end
 
 function SaveTargeterChanges()
@@ -369,6 +395,7 @@ function SwapGroupBuffsSettingsForm(aWdg)
 end
 
 function SwapMainSettingsForm(aWdg)
+	UpdateMainFormButtons(m_mainSettingForm)
 	SwapSettingsForm(m_mainSettingForm)
 end
 
@@ -421,6 +448,26 @@ function ProgressCastFixButtonChecked(aWdg)
 		DnD.HideWdg(getChild(m_progressActionPanel, "MoveModePanel"))
 		DnD.HideWdg(getChild(m_progressBuffPanel, "MoveModePanel"))
 	end
+end
+
+function UseRaidSubSystemChecked()
+	UpdateUseRaidSubSystemMainForm(m_mainSettingForm)
+end
+
+function UseTargeterSubSystemChecked()
+	UpdateUseTargeterSubSystemMainForm(m_mainSettingForm)
+end
+
+function UseBuffMngSubSystemChecked()
+	UpdateUseBuffMngSubSystemMainForm(m_mainSettingForm)
+end
+
+function UseBindSubSystemChecked()
+	UpdateUseBindSubSystemMainForm(m_mainSettingForm)
+end
+
+function UseCastSubSystemChecked()
+	UpdateUseProgressCastSubSystemMainForm(m_mainSettingForm)
 end
 
 local function HidePartyBtns()
@@ -601,7 +648,7 @@ end
 function TargetChanged()
 	local targetID = avatar.GetTarget()
 	local profile = GetCurrentProfile()
-	if profile.raidFormSettings.highlightSelectedButton then
+	if m_raidSubSystemLoaded and profile.raidFormSettings.highlightSelectedButton then
 		for i=0, GetTableSize(m_raidPlayerPanelList)-1 do
 			local subParty = m_raidPlayerPanelList[i]
 			for j=0, GetTableSize(subParty)-1 do
@@ -614,7 +661,7 @@ function TargetChanged()
 			end
 		end
 	end
-	if profile.targeterFormSettings.highlightSelectedButton then
+	if m_targetSubSystemLoaded and profile.targeterFormSettings.highlightSelectedButton then
 		for i=0, GetTableSize(m_targeterPlayerPanelList)-1 do
 			local playerBar = m_targeterPlayerPanelList[i]
 			if targetID and playerBar.isUsed and playerBar.playerID and targetID == playerBar.playerID then
@@ -2610,7 +2657,6 @@ function GUIControllerInit()
 	
 	AddReaction("closeButton", function (aWdg) DnD.SwapWdg(getParent(aWdg)) end)
 	AddReaction("UniverseButton", SwapMainSettingsForm)
-	AddReaction("okButton", SaveButtonPressed)
 	AddReaction("closeExprotBtn", function (aWdg) DnD.SwapWdg(getParent(aWdg)) end)
 	AddReaction("closeButtonOK", function (aWdg) DnD.SwapWdg(getParent(aWdg)) end)
 	AddReaction("profilesButton", function () DnD.SwapWdg(m_profilesForm) end)
@@ -2658,6 +2704,11 @@ function GUIControllerInit()
 	AddReaction("groupBuffSelector", EditBuffGroup)
 	AddReaction("progressCastFixButton", ProgressCastFixButtonChecked)
 	AddReaction("buffsFixButton", BuffsFixButtonChecked)
+	AddReaction("useRaidSubSystem", UseRaidSubSystemChecked)
+	AddReaction("useTargeterSubSystem", UseTargeterSubSystemChecked)
+	AddReaction("useBuffMngSubSystem", UseBuffMngSubSystemChecked)
+	AddReaction("useBindSubSystem", UseBindSubSystemChecked)
+	AddReaction("useCastSubSystem", UseCastSubSystemChecked)
 	
 	AddRightClickReaction("targeterDropDown", TargetWorkSwitch)
 	
