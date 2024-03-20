@@ -139,7 +139,10 @@ function SaveProfileAs()
 	local allProfiles = GetAllProfiles()
 	local res = AddElementFromFormWithEditLine(allProfiles, m_profilesForm, getChild(m_profilesForm, "EditLine1"), getChild(m_profilesForm, "configProfilesContainer"))
 	if res then
-		allProfiles[GetTableSize(allProfiles)] = deepCopyTable(GetCurrentProfile())
+		local newProfileInd = GetTableSize(allProfiles)
+		local newProfileName = allProfiles[newProfileInd].name
+		allProfiles[newProfileInd] = deepCopyTable(GetCurrentProfile())
+		allProfiles[newProfileInd].name = newProfileName
 		SaveAllSettings(allProfiles)
 	end
 end
