@@ -115,6 +115,19 @@ function ConcatWString(...)
 	return wStr
 end 
 
+
+local m_valuedText = common.CreateValuedText()
+m_valuedText:SetFormat(toWString('<header><r name="text_label"/></header>'))
+local m_htmlWstr = userMods.ToWString("<html>")
+
+function removeHtmlFromWString(text)
+	if text:IsContain(m_htmlWstr) then
+		m_valuedText:SetVal("text_label", text)
+		return m_valuedText:ToWString()
+	end
+	return text
+end
+
 function LogAllCSSStyle()
 	local listCSS = common.GetCSSList()
 	for i = 0, GetTableSize(listCSS) do

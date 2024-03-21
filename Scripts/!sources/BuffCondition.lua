@@ -93,7 +93,7 @@ function BuffCondition:Check(aBuffInfo)
 	if aBuffInfo.isNeedVisualize then
 		return true, self.avlCustomTree.value, true
 	end]]
-	
+	aBuffInfo.name = removeHtmlFromWString(aBuffInfo.name)
 	if aBuffInfo.isNeedVisualize then
 		if self.needCheckAllBuffsByList then
 			searchRes = self.avlCustomTree:find(aBuffInfo)

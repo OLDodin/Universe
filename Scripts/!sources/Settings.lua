@@ -355,6 +355,22 @@ function LoadSettings(aProfileInd)
 		end
 	end
 	
+	if m_currentProfile.version < 2.92 or m_currentProfile.version == nil then
+		for _, buffSettings in ipairs(m_currentProfile.raidFormSettings.raidBuffs.customBuffs) do
+			buffSettings.name = removeHtmlFromWString(buffSettings.name)
+		end
+		
+		for _, buffSettings in ipairs(m_currentProfile.targeterFormSettings.raidBuffs.customBuffs) do
+			buffSettings.name = removeHtmlFromWString(buffSettings.name)
+		end
+		
+		for _, buffGroupSettings in ipairs(m_currentProfile.buffFormSettings.buffGroups) do
+			for _, buffSettings in ipairs(buffGroupSettings.buffs or {}) do
+				buffSettings.name = removeHtmlFromWString(buffSettings.name)
+			end
+		end
+	end
+	
 	if m_currentProfile.version < GetSettingsVersion() or m_currentProfile.version == nil then
 		m_currentProfile.version = GetSettingsVersion()
 		SaveAllSettings(allProfiles)
@@ -396,5 +412,5 @@ function ExportProfileByIndex(anInd)
 end
 
 function GetSettingsVersion()
-	return 2.91;
+	return 2.92;
 end
