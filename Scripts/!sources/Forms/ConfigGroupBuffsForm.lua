@@ -190,7 +190,7 @@ function LoadConfigGroupBuffsForm(aForm, anIndex, aInitLoad)
 	m_currentFormSettings = m_totalGroupsSettings.buffGroups[m_loadedWndInd]
 	--deepCopyTable(profile.buffFormSettings.buffGroups[m_loadedWndInd])
 	
-	setText(getChild(m_group1, "widthBuffCntEdit"), m_currentFormSettings.w or 5)
+	setText(getChild(m_group1, "widthBuffCntEdit"), m_currentFormSettings.w or 8)
 	setText(getChild(m_group1, "heightBuffCntEdit"), m_currentFormSettings.h or 1)
 	setText(getChild(m_group1, "sizeBuffGroupEdit"), m_currentFormSettings.size or 50)
 	if m_currentFormSettings.buffsOpacity == 1 then

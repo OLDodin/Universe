@@ -2331,7 +2331,7 @@ end
 
 local function OnEventSecondTimer()
 	--при таргетере под курсором мыши перерисовываем лишь раз в секунду (чтобы легче выбрать)
-	if m_needRedrawTargeter then
+	if m_targetSubSystemLoaded and m_needRedrawTargeter then
 		m_redrawPauseCnt = m_redrawPauseCnt + 1
 		if m_redrawPauseCnt == 2 then
 			RedrawTargeter(m_currTargetType)

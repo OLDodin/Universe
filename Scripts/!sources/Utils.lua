@@ -3,6 +3,7 @@ local cachedFromWString = userMods.FromWString
 local cachedIsWString = common.IsWString
 local cachedIsExist = object.IsExist
 local cachedIsUnit = object.IsUnit
+local cachedCreateValuedText = common.CreateValuedText
 
 --init global Locales
 getLocale()
@@ -116,7 +117,7 @@ function ConcatWString(...)
 end 
 
 
-local m_valuedText = common.CreateValuedText()
+local m_valuedText = cachedCreateValuedText()
 m_valuedText:SetFormat(toWString('<header><r name="text_label"/></header>'))
 local m_htmlWstr = userMods.ToWString("<html>")
 
@@ -137,18 +138,23 @@ function LogAllCSSStyle()
 	end
 end
 
+
 function formatText(text, align, fontSize, shadow, outline, fontName)
-	local firstPart = "<body fontname='"..(toStringUtils(fontName) or "AllodsWest").."' alignx = '"..(toStringUtils(align) or "left").."' fontsize='"..(toStringUtils(fontSize) or "14").."' shadow='"..(toStringUtils(shadow) or "0").."' outline='"..(toStringUtils(outline) or "1").."'><rs class='color'>"
+	local firstPart = "<body fontname='"..(toStringUtils(fontName) or "AllodsWest")
+					.."' alignx = '"..(align or "left")
+					.."' fontsize='"..(fontSize and tostring(fontSize) or "14")
+					.."' shadow='"..(shadow and tostring(shadow) or "0")
+					.."' outline='"..(outline and tostring(outline) or "1")
+					.."'><rs class='color'>"
 	local textMessage = toWString(text) or common.GetEmptyWString()
 	local secondPart = "</rs></body>"
-	return ConcatWString(firstPart, textMessage, secondPart)
+	return firstPart..textMessage..secondPart
 end
 
 function toValuedText(text, color, align, fontSize, shadow, outline, fontName)
-	local valuedText=common.CreateValuedText()
-	text=toWString(text)
+	local valuedText = cachedCreateValuedText()
 	if not valuedText or not text then return nil end
-	valuedText:SetFormat(toWString(formatText(text, align, fontSize, shadow, outline, fontName)))
+	valuedText:SetFormat(formatText(text, align, fontSize, shadow, outline, fontName))
 	
 	if color then
 		valuedText:SetClassVal( "color", color )

@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <WidgetPanel>
-	<Priority>152</Priority>
+	<Priority>202</Priority>
 	<Name>ShieldBar</Name>
 	<Children>
 		<Item href="ShieldContainer.xdb"/>

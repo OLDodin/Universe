@@ -41,7 +41,7 @@ end
 
 local function GenerateAboveHeadGroup()
 	local correctAboveHeadSettings = {}
-	correctAboveHeadSettings.w = 5
+	correctAboveHeadSettings.w = 8
 	correctAboveHeadSettings.h = 1
 	correctAboveHeadSettings.size = 50
 	correctAboveHeadSettings.buffsOpacity = 1

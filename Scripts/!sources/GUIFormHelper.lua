@@ -250,11 +250,16 @@ function UpdateTableValuesFromContainer(aTable, aForm, aContainer)
 	if not aContainer or not aTable then 
 		return nil 
 	end
+	local containerName = getName(aContainer)
 	for i, j in ipairs(aTable) do
 		local editLine = getChild(aContainer, "Name"..tostring(i), true)
 		editLine:SetFocus(false)
 		j.name = getText(editLine)
-		j.nameLowerStr = toLowerString(j.name)
+		if containerName == "myTargetsContainer" then
+			j.nameLowerStr = toLowerString(j.name)
+		else
+			j.nameLowerStr = nil
+		end
 	end
 end
 
