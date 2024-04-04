@@ -179,10 +179,10 @@ function compare(name1, name2)
 end
 
 function initTimeAbbr()
-	table.insert(cachedTimeAbbr, toString(Locales["s"]))
-	table.insert(cachedTimeAbbr, toString(Locales["m"]))
-	table.insert(cachedTimeAbbr, toString(Locales["h"]))
-	table.insert(cachedTimeAbbr, toString(Locales["d"]))
+	table.insert(cachedTimeAbbr, toStringUtils(Locales["s"] or "s"))
+	table.insert(cachedTimeAbbr, toStringUtils(Locales["m"] or "m"))
+	table.insert(cachedTimeAbbr, toStringUtils(Locales["h"] or "h"))
+	table.insert(cachedTimeAbbr, toStringUtils(Locales["d"] or "d"))
 end
 
 function getTimeString(ms, withoutFraction)

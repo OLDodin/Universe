@@ -23,6 +23,7 @@
 			</StateDisabled>
 			<ReactionOnUp>true</ReactionOnUp>
 			<Reaction>execute</Reaction>
+			<ReactionRightClick>executeRightClick</ReactionRightClick>
 		</Item>
 	</Variants>
 	<TextStyle>
