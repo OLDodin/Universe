@@ -8,7 +8,7 @@ for /d %%B in (.\*) do (
 		for %%i in ("%%B\*.lua") do (
 			set nam=%%i
 			echo Converting %%i
-			luajit-2.0.5.exe -bs "%%i" "..\!nam:~0,-4!.luac" 
+			luajit.exe -b "%%i" "..\!nam:~0,-4!.luac" 
 		)
 	)
 )
@@ -16,7 +16,7 @@ for /d %%B in (.\*) do (
 for %%i in (*.lua) do (
 	set nam=%%i
 	echo Converting %%i
-	luajit-2.0.5.exe -bs "%%i" "../!nam:~0,-4!.luac" 
+	luajit.exe -b "%%i" "../!nam:~0,-4!.luac" 
 )
 
 echo Done
