@@ -1056,7 +1056,7 @@ local function ShowMoveIfNeeded()
 		return
 	end
 	HideMove()
-	local members = raid.GetMembers()
+	local members = GetRaidMembersInOldFormat()
 	local maxPeopleCnt = 0
 	local partyCnt = GetTableSize(members)
 	
@@ -1296,7 +1296,7 @@ function RaidChanged(aParams, aFullUpdate)
 	local prevRaidMembers = m_currentRaid.members
 	local prevLeaderUniqueID = m_currentRaid.currentLeaderUniqueID
 	if raid.IsExist() then
-		local members = raid.GetMembers()
+		local members = GetRaidMembersInOldFormat()
 		m_currentRaid.type = RAID_TYPE
 		m_currentRaid.members = members
 		m_currentRaid.currentLeaderUniqueID = raid.GetLeader()

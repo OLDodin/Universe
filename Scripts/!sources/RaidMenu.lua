@@ -127,7 +127,7 @@ function GenerateMenuInfos(aPlayerBar, aMyUniqueID)
 	if not isClickOnAvatar and (isRaid() or isGroup()) and matchMaking.GetCurrentBattleInfo() == nil then AddToMenu("followMenuButton", function () if isExist(playerID) then avatar.SelectTarget(playerID) avatar.SetFollowTarget(true) end CloseMenu() end) end
 
 	if isRaid() then
-		if uniqueID and raid.IsPlayerInAvatarsRaidById(uniqueID) then
+		if uniqueID and IsPlayerInAvatarsRaidById(uniqueID) then
 			local rights = raid.GetMemberRights(uniqueID)
 			local isHelper = rights and (rights[0] and rights[0]==RAID_MEMBER_RIGHT_LEADER_HELPER or rights[1] and rights[1]==RAID_MEMBER_RIGHT_LEADER_HELPER)
 			local isMaster = rights and (rights[0] and rights[0]==RAID_MEMBER_RIGHT_LOOT_MASTER or rights[1] and rights[1]==RAID_MEMBER_RIGHT_LOOT_MASTER)
@@ -135,7 +135,7 @@ function GenerateMenuInfos(aPlayerBar, aMyUniqueID)
 				if raid.IsLeader() and not raid.IsAutomatic() then
 					AddToMenu("makeAllLeaderHelperMenuButton", 
 						function ()
-							local members = raid.GetMembers()
+							local members = GetRaidMembersInOldFormat()
 							for i=0, GetTableSize(members)-1 do
 								local subParty = members[i]
 								for j=0, GetTableSize(subParty)-1 do

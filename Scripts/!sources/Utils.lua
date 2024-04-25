@@ -605,6 +605,34 @@ function setLocaleText(widget, checked)
 	setLocaleTextEx(widget, checked, "ColorWhite", "left")
 end
 
+
+function GetRaidMembersInOldFormat()
+	local members = raid.GetMembers()
+	local oldMembers = {}
+	for i=1, GetTableSize(members) do
+		local subParty = members[i]
+		oldMembers[i-1] = {}
+		for j=1, GetTableSize(subParty) do
+			oldMembers[i-1][j-1] = subParty[j]
+		end
+	end
+	return oldMembers
+end
+
+function IsPlayerInAvatarsRaidById(anUniqueID)
+	local members = raid.GetMembers()
+	for i=1, GetTableSize(members) do
+		local subParty = members[i]
+		for j=1, GetTableSize(subParty) do
+			local playerInfo = subParty[j]
+			if anUniqueID:IsEqual(playerInfo.uniqueId) then
+				return true
+			end
+		end
+	end
+	return false
+end
+
 --------------------------------------------------------------------------------
 -- Spell functions
 --------------------------------------------------------------------------------
@@ -834,7 +862,7 @@ end
 function getPersIdToId(pid)
 	if not pid then return nil end
 	if isRaid() then
-		local members=raid.GetMembers()
+		local members=GetRaidMembersInOldFormat()
 		for i, g in pairs(members) do
 			for j, m in pairs(g) do
 				if m and m.id==pid then return m.uniqueId or m.persistentId end
@@ -854,7 +882,7 @@ end
 function getNameToPersId(pid)
 	if not pid or type(pid)~="userdata" then return nil end
 	if isRaid() then
-		local members=raid.GetMembers()
+		local members=GetRaidMembersInOldFormat()
 		for i, g in pairs(members) do
 			for j, m in pairs(g) do
 				if m and (m.uniqueId and m.uniqueId.IsEqual and m.uniqueId.IsEqual(pid, m.uniqueId) or m.persistentId==pid) then return m.name end
@@ -873,7 +901,7 @@ end
 function getGroupFromPersId(pid)
 	if not pid or type(pid)~="userdata" then return nil end
 	if isRaid() and pid then
-		local members=raid.GetMembers()
+		local members=GetRaidMembersInOldFormat()
 		if not members then return 0 end
 		local activeGroups=0
 		for i=0, 3 do
@@ -894,7 +922,7 @@ function getGroupSizeFromPersId(pid)
 	if not pid or type(pid)~="userdata" then return nil end
 	if isRaid() then
 		local group=nil
-		local members=raid.GetMembers()
+		local members=GetRaidMembersInOldFormat()
 		if not members then return nil end
 		for i=0, 3 do
 			if members[i] then
@@ -916,7 +944,7 @@ end
 
 function getFirstEmptyPartyInRaid()
 	if isRaid() then
-		local members=raid.GetMembers()
+		local members=GetRaidMembersInOldFormat()
 		if not members then return nil end
 		for i=0, 3 do
 			local active=false
