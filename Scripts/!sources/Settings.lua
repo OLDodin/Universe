@@ -357,15 +357,24 @@ function LoadSettings(aProfileInd)
 	
 	if m_currentProfile.version < 2.92 or m_currentProfile.version == nil then
 		for _, buffSettings in ipairs(m_currentProfile.raidFormSettings.raidBuffs.customBuffs) do
+			if not buffSettings.name then
+				buffSettings.name = common.GetEmptyWString()
+			end
 			buffSettings.name = removeHtmlFromWString(buffSettings.name)
 		end
 		
 		for _, buffSettings in ipairs(m_currentProfile.targeterFormSettings.raidBuffs.customBuffs) do
+			if not buffSettings.name then
+				buffSettings.name = common.GetEmptyWString()
+			end
 			buffSettings.name = removeHtmlFromWString(buffSettings.name)
 		end
 		
 		for _, buffGroupSettings in ipairs(m_currentProfile.buffFormSettings.buffGroups) do
 			for _, buffSettings in ipairs(buffGroupSettings.buffs or {}) do
+				if not buffSettings.name then
+					buffSettings.name = common.GetEmptyWString()
+				end
 				buffSettings.name = removeHtmlFromWString(buffSettings.name)
 			end
 		end

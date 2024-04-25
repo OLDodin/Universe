@@ -257,7 +257,7 @@ function LoadRaidFormSettings(aForm)
 	destroy(getChild(group9, "colorSettingsForm"))
 	destroy(getChild(group10, "colorSettingsForm"))
 	destroy(getChild(group11, "colorSettingsForm"))
-	
+
 	local colorForm = CreateSimpleColorSettingsForm(m_currentFormSettings.friendColor, "friendColorHeader")
 	group8:AddChild(colorForm)
 	

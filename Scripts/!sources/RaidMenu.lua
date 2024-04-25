@@ -3,6 +3,10 @@
 -- Raid move
 --------------------------------------------------------------------------------
 local function CheckHelper(aUniqueID)
+	if not isRaid() then
+		return false
+	end
+	
 	local raidHelpers = raid.GetLeaderHelpers()
 	if not raidHelpers then
 		return false
