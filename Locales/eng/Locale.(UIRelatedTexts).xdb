@@ -158,10 +158,6 @@
       <resource href="flipBuffsButton.txt"/>
     </Item>
     <Item>
-      <name>aboveHeadButton</name>
-      <resource href="aboveHeadButton.txt"/>
-    </Item>
-    <Item>
       <name>isEnemyButton</name>
       <resource href="isEnemyButton.txt"/>
     </Item>

@@ -181,11 +181,7 @@ function SaveTargeterFormSettings(aForm)
 	if container and m_currentFormSettings.raidBuffs.customBuffs then
 		for i, j in ipairs(m_currentFormSettings.raidBuffs.customBuffs) do
 			j.name = getText(getChild(container, "Name"..tostring(i), true))
-			j.isCastName = getCheckBoxState(getChild(container, "isCastName"..tostring(i), true))
-			j.isMobName = getCheckBoxState(getChild(container, "isMobName"..tostring(i), true))
-			if not j.isCastName and not j.isMobName then
-				j.isCastName = true
-			end
+			j.castByMe = getCheckBoxState(getChild(container, "castByMe"..tostring(i), true))
 		end
 	end
 

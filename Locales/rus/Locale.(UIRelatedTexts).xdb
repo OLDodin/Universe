@@ -1274,18 +1274,6 @@
       <resource href="progressActionPanelName.txt"/>
     </Item>
 	<Item>
-      <name>allShop79</name>
-      <resource href="allShop79.txt"/>
-    </Item>
-	<Item>
-      <name>allShop80</name>
-      <resource href="allShop80.txt"/>
-    </Item>
-	<Item>
-      <name>allShop81</name>
-      <resource href="allShop81.txt"/>
-    </Item>
-	<Item>
       <name>aboveHeadTxt</name>
       <resource href="aboveHeadTxt.txt"/>
     </Item>
