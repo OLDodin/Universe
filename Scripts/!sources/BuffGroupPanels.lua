@@ -326,15 +326,19 @@ function SetGroupBuffPanelFixed(aFromWdg)
 end
 
 function SetGroupBuffPanelsInfoForMe()
-	local myID = avatar.GetId()
 	local profile = GetCurrentProfile()
 	local panelList = {}
+	local hasSpell = false
 	for i, groupSettings in pairs(profile.buffFormSettings.buffGroups) do
 		if groupSettings.buffOnMe and not groupSettings.aboveHeadButton then 
 			panelList[i] = m_groupBuffPanels[i]
+			local spellCondition = GetSpellConditionForBuffPlate(i)
+			if spellCondition and spellCondition:HasCondtion() then
+				hasSpell = true
+			end
 		end
 	end
-	FabricMakeGroupBuffPlayerInfo(myID, panelList, true)
+	FabricMakeGroupBuffPlayerInfo(g_myAvatarID, panelList, hasSpell)
 end
 
 function SetGroupBuffPanelsInfoForTarget(aTargetID)
@@ -356,7 +360,7 @@ function SetGroupBuffPanelsInfoForTarget(aTargetID)
 		UnsubscribeGroupBuffListeners(m_lastTargetID)
 	end
 	
-	if aTargetID == avatar.GetId() then
+	if aTargetID == g_myAvatarID then
 		m_lastTargetID = nil
 		FabricDestroyUnused()
 		return
@@ -396,7 +400,6 @@ end
 function SpawnedUnitsForAboveHead(aSpawnedUnitList)
 	local aboveHeadPanel = nil
 	local priority = NORMAL_PRIORITY_PANELS
-	local myID = avatar.GetId()
 	local aboveHeadSettings = GetAboveHeadSettings()
 	if not aboveHeadSettings then
 		return
@@ -406,7 +409,7 @@ function SpawnedUnitsForAboveHead(aSpawnedUnitList)
 		local needPanel, isPlayer = CheckSettingsCondition(aboveHeadSettings, objID)
 		if needPanel then
 			priority = NORMAL_PRIORITY_PANELS
-			if objID == myID then
+			if objID == g_myAvatarID then
 				priority = HIGH_PRIORITY_PANELS
 			end
 			if not isPlayer then

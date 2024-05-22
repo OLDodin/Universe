@@ -22,8 +22,7 @@ end
 
 function CanMovePlayers(aMyUniqueID)
 	if isRaid() then
-		local iamHelper = CheckHelper(aMyUniqueID)
-		if raid.IsLeader() or iamHelper then
+		if raid.IsLeader() or CheckHelper(aMyUniqueID) then
 			return true
 		end
 	end
@@ -34,10 +33,10 @@ function MoveTo(aPartyNum, anUniqueID, aMyUniqueID)
 	if CanMovePlayers(aMyUniqueID) and anUniqueID then
 		if aPartyNum < 4 then
 			local currGroupSize = getGroupSizeFromPersId(anUniqueID)
-			local currGroupNum = getGroupFromPersId(anUniqueID)
+			local currGroupNum = getGroupFromPersId(anUniqueID) - 1
 			if currGroupNum and aPartyNum < currGroupNum or currGroupSize and currGroupSize > 1 then
 				local emptyParty = getFirstEmptyPartyInRaid()
-				if emptyParty == nil or aPartyNum < emptyParty  then
+				if emptyParty == nil or aPartyNum < emptyParty - 1  then
 					raid.MoveMemberToGroup(anUniqueID, aPartyNum)
 				else
 					raid.IsolateMember(anUniqueID)
@@ -83,9 +82,9 @@ function GenerateMenuInfos(aPlayerBar, aMyUniqueID)
 	local iamHelper = CheckHelper(aMyUniqueID)
 	m_menuInfos = {}
 	local name = aPlayerBar.optimizeInfo.name
-	local isClickOnAvatar = avatar.GetId()==playerID
+	local isClickOnAvatar = g_myAvatarID==playerID
 	local canWhisper = isExist(playerID) and unit.IsPlayer(playerID) and isFriend(playerID) and not isClickOnAvatar
-	local canInvite = canWhisper and not raid.IsAutomatic() and not group.IsAutomatic()
+	local canInvite = canWhisper and (isRaid() and not raid.IsAutomatic() or true) and not group.IsAutomatic()
 	local isClickOnLeader = aPlayerBar.optimizeInfo.isLeader
 
 	if isClickOnAvatar and (isRaid() or isGroup() and group.IsCreatureInGroup(playerID)) then
@@ -131,28 +130,27 @@ function GenerateMenuInfos(aPlayerBar, aMyUniqueID)
 	if not isClickOnAvatar and (isRaid() or isGroup()) and matchMaking.GetCurrentBattleInfo() == nil then AddToMenu("followMenuButton", function () if isExist(playerID) then avatar.SelectTarget(playerID) avatar.SetFollowTarget(true) end CloseMenu() end) end
 
 	if isRaid() then
-		if uniqueID and IsPlayerInAvatarsRaidById(uniqueID) then
+		if uniqueID and raid.IsPlayerInAvatarsRaid(uniqueID) then
 			local rights = raid.GetMemberRights(uniqueID)
-			local isHelper = rights and (rights[0] and rights[0]==RAID_MEMBER_RIGHT_LEADER_HELPER or rights[1] and rights[1]==RAID_MEMBER_RIGHT_LEADER_HELPER)
-			local isMaster = rights and (rights[0] and rights[0]==RAID_MEMBER_RIGHT_LOOT_MASTER or rights[1] and rights[1]==RAID_MEMBER_RIGHT_LOOT_MASTER)
+			local isHelper = rights and rights[RAID_MEMBER_RIGHT_LEADER_HELPER]
+			local isMaster = rights and rights[RAID_MEMBER_RIGHT_LOOT_MASTER]
 			if isClickOnAvatar then 
 				if raid.IsLeader() and not raid.IsAutomatic() then
 					AddToMenu("makeAllLeaderHelperMenuButton", 
 						function ()
-							local members = GetRaidMembersInOldFormat()
-							for i=0, GetTableSize(members)-1 do
-								local subParty = members[i]
-								for j=0, GetTableSize(subParty)-1 do
-									if members[i][j].uniqueId and members[i][j].id ~= avatar.GetId() then
-										raid.AddRight(members[i][j].uniqueId, RAID_MEMBER_RIGHT_LEADER_HELPER)
-										CloseMenu() 
+							local members = raid.GetMembers()
+							for _, party in ipairs(members) do
+								for _, member in ipairs(party) do
+									if member.uniqueId and member.id ~= g_myAvatarID then
+										raid.AddRight(member.uniqueId, RAID_MEMBER_RIGHT_LEADER_HELPER)
+										CloseMenu()
 									end
 								end
 							end
 						end)
 				end
 			end
-			if raid.IsLeader() 			then
+			if raid.IsLeader() then
 				if not isClickOnAvatar and playerID ~= nil 	then
 					AddToMenu("leaderMenuButton", function () raid.ChangeLeader(uniqueID) CloseMenu() end)
 					if not isHelper then AddToMenu("addLeaderHelperMenuButton", function () raid.AddRight(uniqueID, RAID_MEMBER_RIGHT_LEADER_HELPER) CloseMenu() end)
@@ -167,6 +165,9 @@ function GenerateMenuInfos(aPlayerBar, aMyUniqueID)
 				end
 			elseif iamHelper then
 				AddToMenu("moveMenuButton", function () StartMove(uniqueID) CloseMenu() end)
+				if not raid.IsAutomatic() then
+					if not isClickOnAvatar then AddToMenu("kickMenuButton", function () raid.Kick(uniqueID) CloseMenu() end) end
+				end
 			end
 			if isClickOnAvatar then AddToMenu("raidLeaveMenuButton", function () raid.Leave() CloseMenu() end) end
 		else

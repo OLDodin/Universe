@@ -4,10 +4,10 @@ function GetColorSettingsHeight()
 	return 245
 end
 
-function CreateSimpleColorSettingsForm(aColor, aHeaderName)
+function CreateSimpleColorSettingsForm(aParent, aColor, aHeaderName)
 	setTemplateWidget(m_template)
 	
-	local form=createWidget(nil, "colorSettingsForm", "PanelTransparent", WIDGET_ALIGN_CENTER, WIDGET_ALIGN_BOTH, 290, nil, 0, 0, true)
+	local form=createWidget(aParent, "colorSettingsForm", "PanelTransparent", WIDGET_ALIGN_CENTER, WIDGET_ALIGN_BOTH, 290, nil, 0, 0)
 	setLocaleTextEx(createWidget(form, aHeaderName, "TextView", WIDGET_ALIGN_BOTH, WIDGET_ALIGN_LOW, nil, 25, 0, 10), nil, "ColorWhite", "center")
 	
 	local backPreview = createWidget(form, "backPreview", "ImageBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 76, 76, 207, 52)
@@ -53,7 +53,7 @@ function CreateSimpleColorSettingsForm(aColor, aHeaderName)
 	return form
 end
 
-function CreateColorSettingsForm(anInfo)
+function CreateColorSettingsForm(aParent, anInfo)
 	if anInfo.useHighlightBuff == nil then
 		anInfo.useHighlightBuff = false
 	end
@@ -67,7 +67,7 @@ function CreateColorSettingsForm(anInfo)
 	
 	setTemplateWidget(m_template)
 	
-	local form=createWidget(nil, "colorSettingsForm", "PanelTransparent", WIDGET_ALIGN_CENTER, WIDGET_ALIGN_BOTH, 290, nil, 0, 0, true)
+	local form=createWidget(aParent, "colorSettingsForm", "PanelTransparent", WIDGET_ALIGN_CENTER, WIDGET_ALIGN_BOTH, 290, nil, 0, 0)
 	
 	setLocaleText(createWidget(form, "useHighlightBuffCheckBox", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 250, 25, 10, 150), anInfo.useHighlightBuff)
 	setLocaleText(createWidget(form, "blinkHighlightCheckBox", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 250, 25, 10, 180), anInfo.blinkHighlight)

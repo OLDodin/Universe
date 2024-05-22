@@ -5,8 +5,6 @@ local cachedIsExist = object.IsExist
 local cachedIsUnit = object.IsUnit
 local cachedCreateValuedText = common.CreateValuedText
 
---init global Locales
-getLocale()
 local cachedTimeAbbr = {}
 
 --------------------------------------------------------------------------------
@@ -178,11 +176,11 @@ function compare(name1, name2)
 	return name1:Compare(name2, true) == 0
 end
 
-function initTimeAbbr()
-	table.insert(cachedTimeAbbr, toStringUtils(Locales["s"] or "s"))
-	table.insert(cachedTimeAbbr, toStringUtils(Locales["m"] or "m"))
-	table.insert(cachedTimeAbbr, toStringUtils(Locales["h"] or "h"))
-	table.insert(cachedTimeAbbr, toStringUtils(Locales["d"] or "d"))
+function initTimeAbbr()	
+	table.insert(cachedTimeAbbr, toStringUtils(getLocale()["s"] or "s"))
+	table.insert(cachedTimeAbbr, toStringUtils(getLocale()["m"] or "m"))
+	table.insert(cachedTimeAbbr, toStringUtils(getLocale()["h"] or "h"))
+	table.insert(cachedTimeAbbr, toStringUtils(getLocale()["d"] or "d"))
 end
 
 function getTimeString(ms, withoutFraction)
@@ -406,6 +404,14 @@ function createWidget(parent, widgetName, templateName, alignX, alignY, width, h
 		LogInfo("Not found WidgetDesc of ", templateName)
 		return
 	end
+--[[	
+	if not parent or noParent then
+		--LogInfo("deprecated parent must exist ", templateName)
+		widget = mainForm:CreateWidgetByDesc(desc)
+	else
+		widget = parent:CreateChildByDesc(desc)
+	end
+	]]
 	widget = mainForm:CreateWidgetByDesc(desc)
 	if not widget or not widget:IsValid() then
 		LogInfo("Fail create widget type of ", templateName)
@@ -419,11 +425,6 @@ end
 
 function setTemplateWidget(widget)
 	templateWidget=widget
-end
-
-function equals(widget1, widget2)
-	if not widget1 or not widget2 then return nil end
-	return widget1.IsEqual and widget1:IsEqual(widget2) or widget2.IsEqual and widget2:IsEqual(widget1) or nil
 end
 
 function swap(widget)
@@ -478,24 +479,21 @@ local template=getChild(mainForm, "Template")
 local timers={}
 local m_loopEffects={}
 
-function timer(params)
+function timerTick(params)
 	if not params.effectType == ET_FADE then return end
-	local name=nil
-	for i, j in pairs(timers) do
-		if j and equals(params.wtOwner, j.widget) then
-			name=i
+	local timerForTick = nil
+	for _, someTimer in pairs(timers) do
+		if params.wtOwner:IsEqual(someTimer.widget) then
+			timerForTick = someTimer
+			break
 		end
 	end
-	if not name then return end
+	if not timerForTick then return end
 
-
-	if timers[name] then
-		if timers[name].widget and not timers[name].one then
-			timers[name].widget:PlayFadeEffect( 1.0, 1.0, timers[name].speed*1000, EA_MONOTONOUS_INCREASE, true)
-		end
-		--userMods.SendEvent( timers[name].event, {sender = common.GetAddonName()} )
-		timers[name].callback()
+	if not timerForTick.one then
+		timerForTick.widget:PlayFadeEffect( 1.0, 1.0, timerForTick.speed*1000, EA_MONOTONOUS_INCREASE, true)
 	end
+	timerForTick.callback()
 end
 
 function startTimer(name, callback, speed, one)
@@ -503,19 +501,21 @@ function startTimer(name, callback, speed, one)
 	setTemplateWidget(template)
 	local timerWidget=createWidget(mainForm, name, "Timer")
 	if not timerWidget or not name or not callback then return nil end
-	timers[name]={}
-	timers[name].callback=callback
-	timers[name].widget=timerWidget
-	timers[name].one=one
-	timers[name].speed=tonumber(speed) or 1
+	local newTimer = {}
+	newTimer.callback=callback
+	newTimer.widget=timerWidget
+	newTimer.one=one
+	newTimer.speed=tonumber(speed) or 1
 
-	common.RegisterEventHandler(timer, "EVENT_EFFECT_FINISHED")
-    timerWidget:PlayFadeEffect(1.0, 1.0, timers[name].speed*1000, EA_MONOTONOUS_INCREASE, true)
+	common.RegisterEventHandler(timerTick, "EVENT_EFFECT_FINISHED")
+    timerWidget:PlayFadeEffect(1.0, 1.0, newTimer.speed*1000, EA_MONOTONOUS_INCREASE, true)
+	
+	timers[name] = newTimer
 	return true
 end
 
 function stopTimer(name)
-    common.UnRegisterEventHandler( timer, "EVENT_EFFECT_FINISHED" )
+    common.UnRegisterEventHandler(timerTick, "EVENT_EFFECT_FINISHED")
 end
 
 function setTimeout(name, speed)
@@ -536,7 +536,7 @@ function effectDone(aParams)
 
 	local findedWdg = nil
 	for _, v in pairs(m_loopEffects) do
-		if v and equals(aParams.wtOwner, v.widget) then
+		if aParams.wtOwner:IsEqual(v.widget) then
 			findedWdg = v
 			break
 		end
@@ -550,12 +550,12 @@ end
 
 function startLoopBlink(aWdg, aSpeed)
 	for i, v in pairs(m_loopEffects) do
-		if v and equals(aWdg, v.widget) then
+		if aWdg:IsEqual(v.widget) then
 			v.speed = aSpeed
 			return
 		end
 	end
-	
+
 	local obj = {}
 	obj.widget = aWdg
 	obj.speed = aSpeed
@@ -566,7 +566,7 @@ end
 
 function stopLoopBlink(aWdg)
 	for i, v in pairs(m_loopEffects) do
-		if v and equals(aWdg, v.widget) then
+		if aWdg:IsEqual(v.widget) then
 			table.remove(m_loopEffects, i)
 			break
 		end
@@ -580,14 +580,9 @@ end
 -- Locales functions
 --------------------------------------------------------------------------------
 
-initTimeAbbr()
-
 function setLocaleTextEx(widget, checked, color, align, fontSize, shadow, outline, fontName)
-	if not Locales then
-		getLocale()
-	end
 	local name=getName(widget)
-	local text=name and Locales[name]
+	local text=name and getLocale()[name]
 	if not text then
 		text = name
 	end
@@ -603,34 +598,6 @@ end
 
 function setLocaleText(widget, checked)
 	setLocaleTextEx(widget, checked, "ColorWhite", "left")
-end
-
-
-function GetRaidMembersInOldFormat()
-	local members = raid.GetMembers()
-	local oldMembers = {}
-	for i=1, GetTableSize(members) do
-		local subParty = members[i]
-		oldMembers[i-1] = {}
-		for j=1, GetTableSize(subParty) do
-			oldMembers[i-1][j-1] = subParty[j]
-		end
-	end
-	return oldMembers
-end
-
-function IsPlayerInAvatarsRaidById(anUniqueID)
-	local members = raid.GetMembers()
-	for i=1, GetTableSize(members) do
-		local subParty = members[i]
-		for j=1, GetTableSize(subParty) do
-			local playerInfo = subParty[j]
-			if anUniqueID:IsEqual(playerInfo.uniqueId) then
-				return true
-			end
-		end
-	end
-	return false
 end
 
 --------------------------------------------------------------------------------
@@ -821,7 +788,7 @@ end
 function ressurect(targetId, ressurectName)
 	local arrNames = {}
 	for i = 1, 4 do
-		local defaultName = Locales["defaultRessurectNames"..i]
+		local defaultName = getLocale()["defaultRessurectNames"..i]
 		if defaultName then
 			table.insert(arrNames, defaultName)
 		end
@@ -859,104 +826,43 @@ function getAngleToTarget(targetId)
 end
 
 
-function getPersIdToId(pid)
-	if not pid then return nil end
-	if isRaid() then
-		local members=GetRaidMembersInOldFormat()
-		for i, g in pairs(members) do
-			for j, m in pairs(g) do
-				if m and m.id==pid then return m.uniqueId or m.persistentId end
-			end
-		end
-	elseif isGroup() then
-		local members=group.GetMembers()
-		for i, m in pairs(members) do
-			if m and m.id==pid then return m.uniqueId or m.persistentId end
-		end
-	elseif avatar.GetId and avatar.GetId()==pid then
-		return avatar.GetUniqueId and avatar.GetUniqueId() or avatar.GetServerId and avatar.GetServerId()
-	end
-	return pid
-end
-
-function getNameToPersId(pid)
-	if not pid or type(pid)~="userdata" then return nil end
-	if isRaid() then
-		local members=GetRaidMembersInOldFormat()
-		for i, g in pairs(members) do
-			for j, m in pairs(g) do
-				if m and (m.uniqueId and m.uniqueId.IsEqual and m.uniqueId.IsEqual(pid, m.uniqueId) or m.persistentId==pid) then return m.name end
-			end
-		end
-	elseif isGroup() then
-		local members=group.GetMembers()
-		for i, m in pairs(members) do
-			if m and (m.uniqueId and m.uniqueId.IsEqual and m.uniqueId.IsEqual(pid, m.uniqueId) or m.persistentId==pid) then return toStringUtils(m.name) end
-		end
-	end
-	local avatarUniqueId=avatar.GetUniqueId and avatar.GetUniqueId()
-	return (avatarUniqueId and avatarUniqueId.IsEqual and avatarUniqueId.IsEqual(pid, avatarUniqueId) or avatar.GetServerId and avatar.GetServerId()==pid) and avatar.GetId and object.GetName and object.GetName(avatar.GetId()) or nil
-end
-
 function getGroupFromPersId(pid)
 	if not pid or type(pid)~="userdata" then return nil end
-	if isRaid() and pid then
-		local members=GetRaidMembersInOldFormat()
-		if not members then return 0 end
-		local activeGroups=0
-		for i=0, 3 do
-			if members[i] then
-				local activeGroup=false
-				for j, m in pairs(members[i]) do
-					if m and (m.uniqueId and m.uniqueId.IsEqual and m.uniqueId.IsEqual(pid, m.uniqueId) or m.persistentId==pid) then return activeGroups end
-					activeGroup=true
+	if raid.IsExist() then
+		local members = raid.GetMembers()
+		if not members then return 1 end
+		for i, party in ipairs(members) do
+			for _, member in ipairs(party) do
+				if member.uniqueId and member.uniqueId:IsEqual(pid) then
+					return i
 				end
-				if activeGroup then activeGroups=activeGroups+1 end
 			end
 		end
 	end
-	return nil
 end
 
 function getGroupSizeFromPersId(pid)
 	if not pid or type(pid)~="userdata" then return nil end
-	if isRaid() then
+	if raid.IsExist() then
 		local group=nil
-		local members=GetRaidMembersInOldFormat()
+		local members = raid.GetMembers()
 		if not members then return nil end
-		for i=0, 3 do
-			if members[i] then
-				for j, m in pairs(members[i]) do
-					if m and (m.uniqueId and m.uniqueId.IsEqual and m.uniqueId.IsEqual(pid, m.uniqueId) or m.persistentId==pid) then group=i end
+		for _, party in ipairs(members) do
+			for _, member in ipairs(party) do
+				if member.uniqueId and member.uniqueId:IsEqual(pid) then
+					return GetTableSize(party)
 				end
 			end
 		end
-		if not group then return nil end
-
-		local size=0
-		for j, m in pairs(members[group]) do
-			size=size+1
-		end
-		return size
 	end
-	return nil
 end
 
 function getFirstEmptyPartyInRaid()
-	if isRaid() then
-		local members=GetRaidMembersInOldFormat()
+	if raid.IsExist() then
+		local members = raid.GetMembers()
 		if not members then return nil end
-		for i=0, 3 do
-			local active=false
-			if members[i] then
-				for j, m in pairs(members[i]) do
-					active=true
-				end
-			end
-			if not active then return i end
-		end
+		return GetTableSize(members) + 1
 	end
-	return nil
 end
 
 
@@ -972,11 +878,7 @@ function updateCachedTimestamp()
 end
 
 function copyTable(t)
-  local result = { }
-  for k, v in pairs( t ) do
-    result[k] = v
-  end
-  return result
+	return table.sclone(t)
 end
 
 function deepCopyTable(t)
@@ -999,11 +901,4 @@ function getSpellTextureFromCache(aSpellID)
 	table.insert(m_spellTextureCache, newSpellTexInfo)
 	
 	return newSpellTexInfo.texture
-end
-
-
-
-function LogToChat(aMessage)
-	if not cachedIsWString(aMessage) then	aMessage = cachedToWString(aMessage) end
-	userMods.SendSelfChatMessage(aMessage, "notice")
 end

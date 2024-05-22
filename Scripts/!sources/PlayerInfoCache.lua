@@ -1,4 +1,3 @@
-Global("g_myAvatarID", nil)
 local m_players = {}
 
 local function CreatePlayerSubInfo(anID, aSubClass)
@@ -115,7 +114,7 @@ local function FabricMakePlayerInfo(anID, aListener, anIsRaidInfo)
 	end
 		
 	if anIsRaidInfo then
-		if (settings.showDistanceButton or settings.showArrowButton or settings.distanceText ~= "0") and anID ~= avatar.GetId() then
+		if (settings.showDistanceButton or settings.showArrowButton or settings.distanceText ~= "0") and anID ~= g_myAvatarID then
 			if not player.distance then
 				player.distance = CreatePlayerSubInfo(anID, PlayerDistance)
 			end

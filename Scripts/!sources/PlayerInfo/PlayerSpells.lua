@@ -78,6 +78,13 @@ function PlayerSpells:InitIgnorePlatesBuffsList(anIndex)
 	end
 end
 
+function PlayerSpells:GetConditionForBuffPlate(anIndex)	
+	local condition = GetSpellConditionForBuffPlate(anIndex)
+	if condition and condition:HasCondtion() then
+		return condition
+	end
+end
+
 function PlayerSpells:CallListenerIfNeeded(aSpellID, aListener, aCondition, anIgnoreBuffsList)
 	if aListener and aCondition:HasCondtion() then
 		local spellInfo = aSpellID and cachedGetDescription(aSpellID)
@@ -99,12 +106,15 @@ function PlayerSpells:GetReadAllSpellEventFunc()
 	return function(aParams)
 		local spellbook = avatar.GetSpellBook()
 		if spellbook then
-			for _, spellID in pairs(spellbook) do
-				for i, buffPlate in pairs(self.base.guiBuffPlatesListeners) do
-					self:InitIgnorePlatesBuffsList(i)
-					self:CallListenerIfNeeded(spellID, buffPlate, GetSpellConditionForBuffPlate(i), self.ignoreSpellID[i])
-				end		
-			end
+			for i, buffPlate in pairs(self.base.guiBuffPlatesListeners) do
+				local condition = self:GetConditionForBuffPlate(i)
+				if condition then
+					for _, spellID in pairs(spellbook) do
+						self:InitIgnorePlatesBuffsList(i)
+						self:CallListenerIfNeeded(spellID, buffPlate, condition, self.ignoreSpellID[i])
+					end
+				end
+			end					
 		end
 	end
 end
@@ -113,8 +123,11 @@ function PlayerSpells:GetChangedEventFunc()
 	return function(aParams)	
 		if aParams.effect == EFFECT_TYPE_COOLDOWN_STARTED or aParams.effect == EFFECT_TYPE_COOLDOWN_FINISHED then
 			for i, buffPlate in pairs(self.base.guiBuffPlatesListeners) do
-				self:InitIgnorePlatesBuffsList(i)
-				self:CallListenerIfNeeded(aParams.id, buffPlate, GetSpellConditionForBuffPlate(i), self.ignoreSpellID[i])
+				local condition = self:GetConditionForBuffPlate(i)
+				if condition then
+					self:InitIgnorePlatesBuffsList(i)
+					self:CallListenerIfNeeded(aParams.id, buffPlate, condition, self.ignoreSpellID[i])
+				end
 			end		
 		end
 	end

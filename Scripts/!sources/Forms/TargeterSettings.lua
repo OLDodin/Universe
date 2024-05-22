@@ -264,17 +264,10 @@ function LoadTargeterFormSettings(aForm)
 	destroy(getChild(group10, "colorSettingsForm"))
 	destroy(getChild(group11, "colorSettingsForm"))
 	
-	local colorForm = CreateSimpleColorSettingsForm(m_currentFormSettings.friendColor, "friendColorHeader")
-	group8:AddChild(colorForm)
-	
-	colorForm = CreateSimpleColorSettingsForm(m_currentFormSettings.neitralColor, "neitralColorHeader")
-	group9:AddChild(colorForm)
-	
-	colorForm = CreateSimpleColorSettingsForm(m_currentFormSettings.enemyColor, "enemyColorHeader")
-	group10:AddChild(colorForm)
-	
-	colorForm = CreateSimpleColorSettingsForm(m_currentFormSettings.selectionColor, "selectionColorHeader")
-	group11:AddChild(colorForm)
+	CreateSimpleColorSettingsForm(group8, m_currentFormSettings.friendColor, "friendColorHeader")
+	CreateSimpleColorSettingsForm(group9, m_currentFormSettings.neitralColor, "neitralColorHeader")
+	CreateSimpleColorSettingsForm(group10, m_currentFormSettings.enemyColor, "enemyColorHeader")
+	CreateSimpleColorSettingsForm(group11, m_currentFormSettings.selectionColor, "selectionColorHeader")
 end
 
 function AddTargetBuffToSroller(aForm)
@@ -313,9 +306,8 @@ function CreateColorSettingsForTargetBuffScroller(aForm, anIndex)
 		destroy(colorForm)
 		resize(panelOfElement, nil, 30)		
 	else
-		colorForm = CreateColorSettingsForm(m_currentFormSettings.raidBuffs.customBuffs[anIndex+1])
+		colorForm = CreateColorSettingsForm(panelOfElement, m_currentFormSettings.raidBuffs.customBuffs[anIndex+1])
 		resize(panelOfElement, nil, GetColorSettingsHeight())
-		panelOfElement:AddChild(colorForm)
 	end
 	container:ForceReposition()
 end

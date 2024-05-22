@@ -61,6 +61,8 @@ function onInterfaceToggle(aParams)
 end
 
 local function Init()
+	g_myAvatarID = avatar.GetId()
+	
 	GUIControllerInit()
 	
 	common.RegisterEventHandler( onAOPanelStart, "AOPANEL_START" )

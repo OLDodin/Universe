@@ -1,6 +1,6 @@
 --------------------------------------------------------------------------------
 -- LibDnD.lua // "Drag&Drop Library" by SLA, version 2011-05-28
---                                   updated version 2023-11-04 by oldodin
+--                                   updated version 2024-05-19 by oldodin
 -- Help, support and updates: 
 -- https://alloder.pro/topic/260-how-to-libdndlua-biblioteka-dragdrop/
 --------------------------------------------------------------------------------
@@ -82,6 +82,23 @@ function DnD.Enable( wtWidget, fEnable, oldParam1 )
 	if ID and DnD.Widgets[ ID ].Enabled ~= fEnable then
 		DnD.Widgets[ ID ].Enabled = fEnable
 		DnD.Register( wtWidget, fEnable )
+	end
+end
+function DnD.UpdatePadding( wtWidget, Padding )
+	if not DnD.Widgets then return end
+	local ID = DnD.GetWidgetID( wtWidget )
+	if ID then
+		if type( Padding ) == "table" then
+			for i = 1, 4 do
+				if Padding[ i ] then
+					DnD.Widgets[ ID ].Padding[ i ] = Padding[ i ]
+				end
+			end
+		elseif type( Padding ) == "number" then
+			for i = 1, 4 do
+				DnD.Widgets[ ID ].Padding[ i ] = Padding
+			end
+		end
 	end
 end
 function DnD.IsDragging()

@@ -258,17 +258,10 @@ function LoadRaidFormSettings(aForm)
 	destroy(getChild(group10, "colorSettingsForm"))
 	destroy(getChild(group11, "colorSettingsForm"))
 
-	local colorForm = CreateSimpleColorSettingsForm(m_currentFormSettings.friendColor, "friendColorHeader")
-	group8:AddChild(colorForm)
-	
-	colorForm = CreateSimpleColorSettingsForm(m_currentFormSettings.clearColor, "needClearColorHeader")
-	group9:AddChild(colorForm)
-	
-	colorForm = CreateSimpleColorSettingsForm(m_currentFormSettings.selectionColor, "selectionColorHeader")
-	group10:AddChild(colorForm)
-	
-	colorForm = CreateSimpleColorSettingsForm(m_currentFormSettings.farColor, "farColorHeader")
-	group11:AddChild(colorForm)
+	CreateSimpleColorSettingsForm(group8, m_currentFormSettings.friendColor, "friendColorHeader")
+	CreateSimpleColorSettingsForm(group9, m_currentFormSettings.clearColor, "needClearColorHeader")
+	CreateSimpleColorSettingsForm(group10, m_currentFormSettings.selectionColor, "selectionColorHeader")
+	CreateSimpleColorSettingsForm(group11, m_currentFormSettings.farColor, "farColorHeader")
 end
 
 function AddRaidBuffToSroller(aForm)
@@ -299,9 +292,8 @@ function CreateColorSettingsForRaidBuffScroller(aForm, anIndex)
 		destroy(colorForm)
 		resize(panelOfElement, nil, 30)		
 	else
-		colorForm = CreateColorSettingsForm(m_currentFormSettings.raidBuffs.customBuffs[anIndex+1])
+		colorForm = CreateColorSettingsForm(panelOfElement, m_currentFormSettings.raidBuffs.customBuffs[anIndex+1])
 		resize(panelOfElement, nil, GetColorSettingsHeight())
-		panelOfElement:AddChild(colorForm)
 	end
 	raidBuffContainer:ForceReposition()
 end

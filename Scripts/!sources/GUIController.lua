@@ -32,7 +32,7 @@ local m_moveMode = false
 local m_movingUniqueID = nil
 local m_lastRaidPanelSize = {}
 local m_lastTargetPanelSize = {}
-local m_usedProgressCastPanelCnt = 0
+
 Global("RAID_TYPE", 1)
 Global("PARTY_TYPE", 2)
 Global("SOLO_TYPE", 3)
@@ -474,31 +474,34 @@ function UseCastSubSystemChecked()
 end
 
 local function HidePartyBtns()
-	for i = 1, 4 do
-		if m_raidPartyButtons[i].showed then
-			m_raidPartyButtons[i].wdg:Show(false)
-			m_raidPartyButtons[i].showed = false
+	for _, partyButton in ipairs(m_raidPartyButtons) do
+		if partyButton.showed then
+			partyButton.wdg:Show(false)
+			partyButton.showed = false
 		end
 	end
 end
 
 local function ShowPartyBtns(aPartyCnt)
-	for i = 1, aPartyCnt do
-		if not m_raidPartyButtons[i].showed then
-			m_raidPartyButtons[i].wdg:Show(true)
-			m_raidPartyButtons[i].showed = true
+	for i, partyButton in ipairs(m_raidPartyButtons) do
+		if not partyButton.showed then
+			partyButton.wdg:Show(true)
+			partyButton.showed = true
+		end
+		if i == aPartyCnt then
+			break
 		end
 	end
 end
 
 local function OnRaidFilter(aParams)
-	for i = 1, 4 do
-		if aParams.widget:IsEqual(m_raidPartyButtons[i].wdg) then
-			m_raidPartyButtons[i].active = not m_raidPartyButtons[i].active
-			if m_raidPartyButtons[i].active then
-				setBackgroundColor(m_raidPartyButtons[i].wdg, { r = 1; g = 1, b = 1; a = 1 })
+	for _, partyButton in ipairs(m_raidPartyButtons) do
+		if aParams.widget:IsEqual(partyButton.wdg) then
+			partyButton.active = not partyButton.active
+			if partyButton.active then
+				setBackgroundColor(partyButton.wdg, { r = 1; g = 1, b = 1; a = 1 })
 			else
-				setBackgroundColor(m_raidPartyButtons[i].wdg, { r = 0.3; g = 0.3; b = 0.3; a = 1 })
+				setBackgroundColor(partyButton.wdg, { r = 0.3; g = 0.3; b = 0.3; a = 1 })
 			end
 		end
 	end
@@ -557,8 +560,7 @@ local function ReadyCheckStarted()
 end
 
 local function FindClickedInProgressCast(anWdg, aPanelList)
-	for i=0, GetTableSize(aPanelList)-1 do
-		local playerBar = aPanelList[i]
+	for _, playerBar in ipairs(aPanelList) do
 		if playerBar.isUsed and anWdg:IsEqual(playerBar.wdg) then
 			return playerBar
 		end
@@ -566,8 +568,7 @@ local function FindClickedInProgressCast(anWdg, aPanelList)
 end
 
 local function FindClickedInTarget(anWdg)
-	for i=0, GetTableSize(m_targeterPlayerPanelList)-1 do
-		local playerBar = m_targeterPlayerPanelList[i]
+	for _, playerBar in ipairs(m_targeterPlayerPanelList) do
 		if playerBar.isUsed and anWdg:IsEqual(playerBar.wdg) then
 			return playerBar
 		end
@@ -575,10 +576,8 @@ local function FindClickedInTarget(anWdg)
 end
 
 local function FindClickedInRaid(anWdg)
-	for i=0, GetTableSize(m_raidPlayerPanelList)-1 do
-		local subParty = m_raidPlayerPanelList[i]
-		for j=0, GetTableSize(subParty)-1 do
-			local playerBar = subParty[j]
+	for _, party in ipairs(m_raidPlayerPanelList) do
+		for _, playerBar in ipairs(party) do
 			if playerBar.isUsed and anWdg:IsEqual(playerBar.wdg) then
 				return playerBar
 			end
@@ -587,11 +586,9 @@ local function FindClickedInRaid(anWdg)
 end
 
 local function FindMyUniqueIDInRaid()
-	for i=0, GetTableSize(m_raidPlayerPanelList)-1 do
-		local subParty = m_raidPlayerPanelList[i]
-		for j=0, GetTableSize(subParty)-1 do
-			local playerBar = subParty[j]
-			if playerBar.isUsed and playerBar.playerID == avatar.GetId() then
+	for _, party in ipairs(m_raidPlayerPanelList) do
+		for _, playerBar in ipairs(party) do
+			if playerBar.isUsed and playerBar.playerID == g_myAvatarID then
 				return playerBar.uniqueID
 			end
 		end
@@ -599,12 +596,10 @@ local function FindMyUniqueIDInRaid()
 end
 
 local function FindClickedInRaidMove(anWdg)
-	for i=0, GetTableSize(m_raidPlayerPanelList)-1 do
-		local subParty = m_raidPlayerPanelList[i]
-		for j=0, GetTableSize(subParty)-1 do
-			local playerBar = subParty[j]
+	for i, party in ipairs(m_raidPlayerPanelList) do
+		for _, playerBar in ipairs(party) do
 			if anWdg:IsEqual(playerBar.raidMoveWdg) then
-				return i
+				return i - 1
 			end
 		end
 	end
@@ -615,10 +610,8 @@ local function FindRaidMoveBarByCoordinateInRaid(aGlobalX, aGlobalY)
 		return
 	end
 	
-	for i=0, GetTableSize(m_raidPlayerPanelList)-1 do
-		local subParty = m_raidPlayerPanelList[i]
-		for j=0, GetTableSize(subParty)-1 do
-			local playerBar = subParty[j]
+	for _, party in ipairs(m_raidPlayerPanelList) do
+		for _, playerBar in ipairs(party) do
 			if playerBar.raidMoveWdg:IsVisible() then
 				local realRect = playerBar.raidMoveWdg:GetRealRect()
 				if realRect.x1 < aGlobalX and realRect.x2 > aGlobalX and realRect.y1 < aGlobalY and realRect.y2 > aGlobalY then
@@ -634,10 +627,8 @@ local function FindBarByCoordinateInRaid(aGlobalX, aGlobalY)
 		return
 	end
 	
-	for i=0, GetTableSize(m_raidPlayerPanelList)-1 do
-		local subParty = m_raidPlayerPanelList[i]
-		for j=0, GetTableSize(subParty)-1 do
-			local playerBar = subParty[j]
+	for _, party in ipairs(m_raidPlayerPanelList) do
+		for _, playerBar in ipairs(party) do
 			if playerBar.isUsed then
 				local realRect = playerBar.wdg:GetRealRect()
 				if realRect.x1 < aGlobalX and realRect.x2 > aGlobalX and realRect.y1 < aGlobalY and realRect.y2 > aGlobalY then
@@ -648,15 +639,25 @@ local function FindBarByCoordinateInRaid(aGlobalX, aGlobalY)
 	end
 end
 
-function TargetChanged()
-	local targetID = avatar.GetTarget()
+function TargetChangedForTargeter(aTargetID)
+	local profile = GetCurrentProfile()
+	if m_targetSubSystemLoaded and profile.targeterFormSettings.highlightSelectedButton then
+		for _, playerBar in ipairs(m_targeterPlayerPanelList) do
+			if aTargetID and playerBar.isUsed and playerBar.playerID and aTargetID == playerBar.playerID then
+				PlayerTargetsHighlightChanged(true, playerBar)
+			elseif playerBar.highlight then
+				PlayerTargetsHighlightChanged(false, playerBar)
+			end
+		end
+	end
+end
+
+function TargetChangedForRaid(aTargetID)
 	local profile = GetCurrentProfile()
 	if m_raidSubSystemLoaded and profile.raidFormSettings.highlightSelectedButton then
-		for i=0, GetTableSize(m_raidPlayerPanelList)-1 do
-			local subParty = m_raidPlayerPanelList[i]
-			for j=0, GetTableSize(subParty)-1 do
-				local playerBar = subParty[j]
-				if targetID and playerBar.isUsed and targetID == playerBar.playerID then
+		for _, party in ipairs(m_raidPlayerPanelList) do
+			for _, playerBar in ipairs(party) do
+				if aTargetID and playerBar.isUsed and aTargetID == playerBar.playerID then
 					PlayerTargetsHighlightChanged(true, playerBar)
 				elseif playerBar.highlight then
 					PlayerTargetsHighlightChanged(false, playerBar)
@@ -664,16 +665,14 @@ function TargetChanged()
 			end
 		end
 	end
-	if m_targetSubSystemLoaded and profile.targeterFormSettings.highlightSelectedButton then
-		for i=0, GetTableSize(m_targeterPlayerPanelList)-1 do
-			local playerBar = m_targeterPlayerPanelList[i]
-			if targetID and playerBar.isUsed and playerBar.playerID and targetID == playerBar.playerID then
-				PlayerTargetsHighlightChanged(true, playerBar)
-			elseif playerBar.highlight then
-				PlayerTargetsHighlightChanged(false, playerBar)
-			end
-		end
-	end
+end
+
+function TargetChanged()
+	local targetID = avatar.GetTarget()
+	
+	TargetChangedForRaid(targetID)
+	TargetChangedForTargeter(targetID)
+	
 	if m_buffGroupSubSystemLoaded then
 		SetGroupBuffPanelsInfoForTarget(targetID)
 	end
@@ -903,13 +902,14 @@ end
 
 local function CreateProgressCastCache(aPanelList, aParentWdg)
 	local profile = GetCurrentProfile()
-	for i = 0, PROGRESS_PANELS_LIMIT do
-		aPanelList[i] = CreateProgressCastPanel(aParentWdg, i)
+	for i = 1, PROGRESS_PANELS_LIMIT do
+		local progressCastPanel = CreateProgressCastPanel(aParentWdg, i-1)
 		if profile.castFormSettings.selectable then
-			aPanelList[i].wdg:SetTransparentInput(false)
+			progressCastPanel.wdg:SetTransparentInput(false)
 		else
-			aPanelList[i].wdg:SetTransparentInput(true)
+			progressCastPanel.wdg:SetTransparentInput(true)
 		end
+		aPanelList[i] = progressCastPanel
 	end
 end
 
@@ -917,11 +917,10 @@ local function GetProgressCastPanelCastedByMe(aPanelList)
 	local profile = GetCurrentProfile()
 	local panelHeight = tonumber(profile.castFormSettings.panelHeightText)
 	
-	local cnt = 0
-	for i = 0, PROGRESS_PANELS_LIMIT do
-		if aPanelList[i].isUsed and aPanelList[i].castedByMe then
-			if not profile.castFormSettings.showOnlyMyTarget or IsProgressCastPanelVisible(aPanelList[i]) then
-				return aPanelList[i]
+	for _, progressPanel in ipairs(aPanelList) do
+		if progressPanel.isUsed and progressPanel.castedByMe then
+			if not profile.castFormSettings.showOnlyMyTarget or IsProgressCastPanelVisible(progressPanel) then
+				return progressPanel
 			end
 		end
 	end
@@ -937,11 +936,11 @@ local function UpdatePositionProgressCastPanels(aPanelList)
 		move(panelCastedByMe.wdg, 0, 40)
 		cnt = 1
 	end
-	for i = 0, PROGRESS_PANELS_LIMIT do
-		if aPanelList[i].isUsed and not aPanelList[i].castedByMe then
-			if not profile.castFormSettings.showOnlyMyTarget or IsProgressCastPanelVisible(aPanelList[i]) then
+	for _, progressPanel in ipairs(aPanelList) do
+		if progressPanel.isUsed and not progressPanel.castedByMe then
+			if not profile.castFormSettings.showOnlyMyTarget or IsProgressCastPanelVisible(progressPanel) then
 				local posY = 40 + cnt*(panelHeight+1)
-				move(aPanelList[i].wdg, 0, posY)
+				move(progressPanel.wdg, 0, posY)
 				cnt = cnt + 1
 			end
 		end
@@ -949,17 +948,17 @@ local function UpdatePositionProgressCastPanels(aPanelList)
 end
 
 local function GetProgressCastPanel(anID, aPanelList)
-	for i = 0, PROGRESS_PANELS_LIMIT do
-		if aPanelList[i].isUsed and aPanelList[i].playerID == anID then
-			return aPanelList[i]
+	for _, progressPanel in ipairs(aPanelList) do
+		if progressPanel.isUsed and progressPanel.playerID == anID then
+			return progressPanel
 		end
 	end
 end
 
 local function GetFreeProgressCastPanel(aPanelList)
-	for i = 0, PROGRESS_PANELS_LIMIT do
-		if not aPanelList[i].isUsed then
-			return aPanelList[i]
+	for _, progressPanel in ipairs(aPanelList) do
+		if not progressPanel.isUsed then
+			return progressPanel
 		end
 	end
 end
@@ -968,9 +967,9 @@ local function ClearProgressPanelOnEndAnimationInPanelList(aParams, aPanelList)
 	if aParams.effectType ~= ET_RESIZE then
 		return
 	end
-	for i = 0, PROGRESS_PANELS_LIMIT do
-		if aPanelList[i].isUsed and equals(aParams.wtOwner, aPanelList[i].barWdg) then
-			ClearProgressCastPanel(aPanelList[i])
+	for _, progressPanel in ipairs(aPanelList) do
+		if progressPanel.isUsed and aParams.wtOwner:IsEqual(progressPanel.barWdg) then
+			ClearProgressCastPanel(progressPanel)
 			UpdatePositionProgressCastPanels(aPanelList)
 			break
 		end
@@ -987,12 +986,12 @@ function ShowProgressBuffForTarget(aTargetID, aPanelList)
 	if not profile.castFormSettings.showOnlyMyTarget then
 		return
 	end
-	for i = 0, PROGRESS_PANELS_LIMIT do
-		if aPanelList[i].isUsed then
-			if aPanelList[i].playerID == aTargetID then
-				SetProgressCastPanelVisible(aPanelList[i], true)
+	for _, progressPanel in ipairs(aPanelList) do
+		if progressPanel.isUsed then
+			if progressPanel.playerID == aTargetID then
+				SetProgressCastPanelVisible(progressPanel, true)
 			else
-				SetProgressCastPanelVisible(aPanelList[i], false)
+				SetProgressCastPanelVisible(progressPanel, false)
 			end
 		end
 	end
@@ -1003,10 +1002,10 @@ local function CreateRaidPanelCache()
 	local profile = GetCurrentProfile()
 	m_raidPlayerMovePanel = CreatePlayerPanel(m_raidPanel, 0, 0, true, profile.raidFormSettings, 111)
 	m_raidPlayerMovePanel.wdg:SetTransparentInput(true)
-	for i = 0, 3 do
+	for i = 1, 4 do
 		m_raidPlayerPanelList[i] = {}
-		for j = 0, 5 do
-			local playerPanel = CreatePlayerPanel(m_raidPanel, i, j, true, profile.raidFormSettings, (i+1)*(j+1))
+		for j = 1, 6 do
+			local playerPanel = CreatePlayerPanel(m_raidPanel, i-1, j-1, true, profile.raidFormSettings, i*j)
 			DnD.Init(m_raidPlayerMovePanel.wdg, playerPanel.wdg, false)
 			DnD.Enable(playerPanel.wdg, false)
 			m_raidPlayerPanelList[i][j] = playerPanel
@@ -1014,7 +1013,7 @@ local function CreateRaidPanelCache()
 	end
 end
 
-local function ResizePanelForm(aGroupsCnt, aMaxPeopleCnt, aFormSettings, aForm, aLastSize, aFormReacting)
+local function ResizePanelForm(aGroupsCnt, aMaxPeopleCnt, aFormSettings, aForm, aLastSize)
 	local panelWidth = tonumber(aFormSettings.raidWidthText)
 	local panelHeight = tonumber(aFormSettings.raidHeightText)
 	local width = 0
@@ -1026,28 +1025,27 @@ local function ResizePanelForm(aGroupsCnt, aMaxPeopleCnt, aFormSettings, aForm, 
 		width = width + aGroupsCnt*panelWidth
 		height = height + aMaxPeopleCnt*panelHeight
 	end
-	if aLastSize.w ~= width or aLastSize.h ~= height then
-		aLastSize.w = width
-		aLastSize.h = height
 	
+	if not aLastSize.w or aLastSize.w < width or not aLastSize.h or aLastSize.h < height then
 		width = math.max(200, width)
 		height = math.max(370, height)
-		resize(aForm, width, height)
-		DnD.Remove(aForm)
-		DnD.Init(aForm, aFormReacting, true, true, {0,-(width-200),-(height-60),0})
 		
+		aLastSize.w = width
+		aLastSize.h = height
+		resize(aForm, width, height)
+		DnD.UpdatePadding(aForm, {0,-(width-200),-(height-60),0})
 	end
 end
 
 local function ResizeTargetPanel(aGroupsCnt, aMaxPeopleCnt)
 	local profile = GetCurrentProfile()
-	ResizePanelForm(aGroupsCnt, aMaxPeopleCnt, profile.targeterFormSettings, m_targetPanel, m_lastTargetPanelSize, getChild(m_targetPanel, "TopTargeterPanel"))
+	ResizePanelForm(aGroupsCnt, aMaxPeopleCnt, profile.targeterFormSettings, m_targetPanel, m_lastTargetPanelSize)
 	ApplyTargetSettingsToGUI(m_targetPanel)
 end
 
 local function ResizeRaidPanel(aGroupsCnt, aMaxPeopleCnt)
 	local profile = GetCurrentProfile()
-	ResizePanelForm(aGroupsCnt, aMaxPeopleCnt, profile.raidFormSettings, m_raidPanel, m_lastRaidPanelSize, getChild(m_raidPanel, "TopPanel"))
+	ResizePanelForm(aGroupsCnt, aMaxPeopleCnt, profile.raidFormSettings, m_raidPanel, m_lastRaidPanelSize)
 	ApplyRaidSettingsToGUI(m_raidPanel)
 end
 
@@ -1056,25 +1054,23 @@ local function ShowMoveIfNeeded()
 		return
 	end
 	HideMove()
-	local members = GetRaidMembersInOldFormat()
+	local members = raid.GetMembers()
 	local maxPeopleCnt = 0
 	local partyCnt = GetTableSize(members)
 	
 	local currGroupSize = getGroupSizeFromPersId(m_movingUniqueID)
 	local currGroupNum = getGroupFromPersId(m_movingUniqueID)
-			
-	for i=0, partyCnt-1 do
-		local subParty = members[i]
-		maxPeopleCnt = math.max(maxPeopleCnt, GetTableSize(subParty))
-		local peopleCnt = GetTableSize(subParty)
+	
+	for i, party in ipairs(members) do 
+		local peopleCnt = GetTableSize(party)
+		maxPeopleCnt = math.max(maxPeopleCnt, peopleCnt)
 		if peopleCnt < 6 and (currGroupNum and i < currGroupNum or currGroupSize and currGroupSize > 1) and currGroupNum ~= i then	
-			DnD.ShowWdg(m_raidPlayerPanelList[i][peopleCnt].raidMoveWdg)
+			DnD.ShowWdg(m_raidPlayerPanelList[i][peopleCnt+1].raidMoveWdg)
 			maxPeopleCnt = maxPeopleCnt + 1
 		end
 	end
 	if partyCnt < 4 and currGroupSize and currGroupSize > 1 then
-		local subParty = members[partyCnt]
-		DnD.ShowWdg(m_raidPlayerPanelList[partyCnt][0].raidMoveWdg)
+		DnD.ShowWdg(m_raidPlayerPanelList[partyCnt+1][1].raidMoveWdg)
 		partyCnt = partyCnt + 1
 	end
 	
@@ -1082,10 +1078,8 @@ local function ShowMoveIfNeeded()
 end
 
 function HideHighlight()
-	for i=0, GetTableSize(m_raidPlayerPanelList)-1 do
-		local subParty = m_raidPlayerPanelList[i]
-		for j=0, GetTableSize(subParty)-1 do
-			local playerBar = subParty[j]
+	for _, party in ipairs(m_raidPlayerPanelList) do
+		for _, playerBar in ipairs(party) do
 			hide(playerBar.rollOverHighlightWdg)
 			hide(playerBar.raidMoveHighlightWdg)
 		end
@@ -1181,20 +1175,20 @@ local function BuildRaidGUI(aCurrentRaid, aReusedRaidListeners)
 	
 	if aCurrentRaid.type == SOLO_TYPE then
 		local playerInfo = {}
-		playerInfo.id = avatar.GetId()
+		playerInfo.id = g_myAvatarID
 		playerInfo.name = object.GetName(playerInfo.id)
 		playerInfo.state = GROUP_MEMBER_STATE_NEAR
 		playerInfo.className = unit.GetClass(playerInfo.id).className
-		m_raidPlayerPanelList[0][0].isUsed = true
-		SetBaseInfoPlayerPanel(m_raidPlayerPanelList[0][0], playerInfo, true, profile.raidFormSettings, FRIEND_PANEL)
-		FabricMakeRaidPlayerInfo(playerInfo.id, m_raidPlayerPanelList[0][0])
+		m_raidPlayerPanelList[1][1].isUsed = true
+		SetBaseInfoPlayerPanel(m_raidPlayerPanelList[1][1], playerInfo, true, profile.raidFormSettings, FRIEND_PANEL)
+		FabricMakeRaidPlayerInfo(playerInfo.id, m_raidPlayerPanelList[1][1])
 		ResizeRaidPanel(1, 1)
 	elseif aCurrentRaid.type == PARTY_TYPE then
 		local leaderInd = group.GetLeaderIndex()
 		for i=0, GetTableSize(aCurrentRaid.members)-1 do
 			local playerInfo = aCurrentRaid.members[i]
 			if m_raidPartyButtons[1].active then
-				local playerBar = m_raidPlayerPanelList[0][i]
+				local playerBar = m_raidPlayerPanelList[1][i+1]
 				playerBar.isUsed = true
 				if (playerInfo.id and not aReusedRaidListeners[playerInfo.id]) or not playerInfo.id then
 					SetBaseInfoPlayerPanel(playerBar, playerInfo, (i == leaderInd),  profile.raidFormSettings, FRIEND_PANEL)
@@ -1211,17 +1205,11 @@ local function BuildRaidGUI(aCurrentRaid, aReusedRaidListeners)
 		local maxPeopleCnt = 0
 		local maxPartyCnt = GetTableSize(aCurrentRaid.members)
 		local raidLeaderID = raid.GetLeader()
-		local partyCnt = 0
-		for i=0, GetTableSize(aCurrentRaid.members)-1 do
-			local subParty = aCurrentRaid.members[i]
-			maxPeopleCnt = math.max(maxPeopleCnt, GetTableSize(subParty))
-			if not m_raidPartyButtons[i+1].active or m_moveMode then
-				maxPartyCnt = maxPartyCnt - 1
-			end
-			
-			if m_raidPartyButtons[i+1].active or m_moveMode then
-				for j=0, GetTableSize(subParty)-1 do
-					local playerInfo = subParty[j]
+		local partyCnt = 1
+		for i, party in ipairs(aCurrentRaid.members) do
+			maxPeopleCnt = math.max(maxPeopleCnt, GetTableSize(party))
+			if m_raidPartyButtons[i].active or m_moveMode then
+				for j, playerInfo in ipairs(party) do
 					local playerBar = m_raidPlayerPanelList[partyCnt][j]
 					playerBar.isUsed = true
 					if (playerInfo.id and not aReusedRaidListeners[playerInfo.id]) or not playerInfo.id then
@@ -1234,12 +1222,14 @@ local function BuildRaidGUI(aCurrentRaid, aReusedRaidListeners)
 					end
 				end
 				partyCnt = partyCnt + 1
+			else
+				maxPartyCnt = maxPartyCnt - 1
 			end
 		end
 		ResizeRaidPanel(maxPartyCnt, maxPeopleCnt)
 		ShowMoveIfNeeded()
 	end
-	TargetChanged()
+	TargetChangedForRaid(avatar.GetTarget())
 end
 
 local function FindMemberStateByUniqueID(aList, anUnuqueID)
@@ -1255,10 +1245,8 @@ local function FindMemberStateByUniqueID(aList, anUnuqueID)
 end
 
 function HideReadyCheck()
-	for i=0, GetTableSize(m_raidPlayerPanelList)-1 do
-		local subParty = m_raidPlayerPanelList[i]
-		for j=0, GetTableSize(subParty)-1 do
-			local playerBar = subParty[j]
+	for _, party in ipairs(m_raidPlayerPanelList) do
+		for _, playerBar in ipairs(party) do
 			HideReadyStateInGUI(playerBar)
 		end
 	end
@@ -1276,14 +1264,12 @@ function ShowReadyCheck(aCheckInfo, aCurrentRaid)
 		for i=0, GetTableSize(aCurrentRaid.members)-1 do
 			local playerInfo = aCurrentRaid.members[i]
 			local playerReadyState = FindMemberStateByUniqueID(aCheckInfo.members, playerInfo.uniqueId)
-			ShowReadyStateInGUI(m_raidPlayerPanelList[0][i], playerReadyState)
+			ShowReadyStateInGUI(m_raidPlayerPanelList[1][i+1], playerReadyState)
 		end
 		ResizeRaidPanel(1, GetTableSize(aCurrentRaid.members))
 	elseif aCurrentRaid.type == RAID_TYPE then
-		for i=0, GetTableSize(aCurrentRaid.members)-1 do
-			local subParty = aCurrentRaid.members[i]
-			for j=0, GetTableSize(subParty)-1 do
-				local playerInfo = subParty[j]
+		for i, party in ipairs(aCurrentRaid.members) do
+			for j, playerInfo in ipairs(party) do
 				local playerReadyState = FindMemberStateByUniqueID(aCheckInfo.members, playerInfo.uniqueId)
 				ShowReadyStateInGUI(m_raidPlayerPanelList[i][j], playerReadyState)
 			end
@@ -1296,7 +1282,7 @@ function RaidChanged(aParams, aFullUpdate)
 	local prevRaidMembers = m_currentRaid.members
 	local prevLeaderUniqueID = m_currentRaid.currentLeaderUniqueID
 	if raid.IsExist() then
-		local members = GetRaidMembersInOldFormat()
+		local members = raid.GetMembers()
 		m_currentRaid.type = RAID_TYPE
 		m_currentRaid.members = members
 		m_currentRaid.currentLeaderUniqueID = raid.GetLeader()
@@ -1319,10 +1305,8 @@ function RaidChanged(aParams, aFullUpdate)
 	local reusedRaidListeners = {}
 	if not aFullUpdate and m_currentRaid.type == prevRaidType and m_currentRaid.type ~= SOLO_TYPE and prevLeaderUniqueID and prevLeaderUniqueID:IsEqual(m_currentRaid.currentLeaderUniqueID) then
 		if raid.IsExist() then
-			for i=0, GetTableSize(prevRaidMembers)-1 do
-				local subParty = prevRaidMembers[i]
-				for j=0, GetTableSize(subParty)-1 do
-					local prevRaidMember = subParty[j]
+			for i, party in ipairs(prevRaidMembers) do
+				for j, prevRaidMember in ipairs(party) do
 					if m_currentRaid.members and m_currentRaid.members[i] then
 						local newRaidMember = m_currentRaid.members[i][j]	
 						local playerBar = m_raidPlayerPanelList[i][j]
@@ -1356,10 +1340,8 @@ function RaidChanged(aParams, aFullUpdate)
 		UnsubscribeRaidListeners()
 	end
 	
-	for i=0, GetTableSize(m_raidPlayerPanelList)-1 do
-		local subParty = m_raidPlayerPanelList[i]
-		for j=0, GetTableSize(subParty)-1 do
-			local playerBar = subParty[j]
+	for _, party in ipairs(m_raidPlayerPanelList) do
+		for _, playerBar in ipairs(party) do
 			playerBar.isUsed = false
 		end
 	end
@@ -1368,10 +1350,8 @@ function RaidChanged(aParams, aFullUpdate)
 	ReadyCheckChanged()
 
 	local canMovePlayers = CanMovePlayers(avatar.GetUniqueId())
-	for i=0, GetTableSize(m_raidPlayerPanelList)-1 do
-		local subParty = m_raidPlayerPanelList[i]
-		for j=0, GetTableSize(subParty)-1 do
-			local playerBar = subParty[j]
+	for _, party in ipairs(m_raidPlayerPanelList) do
+		for _, playerBar in ipairs(party) do
 			if not playerBar.isUsed then
 				playerBar.playerID = nil
 				DnD.HideWdg(playerBar.wdg)
@@ -1387,10 +1367,8 @@ end
 
 function HideMove()
 	if m_moveMode then
-		for i=0, GetTableSize(m_raidPlayerPanelList)-1 do
-			local subParty = m_raidPlayerPanelList[i]
-			for j=0, GetTableSize(subParty)-1 do
-				local playerBar = subParty[j]
+		for _, party in ipairs(m_raidPlayerPanelList) do
+			for _, playerBar in ipairs(party) do
 				DnD.HideWdg(playerBar.raidMoveWdg)
 			end
 		end
@@ -1443,13 +1421,12 @@ end
 
 local function EraseTargetInListTarget(anObjID, aType)
 	local objArr = m_targetUnitsByType[aType]
-	for i=1, GetTableSize(objArr) do
-		if objArr[i].objID == anObjID then
+	for i, info in ipairs(objArr) do
+		if info.objID == anObjID then
 			table.remove(objArr, i)
 			return
 		end
 	end
-	
 end
 
 local function EraseTarget(anObjID)
@@ -1593,7 +1570,7 @@ local function SetNecessaryTargets(anObjID, anInCombat)
 	AddTargetInList(newValue, objArr)
 	
 	objArr = m_targetUnitsByType[MY_SETTINGS_TARGETS]
-	for _, targetsFromSettings in  ipairs(profile.targeterFormSettings.myTargets) do
+	for _, targetsFromSettings in ipairs(profile.targeterFormSettings.myTargets) do
 		if not FindInListTarget(anObjID, objArr) and newValue.objNameLower == targetsFromSettings.nameLowerStr then
 			AddTargetInList(newValue, objArr)
 		end
@@ -1607,31 +1584,22 @@ local function CreateTargeterPanelCache()
 	else
 		TARGETS_LIMIT = 12
 	end
-		
-	for i = 0, TARGETS_LIMIT-1 do
-		local playerPanel = CreatePlayerPanel(m_targetPanel, 0, i, false, profile.targeterFormSettings, i)
+	local limit = TARGETS_LIMIT
+	if profile.targeterFormSettings.twoColumnMode then
+		limit = TARGETS_LIMIT * 2
+	end	
+	for i = 1, limit do
+		local playerPanel = CreatePlayerPanel(m_targetPanel, i <= TARGETS_LIMIT and 0 or 1, i-1, false, profile.targeterFormSettings, i)
 		m_targeterPlayerPanelList[i] = playerPanel
 		if profile.targeterFormSettings.twoColumnMode then
 			align(playerPanel.wdg, WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW)
-		end
-	end
-	
-	if profile.targeterFormSettings.twoColumnMode then
-		for i = TARGETS_LIMIT, TARGETS_LIMIT*2-1 do
-			local playerPanel = CreatePlayerPanel(m_targetPanel, 1, i, false, profile.targeterFormSettings, i)
-			m_targeterPlayerPanelList[i] = playerPanel
-			if profile.targeterFormSettings.twoColumnMode then
-				align(playerPanel.wdg, WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW)
-			end
 		end
 	end
 end
 
 local function ClearTargetPanels()
 	UnsubscribeTargetListener()
-	
-	for i = 0, GetTableSize(m_targeterPlayerPanelList)-1 do
-		local playerBar = m_targeterPlayerPanelList[i]
+	for _, playerBar in ipairs(m_targeterPlayerPanelList) do
 		DnD.HideWdg(playerBar.wdg)
 		hide(playerBar.rollOverHighlightWdg)
 		playerBar.playerID = nil
@@ -1659,7 +1627,7 @@ local function LoadTargeterData()
 	local profile = GetCurrentProfile()
 	local isCombat = false
 	local unitList = avatar.GetUnitList()
-	table.insert(unitList, avatar.GetId())
+	table.insert(unitList, g_myAvatarID)
 	for _, objID in pairs(unitList) do
 		if profile.targeterFormSettings.twoColumnMode then
 			isCombat = object.IsInCombat(objID)
@@ -1707,7 +1675,7 @@ end
 local function SeparateTargeterPanelList(anObjList, aPanelListShift)
 	local findedList = {} 
 	local freeList = {}
-	for i = aPanelListShift, TARGETS_LIMIT+aPanelListShift-1 do
+	for i = aPanelListShift+1, TARGETS_LIMIT+aPanelListShift do
 		local playerBar = m_targeterPlayerPanelList[i]
 		local found = false
 		for _, info in ipairs(anObjList) do
@@ -1784,7 +1752,7 @@ local function SortAndSetTarget(aTargetUnion, aPanelListShift, aPanelPosShift)
 	--находим панели уже отображаемых игроков
 	local reusedPanels, freePanels = SeparateTargeterPanelList(listOfObjForType, aPanelListShift)
 	local freePanelInd = 1
-	cnt = aPanelListShift
+	cnt = aPanelListShift + 1
 	--собираем панели в новом порядке, используя как подходящие так и обновляя инфу
 	for _, targetInfo in ipairs(listOfObjForType) do
 		local objID = targetInfo.objID
@@ -1807,15 +1775,16 @@ local function SortAndSetTarget(aTargetUnion, aPanelListShift, aPanelPosShift)
 
 		cnt = cnt + 1
 	end
+	local usedCnt = cnt
 	--в список всех панелей добавляем все оставшиеся
-	for _, bar in pairs(freePanels) do
+	for _, bar in ipairs(freePanels) do
 		if not bar.isUsed then
 			m_targeterPlayerPanelList[cnt] = bar
 			cnt = cnt + 1
 		end
 	end
 	--обновляем инфу на панелях
-	for _, updateInfo in pairs(listOfObjToUpdate) do
+	for _, updateInfo in ipairs(listOfObjToUpdate) do
 		local playerInfo = {}
 		playerInfo.id = updateInfo.objID
 		playerInfo.name = updateInfo.objName
@@ -1825,10 +1794,10 @@ local function SortAndSetTarget(aTargetUnion, aPanelListShift, aPanelPosShift)
 	end
 
 	--расставляем панели и скрываем не используемые
-	for i = aPanelListShift, TARGETS_LIMIT+aPanelListShift-1 do
+	for i = aPanelListShift + 1, TARGETS_LIMIT+aPanelListShift do
 		playerBar = m_targeterPlayerPanelList[i]
 		
-		ResetPlayerPanelPosition(playerBar, aPanelPosShift, i-aPanelListShift, profile.targeterFormSettings)
+		ResetPlayerPanelPosition(playerBar, aPanelPosShift, i-aPanelListShift-1, profile.targeterFormSettings)
 		if not playerBar.isUsed then
 			if playerBar.playerID then
 				UnsubscribeTargetListener(playerBar.playerID)
@@ -1838,7 +1807,7 @@ local function SortAndSetTarget(aTargetUnion, aPanelListShift, aPanelPosShift)
 			playerBar.playerID = nil
 		end
 	end
-	return cnt-aPanelListShift
+	return usedCnt-aPanelListShift
 end
 
 local function GetArrByCombatStatus(aStatus, aType)
@@ -1899,8 +1868,8 @@ function RedrawTargeter(aType, anIsTypeChanged)
 		SwitchTargetsBtn(aType)
 	end
 	local profile = GetCurrentProfile()
-	for i = 0, GetTableSize(m_targeterPlayerPanelList)-1 do
-		m_targeterPlayerPanelList[i].isUsed = false
+	for _, playerBar in ipairs(m_targeterPlayerPanelList) do
+		playerBar.isUsed = false
 	end
 	
 	local targetUnion = MakeTargetUnion(aType, false)
@@ -1927,7 +1896,7 @@ function RedrawTargeter(aType, anIsTypeChanged)
 	else
 		ResizeTargetPanel(1, maxPeopleCnt)
 	end
-	TargetChanged()
+	TargetChangedForTargeter(avatar.GetTarget())
 end
 
 local function RelationChanged(aParams)
@@ -1941,16 +1910,17 @@ local function RelationChanged(aParams)
 			return
 		end
 		local profile = GetCurrentProfile()
-		if not profile.targeterFormSettings.twoColumnMode then
-			aParams.inCombat = false
-		else
-			if aParams.inCombat == nil then
-				aParams.inCombat = object.IsInCombat(paramsID)
-			end
-		end
 		
-		-- пока не получили EVENT_UNITS_CHANGED данные по могут быть невалидными
-		if FindTarget(paramsID) then
+		-- пока не получили EVENT_UNITS_CHANGED данные могут быть невалидными
+		if FindTarget(paramsID) and isExist(paramsID) then
+			if not profile.targeterFormSettings.twoColumnMode then
+				aParams.inCombat = false
+			else
+				if aParams.inCombat == nil then
+					aParams.inCombat = object.IsInCombat(paramsID)
+				end
+			end
+		
 			EraseTarget(paramsID)
 			SetNecessaryTargets(paramsID, aParams.inCombat)
 			TryRedrawTargeter(m_currTargetType)
@@ -1985,17 +1955,15 @@ local function UnitsHPChanged(aParams)
 	end
 	local someTargetUpdated = false
 	for _, playerID in ipairs(aParams) do 
-		if isExist(playerID) then
-			-- пока не получили EVENT_UNITS_CHANGED данные по могут быть невалидными
-			if FindTarget(playerID) then
-				EraseTarget(playerID)
-				local isCombat = false
-				if profile.targeterFormSettings.twoColumnMode then
-					isCombat = object.IsInCombat(playerID)
-				end
-				SetNecessaryTargets(playerID, isCombat)
-				someTargetUpdated = true
+		-- пока не получили EVENT_UNITS_CHANGED данные могут быть невалидными
+		if FindTarget(playerID) and isExist(playerID) then
+			EraseTarget(playerID)
+			local isCombat = false
+			if profile.targeterFormSettings.twoColumnMode then
+				isCombat = object.IsInCombat(playerID)
 			end
+			SetNecessaryTargets(playerID, isCombat)
+			someTargetUpdated = true
 		end
 	end
 	if someTargetUpdated then
@@ -2003,7 +1971,7 @@ local function UnitsHPChanged(aParams)
 	end
 end
 
-local function UnitDeadChanged(aParams)
+local function UnitDeadChangedForTargeter(aParams)
 	local profile = GetCurrentProfile()
 	if not profile.targeterFormSettings.sortByDead then
 		return
@@ -2014,18 +1982,21 @@ local function UnitDeadChanged(aParams)
 	if m_currTargetType == TARGETS_DISABLE then
 		return
 	end
-	if isExist(aParams.unitId) then
-		-- пока не получили EVENT_UNITS_CHANGED данные по могут быть невалидными
-		if FindTarget(aParams.unitId) then
-			EraseTarget(aParams.unitId)
-			local isCombat = false
-			if profile.targeterFormSettings.twoColumnMode then
-				isCombat = object.IsInCombat(aParams.unitId)
-			end
-			SetNecessaryTargets(aParams.unitId, isCombat)
-			TryRedrawTargeter(m_currTargetType)
+	-- пока не получили EVENT_UNITS_CHANGED данные могут быть невалидными
+	if FindTarget(aParams.unitId) and isExist(aParams.unitId) then
+		EraseTarget(aParams.unitId)
+		local isCombat = false
+		if profile.targeterFormSettings.twoColumnMode then
+			isCombat = object.IsInCombat(aParams.unitId)
 		end
+		SetNecessaryTargets(aParams.unitId, isCombat)
+		TryRedrawTargeter(m_currTargetType)
 	end
+end
+
+local function UnitDeadChanged(aParams)
+	UnitDeadChangedForTargeter(aParams)
+	UnitDead(aParams)
 end
 
 local function GetProgressActionType(aParams)
@@ -2349,11 +2320,10 @@ local function OnEventSecondTimer()
 	end
 	-- затычка №2 - бывает что не приходит событие что юнит исчез, проверяем актуальность отображаемых персонажей в таргетере
 	local unitList = avatar.GetUnitList()
-	table.insert(unitList, avatar.GetId())
+	table.insert(unitList, g_myAvatarID)
 	if m_targetSubSystemLoaded then
 		local eraseSomeTarget = false
-		for i = 0, GetTableSize(m_targeterPlayerPanelList)-1 do
-			local playerBar = m_targeterPlayerPanelList[i]
+		for _, playerBar in ipairs(m_targeterPlayerPanelList) do
 			local reallyExist = false
 			if playerBar.isUsed then
 				for _, objID in pairs(unitList) do
@@ -2380,7 +2350,6 @@ local function OnEventSecondTimer()
 end
 
 local function Update()
-	g_myAvatarID = avatar.GetId()
 	updateCachedTimestamp()
 	UpdateFabric()
 end
@@ -2473,10 +2442,9 @@ function UnloadRaidSubSystem()
 	UnsubscribeRaidListeners()
 	FabricDestroyUnused()
 	StopMove()
-	for i=0, GetTableSize(m_raidPlayerPanelList)-1 do
-		local subParty = m_raidPlayerPanelList[i]
-		for j=0, GetTableSize(subParty)-1 do
-			DestroyPlayerPanel(subParty[j])
+	for _, party in ipairs(m_raidPlayerPanelList) do
+		for _, playerBar in ipairs(party) do
+			DestroyPlayerPanel(playerBar)
 		end
 	end
 	m_raidPlayerPanelList = {}
@@ -2496,11 +2464,8 @@ function InitTargeterSubSystem(aReload)
 	CreateTargeterPanelCache()
 	
 	DnD.ShowWdg(m_targetPanel)
-	--local needActive = m_currTargetType ~= TARGETS_DISABLE
 	InitTargeterData()
-	--if aReload and needActive then
-		TargetWorkSwitch()
-	--end
+	TargetWorkSwitch()
 end
 
 function UnloadTargeterSubSystem()
@@ -2510,8 +2475,8 @@ function UnloadTargeterSubSystem()
 	m_targetSubSystemLoaded = false
 	
 	ClearTargetPanels()
-	for i = 0, GetTableSize(m_targeterPlayerPanelList)-1 do
-		DestroyPlayerPanel(m_targeterPlayerPanelList[i])
+	for _, playerBar in ipairs(m_targeterPlayerPanelList) do
+		DestroyPlayerPanel(playerBar)
 	end
 	m_targeterPlayerPanelList = {}
 	DnD.HideWdg(m_targetPanel)
@@ -2526,7 +2491,6 @@ function InitGroupBuffSubSystem()
 	InitPanelsCache(m_buffsGroupParentForm)
 	common.RegisterEventHandler(CannotAttachPanelAboveHead, "EVENT_CANNOT_ATTACH_WIDGET_3D")
 	
-	g_myAvatarID = avatar.GetId()
 	CreateGroupBuffPanels(m_buffsGroupParentForm)
 	SetGroupBuffPanelsInfoForMe()
 	show(m_buffsGroupParentForm)
@@ -2613,12 +2577,13 @@ function UnloadCastSubSystem()
 	end
 	m_castSubSystemLoaded = false
 	
-	for i = 0, PROGRESS_PANELS_LIMIT do
-		hide(m_progressActionPanelList[i].wdg)
-		destroy(m_progressActionPanelList[i].wdg)
-		
-		hide(m_progressBuffPanelList[i].wdg)
-		destroy(m_progressBuffPanelList[i].wdg)
+	for _, progressPanel in ipairs(m_progressActionPanelList) do
+		hide(progressPanel.wdg)
+		destroy(progressPanel.wdg)
+	end
+	for _, progressPanel in ipairs(m_progressBuffPanelList) do
+		hide(progressPanel.wdg)
+		destroy(progressPanel.wdg)
 	end
 	m_progressActionPanelList = {}
 	m_progressBuffPanelList = {}
@@ -2637,6 +2602,8 @@ end
 
 
 function GUIControllerInit()	
+	initTimeAbbr()
+	
 	InitClassIconsTexture()
 	InitCheckTextures()
 	InitButtonTextures()
@@ -2756,7 +2723,6 @@ function GUIControllerInit()
 	common.RegisterEventHandler(OnDragTo, "EVENT_DND_DRAG_TO")
 	common.RegisterEventHandler(OnDragEnd, "EVENT_DND_DROP_ATTEMPT")
 	common.RegisterEventHandler(OnDragCancelled, "EVENT_DND_DRAG_CANCELLED")
-	common.RegisterEventHandler(UnitDeadChanged, "EVENT_UNIT_DEAD_CHANGED")
 
 	common.RegisterEventHandler(effectDone, "EVENT_EFFECT_FINISHED")
 	
@@ -2768,7 +2734,7 @@ function GUIControllerInit()
 	
 	--из-за лимита в 500 подписок на события какие не требуют привязки по ID вынесены из PlayerInfo
 	common.RegisterEventHandler(AfkChanged, "EVENT_AFK_STATE_CHANGED")
-	common.RegisterEventHandler(UnitDead, "EVENT_UNIT_DEAD_CHANGED")
+	common.RegisterEventHandler(UnitDeadChanged, "EVENT_UNIT_DEAD_CHANGED")
 	common.RegisterEventHandler(WoundsChanged, "EVENT_UNIT_WOUNDS_COMPLEXITY_CHANGED")
 	common.RegisterEventHandler(UpdateUnselectable, "EVENT_OBJECT_SELECTABLE_CHANGED")
 	

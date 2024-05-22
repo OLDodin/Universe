@@ -78,7 +78,7 @@ end
 
 
 
-local defaultMessage = Locales["enterName"]
+local defaultMessage = getLocale()["enterName"]
 
 function HideDropDownSelectPanel(anWidget)
 	if anWidget:IsVisible() then
@@ -139,18 +139,18 @@ function GetIndexForWidget(anWidget)
 	if not container then 
 		return nil
 	end
-	local index = nil
+	local searchingName = getName(anWidget)
 	for i=0, container:GetElementCount() do
-		if equals(anWidget, getChild(container:At(i), getName(anWidget), true)) then 
-			return i 
+		local childWithName = getChild(container:At(i), searchingName, true)
+		if childWithName and anWidget:IsEqual(childWithName) then 
+			return i
 		end
 	end
-	return index
 end
 
 local function GenerateWidgetForContainer(anElement, aContainer, anIndex)
 	setTemplateWidget(m_template)	
-	local ownerPanel=createWidget(nil, "containerMainPanel"..tostring(anIndex), "Panel", WIDGET_ALIGN_BOTH, WIDGET_ALIGN_LOW, nil, 30, nil, nil, true)
+	local ownerPanel=createWidget(mainForm, "containerMainPanel"..tostring(anIndex), "Panel", WIDGET_ALIGN_BOTH, WIDGET_ALIGN_LOW, nil, 30, nil, nil)
 	setBackgroundColor(ownerPanel, {r=1, g=1, b=1, a=0.5})
 	local panel=createWidget(ownerPanel, "containerPanel", "PanelTransparent", WIDGET_ALIGN_BOTH, WIDGET_ALIGN_LOW, nil, 30, 0, 0)
 	setText(createWidget(panel, "Id", "TextView", WIDGET_ALIGN_LOW, WIDGET_ALIGN_CENTER, 30, 20, 10), anIndex)
@@ -214,9 +214,18 @@ function ShowValuesFromTable(aTable, aForm, aContainer)
 	if not aTable or not aContainer then 
 		return nil 
 	end
-	if aContainer.RemoveItems then 
-		aContainer:RemoveItems()
+
+	local containerArr = {}
+	for i = 0, aContainer:GetElementCount() - 1 do
+		table.insert(containerArr, aContainer:At(i))
 	end
+	
+	aContainer:RemoveItems()
+	
+	for _, containerWdg in ipairs(containerArr) do
+		containerWdg:DestroyWidget()
+	end	
+
 	local lastWdg = nil
 	for i, element in ipairs(aTable) do
 		lastWdg = GenerateWidgetForContainer(element, aContainer, i)
@@ -235,10 +244,13 @@ function DeleteContainer(aTable, anWidget, aForm)
 	--update names
 	UpdateTableValuesFromContainer(aTable, aForm, container)
 
+	local deletingWdg = container:At(index)
 	container:RemoveAt(index)
 	table.remove(aTable, index+1)
 
 	container:ForceReposition()
+	deletingWdg:DestroyWidget()
+	
 	local offset = container:GetContainerOffset()
 	--update index 
 	ShowValuesFromTable(aTable, aForm, container)

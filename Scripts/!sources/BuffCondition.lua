@@ -80,13 +80,8 @@ function BuffCondition:Check(aBuffInfo)
 			LogInfo("found aBuffInfo = ", aBuffInfo.name, "  groupName = ", groupName)
 		end
 	end]]
-	--[[
-	LogInfo("found aBuffInfo b = ", aBuffInfo.name)
-	for _, groupName in pairs(aBuffInfo.groups) do
-			LogInfo("found aBuffInfo = ", aBuffInfo.name, "  groupName = ", groupName, " aBuffInfo.isPositive = ", aBuffInfo.isPositive)
-	end
-	LogInfo("found aBuffInfo e")
-	]]
+	--LogTable(aBuffInfo)
+	--LogInfo("=========================================")
 	local searchRes = nil
 	--[[
 	-- test show all buffs
@@ -126,6 +121,7 @@ function BuffCondition:Check(aBuffInfo)
 					break
 				end
 			end		
+
 			if self.settings.autoDebuffModeButton or isCleanable then
 				return true, searchRes, isCleanable
 			end
@@ -140,7 +136,7 @@ function BuffCondition:Check(aBuffInfo)
 				then
 					return true, searchRes, true
 				end
-			end					
+			end	
 		end
 
 		if self.settings.checkControlsButton then

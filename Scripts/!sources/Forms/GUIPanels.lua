@@ -821,18 +821,19 @@ function CreateRaidPartyBtn(aRaidPanel)
 	local wtTopPanel = getChild(aRaidPanel, "TopPanel")
 	setTemplateWidget(wtTopPanel)
 	for i = 1, 4 do
-		raidPartyButtons[i] = {}
-		raidPartyButtons[i].wdg = createWidget(wtTopPanel, "UTargetTopPanel", "PartyButton", nil, nil, nil, nil, (i-1)*20+37, nil, nil, nil)
-		raidPartyButtons[i].active = true
-		raidPartyButtons[i].showed = false
-		setBackgroundTexture(raidPartyButtons[i].wdg, g_texParty[i])
-		hide(raidPartyButtons[i].wdg) 
+		local raidPartyButton = {}
+		raidPartyButton.wdg = createWidget(wtTopPanel, "UTargetTopPanel", "PartyButton", nil, nil, nil, nil, (i-1)*20+37, nil, nil, nil)
+		raidPartyButton.active = true
+		raidPartyButton.showed = false
+		setBackgroundTexture(raidPartyButton.wdg, g_texParty[i])
+		hide(raidPartyButton.wdg) 
+		raidPartyButtons[i] = raidPartyButton
 	end
 	
 	return raidPartyButtons
 end
 
-local m_locale = Locales
+local m_locale = getLocale()
 local m_modeBtn = nil
 local m_targetLockBtn = nil
 local m_targetModeName = nil
@@ -927,7 +928,6 @@ function CreateTargeterPanel()
 	local headerPanel = getChild(modePanel, "DropDownHeaderPanel")
 	align(headerPanel, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)
 	resize(headerPanel, 130, 20)
-	
 	
 	TargetLockBtn(targeterPanel)
 	DnD.HideWdg(targeterPanel)

@@ -254,11 +254,12 @@ function LoadConfigGroupBuffsForm(aForm, anIndex, aInitLoad)
 		hide(groupBuffSelector)
 		destroy(groupBuffSelector)
 	end
+	
 	setTemplateWidget(getChild(mainForm, "Template"))
 	groupBuffSelector = createWidget(aForm, "groupBuffSelector", "DropDownPanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 250, 25, 280, 50)
 	GenerateBtnForDropDown(groupBuffSelector, textArr)
 	setText(getChild(getChild(groupBuffSelector, "DropDownHeaderPanel"), "ModeNameTextView"), m_currentFormSettings.name, "Neutral", "left", 11)
-	
+
 	setText(getChild(aForm, "buffGroupNameHeader"), ConcatWString(getLocale()["configGroupBuffsHeader"], m_commaWStr, m_currentFormSettings.name, m_commaWStr))
 	setText(getChild(aForm, "currentGroupBuffName"), m_currentFormSettings.name)
 	
@@ -352,7 +353,7 @@ function DeleteBuffsInsideGroupFromSroller(aForm, aDeletingWdg)
 end
 
 function AddBuffsGroup(aForm)
-	table.insert(m_totalGroupsSettings.buffGroups, { name = Locales["enterName"] })
+	table.insert(m_totalGroupsSettings.buffGroups, { name = getLocale()["enterName"] })
 	local buffGroupCnt = GetTableSize(m_totalGroupsSettings.buffGroups)
 	m_totalGroupsSettings.buffGroupsUnicCnt = m_totalGroupsSettings.buffGroupsUnicCnt + 1
 	m_totalGroupsSettings.buffGroups[buffGroupCnt].buffGroupWdgName = BUFF_GROUP_WDG_NAME_PREFIX..tostring(m_totalGroupsSettings.buffGroupsUnicCnt)
@@ -390,9 +391,8 @@ function CreateColorSettingsForBuffsGroupScroller(aForm, anIndex)
 		destroy(colorForm)
 		resize(panelOfElement, nil, 30)		
 	else
-		colorForm = CreateColorSettingsForm(m_currentFormSettings.buffs[anIndex+1])
+		colorForm = CreateColorSettingsForm(panelOfElement, m_currentFormSettings.buffs[anIndex+1])
 		resize(panelOfElement, nil, GetColorSettingsHeight())
-		panelOfElement:AddChild(colorForm)
 	end
 	groupBuffContainer:ForceReposition()
 end
