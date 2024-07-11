@@ -8,7 +8,7 @@ function CreateImportProfilesForm()
 
 
 	setLocaleText(createWidget(form, "importBtn", "Button", WIDGET_ALIGN_CENTER, WIDGET_ALIGN_HIGH, 150, 25, 0, 10))
-	createWidget(form, "EditBox1", "EditBoxFix", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 560, 180, 20, 50)
+	createWidget(form, "EditBox1", "EditBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 560, 180, 20, 50)
 	
 
 	DnD.Init(form, form, true)
@@ -32,5 +32,5 @@ function CreateImportError()
 end
 
 function GetImportText(aForm)
-	return getText(getChild(getChild(aForm, "EditBox1"), "EditBox"))
+	return getText(getChild(aForm, "EditBox1"))
 end

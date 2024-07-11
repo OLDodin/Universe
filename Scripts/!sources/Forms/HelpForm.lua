@@ -16,7 +16,7 @@ function CreateHelpForm()
 	m_imagebox = createWidget(form, "colorPreview", "ImageBox", WIDGET_ALIGN_CENTER, WIDGET_ALIGN_LOW, 1160, 670, 0, 40)
 	
 	m_imagebox:SetBackgroundTexture(common.GetAddonRelatedTextureGroup("common"):GetTexture("help1"))
-	
+	resize(m_imagebox, 1024)
 	DnD.Init(form, form, true)
 
 	return form
@@ -28,6 +28,6 @@ function NextHelp()
 end
 
 function PrevHelp()
-	resize(m_imagebox, 1160)
+	resize(m_imagebox, 1024)
 	m_imagebox:SetBackgroundTexture(common.GetAddonRelatedTextureGroup("common"):GetTexture("help1"))
 end

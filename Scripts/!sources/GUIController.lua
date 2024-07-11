@@ -2259,11 +2259,13 @@ end
 
 local function ApplyUnloadRaidSettings(anIsUnloadRaidSubsystem)
 	local profile = GetCurrentProfile()
+	local raidForm = common.GetAddonMainForm("Raid")
 	if anIsUnloadRaidSubsystem or profile.raidFormSettings.showStandartRaidButton then
 		if raid.IsExist() or group.IsExist() then
 			if IsRaidGUIEnabled() or raid.IsExist() then
-				show(common.GetAddonMainForm("Raid"))
-				show(getChild(common.GetAddonMainForm("Raid"), "Raid"))
+				show(raidForm)
+				show(getChild(raidForm, "Raid"))
+				show(getChild(raidForm, "Toolbar"))
 			else
 				show(getChild(common.GetAddonMainForm("Plates"), "Party"))
 				show(getChild(common.GetAddonMainForm("Buffs"), "Party"))
@@ -2272,8 +2274,9 @@ local function ApplyUnloadRaidSettings(anIsUnloadRaidSubsystem)
 	else
 		SwitchPartyGUIToRaidGUI()
 
-		hide(common.GetAddonMainForm("Raid"))
-		hide(getChild(common.GetAddonMainForm("Raid"), "Raid"))
+		hide(raidForm)
+		hide(getChild(raidForm, "Raid"))
+		hide(getChild(raidForm, "Toolbar"))
 	end	
 end
 
@@ -2315,8 +2318,9 @@ local function OnEventSecondTimer()
 	local profile = GetCurrentProfile()
 	if not profile.raidFormSettings.showStandartRaidButton and m_raidSubSystemLoaded then
 		local raidForm = common.GetAddonMainForm("Raid")
-		hide(raidForm)
+		--hide(raidForm) - теперь глючит перетаскивание в сумке
 		hide(getChild(raidForm, "Raid"))
+		hide(getChild(raidForm, "Toolbar"))
 	end
 	-- затычка №2 - бывает что не приходит событие что юнит исчез, проверяем актуальность отображаемых персонажей в таргетере
 	local unitList = avatar.GetUnitList()

@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <WidgetTextView>
 	<Name>TextView</Name>
+	<!--<FormatFileRef href="TextView/TextViewText.txt" />-->
 	<TransparentInput>true</TransparentInput>
 </WidgetTextView>

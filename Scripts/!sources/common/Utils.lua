@@ -404,20 +404,14 @@ function createWidget(parent, widgetName, templateName, alignX, alignY, width, h
 		LogInfo("Not found WidgetDesc of ", templateName)
 		return
 	end
---[[	
-	if not parent or noParent then
-		--LogInfo("deprecated parent must exist ", templateName)
-		widget = mainForm:CreateWidgetByDesc(desc)
-	else
-		widget = parent:CreateChildByDesc(desc)
-	end
-	]]
-	widget = mainForm:CreateWidgetByDesc(desc)
+	
+	widget = parent:CreateChildByDesc(desc)
+
 	if not widget or not widget:IsValid() then
 		LogInfo("Fail create widget type of ", templateName)
 		return
 	end
-	if parent and not noParent then parent:AddChild(widget) end
+	
 	setName(widget, widgetName)
 	updatePlacementPlain(widget, alignX, alignY, posX, posY, width, height)
 	return widget

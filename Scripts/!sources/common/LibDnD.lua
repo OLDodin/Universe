@@ -1,6 +1,6 @@
 --------------------------------------------------------------------------------
 -- LibDnD.lua // "Drag&Drop Library" by SLA, version 2011-05-28
---                                   updated version 2024-05-19 by oldodin
+--                                   updated version 2024-07-02 by oldodin
 -- Help, support and updates: 
 -- https://alloder.pro/topic/260-how-to-libdndlua-biblioteka-dragdrop/
 --------------------------------------------------------------------------------
@@ -19,7 +19,7 @@ function DnD.Init( wtMovable, wtReacting, fUseCfg, fLockedToParentArea, Padding,
 	if type(wtMovable) ~= "userdata" then return end
 	if not DnD.Widgets then
 		DnD.Widgets = {}
-		DnD.Screen = widgetsSystem:GetPosConverterParams()
+		DnD.Screen = common.GetPosConverterParams()
 		common.RegisterEventHandler( DnD.OnPickAttempt, "EVENT_DND_PICK_ATTEMPT" )
 		common.RegisterEventHandler( DnD.OnResolutionChanged, "EVENT_POS_CONVERTER_CHANGED" )
 	end
@@ -236,12 +236,12 @@ function DnD.OnPickAttempt( params )
 	not DnD.Widgets[ Picking ].KbFlag 
 	or DnD.Widgets[ Picking ].KbFlag == KBF_NONE 
 	and params.kbFlags == KBF_NONE 
-	or (common.GetBitAnd and common.GetBitAnd( params.kbFlags, DnD.Widgets[ Picking ].KbFlag ) ~= 0  or bit.band( params.kbFlags, DnD.Widgets[ Picking ].KbFlag ) ~= 0)
+	or bit.band( params.kbFlags, DnD.Widgets[ Picking ].KbFlag ) ~= 0
 	) then
 		DnD.Place = DnD.Widgets[ Picking ].wtMovable:GetPlacementPlain()
 		DnD.Reset = DnD.Widgets[ Picking ].wtMovable:GetPlacementPlain()
 		DnD.Cursor = { X = params.posX , Y = params.posY }
-		DnD.Screen = widgetsSystem:GetPosConverterParams()
+		DnD.Screen = common.GetPosConverterParams()
 		if DnD.Widgets[ Picking ].fLockedToParentArea then
 			DnD.LimitMin, DnD.LimitMax = DnD.PrepareLimits( Picking, DnD.Place )
 		end
@@ -305,7 +305,7 @@ end
 function DnD.OnResolutionChanged()
 	mission.DNDCancelDrag()
 	DnD.OnDragCancelled()
-	DnD.Screen = widgetsSystem:GetPosConverterParams()
+	DnD.Screen = common.GetPosConverterParams()
 	for ID, W in pairs( DnD.Widgets ) do
 		if W.fLockedToParentArea then
 			local InitialPlace = W.wtMovable:GetPlacementPlain()

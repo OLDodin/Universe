@@ -6,11 +6,11 @@
 	<localizedNameFileRef href="name.txt"/>
 	<localizedDescFileRef href="desc.txt"/>
 	<ScriptFileRefs>
-		<Item href="Scripts/AddonBase.lua"/>
-		<Item href="Scripts/LibDnD.lua"/>
+		<Item href="Scripts/common/AddonBase.lua"/>
+		<Item href="Scripts/common/LibDnD.lua"/>
 		<Item href="Scripts/LibDnDExt.lua"/>
-		<Item href="Locales/main.lua"/>
-		<Item href="Scripts/Utils.lua"/>
+		<Item href="Scripts/common/Locales.lua"/>
+		<Item href="Scripts/common/Utils.lua"/>
 		<Item href="Scripts/AVL/avl_WStr.lua"/>
 		<Item href="Scripts/Forms/GUITexturesAndColors.lua"/>
 		<Item href="Scripts/PlayerInfo/PlayerBase.lua"/>
@@ -46,6 +46,7 @@
 		<Item href="Scripts/Forms/PlayerShortInfo.lua"/>
 		<Item href="Scripts/AboveHead.lua"/>
 		<Item href="Scripts/BuffGroupPanels.lua"/>
+		<Item href="Scripts/common/ReactionHelper.lua"/>
 		<Item href="Scripts/GUIFormHelper.lua"/>
 		<Item href="Scripts/GUIController.lua"/>
 		<Item href="Scripts/mainscript.lua"/>
