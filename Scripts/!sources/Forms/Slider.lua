@@ -3,7 +3,8 @@ Global( "CSlider", {} )
 function CreateSlider(aParent, aName, anAlignX, anAlignY, aWidth, aHeight, aPosX, aPosY, aSliderWidth)
 	local slider = copyTable(CSlider)
 	slider:Init(aParent, aName, anAlignX, anAlignY, aWidth, aHeight, aPosX, aPosY, aSliderWidth)
-	common.RegisterReactionHandler(slider:GetReactionHandlers(), 'discrete_slider_changed')
+	slider.reactionFunc = slider:GetReactionHandlers()
+	common.RegisterReactionHandler(slider.reactionFunc, 'discrete_slider_changed')
 
 	return slider
 end
@@ -22,6 +23,11 @@ function CSlider:Init(aParent, aName, anAlignX, anAlignY, aWidth, aHeight, aPosX
 	
 	resize(self.slider, aSliderWidth)
 	move(self.valueText, aSliderWidth+12)
+	
+	--fix broken WidgetDiscreteSlider in 15.2
+	hide(self.widget)
+	show(self.widget)
+	--end fix
 end
 
 function CSlider:Set( params )
@@ -59,6 +65,11 @@ end
 function CSlider:GetReactionHandlers( )
 	return 
 		function( params )
+			if not self.slider:IsValid() then
+				--wdg already destroyed
+				common.UnRegisterReactionHandler(self.reactionFunc, 'discrete_slider_changed')
+				return
+			end
 			if params.widget:IsEqual( self.slider ) then
 				self.value = self.valueMin + params.widget:GetPos() * self.step
 				self.valueText:SetVal( 'value', self.format( self.value ) )

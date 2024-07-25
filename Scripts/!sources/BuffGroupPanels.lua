@@ -171,6 +171,9 @@ function DestroyGroupBuffPanels()
 			local groupBuffTopPanel = getChild(groupBuffPanel.panelWdg, "MoveModePanel")
 			DnD.Remove(groupBuffTopPanel)
 			DnD.HideWdg(groupBuffTopPanel)
+			for _, buffSlot in pairs(groupBuffPanel.buffList) do
+				stopLoopBlink(buffSlot.info.buffHighlight)
+			end
 			destroy(groupBuffPanel.panelWdg)
 		end
 	end

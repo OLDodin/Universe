@@ -1353,9 +1353,8 @@ function RaidChanged(aParams, aFullUpdate)
 	for _, party in ipairs(m_raidPlayerPanelList) do
 		for _, playerBar in ipairs(party) do
 			if not playerBar.isUsed then
+				HidePlayerBar(playerBar)
 				playerBar.playerID = nil
-				DnD.HideWdg(playerBar.wdg)
-				hide(playerBar.rollOverHighlightWdg)
 			else
 				DnD.Enable(playerBar.wdg, canMovePlayers)
 			end
@@ -1600,8 +1599,7 @@ end
 local function ClearTargetPanels()
 	UnsubscribeTargetListener()
 	for _, playerBar in ipairs(m_targeterPlayerPanelList) do
-		DnD.HideWdg(playerBar.wdg)
-		hide(playerBar.rollOverHighlightWdg)
+		HidePlayerBar(playerBar)
 		playerBar.playerID = nil
 	end
 	
@@ -1801,8 +1799,7 @@ local function SortAndSetTarget(aTargetUnion, aPanelListShift, aPanelPosShift)
 		if not playerBar.isUsed then
 			if playerBar.playerID then
 				UnsubscribeTargetListener(playerBar.playerID)
-				DnD.HideWdg(playerBar.wdg)
-				hide(playerBar.rollOverHighlightWdg)
+				HidePlayerBar(playerBar)
 			end
 			playerBar.playerID = nil
 		end
@@ -2263,7 +2260,7 @@ local function ApplyUnloadRaidSettings(anIsUnloadRaidSubsystem)
 	if anIsUnloadRaidSubsystem or profile.raidFormSettings.showStandartRaidButton then
 		if raid.IsExist() or group.IsExist() then
 			if IsRaidGUIEnabled() or raid.IsExist() then
-				show(raidForm)
+				--show(raidForm)
 				show(getChild(raidForm, "Raid"))
 				show(getChild(raidForm, "Toolbar"))
 			else
@@ -2274,7 +2271,7 @@ local function ApplyUnloadRaidSettings(anIsUnloadRaidSubsystem)
 	else
 		SwitchPartyGUIToRaidGUI()
 
-		hide(raidForm)
+		--hide(raidForm)
 		hide(getChild(raidForm, "Raid"))
 		hide(getChild(raidForm, "Toolbar"))
 	end	

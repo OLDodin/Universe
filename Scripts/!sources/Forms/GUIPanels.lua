@@ -411,6 +411,18 @@ local function UpdateTick(aPlayerBar)
 	end
 end
 
+function HidePlayerBar(aPlayerBar)
+	DnD.HideWdg(aPlayerBar.wdg)
+	hide(aPlayerBar.rollOverHighlightWdg)
+				
+	for _, buffSlot in ipairs(aPlayerBar.buffSlots) do
+		stopLoopBlink(buffSlot.buffHighlight)
+	end
+	for _, buffSlot in ipairs(aPlayerBar.buffSlotsNeg) do
+		stopLoopBlink(buffSlot.buffHighlight)
+	end
+end
+
 function CloneBaseInfoPlayerPanel(aPlayerBar, aNewPlayerBar)
 	aNewPlayerBar.farBarBackgroundWdg:Show(aPlayerBar.farBarBackgroundWdg:IsVisible())
 	aNewPlayerBar.farColoredBarWdg:Show(aPlayerBar.farColoredBarWdg:IsVisible())
@@ -438,6 +450,7 @@ function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettin
 		buffSlot.buffID = nil
 		buffSlot.buffFinishedTime_h = 0
 		buffSlot.buffTimeStr = nil
+		stopLoopBlink(buffSlot.buffHighlight)
 	end
 	
 	aPlayerBar.usedBuffSlotNegCnt = 0
@@ -447,6 +460,7 @@ function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettin
 		buffSlot.buffID = nil
 		buffSlot.buffFinishedTime_h = 0
 		buffSlot.buffTimeStr = nil
+		stopLoopBlink(buffSlot.buffHighlight)
 	end
 	hide(aPlayerBar.importantBuff.buffWdg)
 	aPlayerBar.importantBuff.buffID = nil
@@ -760,7 +774,7 @@ function DestroyPlayerPanel(aPlayerBar)
 	end
 	
 	DnD.Remove(aPlayerBar.wdg)
-	DnD.HideWdg(aPlayerBar.wdg)
+	HidePlayerBar(aPlayerBar)
 	destroy(aPlayerBar.wdg)
 end
 
