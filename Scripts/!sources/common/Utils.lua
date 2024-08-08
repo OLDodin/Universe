@@ -1,6 +1,5 @@
 local cachedToWString = userMods.ToWString
 local cachedFromWString = userMods.FromWString
-local cachedIsWString = common.IsWString
 local cachedIsExist = object.IsExist
 local cachedIsUnit = object.IsUnit
 local cachedCreateValuedText = common.CreateValuedText
@@ -33,7 +32,7 @@ end
 
 function toWString(text)
 	if not text then return nil end
-	if not cachedIsWString(text) then
+	if apitype(text) ~= "WString" then
 		text=cachedToWString(tostring(text))
 	end
 	return text
@@ -41,7 +40,7 @@ end
 
 local function toStringUtils(text)
 	if not text then return nil end
-	if cachedIsWString(text) then
+	if apitype(text) == "WString" then
 		text=cachedFromWString(text)
 	end
 	return tostring(text)

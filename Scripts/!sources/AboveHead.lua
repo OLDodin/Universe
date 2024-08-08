@@ -195,6 +195,9 @@ function RemoveAllAboveHeadPanels()
 	
 	for i=1, CACHE_PANELS_SIZE do
 		if m_cachePanels[i] then
+			for _, buffSlot in pairs(m_cachePanels[i].buffList) do
+				stopLoopBlink(buffSlot.info.buffHighlight)
+			end
 			destroy(m_cachePanels[i].panelWdg)
 		end
 	end

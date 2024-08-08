@@ -102,7 +102,7 @@ function GetStringListByArguments( ... )
 	
 	for i = 1, #argList do
 		local arg = argList[ i ]
-		if common.IsWString( arg ) then
+		if apitype( arg ) == "WString" then
 			newArgList[ i ] = arg
 		else
 			newArgList[ i ] = tostring( arg )
@@ -132,7 +132,7 @@ function LogToChat(aMessage, aType)
 	if not aType then
 		aType = "notice"
 	end
-	if not common.IsWString(aMessage) then
+	if apitype(aMessage) ~= "WString" then
 		aMessage = userMods.ToWString(tostring(aMessage))
 	end
 	userMods.SendSelfChatMessage(aMessage, aType)

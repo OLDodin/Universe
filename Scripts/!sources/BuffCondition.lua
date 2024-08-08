@@ -29,7 +29,7 @@ function BuffCondition:InitShopShow()
 	local shopsNames = {}
 	for i = 1, 100 do
 		local shopName = locale["allShop"..i]
-		if common.IsWString(shopName) then
+		if apitype(shopName) == "WString" then
 			table.insert(shopsNames, shopName)
 		end
 	end

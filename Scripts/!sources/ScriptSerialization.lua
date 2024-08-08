@@ -49,7 +49,7 @@ local function AddSerializedValue(aValue, aResultArr)
 		table.insert(aResultArr, EscapeSString(sStringTypeCharacter .. aValue))
 	elseif valueType == "table" then
 		Serialize(aValue, aResultArr)
-	elseif valueType == "userdata" and common.IsWString(aValue) then
+	elseif valueType == "userdata" and apitype(aValue) == "WString" then
 		table.insert(aResultArr, EscapeSString(sWStringTypeCharacter..userMods.FromWString(aValue)))
 	end
 end
@@ -167,7 +167,7 @@ end
 
 -- Deserialize a wstring to a table
 function StartDeserialize(aWStr)
-	if not aWStr or type(aWStr) ~= "userdata" or not common.IsWString(aWStr) or aWStr:IsEmpty() then
+	if not aWStr or type(aWStr) ~= "userdata" or apitype(aWStr) ~= "WString" or aWStr:IsEmpty() then
 		return nil
 	end
 
