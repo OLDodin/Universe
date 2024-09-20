@@ -1184,19 +1184,20 @@ local function BuildRaidGUI(aCurrentRaid, aReusedRaidListeners)
 		FabricMakeRaidPlayerInfo(playerInfo.id, m_raidPlayerPanelList[1][1])
 		ResizeRaidPanel(1, 1)
 	elseif aCurrentRaid.type == PARTY_TYPE then
-		local leaderInd = group.GetLeaderIndex()
-		for i=0, GetTableSize(aCurrentRaid.members)-1 do
-			local playerInfo = aCurrentRaid.members[i]
-			if m_raidPartyButtons[1].active then
-				local playerBar = m_raidPlayerPanelList[1][i+1]
-				playerBar.isUsed = true
-				if (playerInfo.id and not aReusedRaidListeners[playerInfo.id]) or not playerInfo.id then
-					SetBaseInfoPlayerPanel(playerBar, playerInfo, (i == leaderInd),  profile.raidFormSettings, FRIEND_PANEL)
-					if playerInfo.state == GROUP_MEMBER_STATE_OFFLINE then 
-						playerInfo.id = nil
+		-- EVENT_GROUP_CONVERTED - приходит когда еще не рейд но уже members группы - nil
+		if aCurrentRaid.members then
+			for i, playerInfo in ipairs(aCurrentRaid.members) do
+				if m_raidPartyButtons[1].active then
+					local playerBar = m_raidPlayerPanelList[1][i]
+					playerBar.isUsed = true
+					if (playerInfo.id and not aReusedRaidListeners[playerInfo.id]) or not playerInfo.id then
+						SetBaseInfoPlayerPanel(playerBar, playerInfo, playerInfo.uniqueId:IsEqual(m_currentRaid.currentLeaderUniqueID),  profile.raidFormSettings, FRIEND_PANEL)
+						if playerInfo.state == GROUP_MEMBER_STATE_OFFLINE then 
+							playerInfo.id = nil
+						end
+					
+						FabricMakeRaidPlayerInfo(playerInfo.id, playerBar)
 					end
-				
-					FabricMakeRaidPlayerInfo(playerInfo.id, playerBar)
 				end
 			end
 		end
@@ -1204,7 +1205,6 @@ local function BuildRaidGUI(aCurrentRaid, aReusedRaidListeners)
 	elseif aCurrentRaid.type == RAID_TYPE then
 		local maxPeopleCnt = 0
 		local maxPartyCnt = GetTableSize(aCurrentRaid.members)
-		local raidLeaderID = raid.GetLeader()
 		local partyCnt = 1
 		for i, party in ipairs(aCurrentRaid.members) do
 			maxPeopleCnt = math.max(maxPeopleCnt, GetTableSize(party))
@@ -1213,7 +1213,7 @@ local function BuildRaidGUI(aCurrentRaid, aReusedRaidListeners)
 					local playerBar = m_raidPlayerPanelList[partyCnt][j]
 					playerBar.isUsed = true
 					if (playerInfo.id and not aReusedRaidListeners[playerInfo.id]) or not playerInfo.id then
-						SetBaseInfoPlayerPanel(playerBar, playerInfo, playerInfo.uniqueId:IsEqual(raidLeaderID),  profile.raidFormSettings, FRIEND_PANEL)
+						SetBaseInfoPlayerPanel(playerBar, playerInfo, playerInfo.uniqueId:IsEqual(m_currentRaid.currentLeaderUniqueID),  profile.raidFormSettings, FRIEND_PANEL)
 						if playerInfo.state == RAID_MEMBER_STATE_OFFLINE then 
 							playerInfo.id = nil
 						end
@@ -1261,10 +1261,9 @@ function ShowReadyCheck(aCheckInfo, aCurrentRaid)
 	end
 	
 	if aCurrentRaid.type == PARTY_TYPE then
-		for i=0, GetTableSize(aCurrentRaid.members)-1 do
-			local playerInfo = aCurrentRaid.members[i]
+		for i, playerInfo in ipairs(aCurrentRaid.members) do
 			local playerReadyState = FindMemberStateByUniqueID(aCheckInfo.members, playerInfo.uniqueId)
-			ShowReadyStateInGUI(m_raidPlayerPanelList[1][i+1], playerReadyState)
+			ShowReadyStateInGUI(m_raidPlayerPanelList[1][i], playerReadyState)
 		end
 		ResizeRaidPanel(1, GetTableSize(aCurrentRaid.members))
 	elseif aCurrentRaid.type == RAID_TYPE then
@@ -1291,7 +1290,7 @@ function RaidChanged(aParams, aFullUpdate)
 		local members = group.GetMembers()
 		m_currentRaid.type = PARTY_TYPE
 		m_currentRaid.members = members
-		m_currentRaid.currentLeaderUniqueID = group.GetLeaderUniqueId()
+		m_currentRaid.currentLeaderUniqueID = group.GetLeader()
 		ShowPartyBtns(1)
 		StopMove()
 	else
@@ -1322,8 +1321,7 @@ function RaidChanged(aParams, aFullUpdate)
 				end
 			end
 		elseif group.IsExist() then
-			for j=0, GetTableSize(prevRaidMembers)-1 do
-				local prevRaidMember = prevRaidMembers[j]
+			for j, prevRaidMember in ipairs(prevRaidMembers) do
 				local newRaidMember = m_currentRaid.members and m_currentRaid.members[j]		
 				
 				if prevRaidMember.id then
@@ -1376,7 +1374,9 @@ end
 
 function StopMove()
 	if m_moveMode then
-		mission.DNDCancelDrag()
+		if DnD.Dragging and DnD.Widgets[ DnD.Dragging ] then
+			DnD.Widgets[ DnD.Dragging ].wtReacting:DNDCancelDrag()
+		end
 		DnD.OnDragCancelled()
 	end
 	HideMove()

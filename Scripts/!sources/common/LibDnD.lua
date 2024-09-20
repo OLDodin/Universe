@@ -1,6 +1,6 @@
 --------------------------------------------------------------------------------
 -- LibDnD.lua // "Drag&Drop Library" by SLA, version 2011-05-28
---                                   updated version 2024-07-02 by oldodin
+--                                   updated version 2024-09-20 by oldodin
 -- Help, support and updates: 
 -- https://alloder.pro/topic/260-how-to-libdndlua-biblioteka-dragdrop/
 --------------------------------------------------------------------------------
@@ -71,7 +71,7 @@ function DnD.Remove( wtWidget, oldParam1 )
 	if wtWidget == DnD then wtWidget = oldParam1 end
 	local ID = DnD.GetWidgetID( wtWidget )
 	if ID then
-		DnD.Enable( wtWidget, false )
+		DnD.Register( wtWidget, false )
 		DnD.Widgets[ ID ] = nil
 	end
 end
@@ -81,7 +81,7 @@ function DnD.Enable( wtWidget, fEnable, oldParam1 )
 	local ID = DnD.GetWidgetID( wtWidget )
 	if ID and DnD.Widgets[ ID ].Enabled ~= fEnable then
 		DnD.Widgets[ ID ].Enabled = fEnable
-		DnD.Register( wtWidget, fEnable )
+		DnD.Widgets[ ID ].wtReacting:DNDEnable(fEnable)
 	end
 end
 function DnD.UpdatePadding( wtWidget, Padding )
@@ -121,13 +121,12 @@ function SetConfig( name, value )
 end
 -- INTERNAL FUNCTIONS --
 function DnD.AllocateDnDID( wtWidget )
-	local BaseID = 300200
-	return BaseID + common.RequestIntegerByInstanceId(wtWidget:GetInstanceId())
+	return wtWidget:GetId()
 end
 function DnD.GetWidgetID( wtWidget )
-	local WtId = wtWidget:GetInstanceId()
+	local WtId = wtWidget:GetId()
 	for ID, W in pairs( DnD.Widgets ) do
-		if W.wtReacting:GetInstanceId() == WtId or W.wtMovable:GetInstanceId() == WtId then
+		if W.wtReacting:GetId() == WtId or W.wtMovable:GetId() == WtId then
 			return ID
 		end
 	end
@@ -144,14 +143,20 @@ function DnD.Register( wtWidget, fRegister )
 	if not DnD.Widgets then return end
 	local ID = DnD.GetWidgetID( wtWidget )
 	if ID then
-		if fRegister and DnD.Widgets[ ID ].Enabled and DnD.Widgets[ ID ].wtReacting:IsVisible() then
-			mission.DNDRegister( DnD.Widgets[ ID ].wtReacting, ID, true )
+		if fRegister and DnD.Widgets[ ID ].Enabled then
+			if DnD.Widgets[ ID ].wtReacting:DNDGetState() == DND_STATE_NOT_REGISTERED then
+				DnD.Widgets[ ID ].wtReacting:DNDRegister(ID, true)
+			end
 		elseif not fRegister then
 			if DnD.Dragging == ID then
-				mission.DNDCancelDrag()
+				if DnD.Widgets[ ID ].wtReacting:DNDGetState() ~= DND_STATE_NOT_REGISTERED then
+					DnD.Widgets[ ID ].wtReacting:DNDCancelDrag()
+				end
 				DnD.OnDragCancelled()
 			end
-			mission.DNDUnregister( DnD.Widgets[ ID ].wtReacting )
+			if DnD.Widgets[ ID ].wtReacting:DNDGetState() ~= DND_STATE_NOT_REGISTERED then
+				DnD.Widgets[ ID ].wtReacting:DNDUnregister()
+			end
 		end
 	end
 end
@@ -250,8 +255,8 @@ function DnD.OnPickAttempt( params )
 		common.RegisterEventHandler( DnD.OnDragTo, "EVENT_DND_DRAG_TO" )
 		common.RegisterEventHandler( DnD.OnDropAttempt, "EVENT_DND_DROP_ATTEMPT" )
 		common.RegisterEventHandler( DnD.OnDragCancelled, "EVENT_DND_DRAG_CANCELLED" )
-		-- AO 2.0.06+ All IDs other than 14xxx and 15xxx need confirmation
-		mission.DNDConfirmPickAttempt()
+		
+		DnD.Widgets[ Picking ].wtReacting:DNDConfirmPickAttempt()
 	end
 end
 function DnD.OnDragTo( params )
@@ -286,7 +291,7 @@ function DnD.StopDragging( fSuccess )
 	common.UnRegisterEventHandler( DnD.OnDropAttempt, "EVENT_DND_DROP_ATTEMPT" )
 	common.UnRegisterEventHandler( DnD.OnDragCancelled, "EVENT_DND_DRAG_CANCELLED" )
 	if fSuccess then
-		mission.DNDConfirmDropAttempt()
+		DnD.Widgets[ DnD.Dragging ].wtReacting:DNDConfirmDropAttempt()
 		if DnD.Widgets[ DnD.Dragging ].fUseCfg then
 			SetConfig( DnD.Widgets[ DnD.Dragging ].CfgName, { posX = DnD.Place.posX, posY = DnD.Place.posY, highPosX = DnD.Place.highPosX, highPosY = DnD.Place.highPosY } )
 		end
@@ -303,7 +308,9 @@ function DnD.StopDragging( fSuccess )
 	common.SetCursor( "default" )
 end
 function DnD.OnResolutionChanged()
-	mission.DNDCancelDrag()
+	if DnD.Dragging and DnD.Widgets[ DnD.Dragging ] then
+		DnD.Widgets[ DnD.Dragging ].wtReacting:DNDCancelDrag()
+	end
 	DnD.OnDragCancelled()
 	DnD.Screen = common.GetPosConverterParams()
 	for ID, W in pairs( DnD.Widgets ) do
@@ -329,21 +336,8 @@ end
 
 DnD.ShowWdg = function(aWdg)
 	aWdg:Show(true)
-	if not DnD.Widgets then return end
-	local ID = DnD.GetWidgetID(aWdg)
-	if ID then
-		DnD.Widgets[ ID ].Enabled = true
-		DnD.Register(aWdg, true)
-	end
 end
 
 DnD.HideWdg = function(aWdg)
 	aWdg:Show(false)
-	if not DnD.Widgets then return end
-	local ID = DnD.GetWidgetID(aWdg)
-	if ID then
-		DnD.Widgets[ ID ].Enabled = false
-		--при aWdg:Show(false)  DNDUnregister выполнит сам движок
-		--DnD.Register(aWdg, false)
-	end
 end

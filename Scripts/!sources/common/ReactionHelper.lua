@@ -140,6 +140,9 @@ end
 
 function GetIndexForWidget(anWidget)
 	local container = getParent(anWidget, 5)
+	if apitype(container) ~= "Widget_ScrollableContainerSafe" then
+		container = getParent(anWidget, 4)
+	end
 	if not container then 
 		return nil
 	end
