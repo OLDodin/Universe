@@ -1,6 +1,6 @@
 --------------------------------------------------------------------------------
 -- LibDnD.lua // "Drag&Drop Library" by SLA, version 2011-05-28
---                                   updated version 2024-09-20 by oldodin
+--                                   updated version 2024-09-21 by oldodin
 -- Help, support and updates: 
 -- https://alloder.pro/topic/260-how-to-libdndlua-biblioteka-dragdrop/
 --------------------------------------------------------------------------------
@@ -121,12 +121,12 @@ function SetConfig( name, value )
 end
 -- INTERNAL FUNCTIONS --
 function DnD.AllocateDnDID( wtWidget )
-	return wtWidget:GetId()
+	return wtWidget:GetId() * DND_CONTAINER_STEP + DND_GENERIC_WIDGET_USER
 end
 function DnD.GetWidgetID( wtWidget )
-	local WtId = wtWidget:GetId()
+	local WtId = DnD.AllocateDnDID(wtWidget)
 	for ID, W in pairs( DnD.Widgets ) do
-		if W.wtReacting:GetId() == WtId or W.wtMovable:GetId() == WtId then
+		if DnD.AllocateDnDID(W.wtReacting) == WtId or DnD.AllocateDnDID(W.wtMovable) == WtId then
 			return ID
 		end
 	end
