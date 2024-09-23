@@ -1,6 +1,6 @@
 --------------------------------------------------------------------------------
 -- LibDnD.lua // "Drag&Drop Library" by SLA, version 2011-05-28
---                                   updated version 2024-09-21 by oldodin
+--                                   updated version 2024-09-23 by oldodin
 -- Help, support and updates: 
 -- https://alloder.pro/topic/260-how-to-libdndlua-biblioteka-dragdrop/
 --------------------------------------------------------------------------------
@@ -124,9 +124,9 @@ function DnD.AllocateDnDID( wtWidget )
 	return wtWidget:GetId() * DND_CONTAINER_STEP + DND_GENERIC_WIDGET_USER
 end
 function DnD.GetWidgetID( wtWidget )
-	local WtId = DnD.AllocateDnDID(wtWidget)
 	for ID, W in pairs( DnD.Widgets ) do
-		if DnD.AllocateDnDID(W.wtReacting) == WtId or DnD.AllocateDnDID(W.wtMovable) == WtId then
+	--в текущих версиях оператор == для виджетов сверяет типы и затем как IsEqual
+		if W.wtReacting == wtWidget or W.wtMovable == wtWidget then
 			return ID
 		end
 	end
@@ -143,19 +143,22 @@ function DnD.Register( wtWidget, fRegister )
 	if not DnD.Widgets then return end
 	local ID = DnD.GetWidgetID( wtWidget )
 	if ID then
+		local currentDNDState = DnD.Widgets[ ID ].wtReacting:DNDGetState()
+		local currentReactingWdg = DnD.Widgets[ ID ].wtReacting
+		
 		if fRegister and DnD.Widgets[ ID ].Enabled then
-			if DnD.Widgets[ ID ].wtReacting:DNDGetState() == DND_STATE_NOT_REGISTERED then
-				DnD.Widgets[ ID ].wtReacting:DNDRegister(ID, true)
+			if currentDNDState == DND_STATE_NOT_REGISTERED then
+				currentReactingWdg:DNDRegister(ID, true)
 			end
 		elseif not fRegister then
 			if DnD.Dragging == ID then
-				if DnD.Widgets[ ID ].wtReacting:DNDGetState() ~= DND_STATE_NOT_REGISTERED then
-					DnD.Widgets[ ID ].wtReacting:DNDCancelDrag()
+				if currentDNDState ~= DND_STATE_NOT_REGISTERED then
+					currentReactingWdg:DNDCancelDrag()
 				end
 				DnD.OnDragCancelled()
 			end
-			if DnD.Widgets[ ID ].wtReacting:DNDGetState() ~= DND_STATE_NOT_REGISTERED then
-				DnD.Widgets[ ID ].wtReacting:DNDUnregister()
+			if currentDNDState ~= DND_STATE_NOT_REGISTERED then
+				currentReactingWdg:DNDUnregister()
 			end
 		end
 	end

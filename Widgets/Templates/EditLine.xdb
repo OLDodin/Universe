@@ -7,4 +7,5 @@
 	<selectionLayer  href="EditLine/TextEditSelection.(WidgetLayerSimpleTexture).xdb" />
 	<ReactionEsc>EditLineEsc</ReactionEsc>
 	<ReactionEnter>EditLineEsc</ReactionEnter>
+	<ReactionChanged>EditLineChanged</ReactionChanged>
 </WidgetEditLine>

@@ -361,7 +361,7 @@ function setText(widget, text, color, align, fontSize, shadow, outline, fontName
 	if widget.SetValuedText then 
 		widget:SetValuedText(toValuedText(text, color or "ColorWhite", align, fontSize, shadow, outline, fontName)) 
 	--textedit
-	elseif widget.SetText then		
+	elseif widget.SetText then	
 		widget:SetText(text)
 	--buttons
 	elseif widget.SetVal then
