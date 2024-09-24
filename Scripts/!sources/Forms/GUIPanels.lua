@@ -374,9 +374,17 @@ end
 
 local function PlayerAddImportantBuff(aBuffInfo, aPlayerBar)
 	if aBuffInfo.texture then
-		show(aPlayerBar.importantBuff.buffWdg)
-		aPlayerBar.importantBuff.buffID = aBuffInfo.id
-		aPlayerBar.importantBuff.buffIcon:SetBackgroundTexture(aBuffInfo.texture)
+		local buffSlot = aPlayerBar.importantBuff
+		show(buffSlot.buffWdg)
+		buffSlot.buffID = aBuffInfo.id
+		buffSlot.buffIcon:SetBackgroundTexture(aBuffInfo.texture)
+		
+		if aBuffInfo.stackCount <= 1 then 
+			hide(buffSlot.buffStackCnt)
+		else
+			show(buffSlot.buffStackCnt)
+			setText(buffSlot.buffStackCnt, aBuffInfo.stackCount, "ColorWhite", "right", GetTextSizeByBuffSize(buffSlot.buffSize))
+		end
 	end
 end
 
@@ -717,6 +725,7 @@ function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings, aNum)
 	
 	local importantSize = panelHeight-16
 	playerBar.importantBuff = CreateBuffSlot(playerBar.buffPanelImportantWdg, importantSize, nil, 0, WIDGET_ALIGN_CENTER, 1.0, false)
+	align(playerBar.importantBuff.buffStackCnt, WIDGET_ALIGN_LOW, WIDGET_ALIGN_HIGH)
 	move(playerBar.importantBuff.buffWdg, 0, 0)
 	
 	playerBar.listenerHP = PlayerHPChanged
