@@ -1847,8 +1847,11 @@ local function MakeTargetUnion(aType, aStatus)
 	return targetUnion
 end
 
-function TryRedrawTargeter(aType)
-	if not m_targeterUnderMouseNow then
+function TryRedrawTargeter(aType, aDelayRedraw)
+	-- под мышью - обновим список целей раз в 2 сек
+	-- aDelayRedraw - обновим список целей раз в 0,1 сек
+	
+	if not m_targeterUnderMouseNow and not aDelayRedraw then
 		RedrawTargeter(aType)
 		m_needRedrawTargeter = false
 		m_redrawPauseCnt = 0
@@ -1920,7 +1923,7 @@ local function RelationChanged(aParams)
 		
 			EraseTarget(paramsID)
 			SetNecessaryTargets(paramsID, aParams.inCombat)
-			TryRedrawTargeter(m_currTargetType)
+			TryRedrawTargeter(m_currTargetType, true)
 		end
 	end
 end
@@ -1964,7 +1967,7 @@ local function UnitsHPChanged(aParams)
 		end
 	end
 	if someTargetUpdated then
-		TryRedrawTargeter(m_currTargetType)
+		TryRedrawTargeter(m_currTargetType, true)
 	end
 end
 
@@ -1987,7 +1990,7 @@ local function UnitDeadChangedForTargeter(aParams)
 			isCombat = object.IsInCombat(aParams.unitId)
 		end
 		SetNecessaryTargets(aParams.unitId, isCombat)
-		TryRedrawTargeter(m_currTargetType)
+		TryRedrawTargeter(m_currTargetType, true)
 	end
 end
 
@@ -2166,7 +2169,7 @@ local function UnitChanged(aParams)
 			SetNecessaryTargets(objID, isCombat)
 		end
 			
-		TryRedrawTargeter(m_currTargetType)
+		TryRedrawTargeter(m_currTargetType, false)
 	end
 	
 	if m_castSubSystemLoaded and profile.castFormSettings.showImportantCasts then
@@ -2203,7 +2206,7 @@ local function UpdateUnselectable(aParams)
 			end
 			EraseTarget(aParams.objectId)
 			SetNecessaryTargets(aParams.objectId, isCombat)
-			TryRedrawTargeter(m_currTargetType)
+			TryRedrawTargeter(m_currTargetType, true)
 		end
 	end
 	SelectableChanged(aParams)
@@ -2301,7 +2304,7 @@ local function GUIInit()
 end
 
 local function OnEventSecondTimer()
-	--при таргетере под курсором мыши перерисовываем лишь раз в секунду (чтобы легче выбрать)
+	--при таргетере под курсором мыши перерисовываем лишь раз в 2 секунды (чтобы легче выбрать)
 	if m_targetSubSystemLoaded and m_needRedrawTargeter then
 		m_redrawPauseCnt = m_redrawPauseCnt + 1
 		if m_redrawPauseCnt == 2 then
@@ -2341,7 +2344,7 @@ local function OnEventSecondTimer()
 		end
 			
 		if eraseSomeTarget then
-			TryRedrawTargeter(m_currTargetType)
+			TryRedrawTargeter(m_currTargetType, false)
 		end
 	end
 	if m_buffGroupSubSystemLoaded then
@@ -2353,6 +2356,12 @@ end
 local function Update()
 	updateCachedTimestamp()
 	UpdateFabric()
+	
+	if m_targetSubSystemLoaded and not m_targeterUnderMouseNow and m_needRedrawTargeter then
+		RedrawTargeter(m_currTargetType)
+		m_needRedrawTargeter = false
+		m_redrawPauseCnt = 0
+	end
 end
 
 function InitRaidSubSystem()

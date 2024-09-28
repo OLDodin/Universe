@@ -198,7 +198,7 @@ local function PlayerDeadChanged(anInfo, aPlayerBar)
 	if aPlayerBar.optimizeInfo.userState ~= userState and aPlayerBar.optimizeInfo.userState ~= OFF_STATE then
 		if userState == DEAD_STATE then
 			aPlayerBar.textWdg:SetVal("Afk-off", m_deadWStr)
-			PlayerHPChanged(0, aPlayerBar)
+			--PlayerHPChanged(0, aPlayerBar)
 		else
 			if aPlayerBar.optimizeInfo.userState == AFK_STATE then
 				return
