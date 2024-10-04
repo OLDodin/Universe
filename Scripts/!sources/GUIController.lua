@@ -1405,7 +1405,16 @@ local function SortByObjID(A, B)
 	return A.objID < B.objID
 end
 
-local function SortByName(A, B)
+local function SortByName(A, B)	
+	if A.objNameLower == "" or B.objNameLower == "" then
+		if A.objNameLower > B.objNameLower then
+			return true
+		elseif A.objNameLower == B.objNameLower then
+			return A.objID < B.objID
+		end
+		return false
+	end
+	
 	if A.objNameLower < B.objNameLower then
 		return true
 	elseif A.objNameLower == B.objNameLower then
@@ -1508,10 +1517,9 @@ local function SetNecessaryTargets(anObjID, anInCombat)
 	newValue.inCombat = anInCombat
 	newValue.isCanSelect = ((isPlayer or isCanSelect) and 0) or 1
 
-
 	newValue.objName = object.GetName(newValue.objID)
 	newValue.objNameLower = toLowerString(newValue.objName)
-
+		
 	if profile.targeterFormSettings.sortByClass then
 		newValue.className = unit.GetClass(anObjID).className
 		newValue.classPriority = g_classPriority[newValue.className] or g_classPriority["UNKNOWN"]
@@ -1698,6 +1706,7 @@ local function SortBySettings(anArr)
 	if profile.targeterFormSettings.sortByName then
 		table.sort(anArr, SortByName)
 	end
+	
 	for i, info in ipairs(anArr) do
 		info.sortWeight = i
 	end
@@ -1850,7 +1859,7 @@ end
 function TryRedrawTargeter(aType, aDelayRedraw)
 	-- под мышью - обновим список целей раз в 2 сек
 	-- aDelayRedraw - обновим список целей раз в 0,1 сек
-	
+
 	if not m_targeterUnderMouseNow and not aDelayRedraw then
 		RedrawTargeter(aType)
 		m_needRedrawTargeter = false
