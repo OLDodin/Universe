@@ -1206,24 +1206,26 @@ local function BuildRaidGUI(aCurrentRaid, aReusedRaidListeners)
 		local maxPeopleCnt = 0
 		local maxPartyCnt = GetTableSize(aCurrentRaid.members)
 		local partyCnt = 1
-		for i, party in ipairs(aCurrentRaid.members) do
-			maxPeopleCnt = math.max(maxPeopleCnt, GetTableSize(party))
-			if m_raidPartyButtons[i].active or m_moveMode then
-				for j, playerInfo in ipairs(party) do
-					local playerBar = m_raidPlayerPanelList[partyCnt][j]
-					playerBar.isUsed = true
-					if (playerInfo.id and not aReusedRaidListeners[playerInfo.id]) or not playerInfo.id then
-						SetBaseInfoPlayerPanel(playerBar, playerInfo, playerInfo.uniqueId:IsEqual(m_currentRaid.currentLeaderUniqueID),  profile.raidFormSettings, FRIEND_PANEL)
-						if playerInfo.state == RAID_MEMBER_STATE_OFFLINE then 
-							playerInfo.id = nil
+		if aCurrentRaid.members then
+			for i, party in ipairs(aCurrentRaid.members) do
+				maxPeopleCnt = math.max(maxPeopleCnt, GetTableSize(party))
+				if m_raidPartyButtons[i].active or m_moveMode then
+					for j, playerInfo in ipairs(party) do
+						local playerBar = m_raidPlayerPanelList[partyCnt][j]
+						playerBar.isUsed = true
+						if (playerInfo.id and not aReusedRaidListeners[playerInfo.id]) or not playerInfo.id then
+							SetBaseInfoPlayerPanel(playerBar, playerInfo, playerInfo.uniqueId:IsEqual(m_currentRaid.currentLeaderUniqueID),  profile.raidFormSettings, FRIEND_PANEL)
+							if playerInfo.state == RAID_MEMBER_STATE_OFFLINE then 
+								playerInfo.id = nil
+							end
+						
+							FabricMakeRaidPlayerInfo(playerInfo.id, playerBar)
 						end
-					
-						FabricMakeRaidPlayerInfo(playerInfo.id, playerBar)
 					end
+					partyCnt = partyCnt + 1
+				else
+					maxPartyCnt = maxPartyCnt - 1
 				end
-				partyCnt = partyCnt + 1
-			else
-				maxPartyCnt = maxPartyCnt - 1
 			end
 		end
 		ResizeRaidPanel(maxPartyCnt, maxPeopleCnt)
@@ -1302,7 +1304,7 @@ function RaidChanged(aParams, aFullUpdate)
 	end
 
 	local reusedRaidListeners = {}
-	if not aFullUpdate and m_currentRaid.type == prevRaidType and m_currentRaid.type ~= SOLO_TYPE and prevLeaderUniqueID and prevLeaderUniqueID:IsEqual(m_currentRaid.currentLeaderUniqueID) then
+	if prevRaidMembers and not aFullUpdate and m_currentRaid.type == prevRaidType and m_currentRaid.type ~= SOLO_TYPE and prevLeaderUniqueID and prevLeaderUniqueID:IsEqual(m_currentRaid.currentLeaderUniqueID) then
 		if raid.IsExist() then
 			for i, party in ipairs(prevRaidMembers) do
 				for j, prevRaidMember in ipairs(party) do
