@@ -174,7 +174,7 @@ function GenerateMenuInfos(aPlayerBar, aMyUniqueID)
 			if canInvite and (iamHelper or raid.IsLeader()) then AddToMenu("inviteMenuButton", function () raid.Invite(playerID) CloseMenu() end) end
 		end
 	elseif isGroup() then
-		if (playerID and group.IsCreatureInGroup(playerID)) or (uniqueID and group.GetMemberInfoById(uniqueID)) then
+		if (playerID and group.IsCreatureInGroup(playerID)) or (uniqueID and group.GetMemberInfo(uniqueID)) then
 			if isClickOnAvatar 		then
 				if group.IsLeader() and not group.IsAutomatic() then
 					AddToMenu("createRaidMenuButton", function () raid.Create() CloseMenu() end)
