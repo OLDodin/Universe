@@ -504,13 +504,15 @@ function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettin
 		end
 	end
 	
-	if isPlayerExist and not aFormSettings.classColorModeButton then
-		if aPlayerBar.panelColorType == FRIEND_PANEL then
-			barColor = copyTable(aFormSettings.friendColor)
-		elseif aPlayerBar.panelColorType == NEITRAL_PANEL then
-			barColor = copyTable(aFormSettings.neitralColor or g_relationColors[aPlayerBar.panelColorType])
-		elseif aPlayerBar.panelColorType == ENEMY_PANEL then
-			barColor = copyTable(aFormSettings.enemyColor or g_relationColors[aPlayerBar.panelColorType])
+	if isPlayerExist then
+		if not aFormSettings.classColorModeButton or (aFormSettings.classColorModeButton and not unit.IsPlayer(aPlayerInfo.id)) then
+			if aPlayerBar.panelColorType == FRIEND_PANEL then
+				barColor = copyTable(aFormSettings.friendColor)
+			elseif aPlayerBar.panelColorType == NEITRAL_PANEL then
+				barColor = copyTable(aFormSettings.neitralColor)
+			elseif aPlayerBar.panelColorType == ENEMY_PANEL then
+				barColor = copyTable(aFormSettings.enemyColor)
+			end
 		end
 	end
 

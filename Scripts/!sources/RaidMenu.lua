@@ -126,8 +126,8 @@ function GenerateMenuInfos(aPlayerBar, aMyUniqueID)
 			CloseMenu() end)
 	end
 
-	if not isClickOnAvatar and (isRaid() or isGroup()) and not interaction.HasExchange() then AddToMenu("tradeMenuButton", function () if isExist(playerID) then interaction.InviteToExchange(object.GetName(playerID)) end CloseMenu() end) end
-	if not isClickOnAvatar and (isRaid() or isGroup()) and matchMaking.GetCurrentBattleInfo() == nil then AddToMenu("followMenuButton", function () if isExist(playerID) then avatar.SelectTarget(playerID) avatar.SetFollowTarget(true) end CloseMenu() end) end
+	if not isClickOnAvatar and not interaction.HasExchange() and unit.IsPlayer(playerID) then AddToMenu("tradeMenuButton", function () if isExist(playerID) then interaction.InviteToExchange(object.GetName(playerID)) end CloseMenu() end) end
+	if not isClickOnAvatar and matchMaking.GetCurrentBattleInfo() == nil and unit.IsPlayer(playerID) then AddToMenu("followMenuButton", function () if isExist(playerID) then avatar.SelectTarget(playerID) avatar.SetFollowTarget(true) end CloseMenu() end) end
 
 	if isRaid() then
 		if uniqueID and raid.IsPlayerInAvatarsRaid(uniqueID) then
@@ -183,7 +183,6 @@ function GenerateMenuInfos(aPlayerBar, aMyUniqueID)
 				AddToMenu("leaveMenuButton", function () group.Leave() CloseMenu() end)
 			else
 				if group.IsLeader() and isExist(playerID) and unit.IsPlayer(playerID) then AddToMenu("leaderMenuButton", function () group.SetLeader(uniqueID) CloseMenu() end) end
-				if  isExist(playerID) and not unit.IsPlayer(playerID) then AddToMenu("kickMenuButton", function () group.KickMerc(playerID) CloseMenu() end) end
 				if  isExist(playerID) then 
 					if not unit.IsPlayer(playerID) then AddToMenu("kickMenuButton", function () group.KickMerc(playerID) CloseMenu() end) end
 					if unit.IsPlayer(playerID) and group.CanKickMember() then AddToMenu("kickMenuButton", function () group.KickMember(name) CloseMenu() end) end

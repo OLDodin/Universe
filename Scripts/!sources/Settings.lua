@@ -380,6 +380,13 @@ function LoadSettings(aProfileInd)
 		end
 	end
 	
+	if m_currentProfile.version < 3.2 or m_currentProfile.version == nil then
+		if m_currentProfile.targeterFormSettings.classColorModeButton then
+			m_currentProfile.targeterFormSettings.enemyColor = copyTable(m_currentProfile.targeterFormSettings.friendColor)
+			m_currentProfile.targeterFormSettings.neitralColor = copyTable(m_currentProfile.targeterFormSettings.friendColor)
+		end
+	end
+	
 	if m_currentProfile.version < GetSettingsVersion() or m_currentProfile.version == nil then
 		m_currentProfile.version = GetSettingsVersion()
 		SaveAllSettings(allProfiles)
@@ -421,5 +428,5 @@ function ExportProfileByIndex(anInd)
 end
 
 function GetSettingsVersion()
-	return 2.92;
+	return 3.2;
 end

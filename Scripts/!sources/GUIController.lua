@@ -1191,7 +1191,11 @@ local function BuildRaidGUI(aCurrentRaid, aReusedRaidListeners)
 					local playerBar = m_raidPlayerPanelList[1][i]
 					playerBar.isUsed = true
 					if (playerInfo.id and not aReusedRaidListeners[playerInfo.id]) or not playerInfo.id then
-						SetBaseInfoPlayerPanel(playerBar, playerInfo, playerInfo.uniqueId:IsEqual(m_currentRaid.currentLeaderUniqueID),  profile.raidFormSettings, FRIEND_PANEL)
+						local isLeader = false
+						if playerInfo.id and unit.IsPlayer(playerInfo.id) then
+							isLeader = playerInfo.uniqueId:IsEqual(m_currentRaid.currentLeaderUniqueID)
+						end
+						SetBaseInfoPlayerPanel(playerBar, playerInfo, isLeader, profile.raidFormSettings, FRIEND_PANEL)
 						if playerInfo.state == GROUP_MEMBER_STATE_OFFLINE then 
 							playerInfo.id = nil
 						end
