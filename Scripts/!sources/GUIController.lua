@@ -1519,13 +1519,9 @@ local function SetNecessaryTargets(anObjID, anInCombat)
 	local isNeitral = not isEnemy and not isFriend
 	
 	if not isPlayer and not isPet and not isEnemy then
-		local factionID = unit.GetFactionId(anObjID)
-		if factionID then
-			local reputationInfo = avatar.GetReputationInfo(factionID)
-			if reputationInfo and reputationInfo.level == REPUTATION_LEVEL_NEUTRAL then
-				isFriend = false
-				isNeitral = true
-			end
+		if unit.GetReputationLevel(anObjID) == REPUTATION_LEVEL_NEUTRAL then
+			isFriend = false
+			isNeitral = true
 		end
 	end
 	

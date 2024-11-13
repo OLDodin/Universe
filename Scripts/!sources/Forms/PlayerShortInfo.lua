@@ -40,9 +40,8 @@ function InitPlayerShortInfoForm(aPlayerID)
 	local factionID = unit.GetFactionId(aPlayerID)
 	local isEnemy = object.IsEnemy(aPlayerID)
 	local isFriend = object.IsFriend(aPlayerID)
-	if factionID and not isPlayer then
-		local reputationInfo = avatar.GetReputationInfo(factionID)
-		if reputationInfo and reputationInfo.level == REPUTATION_LEVEL_NEUTRAL then
+	if not isPlayer then
+		if unit.GetReputationLevel(aPlayerID) == REPUTATION_LEVEL_NEUTRAL then
 			isFriend = false
 		end
 	end
