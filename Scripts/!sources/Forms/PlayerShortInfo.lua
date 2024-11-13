@@ -36,9 +36,16 @@ function InitPlayerShortInfoForm(aPlayerID)
 	end
 	local infoStr = ""
 	local isPlayer = unit.IsPlayer(aPlayerID)
-	
+
+	local factionID = unit.GetFactionId(aPlayerID)
 	local isEnemy = object.IsEnemy(aPlayerID)
 	local isFriend = object.IsFriend(aPlayerID)
+	if factionID and not isPlayer then
+		local reputationInfo = avatar.GetReputationInfo(factionID)
+		if reputationInfo and reputationInfo.level == REPUTATION_LEVEL_NEUTRAL then
+			isFriend = false
+		end
+	end
 	local nameColor = (isEnemy and "ColorRed") or (isFriend and "ColorGreen") or "ColorYellow"
 	local nameStr
 	local shardName = m_emptyWStr
@@ -56,7 +63,7 @@ function InitPlayerShortInfoForm(aPlayerID)
 	local textureIndexForIcon = playerClass and playerClass.className or "UNKNOWN"
 	setBackgroundTexture(m_classImgWdg, g_texIcons[textureIndexForIcon])
 
-	local factionID = unit.GetFactionId(aPlayerID)
+	
 	local factionStr = factionID and factionID:GetInfo().name or m_emptyWStr
 	local guildStr = m_emptyWStr
 	local title = nil
