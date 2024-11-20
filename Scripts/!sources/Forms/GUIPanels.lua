@@ -727,7 +727,7 @@ function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings, aNum)
 	
 	local importantSize = panelHeight-16
 	playerBar.importantBuff = CreateBuffSlot(playerBar.buffPanelImportantWdg, importantSize, nil, 0, WIDGET_ALIGN_CENTER, 1.0, false)
-	align(playerBar.importantBuff.buffStackCnt, WIDGET_ALIGN_LOW, WIDGET_ALIGN_HIGH)
+	updatePlacementPlain(playerBar.importantBuff.buffStackCnt, WIDGET_ALIGN_LOW, WIDGET_ALIGN_HIGH, 1, 1)
 	move(playerBar.importantBuff.buffWdg, 0, 0)
 	
 	playerBar.listenerHP = PlayerHPChanged
