@@ -39,6 +39,28 @@ local function SetCurrentProfileInd(anInd)
 	userMods.SetGlobalConfigSection("TR_LastProfileArr", lastUsedProfiles)
 end
 
+local function GetAboveHeadBuffSettings(aBuffName)
+	return {
+		name = aBuffName, 
+		isSpell = false,
+		isBuff = true,
+		castByMe = false	
+	}
+end
+
+local function GetRaidBuffSettings(aBuffName)
+	return {
+		name = aBuffName
+	}
+end
+
+local function GetTargeterBuffSettings(aBuffName)
+	return {
+		name = aBuffName,
+		castByMe = false
+	}
+end
+
 local function GenerateAboveHeadGroup()
 	local correctAboveHeadSettings = {}
 	correctAboveHeadSettings.w = 8
@@ -55,15 +77,44 @@ local function GenerateAboveHeadGroup()
 	correctAboveHeadSettings.autoDebuffModeButtonUnk = false
 	correctAboveHeadSettings.checkEnemyCleanableUnk = false
 	correctAboveHeadSettings.showImportantButton = false
-	correctAboveHeadSettings.checkControlsButton = false
-	correctAboveHeadSettings.checkMovementsButton = false
+	correctAboveHeadSettings.checkControlsButton = true
+	correctAboveHeadSettings.checkMovementsButton = true
 
 	correctAboveHeadSettings.aboveHeadFriendPlayersButton = false
-	correctAboveHeadSettings.aboveHeadNotFriendPlayersButton = false
+	correctAboveHeadSettings.aboveHeadNotFriendPlayersButton = true
 	correctAboveHeadSettings.aboveHeadFriendMobsButton = false
 	correctAboveHeadSettings.aboveHeadNotFriendMobsButton = false
 	
 	correctAboveHeadSettings.buffs = {}
+	
+	local locale = getLocale()
+	--"Аспект Защиты"
+	table.insert(correctAboveHeadSettings.buffs, GetAboveHeadBuffSettings(locale["defaultBuff1"]))
+	--"Аспект Нападения"
+	table.insert(correctAboveHeadSettings.buffs, GetAboveHeadBuffSettings(locale["defaultBuff2"]))
+	--"Аспект Поддержки"
+	table.insert(correctAboveHeadSettings.buffs, GetAboveHeadBuffSettings(locale["defaultBuff3"]))
+	--"Аспект Исцеления"
+	table.insert(correctAboveHeadSettings.buffs, GetAboveHeadBuffSettings(locale["defaultBuff4"]))
+	--"Аугментация «Оппортунист»"
+	table.insert(correctAboveHeadSettings.buffs, GetAboveHeadBuffSettings(locale["defaultBuff5"]))
+	--"Мощь"
+	table.insert(correctAboveHeadSettings.buffs, GetAboveHeadBuffSettings(locale["defaultBuff6"]))
+	--"Доблесть"
+	table.insert(correctAboveHeadSettings.buffs, GetAboveHeadBuffSettings(locale["defaultBuff7"]))
+	--"Прилив храбрости"
+	table.insert(correctAboveHeadSettings.buffs, GetAboveHeadBuffSettings(locale["defaultBuff8"]))
+	--"Прилив здоровья"
+	table.insert(correctAboveHeadSettings.buffs, GetAboveHeadBuffSettings(locale["defaultBuff9"]))
+	--"Защита"
+	table.insert(correctAboveHeadSettings.buffs, GetAboveHeadBuffSettings(locale["defaultBuff10"]))
+	--"Раны"
+	table.insert(correctAboveHeadSettings.buffs, GetAboveHeadBuffSettings(locale["defaultBuff11"]))
+	--"Уязвимость"
+	table.insert(correctAboveHeadSettings.buffs, GetAboveHeadBuffSettings(locale["defaultBuff12"]))
+	--"Слабость"
+	table.insert(correctAboveHeadSettings.buffs, GetAboveHeadBuffSettings(locale["defaultBuff13"]))
+
 	
 	correctAboveHeadSettings.name = getLocale()["aboveHeadTxt"]
 	
@@ -116,6 +167,24 @@ function GetDefaultSettings()
 	raidFormSettings.farColor = g_farColor	
 	raidFormSettings.raidBuffs.customBuffs = {}
 	
+	local locale = getLocale()
+	--"Аспект Защиты"
+	table.insert(raidFormSettings.raidBuffs.customBuffs, GetRaidBuffSettings(locale["defaultBuff1"]))
+	--"Аспект Нападения"
+	table.insert(raidFormSettings.raidBuffs.customBuffs, GetRaidBuffSettings(locale["defaultBuff2"]))
+	--"Аспект Поддержки"
+	table.insert(raidFormSettings.raidBuffs.customBuffs, GetRaidBuffSettings(locale["defaultBuff3"]))
+	--"Аспект Исцеления"
+	table.insert(raidFormSettings.raidBuffs.customBuffs, GetRaidBuffSettings(locale["defaultBuff4"]))
+	--"Защита"
+	table.insert(raidFormSettings.raidBuffs.customBuffs, GetRaidBuffSettings(locale["defaultBuff10"]))
+	--"Раны"
+	table.insert(raidFormSettings.raidBuffs.customBuffs, GetRaidBuffSettings(locale["defaultBuff11"]))
+	--"Уязвимость"
+	table.insert(raidFormSettings.raidBuffs.customBuffs, GetRaidBuffSettings(locale["defaultBuff12"]))
+	--"Выбит из седла"
+	table.insert(raidFormSettings.raidBuffs.customBuffs, GetRaidBuffSettings(locale["defaultBuff14"]))
+	
 	local targeterFormSettings = {}
 	targeterFormSettings.classColorModeButton = true
 	targeterFormSettings.showManaButton = false
@@ -153,6 +222,28 @@ function GetDefaultSettings()
 	targeterFormSettings.selectionColor = g_selectionColor
 	targeterFormSettings.raidBuffs.customBuffs = {}
 	targeterFormSettings.myTargets = {}
+
+	--"Аспект Защиты"
+	table.insert(targeterFormSettings.raidBuffs.customBuffs, GetTargeterBuffSettings(locale["defaultBuff1"]))
+	--"Аспект Нападения"
+	table.insert(targeterFormSettings.raidBuffs.customBuffs, GetTargeterBuffSettings(locale["defaultBuff2"]))
+	--"Аспект Поддержки"
+	table.insert(targeterFormSettings.raidBuffs.customBuffs, GetTargeterBuffSettings(locale["defaultBuff3"]))
+	--"Аспект Исцеления"
+	table.insert(targeterFormSettings.raidBuffs.customBuffs, GetTargeterBuffSettings(locale["defaultBuff4"]))
+	--"Защита"
+	table.insert(targeterFormSettings.raidBuffs.customBuffs, GetTargeterBuffSettings(locale["defaultBuff10"]))
+	--"Раны"
+	table.insert(targeterFormSettings.raidBuffs.customBuffs, GetTargeterBuffSettings(locale["defaultBuff11"]))
+	--"Уязвимость"
+	table.insert(targeterFormSettings.raidBuffs.customBuffs, GetTargeterBuffSettings(locale["defaultBuff12"]))
+	--"Выбит из седла"
+	table.insert(targeterFormSettings.raidBuffs.customBuffs, GetTargeterBuffSettings(locale["defaultBuff14"]))
+	--"Наводчик"
+	table.insert(targeterFormSettings.raidBuffs.customBuffs, GetTargeterBuffSettings(locale["defaultBuff15"]))
+	--"Лидерство"
+	table.insert(targeterFormSettings.raidBuffs.customBuffs, GetTargeterBuffSettings(locale["defaultBuff16"]))
+
 	
 	local buffFormSettings = {}
 	buffFormSettings.buffGroups = {}
@@ -387,6 +478,30 @@ function LoadSettings(aProfileInd)
 		end
 	end
 	
+	if m_currentProfile.version < 3.3 or m_currentProfile.version == nil then
+		for _, buffGroupSettings in ipairs(m_currentProfile.buffFormSettings.buffGroups) do
+			buffGroupSettings.customBuffs = nil
+			for _, buffSettings in ipairs(buffGroupSettings.buffs or {}) do
+				buffSettings.time = nil
+				buffSettings.isCD = nil
+				buffSettings.nameLowerStr = nil
+				buffSettings.ind = nil
+			end
+		end
+		
+		for _, buffSettings in ipairs(m_currentProfile.targeterFormSettings.raidBuffs.customBuffs) do
+			buffSettings.isCastName = nil
+		end
+		
+		m_currentProfile.raidFormSettings.invulnerableColor = table.sclone(g_invulnerableColor)
+		m_currentProfile.raidFormSettings.invulnerableColor.a = 0
+		m_currentProfile.targeterFormSettings.invulnerableColor = table.sclone(g_invulnerableColor)
+		
+		if m_currentProfile.targeterFormSettings.lastTargetType and m_currentProfile.targeterFormSettings.lastTargetType > 12 then
+			m_currentProfile.targeterFormSettings.lastTargetType = m_currentProfile.targeterFormSettings.lastTargetType + 1
+		end
+	end
+	
 	if m_currentProfile.version < GetSettingsVersion() or m_currentProfile.version == nil then
 		m_currentProfile.version = GetSettingsVersion()
 		SaveAllSettings(allProfiles)
@@ -428,5 +543,5 @@ function ExportProfileByIndex(anInd)
 end
 
 function GetSettingsVersion()
-	return 3.2;
+	return 3.3;
 end

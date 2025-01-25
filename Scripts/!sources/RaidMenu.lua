@@ -202,6 +202,9 @@ function GenerateMenuInfos(aPlayerBar, aMyUniqueID)
 end
 
 function ShowMenu(aPlayerBar, aParams, aRaidPanelWdg, aRaidPanelSize, aMyUniqueID)
+	if not aPlayerBar.playerID then
+		return
+	end
 	CloseMenu()
 	GenerateMenuInfos(aPlayerBar, aMyUniqueID)
 	if not m_menuInfos then return end

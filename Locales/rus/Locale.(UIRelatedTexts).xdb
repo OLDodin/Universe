@@ -478,10 +478,6 @@
       <resource href="woundsShowButton.txt"/>
     </Item>
     <Item>
-      <name>ignoreSysBuffs</name>
-      <resource href="ignoreSysBuffs.txt"/>
-    </Item>
-    <Item>
       <name>checkEnemyCleanable</name>
       <resource href="checkEnemyCleanable.txt"/>
     </Item>
@@ -776,10 +772,6 @@
     <Item>
       <name>savedMessage</name>
       <resource href="savedMessage.txt"/>
-    </Item>
-    <Item>
-      <name>savedAddMessage</name>
-      <resource href="savedAddMessage.txt"/>
     </Item>
     <Item>
       <name>groupSavedMessage</name>
@@ -1374,12 +1366,84 @@
       <resource href="selectionColorHeader.txt"/>
     </Item>
 	<Item>
+      <name>invulnerableColorHeader</name>
+      <resource href="invulnerableColorHeader.txt"/>
+    </Item>
+	<Item>
       <name>farColorHeader</name>
       <resource href="farColorHeader.txt"/>
     </Item>
 	<Item>
       <name>showProcentShieldButton</name>
       <resource href="showProcentShieldButton.txt"/>
+    </Item>
+	<Item>
+      <name>defaultBuff1</name>
+      <resource href="defaultBuff1.txt"/>
+    </Item>
+	<Item>
+      <name>defaultBuff2</name>
+      <resource href="defaultBuff2.txt"/>
+    </Item>
+	<Item>
+      <name>defaultBuff3</name>
+      <resource href="defaultBuff3.txt"/>
+    </Item>
+	<Item>
+      <name>defaultBuff4</name>
+      <resource href="defaultBuff4.txt"/>
+    </Item>
+	<Item>
+      <name>defaultBuff5</name>
+      <resource href="defaultBuff5.txt"/>
+    </Item>
+	<Item>
+      <name>defaultBuff6</name>
+      <resource href="defaultBuff6.txt"/>
+    </Item>
+	<Item>
+      <name>defaultBuff7</name>
+      <resource href="defaultBuff7.txt"/>
+    </Item>
+	<Item>
+      <name>defaultBuff8</name>
+      <resource href="defaultBuff8.txt"/>
+    </Item>
+	<Item>
+      <name>defaultBuff9</name>
+      <resource href="defaultBuff9.txt"/>
+    </Item>
+	<Item>
+      <name>defaultBuff10</name>
+      <resource href="defaultBuff10.txt"/>
+    </Item>
+	<Item>
+      <name>defaultBuff11</name>
+      <resource href="defaultBuff11.txt"/>
+    </Item>
+	<Item>
+      <name>defaultBuff12</name>
+      <resource href="defaultBuff12.txt"/>
+    </Item>
+	<Item>
+      <name>defaultBuff13</name>
+      <resource href="defaultBuff13.txt"/>
+    </Item>
+	<Item>
+      <name>defaultBuff14</name>
+      <resource href="defaultBuff14.txt"/>
+    </Item>
+	<Item>
+      <name>defaultBuff15</name>
+      <resource href="defaultBuff15.txt"/>
+    </Item>
+	<Item>
+      <name>defaultBuff16</name>
+      <resource href="defaultBuff16.txt"/>
+    </Item>
+	<Item>
+      <name>ENEMY_WITHOUT_PETS_TARGETS</name>
+      <resource href="ENEMY_WITHOUT_PETS_TARGETS.txt"/>
     </Item>
   </items>
 </UIRelatedTexts>

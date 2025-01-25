@@ -15,5 +15,6 @@
 			<HighPos>0</HighPos>
 		</Y>
 	</Placement>
+	<FormatFileRef href="ShieldText.txt" />
 	<TransparentInput>true</TransparentInput>
 </WidgetTextView>

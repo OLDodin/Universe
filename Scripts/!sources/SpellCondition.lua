@@ -16,6 +16,7 @@ function SpellCondition:HasCondtion()
 end
 
 function SpellCondition:Check(aSpellInfo)
+	--aSpellInfo.name = removeHtmlFromWString(aSpellInfo.name)
 	local searchRes = self.avlCustomTree:find(aSpellInfo)
 
 	if searchRes ~= nil then

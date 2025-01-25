@@ -164,6 +164,7 @@ function SaveConfigGroupBuffsForm(aForm, aClose)
 			j.isBuff = getCheckBoxState(getChild(container, "isBuff"..tostring(i), true))
 			j.castByMe = getCheckBoxState(getChild(container, "castByMe"..tostring(i), true))
 			j.isSpell = getCheckBoxState(getChild(container, "isSpell"..tostring(i), true))
+			j.ind = nil -- clear after InitBuffConditionMgr
 		end
 	end
 	

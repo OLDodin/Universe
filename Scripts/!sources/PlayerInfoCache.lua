@@ -297,3 +297,13 @@ function SelectableChanged(aParams)
 		end
 	end
 end
+
+function AvatarClassFormChanged()
+	local playerClass = unit.GetClass(g_myAvatarID)
+	if playerClass and playerClass.className == "WARLOCK" then
+		local playerInfo = m_players[g_myAvatarID]
+		if playerInfo and playerInfo.spells then
+			playerInfo.spells.avatarClassFormChangedEventFunc()
+		end
+	end
+end

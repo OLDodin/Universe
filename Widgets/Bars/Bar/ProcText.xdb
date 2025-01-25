@@ -14,5 +14,6 @@
 			<Pos>0</Pos>
 		</Y>
 	</Placement>
+	<FormatFileRef href="ProcText.txt" />
 	<TransparentInput>true</TransparentInput>
 </WidgetTextView>

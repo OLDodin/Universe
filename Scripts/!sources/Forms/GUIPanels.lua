@@ -83,7 +83,7 @@ local function PlayerHPChanged(anInfo, aPlayerBar)
 		resize(aPlayerBar.clearBarWdg, math.max(newPanelW - 2, 1))
 	end
 	if aPlayerBar.formSettings.showProcentButton then
-		setText(aPlayerBar.procTextWdg, tostring(anInfo).."%", "LogColorYellow")
+		aPlayerBar.procTextWdg:SetVal(g_tagTextValue, tostring(anInfo).."%")
 	end
 end
 
@@ -96,15 +96,24 @@ local function PlayerShieldChanged(anInfo, aPlayerBar)
 	if shieldWidth > 0 then
 		resize(aPlayerBar.shieldLineWdg, shieldWidth)
 		if aPlayerBar.formSettings.showProcentShieldButton then
-			setText(aPlayerBar.shieldTextWdg, tostring(anInfo).."%", "ColorWhite", "center", aPlayerBar.shieldTextFontSize)
+			aPlayerBar.shieldTextWdg:SetVal(g_tagTextValue, tostring(anInfo).."%")
 		end
 		show(aPlayerBar.shieldBarWdg)
 	else
 		hide(aPlayerBar.shieldBarWdg)
 		if aPlayerBar.formSettings.showProcentShieldButton then
-			setText(aPlayerBar.shieldTextWdg, "")
+			aPlayerBar.shieldTextWdg:SetVal(g_tagTextValue, "")
 		end
 	end
+end
+
+local function PlayerInvulnerableChanged(anInfo, aPlayerBar)
+	if anInfo then
+		show(aPlayerBar.invulnerableWdg)
+	else
+		hide(aPlayerBar.invulnerableWdg)
+	end
+	
 end
 
 local function PlayerManaChanged(anInfo, aPlayerBar)
@@ -128,7 +137,7 @@ local function PlayerWoundsChanged(anInfo, aPlayerBar)
 	end
 
 	aPlayerBar.optimizeInfo.currWounds = anInfo
-	setText(aPlayerBar.woundsTextWdg, "-"..tostring(math.floor(anInfo)).."%", "ColorGreen", "left")
+	aPlayerBar.woundsTextWdg:SetVal(g_tagTextValue, "-"..tostring(math.floor(anInfo)).."%")
 end
 
 local function PlayerDistanceChanged(anInfo, aPlayerBar)
@@ -151,7 +160,7 @@ local function PlayerDistanceChanged(anInfo, aPlayerBar)
 
 	if aPlayerBar.optimizeInfo.currDist ~= anInfo.dist then
 		if aPlayerBar.formSettings.showDistanceButton then
-			setText(aPlayerBar.distTextWdg, anInfo.dist, "LogColorYellow")
+			aPlayerBar.distTextWdg:SetVal(g_tagTextValue, tostring(anInfo.dist))
 		end
 		if aPlayerBar.formSettings.distanceText ~= "0" then
 			local limitDist = tonumber(aPlayerBar.formSettings.distanceText)
@@ -320,14 +329,14 @@ local function PlayerAddBuff(aBuffInfo, aPlayerBar, anArray, aCnt, anInfoObj)
 		hide(buffSlot.buffStackCnt)
 	else
 		show(buffSlot.buffStackCnt)
-		setText(buffSlot.buffStackCnt, aBuffInfo.stackCount, "ColorWhite", "right", GetTextSizeByBuffSize(buffSlot.buffSize))
+		buffSlot.buffStackCnt:SetVal(g_tagTextValue, tostring(aBuffInfo.stackCount))
 	end
 	
 	buffSlot.buffFinishedTime_h = aBuffInfo.remainingMs + g_cachedTimestamp
 	if buffSlot.needShowTime then
 		if aBuffInfo.remainingMs > 0 then
 			buffSlot.buffTimeStr = getTimeString(aBuffInfo.remainingMs, true)
-			setText(buffSlot.buffTime, buffSlot.buffTimeStr, "ColorWhite", "center", GetTimeTextSizeByBuffSize(buffSlot.buffSize), 1, 1)
+			buffSlot.buffTime:SetVal(g_tagTextValue, buffSlot.buffTimeStr)
 			show(buffSlot.buffTime)
 		else
 			buffSlot.buffTimeStr = nil
@@ -383,7 +392,7 @@ local function PlayerAddImportantBuff(aBuffInfo, aPlayerBar)
 			hide(buffSlot.buffStackCnt)
 		else
 			show(buffSlot.buffStackCnt)
-			setText(buffSlot.buffStackCnt, aBuffInfo.stackCount, "ColorWhite", "right", GetTextSizeByBuffSize(buffSlot.buffSize))
+			buffSlot.buffStackCnt:SetVal(g_tagTextValue, tostring(aBuffInfo.stackCount))
 		end
 	end
 end
@@ -401,7 +410,7 @@ local function UpdateTickForBuffArray(anArray)
 			if remainingMs > 0 then
 				local buffTimeStr = getTimeString(remainingMs, true)
 				if buffSlot.buffTimeStr ~= buffTimeStr then 
-					setText(buffSlot.buffTime, buffTimeStr, "ColorWhite", "center", GetTimeTextSizeByBuffSize(buffSlot.buffSize), 1, 1)
+					buffSlot.buffTime:SetVal(g_tagTextValue, buffTimeStr)
 					buffSlot.buffTimeStr = buffTimeStr
 				end
 			else
@@ -449,8 +458,10 @@ function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettin
 	aPlayerBar.panelColorType = aRelationType
 	aPlayerBar.optimizeInfo.shieldContainerColor = copyTable(g_shieldContainerNormalColor)
 	
-	local isPlayerExist = isExist(aPlayerInfo.id)
-	aPlayerBar.isPlayerExist = isPlayerExist
+	local isUnitExist = isExist(aPlayerInfo.id)
+	aPlayerBar.isPlayerExist = isUnitExist
+	
+	local isPlayer = isUnitExist and unit.IsPlayer(aPlayerInfo.id) or false
 	
 	aPlayerBar.usedBuffSlotCnt = 0
 	for _, buffSlot in ipairs(aPlayerBar.buffSlots) do
@@ -474,11 +485,12 @@ function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettin
 	aPlayerBar.importantBuff.buffID = nil
 	
 	hide(aPlayerBar.clearBarWdg)
+	hide(aPlayerBar.invulnerableWdg)
 	
 	setBackgroundColor(aPlayerBar.shieldContainerWdg, aPlayerBar.optimizeInfo.shieldContainerColor)
 	
 	local barColor = copyTable(aFormSettings.friendColor)
-	if isPlayerExist and (aFormSettings.showManaButton or aFormSettings.classColorModeButton) then
+	if isUnitExist and (aFormSettings.showManaButton or aFormSettings.classColorModeButton) then
 		local playerClass = unit.GetClass(aPlayerInfo.id)
 		if playerClass and playerClass.className then 	
 			aPlayerInfo.className = playerClass.className
@@ -504,7 +516,7 @@ function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettin
 		end
 	end
 	
-	if isPlayerExist then
+	if isUnitExist then
 		if not aFormSettings.classColorModeButton or (aFormSettings.classColorModeButton and not unit.IsPlayer(aPlayerInfo.id)) then
 			if aPlayerBar.panelColorType == FRIEND_PANEL then
 				barColor = copyTable(aFormSettings.friendColor)
@@ -530,7 +542,7 @@ function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettin
 	local leaderWStr = anIsLeader and m_leaderWStr or m_emptyWStr
 	local userState = (aPlayerInfo.state == GROUP_MEMBER_STATE_OFFLINE or aPlayerInfo.state == RAID_MEMBER_STATE_OFFLINE) and OFF_STATE 
 	or (aPlayerInfo.state == GROUP_MEMBER_STATE_AFK or aPlayerInfo.state == RAID_MEMBER_STATE_AFK) and AFK_STATE
-	or (isPlayerExist and object.IsDead(aPlayerInfo.id)) and DEAD_STATE
+	or (isUnitExist and object.IsDead(aPlayerInfo.id)) and DEAD_STATE
 	or NORMAL_STATE
 	
 	local offAfkWStr = userState == OFF_STATE and m_offWStr 
@@ -545,12 +557,12 @@ function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettin
 	
 	hide(aPlayerBar.shieldBarWdg)
 	if aPlayerBar.formSettings.showProcentShieldButton then
-		setText(aPlayerBar.shieldTextWdg, "")
+		aPlayerBar.shieldTextWdg:SetVal(g_tagTextValue, "")
 	end
 
 	if aFormSettings.showServerNameButton then
 		local shardName = m_emptyWStr
-		if --[[cartographer.IsOnCommon() and ]]aPlayerInfo.id and isPlayerExist and unit.IsPlayer(aPlayerInfo.id) then
+		if --[[cartographer.IsOnCommon() and ]]aPlayerInfo.id and isUnitExist and unit.IsPlayer(aPlayerInfo.id) then
 			shardName = unit.GetPlayerShardName(aPlayerInfo.id)
 			if shardName then 
 				shardName = shardName:ToAbbr()
@@ -584,13 +596,19 @@ function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettin
 	end
 
 	if aFormSettings.showClassIconButton then
-		if isPlayerExist and not aPlayerInfo.className then
-			local playerClass = unit.GetClass(aPlayerInfo.id)
-			if playerClass and playerClass.className then 	
-				aPlayerInfo.className = playerClass.className
+		local mobQuality = nil
+		if isPlayer then 
+			if not aPlayerInfo.className then
+				local playerClass = unit.GetClass(aPlayerInfo.id)
+				if playerClass and playerClass.className then 	
+					aPlayerInfo.className = playerClass.className
+				end
 			end
+		elseif isUnitExist then
+			mobQuality = unit.GetQuality(aPlayerInfo.id)
 		end
-		local textureIndexForIcon = aPlayerInfo.className or "UNKNOWN"
+		local textureIndexForIcon = aPlayerInfo.className or mobQuality or "UNKNOWN"
+		
 		if aPlayerBar.optimizeInfo.textureIndexForIcon ~= textureIndexForIcon then
 			aPlayerBar.optimizeInfo.textureIndexForIcon = textureIndexForIcon
 			setBackgroundTexture(aPlayerBar.classIconWdg, g_texIcons[textureIndexForIcon])
@@ -665,6 +683,7 @@ function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings, aNum)
 	playerBar.farColoredBarWdg = getChild(playerBar.wdg, "FarColored")
 	playerBar.rollOverHighlightWdg = getChild(playerBar.wdg, "RolloverHighlight")
 	playerBar.highlightWdg = getChild(playerBar.wdg, "Highlight")
+	playerBar.invulnerableWdg = getChild(playerBar.wdg, "Invulnerable")
 	
 	playerBar.optimizeInfo = {}
 	playerBar.optimizeInfo.name = m_emptyWStr
@@ -678,11 +697,13 @@ function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings, aNum)
 	playerBar.isUsed = false
 	playerBar.wasVisible = false
 	playerBar.panelColorType = FRIEND_PANEL
+	
+	local shieldTextFontSize = 10
 	if panelHeight > 59 then
-		playerBar.shieldTextFontSize = 12
-	else
-		playerBar.shieldTextFontSize = 10
+		shieldTextFontSize = 12
 	end
+	
+	setTextViewText(playerBar.shieldTextWdg, g_tagTextValue, nil, nil, nil, shieldTextFontSize)
 	
 	if aFormSettings.showClassIconButton then
 		updatePlacementPlain(playerBar.textWdg, WIDGET_ALIGN_LOW, nil, 24, 0, panelWidth-24, nil)
@@ -696,6 +717,8 @@ function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings, aNum)
 	setBackgroundColor(playerBar.highlightWdg, aFormSettings.selectionColor) 
 	
 	setBackgroundColor(playerBar.shieldContainerWdg, playerBar.optimizeInfo.shieldContainerColor)
+	
+	setBackgroundColor(playerBar.invulnerableWdg, aFormSettings.invulnerableColor)
 	
 	local shieldBarHeight = 10
 	if panelHeight > 69 then
@@ -732,6 +755,7 @@ function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings, aNum)
 	
 	playerBar.listenerHP = PlayerHPChanged
 	playerBar.listenerShield = PlayerShieldChanged
+	playerBar.listenerInvulnerable = PlayerInvulnerableChanged
 	playerBar.listenerMana = PlayerManaChanged
 	playerBar.listenerWounds = PlayerWoundsChanged
 	playerBar.listenerDistance = PlayerDistanceChanged
@@ -770,6 +794,8 @@ function CreateBuffSlot(aParent, aBuffSize, anResArray, anIndex, anAlign, aBuffs
 		setFade(buffSlot.buffIcon, aBuffsOpacity)
 		setFade(buffSlot.buffHighlight, aBuffsOpacity)
 	end
+	setTextViewText(buffSlot.buffStackCnt, g_tagTextValue, nil, "ColorWhite", "right", GetTextSizeByBuffSize(buffSlot.buffSize))
+	setTextViewText(buffSlot.buffTime, g_tagTextValue, nil, "ColorWhite", "center", GetTimeTextSizeByBuffSize(buffSlot.buffSize), 1, 1)
 
 	if anResArray then
 		table.insert(anResArray, buffSlot)	
@@ -877,8 +903,9 @@ Global("ENEMY_PETS_TARGETS", 9)
 Global("FRIEND_PETS_TARGETS", 10)
 Global("NOT_FRIENDS_TARGETS", 11)
 Global("NOT_FRIENDS_PLAYERS_TARGETS", 12)
-Global("MY_SETTINGS_TARGETS", 13)
-Global("TARGETS_DISABLE", 14)
+Global("ENEMY_WITHOUT_PETS_TARGETS", 13)
+Global("MY_SETTINGS_TARGETS", 14)
+Global("TARGETS_DISABLE", 15)
 
 
 
@@ -899,6 +926,7 @@ m_targetSwitchArr[NEITRAL_PLAYERS_TARGETS] = m_locale["NEITRAL_PLAYERS_TARGETS"]
 m_targetSwitchArr[NEITRAL_MOBS_TARGETS] = m_locale["NEITRAL_MOBS_TARGETS"]
 m_targetSwitchArr[NOT_FRIENDS_TARGETS] = m_locale["NOT_FRIENDS_TARGETS"]
 m_targetSwitchArr[NOT_FRIENDS_PLAYERS_TARGETS] = m_locale["NOT_FRIENDS_PLAYERS_TARGETS"]
+m_targetSwitchArr[ENEMY_WITHOUT_PETS_TARGETS] = m_locale["ENEMY_WITHOUT_PETS_TARGETS"]
 
 function HideTargetDropDownSelectPanel()
 	HideDropDownSelectPanel(m_modeSelectPanel)

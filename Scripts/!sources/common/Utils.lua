@@ -135,41 +135,7 @@ function LogAllCSSStyle()
 	end
 end
 
---[[
-fontname:       "AllodsFantasy", "AllodsSystem", "AllodsConsole", "Content", 
-                "ContentNarrow", "ContentNarrowBold", "ContentNarrowItalic", 
-                "ContentNarrowBoldItalic", 
-fontsize:       (int >0)
-alignX:         (0), "left"(1), "center"(2), "right"(3), "justify"(4)
-alignY:         "top"(0), "middle"(1), "bottom"(2)
-color:          (int), (hexint)
-shadow:         (int 0-10)
-shadowcolor:    (int), (hexint)
-outline:        (int 0-2)
-outlinecolor:   (int), (hexint)
-wordWrap:       "false"(0), "true"(1)
-paragraph:      "false"(0), "true"(1)
-lineSpasing:    (float)
-before:         (int >=0)
-rightToLeft:    (0), (1)
-
-<html fontname="x" alignx="x" aligny="x" fontsize="x" outline="x" shadow="x"><r name="value"/></html>
-
-SetTagAttributes
-
--- пример:
---- <header><r name="unitName"/></header>
-local tag = ToWs( "unitName" )
-local fontsize = ToWs( "fontsize" )
-local color = ToWs( "color" )
-vt:SetTagAttributes( true, tag, {
-  [ fontsize ] = tostring( 18 ),
-  [ color ] = "0xFFEEDDCC"
-} )
-]]
-
 function formatText(text, align, fontSize, shadow, outline, fontName)
-	--<body shadow="1"><html color="0xff%s">%s</html></body>
 	local firstPart = "<body fontname='"..(toStringUtils(fontName) or "AllodsFantasy")
 					.."' alignx = '"..(align or "left")
 					.."' fontsize='"..(fontSize and tostring(fontSize) or "14")
@@ -180,7 +146,7 @@ function formatText(text, align, fontSize, shadow, outline, fontName)
 	local secondPart = "</rs></body>"
 	return firstPart..textMessage..secondPart
 end
-
+--[[
 function toValuedText(text, color, align, fontSize, shadow, outline, fontName)
 	local valuedText = cachedCreateValuedText()
 	if not valuedText or not text then return nil end
@@ -193,7 +159,7 @@ function toValuedText(text, color, align, fontSize, shadow, outline, fontName)
 	end
 	return valuedText
 end
-
+]]
 function compareStrWithConvert(aName1, aName2)
 	local name1=toWString(aName1)
 	local name2=toWString(aName2)
@@ -387,12 +353,49 @@ function getTextString(widget)
 	return widget and widget.GetText and toStringUtils(widget:GetText()) or nil
 end
 
+local tagFontName = toWString("fontname")
+local tagAlignX = toWString("alignx")
+local tagFontsize = toWString("fontsize")
+local tagShadow = toWString("shadow")
+local tagOutline = toWString("outline")
+local tagColor = toWString("color")
+
+function setTextViewText(widget, tagTextValue, text, color, align, fontSize, shadow, outline, fontName)
+	local attributes = {}
+	if fontName then
+		attributes[ tagFontName ] = toStringUtils(fontName)
+	end	
+	if align then
+		attributes[ tagAlignX ] = align
+	end	
+	if fontSize then
+		attributes[ tagFontsize ] = tostring(fontSize)
+	end	
+	if shadow then
+		attributes[ tagShadow ] = tostring(shadow)
+	end	
+	if outline then
+		attributes[ tagOutline ] = tostring(outline)
+	end	
+	if table.nkeys(attributes) > 0 then
+		widget:SetTextAttributes(true, tagTextValue, attributes)
+	end
+			
+	if color then
+		widget:SetClassVal("color", color)
+	end
+	if text then
+		widget:SetVal(tagTextValue, toWString(text))
+	end
+end
+
 function setText(widget, text, color, align, fontSize, shadow, outline, fontName)
 	if not widget then return nil end
 	text=toWString(text or "")
 	--textview
 	if widget.SetValuedText then 
-		widget:SetValuedText(toValuedText(text, color or "ColorWhite", align, fontSize, shadow, outline, fontName)) 
+		widget:SetFormat(formatText(text, align, fontSize, shadow, outline, fontName))
+		widget:SetClassVal( "color", color or "ColorWhite" )
 	--textedit
 	elseif widget.SetText then	
 		widget:SetText(text)
@@ -834,10 +837,8 @@ local cachedAvatarGetPos = avatar.GetPos
 local cachedAvatarGetDir = avatar.GetDir
 
 function getDistanceToTarget(targetId)
-	local objPos = cachedObjGetPos(targetId)
-	if not objPos then return nil end
-	local avPos = cachedAvatarGetPos()
-	local res = ((objPos.posX-avPos.posX)^2+(objPos.posY-avPos.posY)^2+(objPos.posZ-avPos.posZ)^2)^0.5
+	local res = object.GetDistance(targetId)
+	if not res then return nil end
 	res = math.ceil(res)
 
 	return res

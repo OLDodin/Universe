@@ -2,6 +2,31 @@
 <UIRelatedTextures>
 	<Items>
 		<Item>
+			<name>BossIcon</name>
+			<textureItem href="Class/Boss.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
+		</Item>
+		<Item>
+			<name>EliteIcon</name>
+			<textureItem href="Class/Elite.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
+		</Item>
+		<Item>
+			<name>FlavorEliteIcon</name>
+			<textureItem href="Class/FlavorElite.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
+		</Item>
+		<Item>
+			<name>MiniBossIcon</name>
+			<textureItem href="Class/MiniBoss.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
+		</Item>
+		<Item>
+			<name>RaidBossIcon</name>
+			<textureItem href="Class/RaidBoss.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
+		</Item>
+		<Item>
+			<name>RaidEliteIcon</name>
+			<textureItem href="Class/RaidElite.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
+		</Item>
+		
+		<Item>
 			<name>EngineerIcon</name>
 			<textureItem href="Class/Engineer.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
 		</Item>

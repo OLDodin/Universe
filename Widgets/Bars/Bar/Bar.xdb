@@ -19,6 +19,7 @@
 		<Item href="FarColored.xdb#xpointer(/WidgetPanel)"/>
 		<Item href="Highlight.xdb#xpointer(/WidgetPanel)"/>
 		<Item href="RolloverHighlight.xdb#xpointer(/WidgetPanel)"/>
+		<Item href="Invulnerable.xdb#xpointer(/WidgetPanel)"/>
 
 		<Item href="BuffPanelNegative.xdb#xpointer(/WidgetPanel)"/>
 		<Item href="BuffPanel.xdb#xpointer(/WidgetPanel)"/>

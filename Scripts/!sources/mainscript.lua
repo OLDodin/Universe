@@ -1,4 +1,5 @@
 Global("g_debugSubsrb", false)
+Global("g_tagTextValue", toWString("textViewValue"))
 
 local IsAOPanelEnabled = GetConfig( "EnableAOPanel" ) or GetConfig( "EnableAOPanel" ) == nil
 local IsBtnInAOPanelNow = false

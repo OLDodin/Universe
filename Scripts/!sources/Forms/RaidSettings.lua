@@ -54,6 +54,10 @@ function CreateRaidSettingsForm()
 	align(group11, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)
 	resize(group11, 315, 151)
 	
+	local group12 = createWidget(form, "group12", "Panel")
+	align(group12, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)
+	resize(group12, 315, 151)
+	
 	
 	
 	setLocaleText(createWidget(form, "raidSettingsFormHeader", "TextView",  WIDGET_ALIGN_CENTER, nil, 150, 20, nil, 16))
@@ -101,7 +105,7 @@ function CreateRaidSettingsForm()
 	settingsContainer:PushBack(group9)
 	settingsContainer:PushBack(group10)
 	settingsContainer:PushBack(group11)
-
+	settingsContainer:PushBack(group12)
 	
 	
 	setLocaleText(createWidget(group6, "raidBuffsButton", "TextView", nil, nil, 200, 25, 75, 3))
@@ -151,6 +155,7 @@ function SaveRaidFormSettings(aForm)
 	local group9 = settingsContainer:At(6)
 	local group10 = settingsContainer:At(7)
 	local group11 = settingsContainer:At(8)
+	local group12 = settingsContainer:At(9)
 	
 
 	m_currentFormSettings.showStandartRaidButton = getCheckBoxState(getChild(group1, "showStandartRaidButton"))
@@ -193,6 +198,7 @@ function SaveRaidFormSettings(aForm)
 	m_currentFormSettings.clearColor = getChild(getChild(group9, "colorSettingsForm"), "colorPreview"):GetBackgroundColor()
 	m_currentFormSettings.selectionColor = getChild(getChild(group10, "colorSettingsForm"), "colorPreview"):GetBackgroundColor()
 	m_currentFormSettings.farColor = getChild(getChild(group11, "colorSettingsForm"), "colorPreview"):GetBackgroundColor()
+	m_currentFormSettings.invulnerableColor = getChild(getChild(group12, "colorSettingsForm"), "colorPreview"):GetBackgroundColor()
 		
 	return m_currentFormSettings
 end
@@ -210,6 +216,7 @@ function LoadRaidFormSettings(aForm)
 	local group9 = settingsContainer:At(6)
 	local group10 = settingsContainer:At(7)
 	local group11 = settingsContainer:At(8)
+	local group12 = settingsContainer:At(9)
 	
 	local profile = GetCurrentProfile()
 	m_currentFormSettings = deepCopyTable(profile.raidFormSettings)
@@ -257,11 +264,13 @@ function LoadRaidFormSettings(aForm)
 	destroy(getChild(group9, "colorSettingsForm"))
 	destroy(getChild(group10, "colorSettingsForm"))
 	destroy(getChild(group11, "colorSettingsForm"))
+	destroy(getChild(group12, "colorSettingsForm"))
 
 	CreateSimpleColorSettingsForm(group8, m_currentFormSettings.friendColor, "friendColorHeader")
 	CreateSimpleColorSettingsForm(group9, m_currentFormSettings.clearColor, "needClearColorHeader")
 	CreateSimpleColorSettingsForm(group10, m_currentFormSettings.selectionColor, "selectionColorHeader")
 	CreateSimpleColorSettingsForm(group11, m_currentFormSettings.farColor, "farColorHeader")
+	CreateSimpleColorSettingsForm(group12, m_currentFormSettings.invulnerableColor, "invulnerableColorHeader")
 end
 
 function AddRaidBuffToSroller(aForm)

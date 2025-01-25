@@ -860,6 +860,9 @@ local function OnRightClick(aParams)
 end
 
 local function OnPlayerBarPointing(aParams)
+	if not aParams.widget:IsValid() then
+		return
+	end
 	local playerBar = nil
 	playerBar = FindClickedInRaid(aParams.widget)
 	m_targeterUnderMouseNow = false
@@ -1028,7 +1031,7 @@ local function ResizePanelForm(aGroupsCnt, aMaxPeopleCnt, aFormSettings, aForm, 
 	
 	if not aLastSize.w or aLastSize.w < width or not aLastSize.h or aLastSize.h < height then
 		width = math.max(200, width)
-		height = math.max(370, height)
+		height = math.max(390, height)
 		
 		aLastSize.w = width
 		aLastSize.h = height
@@ -1107,7 +1110,7 @@ function OnDragEnd(aParams)
 		return
 	end
 
-	if aParams.targetWidget then
+	if aParams.targetWidget and aParams.targetWidget:IsValid() then
 		local playerBar = FindClickedInRaid(aParams.targetWidget)
 		if playerBar then
 			SwapPlayers(m_movingUniqueID, playerBar.uniqueID, avatar.GetUniqueId())
@@ -1533,6 +1536,8 @@ local function SetNecessaryTargets(anObjID, anInCombat)
 	newValue.objName = object.GetName(newValue.objID)
 	newValue.objNameLower = toLowerString(newValue.objName)
 		
+	--LogInfo("SetNecessaryTargets ", newValue.objName, " isPlayer = ", isPlayer, " isEnemy = ", isEnemy, " isFriend = ", isFriend)	
+		
 	if profile.targeterFormSettings.sortByClass then
 		newValue.className = unit.GetClass(anObjID).className
 		newValue.classPriority = g_classPriority[newValue.className] or g_classPriority["UNKNOWN"]
@@ -1566,10 +1571,7 @@ local function SetNecessaryTargets(anObjID, anInCombat)
 		else
 			objArr = m_targetUnitsByType[NEITRAL_PLAYERS_TARGETS]
 		end
-	end
-	AddTargetInList(newValue, objArr)
-	objArr = nil
-	if not isPlayer then
+	elseif not isPlayer and not isPet then
 		if isEnemy then
 			objArr = m_targetUnitsByType[ENEMY_MOBS_TARGETS]
 		elseif isFriend then
@@ -1577,14 +1579,13 @@ local function SetNecessaryTargets(anObjID, anInCombat)
 		else
 			objArr = m_targetUnitsByType[NEITRAL_MOBS_TARGETS]
 		end
-	end
-	AddTargetInList(newValue, objArr)
-	objArr = nil
-	if isPet then
+	elseif isPet then
 		if isEnemy then
 			objArr = m_targetUnitsByType[ENEMY_PETS_TARGETS]
 		elseif isFriend then
 			objArr = m_targetUnitsByType[FRIEND_PETS_TARGETS]
+		else
+			objArr = m_targetUnitsByType[NEITRAL_MOBS_TARGETS]
 		end
 	end
 	AddTargetInList(newValue, objArr)
@@ -1849,20 +1850,34 @@ local function MakeTargetUnion(aType, aStatus)
 		table.insert(targetUnion, GetArrByCombatStatus(aStatus, ENEMY_MOBS_TARGETS))
 		table.insert(targetUnion, GetArrByCombatStatus(aStatus, NEITRAL_MOBS_TARGETS))
 		table.insert(targetUnion, GetArrByCombatStatus(aStatus, FRIEND_MOBS_TARGETS))
+		table.insert(targetUnion, GetArrByCombatStatus(aStatus, ENEMY_PETS_TARGETS))
+		table.insert(targetUnion, GetArrByCombatStatus(aStatus, FRIEND_PETS_TARGETS))
 	elseif aType == ENEMY_TARGETS then
 		table.insert(targetUnion, GetArrByCombatStatus(aStatus, ENEMY_PLAYERS_TARGETS))
 		table.insert(targetUnion, GetArrByCombatStatus(aStatus, ENEMY_MOBS_TARGETS))
+		table.insert(targetUnion, GetArrByCombatStatus(aStatus, ENEMY_PETS_TARGETS))
 	elseif aType == FRIEND_TARGETS then
 		table.insert(targetUnion, GetArrByCombatStatus(aStatus, FRIEND_PLAYERS_TARGETS))
 		table.insert(targetUnion, GetArrByCombatStatus(aStatus, FRIEND_MOBS_TARGETS))
+		table.insert(targetUnion, GetArrByCombatStatus(aStatus, FRIEND_PETS_TARGETS))
+	elseif aType == ENEMY_MOBS_TARGETS then
+		table.insert(targetUnion, GetArrByCombatStatus(aStatus, ENEMY_MOBS_TARGETS))
+		table.insert(targetUnion, GetArrByCombatStatus(aStatus, ENEMY_PETS_TARGETS))
+	elseif aType == FRIEND_MOBS_TARGETS then
+		table.insert(targetUnion, GetArrByCombatStatus(aStatus, FRIEND_MOBS_TARGETS))
+		table.insert(targetUnion, GetArrByCombatStatus(aStatus, FRIEND_PETS_TARGETS))
 	elseif aType == NOT_FRIENDS_TARGETS then
 		table.insert(targetUnion, GetArrByCombatStatus(aStatus, ENEMY_PLAYERS_TARGETS))
 		table.insert(targetUnion, GetArrByCombatStatus(aStatus, NEITRAL_PLAYERS_TARGETS))
 		table.insert(targetUnion, GetArrByCombatStatus(aStatus, ENEMY_MOBS_TARGETS))
+		table.insert(targetUnion, GetArrByCombatStatus(aStatus, ENEMY_PETS_TARGETS))
 		table.insert(targetUnion, GetArrByCombatStatus(aStatus, NEITRAL_MOBS_TARGETS))
 	elseif aType == NOT_FRIENDS_PLAYERS_TARGETS then	
 		table.insert(targetUnion, GetArrByCombatStatus(aStatus, ENEMY_PLAYERS_TARGETS))
 		table.insert(targetUnion, GetArrByCombatStatus(aStatus, NEITRAL_PLAYERS_TARGETS))
+	elseif aType == ENEMY_WITHOUT_PETS_TARGETS then
+		table.insert(targetUnion, GetArrByCombatStatus(aStatus, ENEMY_PLAYERS_TARGETS))
+		table.insert(targetUnion, GetArrByCombatStatus(aStatus, ENEMY_MOBS_TARGETS))
 	else
 		table.insert(targetUnion, GetArrByCombatStatus(aStatus, aType))
 	end
@@ -2761,6 +2776,8 @@ function GUIControllerInit()
 	common.RegisterEventHandler(OnInterfaceToggle, "EVENT_INTERFACE_TOGGLE" )
 	common.RegisterEventHandler(OnTalentsChanged, "EVENT_TALENTS_CHANGED" )
 	
+	common.RegisterEventHandler(AvatarClassFormChanged, "EVENT_AVATAR_CLASS_FORM_CHANGED" )
+		
 	--EVENT_TRACK_ADDED
 
 	

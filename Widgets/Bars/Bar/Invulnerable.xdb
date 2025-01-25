@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<WidgetPanel>
+	<Priority>122</Priority>
+	<Name>Invulnerable</Name>
+	<Children>
+	</Children>
+	<BackLayer href="../Textures/Highlighted4.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)" />
+	<Placement>
+		<X>
+			<Align>WIDGET_ALIGN_BOTH</Align>
+			<Pos>0</Pos>
+		</X>
+		<Y>
+			<Align>WIDGET_ALIGN_BOTH</Align>
+			<Pos>0</Pos>
+		</Y>
+	</Placement>
+	<TransparentInput>true</TransparentInput>
+	<Visible>false</Visible>
+</WidgetPanel>

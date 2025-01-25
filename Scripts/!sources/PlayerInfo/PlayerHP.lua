@@ -10,8 +10,10 @@ function PlayerHP:Init(anID)
 	self.objParams = {}
 	self.shield = 0
 	self.hp = 0
+	self.isInvulnerable = false
 	self.lastShield = -1
 	self.lastHP = -1
+	self.lastIsInvulnerable = -1
 	--PlayerWounds.lua не достаточно, тк EVENT_UNIT_WOUNDS_COMPLEXITY_CHANGED не приходит на руническое проклятье и тд
 	self.woundsComplexity = 0
 	self.lastWoundsComplexity = -1
@@ -27,6 +29,7 @@ function PlayerHP:ClearLastValues()
 	self.lastHP = -1
 	self.lastShield = -1
 	self.lastWoundsComplexity = -1
+	self.lastIsInvulnerable = -1
 end
 
 function PlayerHP:SubscribeTargetGui(aLitener)
@@ -62,6 +65,12 @@ function PlayerHP:UpdateValueIfNeededInternal()
 	local res = nil
 	local profile = GetCurrentProfile()
 	
+	if self.isInvulnerable ~= self.lastIsInvulnerable then
+		self.lastIsInvulnerable = self.isInvulnerable
+		res = self.base.guiRaidListener and self.base.guiRaidListener.listenerInvulnerable(self.isInvulnerable, self.base.guiRaidListener)
+		res = self.base.guiTargetListener and self.base.guiTargetListener.listenerInvulnerable(self.isInvulnerable, self.base.guiTargetListener)
+	end
+	
 	if self.shield ~= self.lastShield then
 		self.lastShield = self.shield
 
@@ -93,9 +102,11 @@ function PlayerHP:GetEventFunc()
 		local playerID = aParams.unitId or aParams.id
 		if isExist(playerID) then
 			local healthInfo = cachedGetHealthInfo(playerID)
-			self.shield = healthInfo and healthInfo.additionalPercents 
-			self.hp = healthInfo and healthInfo.valuePercents
-			
+			if healthInfo then 
+				self.shield = healthInfo.additionalPercents 
+				self.hp = healthInfo.valuePercents
+				self.isInvulnerable = healthInfo.isInvulnerable
+			end
 			self:UpdateValueIfNeededInternal()
 		end
 	end

@@ -25,7 +25,6 @@ local function PlayerAddBuff(aBuffInfo, aGroupBuffBar, anInfoObj)
 	local posInPlateIndex = anInfoObj and anInfoObj.ind or nil
 --LogInfo("PlayerAddBuff = ", aBuffInfo.name, " ind ", posInPlateIndex)
 	
-	
 	if not aBuffInfo.texture then
 		return
 	end
@@ -45,14 +44,13 @@ local function PlayerAddBuff(aBuffInfo, aGroupBuffBar, anInfoObj)
 		if not buffSlot then
 			local newCnt = aGroupBuffBar.usedBuffSlotCnt + 1
 			buffSlot = aGroupBuffBar.buffList[newCnt]	
-			--LogInfo("PlayerAddBuff 1 = ", newCnt)
+		--	LogInfo("PlayerAddBuff 1 = ", newCnt)
 			if buffSlot then
-			--LogInfo("PlayerAddBuff 2")
+		--	LogInfo("PlayerAddBuff 2")
 				aGroupBuffBar.usedBuffSlotCnt = newCnt
 				
 				buffSlot.buffWdg:Show(true)
 				buffSlot.info.buffIcon:SetBackgroundTexture(aBuffInfo.texture)
-				
 				resize(aGroupBuffBar.panelWdg, math.max(buffSlot.info.buffSize*math.min(aGroupBuffBar.panelWidthBuffCnt, aGroupBuffBar.usedBuffSlotCnt), GetMinGroupPanelSize(aGroupBuffBar.abovehead)), buffSlot.info.buffSize*math.min(aGroupBuffBar.panelHeightBuffCnt, math.ceil(aGroupBuffBar.usedBuffSlotCnt/aGroupBuffBar.panelWidthBuffCnt))+30)
 			end
 		end
@@ -69,12 +67,12 @@ local function PlayerAddBuff(aBuffInfo, aGroupBuffBar, anInfoObj)
 		hide(buffSlot.info.buffStackCntWdg)
 	else
 		show(buffSlot.info.buffStackCntWdg)
-		setText(buffSlot.info.buffStackCntWdg, aBuffInfo.stackCount, nil, "right", GetTextSizeByBuffSize(buffSlot.info.buffSize))
+		buffSlot.info.buffStackCntWdg:SetVal(g_tagTextValue, tostring(aBuffInfo.stackCount))
 	end
 	
 	if aBuffInfo.remainingMs > 0 then
 		local buffTimeStr = getTimeString(aBuffInfo.remainingMs)
-		setText(buffSlot.info.buffTimerWdg, buffTimeStr, "ColorWhite", "center", GetTextSizeByBuffSize(buffSlot.info.buffSize), 1, 1)
+		buffSlot.info.buffTimerWdg:SetVal(g_tagTextValue, buffTimeStr)
 		buffSlot.info.buffTimeStr = buffTimeStr
 		show(buffSlot.info.buffTimerWdg)
 	else
@@ -99,6 +97,7 @@ end
 local function PlayerRemoveBuff(aBuffID, aGroupBuffBar)
 	local buffSlot, removeIndex  = FindBufSlot(aGroupBuffBar, aBuffID)
 	if buffSlot then
+		buffSlot.buffID = nil
 		if aGroupBuffBar.fixedInsidePanel then	
 			hide(buffSlot.buffWdg)
 			stopLoopBlink(buffSlot.info.buffHighlight)
@@ -133,7 +132,7 @@ local function UpdateTick(aGroupBuffBar)
 			if remainingMs > 0 then
 				local buffTimeStr = getTimeString(remainingMs)
 				if buffSlot.info.buffTimeStr ~= buffTimeStr then 
-					setText(buffSlot.info.buffTimerWdg, buffTimeStr, "ColorWhite", "center", GetTextSizeByBuffSize(buffSlot.info.buffSize), 1, 1)
+					buffSlot.info.buffTimerWdg:SetVal(g_tagTextValue, buffTimeStr)
 					buffSlot.info.buffTimeStr = buffTimeStr
 				end
 			else
@@ -145,16 +144,10 @@ local function UpdateTick(aGroupBuffBar)
 end
 
 local function SpellChanged(aSpellInfo, aGroupBuffBar, anInfoObj)
-	local spellCooldown = spellLib.GetCooldown(aSpellInfo.spellID)
-	if spellCooldown then
-		aSpellInfo.remainingMs = spellCooldown.remainingMs
-	else
-		aSpellInfo.remainingMs = 0
-	end
 	aSpellInfo.stackCount = 0
 	aSpellInfo.texture = getSpellTextureFromCache(aSpellInfo.spellID)
 	aSpellInfo.id = aSpellInfo.objectId
-	
+
 	local buffSlot = PlayerAddBuff(aSpellInfo, aGroupBuffBar, anInfoObj)
 	if buffSlot then
 		if aSpellInfo.remainingMs > 0 then
@@ -163,6 +156,11 @@ local function SpellChanged(aSpellInfo, aGroupBuffBar, anInfoObj)
 			setFade(buffSlot.info.buffIcon, 1)
 		end
 	end
+end
+
+
+local function SpellRemoved(anID, aGroupBuffBar)
+	PlayerRemoveBuff(anID, aGroupBuffBar)
 end
 
 function DestroyGroupBuffPanels()
@@ -193,6 +191,7 @@ function CreateGroupBuffPanel(aForm, aSettings, anIsAboveHead, aPosInPlateIndex)
 	groupBuffPanel.listenerChangeImportantBuff = PlayerAddBuff
 	groupBuffPanel.listenerUpdateTick = UpdateTick
 	groupBuffPanel.listenerSpellChanged = SpellChanged
+	groupBuffPanel.listenerSpellRemoved = SpellRemoved
 	groupBuffPanel.buffList = {}
 	groupBuffPanel.fixedInsidePanel = aSettings.fixedInsidePanel
 	groupBuffPanel.usedBuffSlotCnt = 0
@@ -238,7 +237,7 @@ function CreateGroupBuffPanel(aForm, aSettings, anIsAboveHead, aPosInPlateIndex)
 		end
 				
 		setTemplateWidget(m_template)	
-		for j=1, num do
+		for j=1, w*h do
 			local x = ((j-1)%w)*size
 			local y = math.floor((j-1)/w)*size
 			
@@ -260,6 +259,9 @@ function CreateGroupBuffPanel(aForm, aSettings, anIsAboveHead, aPosInPlateIndex)
 			
 			updatePlacementPlain(currBuff.info.buffTimerWdg, nil, nil, 1, 0, currBuff.info.buffSize, round(currBuff.info.buffSize/2.4)+1)
 			updatePlacementPlain(currBuff.info.buffStackCntWdg, WIDGET_ALIGN_LOW, WIDGET_ALIGN_HIGH, 1, 1, currBuff.info.buffSize, GetTextSizeByBuffSize(currBuff.info.buffSize)+1)
+			
+			setTextViewText(currBuff.info.buffStackCntWdg, g_tagTextValue, nil, "ColorWhite", "right", GetTextSizeByBuffSize(currBuff.info.buffSize))
+			setTextViewText(currBuff.info.buffTimerWdg, g_tagTextValue, nil, "ColorWhite", "center", GetTextSizeByBuffSize(currBuff.info.buffSize), 1, 1)
 						
 			groupBuffPanel.buffList[j] = currBuff
 		end

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<UITexture>
+	<mipSW>-1</mipSW>
+	<mipsNumber>1</mipsNumber>
+	<generateMipChain>false</generateMipChain>
+	<type>DXT5</type>
+	<width>64</width>
+	<height>64</height>
+	<realWidth>64</realWidth>
+	<realHeight>64</realHeight>
+	<disableLODControl>false</disableLODControl>
+	<alphaTex>true</alphaTex>
+	<binaryFileSize>186</binaryFileSize>
+	<binaryFile href="Highlighted4.(UITexture).bin" />
+	<binaryFileSize2>0</binaryFileSize2>
+	<binaryFile2 href="" />
+	<sourceFile href="Highlighted4.tga" />
+	<sourceFileCRC>-1443120527</sourceFileCRC>
+	<wrap>false</wrap>
+	<atlasPart>true</atlasPart>
+	<pool>UNDEFINED</pool>
+</UITexture>

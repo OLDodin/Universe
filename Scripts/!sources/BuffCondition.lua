@@ -2,12 +2,12 @@ Global( "BuffCondition", {} )
 
 
 
-function BuffCondition:Init(aSettings)
+function BuffCondition:Init(aSettings, aCustomBuffs)
 	self.settings = aSettings
 	self.showShopAndFood = false
 	--для работы подсветки для автообнаруженных бафов (при дублировании их в списке бафов)
 	self.needCheckAllBuffsByList = false
-	for _, element in pairs(self.settings.customBuffs) do
+	for _, element in pairs(aCustomBuffs) do
 		if element.name and element.useHighlightBuff then
 			self.needCheckAllBuffsByList = true
 			break
@@ -15,7 +15,7 @@ function BuffCondition:Init(aSettings)
 	end
 	
 	self.avlCustomTree  = GetAVLWStrTree()
-	for _, element in pairs(self.settings.customBuffs) do
+	for _, element in pairs(aCustomBuffs) do
 		if element.name and not element.name:IsEmpty() then
 			self.avlCustomTree:add(element)
 		end
@@ -189,23 +189,23 @@ local m_aboveHeadCondition = nil
 function InitBuffConditionMgr()
 	local profile = GetCurrentProfile()
 	m_raidCondition = copyTable(BuffCondition)
-	m_raidCondition:Init(profile.raidFormSettings.raidBuffs)
+	m_raidCondition:Init(profile.raidFormSettings.raidBuffs, profile.raidFormSettings.raidBuffs.customBuffs)
 	m_raidCondition:InitShopShow()
 	m_targeterCondition = copyTable(BuffCondition)
-	m_targeterCondition:Init(profile.targeterFormSettings.raidBuffs)
+	m_targeterCondition:Init(profile.targeterFormSettings.raidBuffs, profile.targeterFormSettings.raidBuffs.customBuffs)
 	
 	
 	for i, buffPlateSettings in ipairs(profile.buffFormSettings.buffGroups) do
-		buffPlateSettings.customBuffs = {}
+		local customBuffs = {}
 		if buffPlateSettings.buffs then
 			for ind, settingsBuffInfo in pairs(buffPlateSettings.buffs) do
 				if settingsBuffInfo.isBuff then
 					settingsBuffInfo.ind = ind
-					table.insert(buffPlateSettings.customBuffs, settingsBuffInfo)
+					table.insert(customBuffs, settingsBuffInfo)
 				end
 			end
 			m_buffPlateConditionArr[i] = copyTable(BuffCondition)
-			m_buffPlateConditionArr[i]:Init(buffPlateSettings)
+			m_buffPlateConditionArr[i]:Init(buffPlateSettings, customBuffs)
 			
 			if buffPlateSettings.aboveHeadButton then
 				m_aboveHeadCondition = m_buffPlateConditionArr[i]

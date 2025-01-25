@@ -10,5 +10,6 @@
 			<Align>WIDGET_ALIGN_HIGH</Align>
 		</Y>
 	</Placement>
+	<FormatFileRef href="NameTarget.txt" />
 	<TransparentInput>true</TransparentInput>
 </WidgetTextView>

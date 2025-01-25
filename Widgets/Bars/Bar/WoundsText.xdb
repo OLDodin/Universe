@@ -14,5 +14,6 @@
 			<HighPos>0</HighPos>
 		</Y>
 	</Placement>
+	<FormatFileRef href="WoundsText.txt" />
 	<TransparentInput>true</TransparentInput>
 </WidgetTextView>

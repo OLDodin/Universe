@@ -54,6 +54,11 @@ function CreateProgressCastPanel(aParentPanel, aY)
 	updatePlacementPlain(progressBar.nameTargetWdg, nil, nil, 0, 2, panelWidth, 16*progressBar.fontScale)
 	updatePlacementPlain(progressBar.nameProgressWdg, nil, nil, panelHeight, 0, panelWidth-panelHeight, 20*progressBar.fontScale)
 		
+	setTextViewText(progressBar.nameMobWdg, g_tagTextValue, nil, nil, nil, 14*progressBar.fontScale)
+	setTextViewText(progressBar.nameTargetWdg, g_tagTextValue, nil, nil, nil, 14*progressBar.fontScale)
+	setTextViewText(progressBar.nameProgressWdg, g_tagTextValue, nil, nil, nil, 18*progressBar.fontScale)
+	
+	
 	return progressBar
 end
 
@@ -82,14 +87,14 @@ function SetBaseInfoProgressCastPanel(aBar, aInfo, aType)
 	local toPlacement = copyTable(fromPlacement)
 	toPlacement.sizeX = 0
 	
-	setText(aBar.nameProgressWdg, aInfo.buffName or aInfo.name, "ColorWhite", "left", 18*aBar.fontScale)
+	aBar.nameProgressWdg:SetVal(g_tagTextValue, aInfo.buffName or aInfo.name)
 	if object.IsExist(aBar.playerID) then
-		setText(aBar.nameMobWdg, object.GetName(aBar.playerID), "ColorWhite", "left", 14*aBar.fontScale)
+		aBar.nameMobWdg:SetVal(g_tagTextValue, object.GetName(aBar.playerID))
 	else
-		setText(aBar.nameMobWdg, "", "ColorWhite", "left", 14*aBar.fontScale)
+		aBar.nameMobWdg:SetVal(g_tagTextValue, "")
 	end
 
-	setText(aBar.nameTargetWdg, "", "LogColorOrange", "right", 14*aBar.fontScale)
+	aBar.nameTargetWdg:SetVal(g_tagTextValue, "")
 	
 	if buffInfo then
 		local buffCreatorID = buffInfo.producer and buffInfo.producer.casterId or nil
@@ -106,7 +111,7 @@ function SetBaseInfoProgressCastPanel(aBar, aInfo, aType)
 		aBar.barWdg:PlayResizeEffect( fromPlacement, toPlacement, buffInfo.remainingMs, EA_MONOTONOUS_INCREASE )
 		setBackgroundColor(aBar.barWdg, { r = 0.8; g = 0.8; b = 0; a = 0.8 }) 
 		if buffCreatorID then 
-			setText(aBar.nameTargetWdg, object.GetName(buffCreatorID), "LogColorOrange", "right", 14*aBar.fontScale)
+			aBar.nameTargetWdg:SetVal(g_tagTextValue, object.GetName(buffCreatorID))
 		end
 	end
 	
@@ -127,7 +132,7 @@ function SetBaseInfoProgressCastPanel(aBar, aInfo, aType)
 			local targetID = unit.GetTarget(aBar.playerID)
 			local myAvatarTargetID = avatar.GetTarget()
 			if myAvatarTargetID and targetID and myAvatarTargetID == aBar.playerID then
-				setText(aBar.nameTargetWdg, object.GetName(targetID), "LogColorOrange", "right", 14*aBar.fontScale)
+				aBar.nameTargetWdg:SetVal(g_tagTextValue, object.GetName(targetID))
 			end
 		end
 	end

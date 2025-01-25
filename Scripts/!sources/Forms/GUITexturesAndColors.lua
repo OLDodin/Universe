@@ -9,6 +9,7 @@ Global("g_selectionColor", { r = 1; g = 0; b = 0.6; a = 1 })
 Global("g_farColor", { r = 0.3; g = 0.3; b = 0.3; a = 0.7 })
 Global("g_shieldContainerNormalColor", { r = 0, g = 0, b = 0, a = 1 })
 Global("g_shieldContainerCleanableColor", { r = 0.39, g = 0.19, b = 0, a = 1 })
+Global("g_invulnerableColor", { r = 0.06, g = 1, b = 0.76, a = 1 })
 
 Global("FRIEND_PANEL", 1)
 Global("NEITRAL_PANEL", 2)
@@ -27,6 +28,15 @@ function InitClassIconsTexture()
 	g_texIcons["BARD"] = common.GetAddonRelatedTextureGroup("common"):GetTexture("BardIcon")
 	g_texIcons["WARLOCK"] = common.GetAddonRelatedTextureGroup("common"):GetTexture("WarlockIcon")
 	g_texIcons["UNKNOWN"] = common.GetAddonRelatedTextureGroup("common"):GetTexture("UnknownIcon")
+	
+	g_texIcons[UNIT_QUALITY_COMMON] = g_texIcons["UNKNOWN"]
+	g_texIcons[UNIT_QUALITY_ELITE] = common.GetAddonRelatedTextureGroup("common"):GetTexture("EliteIcon")
+	g_texIcons[UNIT_QUALITY_FLAVOR_ELITE] = common.GetAddonRelatedTextureGroup("common"):GetTexture("FlavorEliteIcon")
+	g_texIcons[UNIT_QUALITY_MINI_BOSS] = common.GetAddonRelatedTextureGroup("common"):GetTexture("MiniBossIcon")
+	g_texIcons[UNIT_QUALITY_BOSS] = common.GetAddonRelatedTextureGroup("common"):GetTexture("BossIcon")
+	g_texIcons[UNIT_QUALITY_RAID_BOSS] = common.GetAddonRelatedTextureGroup("common"):GetTexture("RaidBossIcon")
+	g_texIcons[UNIT_QUALITY_RAID_ELITE] = common.GetAddonRelatedTextureGroup("common"):GetTexture("RaidEliteIcon")
+	g_texIcons[UNIT_QUALITY_CRITTER] = g_texIcons["UNKNOWN"]
 end
 
 function InitButtonTextures()

@@ -2,6 +2,6 @@
 <WidgetTextView>
 	<Name>DotStackText</Name>
 	<Priority>3</Priority>
-
+	<FormatFileRef href="BuffText.txt" />
 	<TransparentInput>true</TransparentInput>
 </WidgetTextView>

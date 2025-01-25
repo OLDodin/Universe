@@ -70,16 +70,16 @@
       <resource href="useCastSubSystem.txt"/>
     </Item>
     <Item>
-      <name>raidBuffsButton</name>
-      <resource href="raidBuffsButton.txt"/>
-    </Item>
-    <Item>
       <name>panelWidthText</name>
       <resource href="panelWidthText.txt"/>
     </Item>
     <Item>
       <name>panelHeightText</name>
       <resource href="panelHeightText.txt"/>
+    </Item>
+    <Item>
+      <name>raidBuffsButton</name>
+      <resource href="raidBuffsButton.txt"/>
     </Item>
     <Item>
       <name>raidWidthText</name>
@@ -156,10 +156,6 @@
     <Item>
       <name>flipBuffsButton</name>
       <resource href="flipBuffsButton.txt"/>
-    </Item>
-    <Item>
-      <name>isEnemyButton</name>
-      <resource href="isEnemyButton.txt"/>
     </Item>
     <Item>
       <name>isSpell</name>
@@ -292,6 +288,14 @@
     <Item>
       <name>FRIEND_PETS_TARGETS</name>
       <resource href="FRIEND_PETS_TARGETS.txt"/>
+    </Item>
+    <Item>
+      <name>NOT_FRIENDS_TARGETS</name>
+      <resource href="NOT_FRIENDS_TARGETS.txt"/>
+    </Item>
+    <Item>
+      <name>NOT_FRIENDS_PLAYERS_TARGETS</name>
+      <resource href="NOT_FRIENDS_PLAYERS_TARGETS.txt"/>
     </Item>
     <Item>
       <name>MY_SETTINGS_TARGETS</name>
@@ -738,6 +742,30 @@
       <resource href="configGroupBuffsBuff.txt"/>
     </Item>
     <Item>
+      <name>showImportantCasts</name>
+      <resource href="showImportantCasts.txt"/>
+    </Item>
+    <Item>
+      <name>showImportantBuffs</name>
+      <resource href="showImportantBuffs.txt"/>
+    </Item>
+    <Item>
+      <name>selectablePanel</name>
+      <resource href="selectablePanel.txt"/>
+    </Item>
+    <Item>
+      <name>progressCastFixButton</name>
+      <resource href="fixedPanel.txt"/>
+    </Item>
+    <Item>
+      <name>castSettingsFormHeader</name>
+      <resource href="castSettingsFormHeader.txt"/>
+    </Item>
+    <Item>
+      <name>showOnlyMyTarget</name>
+      <resource href="showOnlyMyTarget.txt"/>
+    </Item>
+    <Item>
       <name>loadedMessage</name>
       <resource href="loadedMessage.txt"/>
     </Item>
@@ -812,30 +840,6 @@
     <Item>
       <name>blinkHighlightCheckBox</name>
       <resource href="blinkHighlightCheckBox.txt"/>
-    </Item>
-    <Item>
-      <name>showImportantCasts</name>
-      <resource href="showImportantCasts.txt"/>
-    </Item>
-    <Item>
-      <name>showImportantBuffs</name>
-      <resource href="showImportantBuffs.txt"/>
-    </Item>
-    <Item>
-      <name>selectablePanel</name>
-      <resource href="selectablePanel.txt"/>
-    </Item>
-    <Item>
-      <name>progressCastFixButton</name>
-      <resource href="fixedPanel.txt"/>
-    </Item>
-    <Item>
-      <name>castSettingsFormHeader</name>
-      <resource href="castSettingsFormHeader.txt"/>
-    </Item>
-    <Item>
-      <name>showOnlyMyTarget</name>
-      <resource href="showOnlyMyTarget.txt"/>
     </Item>
     <Item>
       <name>resetPanelBuffPosButton</name>
@@ -1358,12 +1362,84 @@
       <resource href="selectionColorHeader.txt"/>
     </Item>
 	<Item>
+      <name>invulnerableColorHeader</name>
+      <resource href="invulnerableColorHeader.txt"/>
+    </Item>
+	<Item>
       <name>farColorHeader</name>
       <resource href="farColorHeader.txt"/>
     </Item>
 	<Item>
       <name>showProcentShieldButton</name>
       <resource href="showProcentShieldButton.txt"/>
+    </Item>
+	<Item>
+      <name>defaultBuff1</name>
+      <resource href="defaultBuff1.txt"/>
+    </Item>
+	<Item>
+      <name>defaultBuff2</name>
+      <resource href="defaultBuff2.txt"/>
+    </Item>
+	<Item>
+      <name>defaultBuff3</name>
+      <resource href="defaultBuff3.txt"/>
+    </Item>
+	<Item>
+      <name>defaultBuff4</name>
+      <resource href="defaultBuff4.txt"/>
+    </Item>
+	<Item>
+      <name>defaultBuff5</name>
+      <resource href="defaultBuff5.txt"/>
+    </Item>
+	<Item>
+      <name>defaultBuff6</name>
+      <resource href="defaultBuff6.txt"/>
+    </Item>
+	<Item>
+      <name>defaultBuff7</name>
+      <resource href="defaultBuff7.txt"/>
+    </Item>
+	<Item>
+      <name>defaultBuff8</name>
+      <resource href="defaultBuff8.txt"/>
+    </Item>
+	<Item>
+      <name>defaultBuff9</name>
+      <resource href="defaultBuff9.txt"/>
+    </Item>
+	<Item>
+      <name>defaultBuff10</name>
+      <resource href="defaultBuff10.txt"/>
+    </Item>
+	<Item>
+      <name>defaultBuff11</name>
+      <resource href="defaultBuff11.txt"/>
+    </Item>
+	<Item>
+      <name>defaultBuff12</name>
+      <resource href="defaultBuff12.txt"/>
+    </Item>
+	<Item>
+      <name>defaultBuff13</name>
+      <resource href="defaultBuff13.txt"/>
+    </Item>
+	<Item>
+      <name>defaultBuff14</name>
+      <resource href="defaultBuff14.txt"/>
+    </Item>
+	<Item>
+      <name>defaultBuff15</name>
+      <resource href="defaultBuff15.txt"/>
+    </Item>
+	<Item>
+      <name>defaultBuff16</name>
+      <resource href="defaultBuff16.txt"/>
+    </Item>
+	<Item>
+      <name>ENEMY_WITHOUT_PETS_TARGETS</name>
+      <resource href="ENEMY_WITHOUT_PETS_TARGETS.txt"/>
     </Item>
   </items>
 </UIRelatedTexts>

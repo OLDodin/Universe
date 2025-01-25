@@ -56,6 +56,10 @@ function CreateTargeterSettingsForm()
 	local group11 = createWidget(form, "group11", "Panel")
 	align(group11, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)
 	resize(group11, 315, 151)
+	
+	local group12 = createWidget(form, "group12", "Panel")
+	align(group12, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)
+	resize(group12, 315, 151)
 
 	
 	setLocaleText(createWidget(form, "targeterSettingsFormHeader", "TextView",  WIDGET_ALIGN_CENTER, nil, 200, 20, nil, 16))
@@ -102,6 +106,7 @@ function CreateTargeterSettingsForm()
 	settingsContainer:PushBack(group9)
 	settingsContainer:PushBack(group10)
 	settingsContainer:PushBack(group11)
+	settingsContainer:PushBack(group12)
 
 	
 	setLocaleText(createWidget(group5, "raidBuffsButton", "TextView", nil, nil, 200, 25, 75, 3))
@@ -140,6 +145,7 @@ function SaveTargeterFormSettings(aForm)
 	local group9 = settingsContainer:At(5)
 	local group10 = settingsContainer:At(6)
 	local group11 = settingsContainer:At(7)
+	local group12 = settingsContainer:At(8)
 	
 	m_currentFormSettings.classColorModeButton = getCheckBoxState(getChild(group1, "classColorModeButton"))
 	m_currentFormSettings.showServerNameButton = getCheckBoxState(getChild(group1, "showServerNameButton"))
@@ -192,6 +198,7 @@ function SaveTargeterFormSettings(aForm)
 	m_currentFormSettings.neitralColor = getChild(getChild(group9, "colorSettingsForm"), "colorPreview"):GetBackgroundColor()
 	m_currentFormSettings.enemyColor = getChild(getChild(group10, "colorSettingsForm"), "colorPreview"):GetBackgroundColor()
 	m_currentFormSettings.selectionColor = getChild(getChild(group11, "colorSettingsForm"), "colorPreview"):GetBackgroundColor()
+	m_currentFormSettings.invulnerableColor = getChild(getChild(group12, "colorSettingsForm"), "colorPreview"):GetBackgroundColor()
 
 	return m_currentFormSettings
 end
@@ -209,6 +216,7 @@ function LoadTargeterFormSettings(aForm)
 	local group9 = settingsContainer:At(5)
 	local group10 = settingsContainer:At(6)
 	local group11 = settingsContainer:At(7)
+	local group12 = settingsContainer:At(8)
 	
 	local profile = GetCurrentProfile()
 	m_currentFormSettings = deepCopyTable(profile.targeterFormSettings)
@@ -263,11 +271,13 @@ function LoadTargeterFormSettings(aForm)
 	destroy(getChild(group9, "colorSettingsForm"))
 	destroy(getChild(group10, "colorSettingsForm"))
 	destroy(getChild(group11, "colorSettingsForm"))
+	destroy(getChild(group12, "colorSettingsForm"))
 	
 	CreateSimpleColorSettingsForm(group8, m_currentFormSettings.friendColor, "friendColorHeader")
 	CreateSimpleColorSettingsForm(group9, m_currentFormSettings.neitralColor, "neitralColorHeader")
 	CreateSimpleColorSettingsForm(group10, m_currentFormSettings.enemyColor, "enemyColorHeader")
 	CreateSimpleColorSettingsForm(group11, m_currentFormSettings.selectionColor, "selectionColorHeader")
+	CreateSimpleColorSettingsForm(group12, m_currentFormSettings.invulnerableColor, "invulnerableColorHeader")
 end
 
 function AddTargetBuffToSroller(aForm)
