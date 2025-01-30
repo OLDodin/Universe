@@ -10,12 +10,12 @@
 	<realHeight>22</realHeight>
 	<disableLODControl>false</disableLODControl>
 	<alphaTex>true</alphaTex>
-	<binaryFileSize>460</binaryFileSize>
+	<binaryFileSize>458</binaryFileSize>
 	<binaryFile href="RaidElite.(UITexture).bin" />
 	<binaryFileSize2>0</binaryFileSize2>
 	<binaryFile2 href="" />
 	<sourceFile href="RaidElite.tga" />
-	<sourceFileCRC>1587527789</sourceFileCRC>
+	<sourceFileCRC>-1566919025</sourceFileCRC>
 	<wrap>false</wrap>
 	<atlasPart>true</atlasPart>
 	<pool>UNDEFINED</pool>

@@ -10,12 +10,12 @@
 	<realHeight>22</realHeight>
 	<disableLODControl>false</disableLODControl>
 	<alphaTex>true</alphaTex>
-	<binaryFileSize>465</binaryFileSize>
+	<binaryFileSize>464</binaryFileSize>
 	<binaryFile href="Elite.(UITexture).bin" />
 	<binaryFileSize2>0</binaryFileSize2>
 	<binaryFile2 href="" />
 	<sourceFile href="Elite.tga" />
-	<sourceFileCRC>26139604</sourceFileCRC>
+	<sourceFileCRC>-46738317</sourceFileCRC>
 	<wrap>false</wrap>
 	<atlasPart>true</atlasPart>
 	<pool>UNDEFINED</pool>

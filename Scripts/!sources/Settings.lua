@@ -165,6 +165,8 @@ function GetDefaultSettings()
 	raidFormSettings.clearColor = g_needClearColor
 	raidFormSettings.selectionColor = g_selectionColor
 	raidFormSettings.farColor = g_farColor	
+	raidFormSettings.invulnerableColor = table.sclone(g_invulnerableColor)
+	raidFormSettings.invulnerableColor.a = 0
 	raidFormSettings.raidBuffs.customBuffs = {}
 	
 	local locale = getLocale()
@@ -220,8 +222,10 @@ function GetDefaultSettings()
 	targeterFormSettings.enemyColor = g_relationColors[ENEMY_PANEL]
 	targeterFormSettings.neitralColor = g_relationColors[NEITRAL_PANEL]
 	targeterFormSettings.selectionColor = g_selectionColor
+	targeterFormSettings.invulnerableColor = table.sclone(g_invulnerableColor)
 	targeterFormSettings.raidBuffs.customBuffs = {}
 	targeterFormSettings.myTargets = {}
+	
 
 	--"Аспект Защиты"
 	table.insert(targeterFormSettings.raidBuffs.customBuffs, GetTargeterBuffSettings(locale["defaultBuff1"]))
