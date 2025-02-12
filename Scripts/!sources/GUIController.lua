@@ -12,6 +12,7 @@ local m_configGroupBuffForm = nil
 local m_progressCastSettingsForm = nil
 local m_helpForm = nil
 local m_playerShortInfoForm = nil
+local m_targeterInfoForm = nil
 local m_raidPanel = nil
 local m_progressActionPanel = nil
 local m_progressBuffPanel = nil
@@ -71,25 +72,7 @@ function DeleteProfile(aWdg)
 	LoadForms()
 	ReloadAll()
 end
---[[
-local function SaveAllByIndex(anIndex, aList)
-	if not aList then 
-		aList = GetAllProfiles()
-	end
 
-	aList[anIndex].mainFormSettings = SaveMainFormSettings(m_mainSettingForm)
-	aList[anIndex].raidFormSettings = SaveRaidFormSettings(m_raidSettingsForm)
-	aList[anIndex].targeterFormSettings = SaveTargeterFormSettings(m_targeterSettingsForm)
-	aList[anIndex].buffFormSettings = SaveConfigGroupBuffsForm(m_configGroupBuffForm, true)
-	aList[anIndex].bindFormSettings = SaveBindFormSettings(m_bindSettingsForm)
-	aList[anIndex].castFormSettings = SaveProgressCastFormSettings(m_progressCastSettingsForm)
-	aList[anIndex].version = GetSettingsVersion()
-	--save profiles names
-	SaveProfilesFormSettings(m_profilesForm, aList)
-		
-	SaveAllSettings(aList)
-end
-]]
 function OnTalentsChanged()
 	LoadLastUsedSetting()
 	LoadForms()
@@ -899,6 +882,18 @@ local function OnPlayerBarPointing(aParams)
 	end
 end
 
+function OnDropDownBtnPointing(aParams) 
+	if aParams.sender == "targeterModeBtn" then
+		if aParams.active and m_currTargetType == TARGETS_DISABLE then
+			local targeterPlace = m_targetPanel:GetPlacementPlain()
+			move(m_targeterInfoForm, targeterPlace.posX+30, targeterPlace.posY+30)
+			show(m_targeterInfoForm)
+		else
+			hide(m_targeterInfoForm)
+		end
+	end
+end
+
 local function TargetLockChanged(aParams)
 	TargetLockBtn(m_targetPanel)
 end
@@ -1043,13 +1038,11 @@ end
 local function ResizeTargetPanel(aGroupsCnt, aMaxPeopleCnt)
 	local profile = GetCurrentProfile()
 	ResizePanelForm(aGroupsCnt, aMaxPeopleCnt, profile.targeterFormSettings, m_targetPanel, m_lastTargetPanelSize)
-	ApplyTargetSettingsToGUI(m_targetPanel)
 end
 
 local function ResizeRaidPanel(aGroupsCnt, aMaxPeopleCnt)
 	local profile = GetCurrentProfile()
 	ResizePanelForm(aGroupsCnt, aMaxPeopleCnt, profile.raidFormSettings, m_raidPanel, m_lastRaidPanelSize)
-	ApplyRaidSettingsToGUI(m_raidPanel)
 end
 
 local function ShowMoveIfNeeded()
@@ -1662,8 +1655,8 @@ local function TargetWorkSwitch()
 	if m_currTargetType ~= TARGETS_DISABLE then
 		m_lastTargetType = m_currTargetType
 		m_currTargetType = TARGETS_DISABLE
-		ResizeTargetPanel(1, 0)
 		SwitchTargetsBtn(TARGETS_DISABLE)
+		ResizeTargetPanel(1, 0)
 		ClearTargetPanels()
 		
 		HideTargetDropDownSelectPanel()
@@ -1676,6 +1669,7 @@ local function TargetWorkSwitch()
 		
 		UpdateLastTargetWasActive(true)
 	end
+	ApplyTargetSettingsToGUI(m_targetPanel)
 	SaveTargeterChanges()
 end
 
@@ -2332,6 +2326,7 @@ local function GUIInit()
 	m_progressCastSettingsForm = CreateProgressCastSettingsForm()
 	
 	m_playerShortInfoForm = CreatePlayerShortInfoForm()
+	m_targeterInfoForm = CreateTargeterInfoForm()
 
 	m_raidPanel = CreateRaidPanel()
 	m_targetPanel = CreateTargeterPanel()
@@ -2450,6 +2445,7 @@ function InitRaidSubSystem()
 	
 	DnD.ShowWdg(m_raidPanel)
 	
+	ApplyRaidSettingsToGUI(m_raidPanel)
 	RaidChanged(nil, true)
 	
 	ApplyUnloadRaidSettings()
@@ -2792,6 +2788,7 @@ function GUIControllerInit()
 	common.RegisterReactionHandler(OnLeftClick, "OnProgressBarLeftClick")
 	common.RegisterReactionHandler(OnRightClick, "OnProgressBarRightClick" )
 	common.RegisterReactionHandler(OnPlayerBarPointing, "OnPlayerBarPointing" )
+	common.RegisterReactionHandler(OnDropDownBtnPointing, "DropDownBtnOnPointing")
 	common.RegisterReactionHandler(MoveModeClick, "addClick")
 	common.RegisterReactionHandler(TargetLockChanged, "OnTargetLockChanged")
 	common.RegisterReactionHandler(function () RaidLockBtn(m_raidPanel) end, "OnRaidLockChanged")

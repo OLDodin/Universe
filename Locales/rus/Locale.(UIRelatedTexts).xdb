@@ -1445,5 +1445,9 @@
       <name>ENEMY_WITHOUT_PETS_TARGETS</name>
       <resource href="ENEMY_WITHOUT_PETS_TARGETS.txt"/>
     </Item>
+	<Item>
+      <name>targeterInfoTxt</name>
+      <resource href="targeterInfoTxt.txt"/>
+    </Item>
   </items>
 </UIRelatedTexts>

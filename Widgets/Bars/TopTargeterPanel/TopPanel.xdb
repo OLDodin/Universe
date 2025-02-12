@@ -20,6 +20,5 @@
 		</Y>
 	</Placement>
 	<IgnoreDblClick>true</IgnoreDblClick>
-	
 	<PickChildrenOnly>false</PickChildrenOnly>
 </WidgetPanel>

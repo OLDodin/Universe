@@ -921,6 +921,7 @@ local m_modeBtn = nil
 local m_targetLockBtn = nil
 local m_targetModeName = nil
 local m_modeSelectPanel = nil
+local m_currTargetInd = nil
 
 Global("ALL_TARGETS", 0)
 Global("ENEMY_TARGETS", 1)
@@ -966,25 +967,30 @@ end
 
 function SwitchTargetsBtn(aNewTargetInd)
 	setText(m_targetModeName, m_targetSwitchArr[aNewTargetInd], "Neutral", "left", 11)
+	m_currTargetInd = aNewTargetInd
+end
+
+local function ApplyTargetSettingsToGUIInternal(aTopPanelForm, anActiveNum)
+	m_targetLockBtn:SetVariant(anActiveNum)
+	if m_currTargetInd == TARGETS_DISABLE then
+		m_modeBtn:SetVariant(1)
+	else
+		m_modeBtn:SetVariant(anActiveNum)
+	end
+	
+	local wtTopPanel = getChild(aTopPanelForm, "TopTargeterPanel")
+	DnD.Enable(wtTopPanel, anActiveNum==0)
+	HideTargetDropDownSelectPanel()
 end
 
 function TargetLockBtn(aTopPanelForm)
 	local activeNum = m_targetLockBtn:GetVariant() == 1 and 0 or 1
-	m_targetLockBtn:SetVariant(activeNum)
-	m_modeBtn:SetVariant(activeNum)
-	
-	local wtTopPanel = getChild(aTopPanelForm, "TopTargeterPanel")
-	DnD.Enable(wtTopPanel, activeNum==0)
-	HideTargetDropDownSelectPanel()
+	ApplyTargetSettingsToGUIInternal(aTopPanelForm, activeNum)
 end
 
 function ApplyTargetSettingsToGUI(aTopPanelForm)
 	local activeNum = m_targetLockBtn:GetVariant() == 1 and 1 or 0
-	m_targetLockBtn:SetVariant(activeNum)
-	m_modeBtn:SetVariant(activeNum)
-	
-	local wtTopPanel = getChild(aTopPanelForm, "TopTargeterPanel")
-	DnD.Enable(wtTopPanel, activeNum==0)
+	ApplyTargetSettingsToGUIInternal(aTopPanelForm, activeNum)
 end
 
 function CreateTargeterPanel()
@@ -1001,6 +1007,7 @@ function CreateTargeterPanel()
 	move(modePanel, 25, 3)
 	
 	m_modeBtn = getChild(getChild(modePanel, "DropDownHeaderPanel"), "GetModeBtn")
+	m_modeBtn:SetName("targeterModeBtn")
 	
 	local textArr = {}
 	for i = ALL_TARGETS, MY_SETTINGS_TARGETS do
@@ -1018,4 +1025,17 @@ function CreateTargeterPanel()
 	DnD.HideWdg(targeterPanel)
 	
 	return targeterPanel
+end
+
+function CreateTargeterInfoForm()
+	local form=createWidget(mainForm, "targeterInfoForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 250, 70, 0, 0)
+	priority(form, 508)
+	hide(form)
+
+	createWidget(form, "closeShortInfo", "Cross",  WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 15, 15, 6, 6)
+	local hintWdg = createWidget(form, "targeterInfoTxt", "TextView",  WIDGET_ALIGN_BOTH, WIDGET_ALIGN_LOW, nil, 50, 15, 10)
+	hintWdg:SetMultiline(true)
+	setLocaleText(hintWdg)
+	
+	return form
 end
