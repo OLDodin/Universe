@@ -242,7 +242,7 @@ function PlayerTargetsHighlightChanged(anInfo, aPlayerBar)
 	end
 end
 
-local function FindBuffSlot(aPlayerBar, aBuffID, aBuffID2, aCnt, anArray)
+local function FindBuffSlot(aPlayerBar, aBuffID, aCnt, anArray)
 	for i=1, aCnt do
 		if anArray[i].buffID == aBuffID then
 			return anArray[i], i
@@ -251,8 +251,19 @@ local function FindBuffSlot(aPlayerBar, aBuffID, aBuffID2, aCnt, anArray)
 	return nil, nil
 end
 
+local function HasCleanableBuff(aPlayerBar)
+	for _, buffInfo in pairs(aPlayerBar.buffsQueue) do
+		if not buffInfo.isPositive and buffInfo.cleanableBuff then
+			return true
+		end
+	end
+	return false
+end
+
 local function PlayerRemoveBuff(aBuffID, aPlayerBar, aCnt, anArray)
-	local buffSlot, removeIndex = FindBuffSlot(aPlayerBar, aBuffID, nil, aCnt, anArray)
+	aPlayerBar.buffsQueue[aBuffID] = nil
+	
+	local buffSlot, removeIndex = FindBuffSlot(aPlayerBar, aBuffID, aCnt, anArray)
 	if buffSlot then
 		hide(buffSlot.buffWdg)
 		stopLoopBlink(buffSlot.buffHighlight)
@@ -270,13 +281,32 @@ local function PlayerRemoveBuff(aBuffID, aPlayerBar, aCnt, anArray)
 	return false, nil
 end
 
+local function TryShowBuffFromQueue(aPlayerBar, aPositive)
+	local listener = nil
+	for _, buffInfo in pairs(aPlayerBar.buffsQueue) do
+		if not buffInfo.isShowedInGuiSlot then
+			if aPositive and buffInfo.isPositive then
+				listener = aPlayerBar.listenerChangeBuff
+			elseif not aPositive and not buffInfo.isPositive then	
+				listener = aPlayerBar.listenerChangeBuffNegative
+			end
+			if listener then
+				if buffInfo.remainingMs > 0 then
+					buffInfo.remainingMs = math.max(buffInfo.buffFinishedTime_h - g_cachedTimestamp, 0)
+				end
+				listener(buffInfo, aPlayerBar, buffInfo.additionalInfo)
+				return
+			end
+		end
+	end
+end
+
 local function PlayerRemoveBuffPositive(aBuffID, aPlayerBar)
 	local wasRemoved, buffSlot = PlayerRemoveBuff(aBuffID, aPlayerBar, aPlayerBar.usedBuffSlotCnt, aPlayerBar.buffSlots)
 	if wasRemoved then
-		aPlayerBar.usedBuffSlotCnt = aPlayerBar.usedBuffSlotCnt - 1
-		if aPlayerBar.usedBuffSlotCnt < 0 then
-			aPlayerBar.usedBuffSlotCnt = 0
-		end
+		aPlayerBar.usedBuffSlotCnt = math.max(aPlayerBar.usedBuffSlotCnt - 1, 0)
+		
+		TryShowBuffFromQueue(aPlayerBar, true)
 	end
 end
 
@@ -284,15 +314,14 @@ local function PlayerRemoveBuffNegative(aBuffID, aPlayerBar)
 	local wasRemoved, buffSlot = PlayerRemoveBuff(aBuffID, aPlayerBar, aPlayerBar.usedBuffSlotNegCnt, aPlayerBar.buffSlotsNeg)
 	if wasRemoved then
 		aPlayerBar.usedBuffSlotNegCnt = math.max(aPlayerBar.usedBuffSlotNegCnt - 1, 0)
-		if buffSlot.cleanableBuff then
-			aPlayerBar.cleanableBuffCnt = math.max(aPlayerBar.cleanableBuffCnt - 1, 0)
-		end
-		if aPlayerBar.cleanableBuffCnt == 0 and aPlayerBar.formSettings.raidBuffs.colorDebuffButton then
-			hide(aPlayerBar.clearBarWdg)
-			if not compareColor(aPlayerBar.optimizeInfo.shieldContainerColor, g_shieldContainerNormalColor) then
-				setBackgroundColor(aPlayerBar.shieldContainerWdg, g_shieldContainerNormalColor)
-				aPlayerBar.optimizeInfo.shieldContainerColor = g_shieldContainerNormalColor
-			end
+		
+		TryShowBuffFromQueue(aPlayerBar, false)
+	end
+	if aPlayerBar.formSettings.raidBuffs.colorDebuffButton and not HasCleanableBuff(aPlayerBar) then
+		hide(aPlayerBar.clearBarWdg)
+		if not compareColor(aPlayerBar.optimizeInfo.shieldContainerColor, g_shieldContainerNormalColor) then
+			setBackgroundColor(aPlayerBar.shieldContainerWdg, g_shieldContainerNormalColor)
+			aPlayerBar.optimizeInfo.shieldContainerColor = g_shieldContainerNormalColor
 		end
 	end
 end
@@ -306,10 +335,16 @@ local function GetTimeTextSizeByBuffSize(aSize)
 end
 
 local function PlayerAddBuff(aBuffInfo, aPlayerBar, anArray, aCnt, anInfoObj)
+	aBuffInfo.additionalInfo = anInfoObj
+	if aBuffInfo.remainingMs > 0 then
+		aBuffInfo.buffFinishedTime_h = aBuffInfo.remainingMs + g_cachedTimestamp
+	end
+	aPlayerBar.buffsQueue[aBuffInfo.id] = table.sclone(aBuffInfo)
+
 	if not aBuffInfo.texture then
 		return false
 	end
-	local buffSlot = FindBuffSlot(aPlayerBar, aBuffInfo.id, aBuffInfo.buffId, aCnt, anArray)
+	local buffSlot = FindBuffSlot(aPlayerBar, aBuffInfo.id, aCnt, anArray)
 	local res = false
 	if not buffSlot then
 		local newCnt = aCnt + 1
@@ -319,11 +354,12 @@ local function PlayerAddBuff(aBuffInfo, aPlayerBar, anArray, aCnt, anInfoObj)
 		
 		buffSlot = anArray[newCnt]
 		buffSlot.buffID = aBuffInfo.id
-		buffSlot.cleanableBuff = aBuffInfo.cleanableBuff
 		buffSlot.buffWdg:Show(true)
 		buffSlot.buffIcon:SetBackgroundTexture(aBuffInfo.texture)
 		res = true
-	end	
+	end
+	aPlayerBar.buffsQueue[aBuffInfo.id].isShowedInGuiSlot = true
+	
 
 	if aBuffInfo.stackCount <= 1 then 
 		hide(buffSlot.buffStackCnt)
@@ -361,16 +397,12 @@ end
 local function PlayerAddBuffNegative(aBuffInfo, aPlayerBar, anInfoObj)
 	if PlayerAddBuff(aBuffInfo, aPlayerBar, aPlayerBar.buffSlotsNeg, aPlayerBar.usedBuffSlotNegCnt, anInfoObj) then
 		aPlayerBar.usedBuffSlotNegCnt = aPlayerBar.usedBuffSlotNegCnt + 1
-		if aBuffInfo.cleanableBuff then
-			aPlayerBar.cleanableBuffCnt = aPlayerBar.cleanableBuffCnt + 1
-		end
-		
-		if aPlayerBar.cleanableBuffCnt == 1 and aPlayerBar.formSettings.raidBuffs.colorDebuffButton then
-			show(aPlayerBar.clearBarWdg)
-			if not compareColor(aPlayerBar.optimizeInfo.shieldContainerColor, g_shieldContainerCleanableColor) then
-				setBackgroundColor(aPlayerBar.shieldContainerWdg, g_shieldContainerCleanableColor)
-				aPlayerBar.optimizeInfo.shieldContainerColor = g_shieldContainerCleanableColor
-			end
+	end
+	if aPlayerBar.formSettings.raidBuffs.colorDebuffButton and HasCleanableBuff(aPlayerBar) then
+		show(aPlayerBar.clearBarWdg)
+		if not compareColor(aPlayerBar.optimizeInfo.shieldContainerColor, g_shieldContainerCleanableColor) then
+			setBackgroundColor(aPlayerBar.shieldContainerWdg, g_shieldContainerCleanableColor)
+			aPlayerBar.optimizeInfo.shieldContainerColor = g_shieldContainerCleanableColor
 		end
 	end
 end
@@ -464,6 +496,7 @@ function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettin
 	local isPlayer = isUnitExist and unit.IsPlayer(aPlayerInfo.id) or false
 	
 	aPlayerBar.usedBuffSlotCnt = 0
+	aPlayerBar.buffsQueue = {}
 	for _, buffSlot in ipairs(aPlayerBar.buffSlots) do
 		hide(buffSlot.buffWdg)
 		buffSlot.buffID = nil
@@ -473,7 +506,6 @@ function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettin
 	end
 	
 	aPlayerBar.usedBuffSlotNegCnt = 0
-	aPlayerBar.cleanableBuffCnt = 0
 	for _, buffSlot in ipairs(aPlayerBar.buffSlotsNeg) do
 		hide(buffSlot.buffWdg)
 		buffSlot.buffID = nil
@@ -734,12 +766,12 @@ function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings, aNum)
 		
 	local buffSlotCnt = math.floor((panelWidth)*0.85 / buffSize)
 	
+	playerBar.buffsQueue = {}
 	playerBar.buffSlots = {}
 	playerBar.usedBuffSlotCnt = 0
 	
 	playerBar.buffSlotsNeg = {}
 	playerBar.usedBuffSlotNegCnt = 0
-	playerBar.cleanableBuffCnt = 0
 	setTemplateWidget(m_template)
 	
 

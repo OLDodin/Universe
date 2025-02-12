@@ -18,7 +18,7 @@ local function RemovePanel(anObjID)
 	if panelForRemove then
 		table.insert(m_cachePanels, panelForRemove)
 		hide(panelForRemove.panelWdg)
-		HideItemsAboveHead(panelForRemove)
+		HideBuffsOnPanel(panelForRemove)
 		panelForRemove.priority = NORMAL_PRIORITY_PANELS
 		
 		object.DetachWidget3D( anObjID, panelForRemove.panelWdg )
@@ -44,8 +44,9 @@ local function FreePlaceForPriority(aPriority)
 			end
 		end
 	end
-	RemovePanel(minPriorityObjID)
+	
 	if minPriorityObjID then
+		RemovePanel(minPriorityObjID)
 		UnsubscribeAboveHeadListeners(minPriorityObjID)
 	end
 end
@@ -57,18 +58,19 @@ local function GetPanel(anObjID, aPriority)
 		
 		return panel
 	end
+
 	if GetTableSize(m_cachePanels) < 1 then
 		if aPriority == HIGH_PRIORITY_PANELS then
 			FreePlaceForPriority(HIGH_PRIORITY_PANELS)
 		elseif aPriority == NORMAL_PRIORITY_PANELS then
 			FreePlaceForPriority(NORMAL_PRIORITY_PANELS)
-			if GetTableSize(m_cachePanels) == 0 then
-				return nil
-			end
 		else
 			return nil
 		end
 	end	
+	if GetTableSize(m_cachePanels) == 0 then
+		return nil
+	end
 
 	panel = table.remove(m_cachePanels)
 	panel.priority = aPriority
@@ -76,13 +78,12 @@ local function GetPanel(anObjID, aPriority)
 	
 	m_wtControl3D:AddWidget3D(panel.panelWdg, m_wdg3dSize, m_zeroPos, false, true, 80, WIDGET_3D_BIND_POINT_HIGH, 0.8, 1)
 	object.AttachWidget3D( anObjID, m_wtControl3D, panel.panelWdg, 1.2)
-	panel.usedBuffSlotCnt = 0
 	show(panel.panelWdg)
 	
 	--LogInfo("m_usingPanels = ", GetTableSize(m_usingPanels))
 	--LogInfo("add panel above head ", anObjID, "  ", object.GetName(anObjID))
 	--LogInfo("add panel.ai ", panel.ai)
-	return m_usingPanels[anObjID]
+	return panel
 end
 
 
@@ -162,9 +163,10 @@ function CannotAttachPanelAboveHead(aParams)
 	RemovePanel(aParams.objectId)
 end
 
-function HideItemsAboveHead(aPanel)
+function HideBuffsOnPanel(aPanel)
 	aPanel.usedBuffSlotCnt = 0
-	for _, buffSettings in pairs(aPanel.buffList) do
+	aPanel.buffsQueue = {}
+	for _, buffSettings in pairs(aPanel.guiBuffList) do
 		hide(buffSettings.buffWdg)
 		buffSettings.buffID = nil
 		buffSettings.buffFinishedTime_h = 0
@@ -195,7 +197,7 @@ function RemoveAllAboveHeadPanels()
 	
 	for i=1, CACHE_PANELS_SIZE do
 		if m_cachePanels[i] then
-			for _, buffSlot in pairs(m_cachePanels[i].buffList) do
+			for _, buffSlot in pairs(m_cachePanels[i].guiBuffList) do
 				stopLoopBlink(buffSlot.info.buffHighlight)
 			end
 			destroy(m_cachePanels[i].panelWdg)

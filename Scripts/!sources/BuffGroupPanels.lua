@@ -7,7 +7,7 @@ local function GetTextSizeByBuffSize(aSize)
 end
 
 local function FindBufSlot(aGroupBuffBar, aBuffID)
-	for i, buffSlot in pairs(aGroupBuffBar.buffList) do
+	for i, buffSlot in pairs(aGroupBuffBar.guiBuffList) do
 		if buffSlot.buffID == aBuffID then
 			return buffSlot, i
 		end
@@ -21,7 +21,25 @@ local function GetMinGroupPanelSize(anIsAboveHead)
 	return 220
 end
 
+local function TryShowBuffFromQueue(aGroupBuffBar)
+	for _, buffInfo in pairs(aGroupBuffBar.buffsQueue) do
+		if not buffInfo.isShowedInGuiSlot then
+			if buffInfo.remainingMs > 0 then
+				buffInfo.remainingMs = math.max(buffInfo.buffFinishedTime_h - g_cachedTimestamp, 0)
+			end
+			aGroupBuffBar.listenerChangeBuffNegative(buffInfo, aGroupBuffBar, buffInfo.additionalInfo)
+			return
+		end
+	end
+end
+
 local function PlayerAddBuff(aBuffInfo, aGroupBuffBar, anInfoObj)
+	aBuffInfo.additionalInfo = anInfoObj
+	if aBuffInfo.remainingMs > 0 then
+		aBuffInfo.buffFinishedTime_h = aBuffInfo.remainingMs + g_cachedTimestamp
+	end
+	aGroupBuffBar.buffsQueue[aBuffInfo.id] = table.sclone(aBuffInfo)
+	
 	local posInPlateIndex = anInfoObj and anInfoObj.ind or nil
 --LogInfo("PlayerAddBuff = ", aBuffInfo.name, " ind ", posInPlateIndex)
 	
@@ -33,7 +51,7 @@ local function PlayerAddBuff(aBuffInfo, aGroupBuffBar, anInfoObj)
 		if not posInPlateIndex then
 			posInPlateIndex = 1
 		end
-		buffSlot = aGroupBuffBar.buffList[posInPlateIndex]
+		buffSlot = aGroupBuffBar.guiBuffList[posInPlateIndex]
 		if buffSlot then
 			if not buffSlot.buffWdg:IsVisible() then
 				buffSlot.buffWdg:Show(true)
@@ -43,7 +61,7 @@ local function PlayerAddBuff(aBuffInfo, aGroupBuffBar, anInfoObj)
 	else
 		if not buffSlot then
 			local newCnt = aGroupBuffBar.usedBuffSlotCnt + 1
-			buffSlot = aGroupBuffBar.buffList[newCnt]	
+			buffSlot = aGroupBuffBar.guiBuffList[newCnt]	
 		--	LogInfo("PlayerAddBuff 1 = ", newCnt)
 			if buffSlot then
 		--	LogInfo("PlayerAddBuff 2")
@@ -58,6 +76,8 @@ local function PlayerAddBuff(aBuffInfo, aGroupBuffBar, anInfoObj)
 	if not buffSlot then
 		return
 	end
+	
+	aGroupBuffBar.buffsQueue[aBuffInfo.id].isShowedInGuiSlot = true
 	
 	buffSlot.buffID = aBuffInfo.id
 	buffSlot.buffFinishedTime_h = aBuffInfo.remainingMs + g_cachedTimestamp
@@ -95,6 +115,7 @@ local function PlayerAddBuff(aBuffInfo, aGroupBuffBar, anInfoObj)
 end
 
 local function PlayerRemoveBuff(aBuffID, aGroupBuffBar)
+	aGroupBuffBar.buffsQueue[aBuffID] = nil
 	local buffSlot, removeIndex  = FindBufSlot(aGroupBuffBar, aBuffID)
 	if buffSlot then
 		buffSlot.buffID = nil
@@ -104,29 +125,27 @@ local function PlayerRemoveBuff(aBuffID, aGroupBuffBar)
 		else
 			hide(buffSlot.buffWdg)
 			stopLoopBlink(buffSlot.info.buffHighlight)
-			if removeIndex ~= GetTableSize(aGroupBuffBar.buffList) then
+			if removeIndex ~= GetTableSize(aGroupBuffBar.guiBuffList) then
 				for i = removeIndex, aGroupBuffBar.usedBuffSlotCnt do
-					aGroupBuffBar.buffList[i] = aGroupBuffBar.buffList[i+1]
+					aGroupBuffBar.guiBuffList[i] = aGroupBuffBar.guiBuffList[i+1]
 				end
-				aGroupBuffBar.buffList[aGroupBuffBar.usedBuffSlotCnt] = buffSlot
+				aGroupBuffBar.guiBuffList[aGroupBuffBar.usedBuffSlotCnt] = buffSlot
 				for i = removeIndex, aGroupBuffBar.usedBuffSlotCnt do
 					local x = ((i-1)%aGroupBuffBar.panelWidthBuffCnt)*buffSlot.info.buffSize
 					local y = math.floor((i-1)/aGroupBuffBar.panelWidthBuffCnt)*buffSlot.info.buffSize
-					move(aGroupBuffBar.buffList[i].buffWdg, x, y+30)
+					move(aGroupBuffBar.guiBuffList[i].buffWdg, x, y+30)
 				end
 			end
-			aGroupBuffBar.usedBuffSlotCnt = aGroupBuffBar.usedBuffSlotCnt - 1
-			if aGroupBuffBar.usedBuffSlotCnt < 0 then
-				aGroupBuffBar.usedBuffSlotCnt = 0
-			end
+			aGroupBuffBar.usedBuffSlotCnt = math.max(aGroupBuffBar.usedBuffSlotCnt - 1, 0)
 			
 			resize(aGroupBuffBar.panelWdg, math.max(buffSlot.info.buffSize*math.min(aGroupBuffBar.panelWidthBuffCnt, aGroupBuffBar.usedBuffSlotCnt), GetMinGroupPanelSize(aGroupBuffBar.abovehead)), buffSlot.info.buffSize*math.min(aGroupBuffBar.panelHeightBuffCnt, math.ceil(aGroupBuffBar.usedBuffSlotCnt/aGroupBuffBar.panelWidthBuffCnt))+30)
 		end
+		TryShowBuffFromQueue(aGroupBuffBar)
 	end
 end
 
 local function UpdateTick(aGroupBuffBar)
-	for _, buffSlot in pairs(aGroupBuffBar.buffList) do
+	for _, buffSlot in pairs(aGroupBuffBar.guiBuffList) do
 		if buffSlot.info.buffTimeStr then
 			local remainingMs = buffSlot.buffFinishedTime_h - g_cachedTimestamp
 			if remainingMs > 0 then
@@ -169,7 +188,7 @@ function DestroyGroupBuffPanels()
 			local groupBuffTopPanel = getChild(groupBuffPanel.panelWdg, "MoveModePanel")
 			DnD.Remove(groupBuffTopPanel)
 			DnD.HideWdg(groupBuffTopPanel)
-			for _, buffSlot in pairs(groupBuffPanel.buffList) do
+			for _, buffSlot in pairs(groupBuffPanel.guiBuffList) do
 				stopLoopBlink(buffSlot.info.buffHighlight)
 			end
 			destroy(groupBuffPanel.panelWdg)
@@ -192,7 +211,8 @@ function CreateGroupBuffPanel(aForm, aSettings, anIsAboveHead, aPosInPlateIndex)
 	groupBuffPanel.listenerUpdateTick = UpdateTick
 	groupBuffPanel.listenerSpellChanged = SpellChanged
 	groupBuffPanel.listenerSpellRemoved = SpellRemoved
-	groupBuffPanel.buffList = {}
+	groupBuffPanel.guiBuffList = {}
+	groupBuffPanel.buffsQueue = {}
 	groupBuffPanel.fixedInsidePanel = aSettings.fixedInsidePanel
 	groupBuffPanel.usedBuffSlotCnt = 0
 	groupBuffPanel.panelWidthBuffCnt = aSettings.w
@@ -263,7 +283,7 @@ function CreateGroupBuffPanel(aForm, aSettings, anIsAboveHead, aPosInPlateIndex)
 			setTextViewText(currBuff.info.buffStackCntWdg, g_tagTextValue, nil, "ColorWhite", "right", GetTextSizeByBuffSize(currBuff.info.buffSize))
 			setTextViewText(currBuff.info.buffTimerWdg, g_tagTextValue, nil, "ColorWhite", "center", GetTextSizeByBuffSize(currBuff.info.buffSize), 1, 1)
 						
-			groupBuffPanel.buffList[j] = currBuff
+			groupBuffPanel.guiBuffList[j] = currBuff
 		end
 	end
 	return groupBuffPanel
@@ -357,7 +377,7 @@ function SetGroupBuffPanelsInfoForTarget(aTargetID)
 	for i, groupSettings in ipairs(profile.buffFormSettings.buffGroups) do
 		if groupSettings.buffOnTarget and not groupSettings.aboveHeadButton then 
 			panelList[i] = m_groupBuffPanels[i]
-			HideItemsAboveHead(panelList[i])
+			HideBuffsOnPanel(panelList[i])
 		end
 	end
 
