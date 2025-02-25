@@ -826,7 +826,7 @@ function CreateBuffSlot(aParent, aBuffSize, anResArray, anIndex, anAlign, aBuffs
 		setFade(buffSlot.buffIcon, aBuffsOpacity)
 		setFade(buffSlot.buffHighlight, aBuffsOpacity)
 	end
-	setTextViewText(buffSlot.buffStackCnt, g_tagTextValue, nil, "ColorWhite", "right", GetTextSizeByBuffSize(buffSlot.buffSize))
+	setTextViewText(buffSlot.buffStackCnt, g_tagTextValue, nil, "ColorWhite", "right", GetTextSizeByBuffSize(buffSlot.buffSize), nil, 1)
 	setTextViewText(buffSlot.buffTime, g_tagTextValue, nil, "ColorWhite", "center", GetTimeTextSizeByBuffSize(buffSlot.buffSize), 1, 1)
 
 	if anResArray then

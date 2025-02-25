@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <WidgetButton>
-	<Name>SelectButton</Name>
+	<Name>DropDownSelectButton</Name>
 	<Priority>1</Priority>
 	<Placement>
 		<X>
@@ -17,7 +17,7 @@
 			<TextFileRef href="" />
 			<LayerHighlight href="ButtonRegularHighlighted.(WidgetLayerTiledTexture).xdb" />
 			<StateNormal>
-				<LayerMain href="ButtonRegularNormal.(WidgetLayerTiledTexture).xdb" />
+				<LayerMain href="ButtonRegularNormal.(WidgetLayerSimpleTexture).xdb" />
 				<FormatFileRef href="ButtonFormatNormal.txt" />
 			</StateNormal>
 			<ReactionOnUp>false</ReactionOnUp>

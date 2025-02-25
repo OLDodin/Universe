@@ -17,12 +17,7 @@
 	<TransparentInput>true</TransparentInput>
 	<FormatFileRef href="Name.txt" />
 	<TextStyle>
-		<multiline>false</multiline>
 		<wrapText>false</wrapText>
-		<showClippedSymbol>false</showClippedSymbol>
-		<showClippedLine>false</showClippedLine>
-		<lineSpacing>0</lineSpacing>
 		<ellipsis>true</ellipsis>
-		<Align>ALIGNY_DEFAULT</Align>
 	</TextStyle>
 </WidgetTextView>

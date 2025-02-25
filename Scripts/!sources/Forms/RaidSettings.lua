@@ -1,6 +1,8 @@
 local m_currentFormSettings = nil
 
 function CreateRaidSettingsForm()
+	setTemplateWidget(getChild(mainForm, "Template"))
+	
 	local form=createWidget(mainForm, "raidSettingsForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 730, 660, 200, 100)
 	hide(form)
 	priority(form, 505)
@@ -59,7 +61,6 @@ function CreateRaidSettingsForm()
 	resize(group12, 315, 151)
 	
 	
-	
 	setLocaleText(createWidget(form, "raidSettingsFormHeader", "TextView",  WIDGET_ALIGN_CENTER, nil, 150, 20, nil, 16))
 	setText(createWidget(form, "closeSomeSettingsButton", "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 20, 20, 20, 20), "x")
 	
@@ -78,7 +79,7 @@ function CreateRaidSettingsForm()
 	createWidget(group3, "showManaButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 300, 25, 5, 213)
 	createWidget(group3, "showDistanceButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 300, 25, 5, 243)
 	createWidget(group3, "showArrowButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 300, 25, 5, 273)
-		
+
 	setLocaleText(createWidget(group4, "raidWidthText", "TextView", nil, nil, 200, 25, 5, 8))
 	setLocaleText(createWidget(group4, "raidHeightText", "TextView", nil, nil, 200, 25, 5, 38))
 	setLocaleText(createWidget(group4, "buffSizeText", "TextView", nil, nil, 200, 25, 5, 68))
@@ -94,7 +95,6 @@ function CreateRaidSettingsForm()
 	createWidget(group5, "distanceEdit", "EditLine", nil, nil, 70, 25, 235, 38)
 	createWidget(group5, "showGrayOnDistanceButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 300, 25, 5, 68)
 	createWidget(group5, "showFrameStripOnDistanceButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 300, 25, 5, 98)
-
 	
 	settingsContainer:PushBack(group1)
 	settingsContainer:PushBack(group2)
@@ -143,6 +143,10 @@ function RaidSettingsСheckFriendCleanableButtonChecked(aForm)
 end
 
 function SaveRaidFormSettings(aForm)
+	if not aForm then
+		return m_currentFormSettings
+	end
+	
 	local settingsContainer = getChild(aForm, "settingsContainer")
 	local group1 = settingsContainer:At(0)
 	local group2 = settingsContainer:At(1)
@@ -204,6 +208,13 @@ function SaveRaidFormSettings(aForm)
 end
 
 function LoadRaidFormSettings(aForm)
+	local profile = GetCurrentProfile()
+	m_currentFormSettings = deepCopyTable(profile.raidFormSettings)
+	
+	if not aForm then
+		return
+	end
+	
 	local settingsContainer = getChild(aForm, "settingsContainer")
 	local group1 = settingsContainer:At(0)
 	local group2 = settingsContainer:At(1)
@@ -218,11 +229,7 @@ function LoadRaidFormSettings(aForm)
 	local group11 = settingsContainer:At(8)
 	local group12 = settingsContainer:At(9)
 	
-	local profile = GetCurrentProfile()
-	m_currentFormSettings = deepCopyTable(profile.raidFormSettings)
-	if m_currentFormSettings.raidBuffs.colorDebuffButton == nil then m_currentFormSettings.raidBuffs.colorDebuffButton = false end
-	if m_currentFormSettings.raidBuffs.checkFriendCleanableButton == nil then m_currentFormSettings.raidBuffs.checkFriendCleanableButton = false end
-	
+
 	setLocaleText(getChild(group1, "showStandartRaidButton"), m_currentFormSettings.showStandartRaidButton)
 	setLocaleText(getChild(group2, "gorisontalModeButton"), m_currentFormSettings.gorisontalModeButton)
 	setLocaleText(getChild(group2, "showRollOverInfoButton"), m_currentFormSettings.showRollOverInfo)

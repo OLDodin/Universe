@@ -1,7 +1,8 @@
-local m_template = nil
 local m_currentFormSettings = nil
 
 function CreateMainSettingsForm()
+	setTemplateWidget(getChild(mainForm, "Template"))
+	
 	local form=createWidget(mainForm, "mainSettingsForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 600, 360, 200, 100)
 	hide(form)
 	priority(form, 505)
@@ -30,6 +31,10 @@ function CreateMainSettingsForm()
 end
 
 function SaveMainFormSettings(aForm)
+	if not aForm then
+		return m_currentFormSettings
+	end
+	
 	m_currentFormSettings.useRaidSubSystem = getCheckBoxState(getChild(aForm, "useRaidSubSystem"))
 	m_currentFormSettings.useTargeterSubSystem = getCheckBoxState(getChild(aForm, "useTargeterSubSystem"))
 	m_currentFormSettings.useBuffMngSubSystem = getCheckBoxState(getChild(aForm, "useBuffMngSubSystem"))
@@ -50,8 +55,9 @@ end
 function LoadMainFormSettings(aForm)
 	local profile = GetCurrentProfile()
 	m_currentFormSettings = deepCopyTable(profile.mainFormSettings)
-	if m_currentFormSettings.useCastSubSystem == nil then 
-		m_currentFormSettings.useCastSubSystem = false 
+	
+	if not aForm then
+		return
 	end
 	
 	setLocaleText(getChild(aForm, "useRaidSubSystem"), m_currentFormSettings.useRaidSubSystem)
@@ -85,8 +91,7 @@ end
 
 
 function CreateMainBtn()
-	m_template = getChild(mainForm, "Template")
-	setTemplateWidget(m_template)
+	setTemplateWidget(getChild(mainForm, "Template"))
 		
 	local button=createWidget(mainForm, "UniverseButton", "Button", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 30, 25, 350, 120)
 	setText(button, "U")

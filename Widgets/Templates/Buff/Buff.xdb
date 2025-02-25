@@ -3,10 +3,10 @@
 	<Priority>1</Priority>
 	<Name>BuffTemplate</Name>
 	<Children>
-		<Item href="DotHighlight.xdb#xpointer(/WidgetPanel)"/>
-		<Item href="DotIcon.xdb#xpointer(/WidgetPanel)"/>
-		<Item href="DotStackText.xdb#xpointer(/WidgetTextView)"/>
-		<Item href="DotText.xdb#xpointer(/WidgetTextView)"/>
+		<Item href="DotHighlight.xdb"/>
+		<Item href="DotIcon.xdb"/>
+		<Item href="DotStackText.xdb"/>
+		<Item href="DotText.xdb"/>
 	</Children>
 	<Visible>false</Visible>
 	<TransparentInput>true</TransparentInput>

@@ -63,9 +63,9 @@ end
 
 local function Init()
 	g_myAvatarID = avatar.GetId()
-	
+
 	GUIControllerInit()
-	
+
 	common.RegisterEventHandler( onAOPanelStart, "AOPANEL_START" )
 	common.RegisterEventHandler( onAOPanelLeftClick, "AOPANEL_BUTTON_LEFT_CLICK" )
 	common.RegisterEventHandler( onAOPanelRightClick, "AOPANEL_BUTTON_RIGHT_CLICK" )

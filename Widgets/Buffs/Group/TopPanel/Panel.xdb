@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <WidgetPanel>
 	<Name>MoveModePanel</Name>
+	<Priority>51</Priority>
 	<Children>
 		<Item href="TopPanel.xdb#xpointer(/WidgetPanel)"/>
 		<Item href="AssertButton.xdb#xpointer(/WidgetButton)"/>

@@ -1,6 +1,7 @@
-local m_template = nil
 
 function CreateProfilesForm()
+	setTemplateWidget(getChild(mainForm, "Template"))
+	
 	local form=createWidget(mainForm, "configProfilesForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 600, 280, 800, 450)
 	priority(form, 506)
 	hide(form)
@@ -21,10 +22,18 @@ function CreateProfilesForm()
 end
 
 function LoadProfilesFormSettings(aForm)
+	if not aForm then
+		return
+	end
+	
 	local allProfiles = GetAllProfiles()
 	ShowValuesFromTable(allProfiles, aForm, getChild(aForm, "configProfilesContainer"))
 end
 
 function SaveProfilesFormSettings(aForm, aList)
+	if not aForm then
+		return
+	end
+	
 	UpdateTableValuesFromContainer(aList, aForm, getChild(aForm, "configProfilesContainer"))
 end

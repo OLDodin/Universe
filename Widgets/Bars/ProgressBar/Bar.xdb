@@ -3,12 +3,12 @@
 	<Priority>50</Priority>
 	<Name>ProgressBar</Name>
 	<Children>
-		<Item href="BackgroundBar.xdb#xpointer(/WidgetPanel)"/>
-		<Item href="TimeBar.xdb#xpointer(/WidgetPanel)"/>
-		<Item href="ProgressIcon.xdb#xpointer(/WidgetPanel)"/>
-		<Item href="NameProgress.xdb#xpointer(/WidgetTextView)"/>
-		<Item href="NameMob.xdb#xpointer(/WidgetTextView)"/>
-		<Item href="NameTarget.xdb#xpointer(/WidgetTextView)"/>
+		<Item href="BackgroundBar.xdb"/>
+		<Item href="TimeBar.xdb"/>
+		<Item href="ProgressIcon.xdb"/>
+		<Item href="NameProgress.xdb"/>
+		<Item href="NameMob.xdb"/>
+		<Item href="NameTarget.xdb"/>
 	</Children>
 	<Variants>
 		<Item>

@@ -5,7 +5,7 @@
 	<Children>
 		<Item href="ShieldLine.xdb"/>
 	</Children>
-	<BackLayer href="Textures/Background.xdb#xpointer(/WidgetLayerTiledTexture)" />
+	<BackLayer href="Textures/Background.xdb" />
 	<Placement>
 		<X>
 			<Align>WIDGET_ALIGN_BOTH</Align>

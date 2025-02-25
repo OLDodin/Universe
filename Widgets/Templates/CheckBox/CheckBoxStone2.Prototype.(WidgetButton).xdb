@@ -4,9 +4,19 @@
 		<isPrototype>true</isPrototype>
 	</Header>
 	<Priority>256</Priority>
+	<Placement>
+		<X>
+			<Size>0</Size>
+		</X>
+		<Y>
+			<Size>0</Size>
+		</Y>
+	</Placement>
 	<IgnoreDblClick>true</IgnoreDblClick>
+	<TextTag>button_label</TextTag>
 	<Variants>
-		<Item>			
+		<Item>
+			<TextFileRef href="" />
 			<LayerHighlight href="checkbox_light.(WidgetLayerTiledTexture).xdb" />
 			<StateNormal>
 				<LayerMain href="checkbox_active.(WidgetLayerTiledTexture).xdb" />
@@ -19,6 +29,7 @@
 			<Reaction>CheckBoxChangedOn</Reaction>
 		</Item>
 		<Item>
+			<TextFileRef href="" />
 			<LayerHighlight href="checkbox_light.(WidgetLayerTiledTexture).xdb" />
 			<StateNormal>
 				<LayerMain href="checkbox.(WidgetLayerTiledTexture).xdb" />
@@ -28,4 +39,7 @@
 			<Reaction>CheckBoxChangedOff</Reaction>
 		</Item>
 	</Variants>
+	<TextStyle>
+		<Align>ALIGNY_MIDDLE</Align>
+	</TextStyle>
 </WidgetButton>

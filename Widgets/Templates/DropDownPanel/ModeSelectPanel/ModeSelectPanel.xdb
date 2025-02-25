@@ -3,9 +3,7 @@
 	<Name>DropDownSelectPanel</Name>
 	<Priority>3</Priority>
 	<BackLayer href="../ModeDropDownHeaderPanel/ModeDropDownPanel.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)" />
-	<Children>
-		<Item href="SelectButton/SelectButton.xdb#xpointer(/WidgetButton)"/>
-	</Children>
+
 	<Placement>
 		<X>
 			<Align>WIDGET_ALIGN_BOTH</Align>

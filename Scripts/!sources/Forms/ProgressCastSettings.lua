@@ -1,6 +1,8 @@
 local m_currentFormSettings = nil
 
 function CreateProgressCastSettingsForm()
+	setTemplateWidget(getChild(mainForm, "Template"))
+	
 	local form=createWidget(mainForm, "castSettingsForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 700, 410, 200, 100)
 	hide(form)
 	priority(form, 505)
@@ -35,6 +37,10 @@ function CreateProgressCastSettingsForm()
 end
 
 function SaveProgressCastFormSettings(aForm)
+	if not aForm then
+		return m_currentFormSettings
+	end
+	
 	m_currentFormSettings.showImportantCasts = getCheckBoxState(getChild(aForm, "showImportantCasts"))
 	m_currentFormSettings.showImportantBuffs = getCheckBoxState(getChild(aForm, "showImportantBuffs"))
 	m_currentFormSettings.selectable = getCheckBoxState(getChild(aForm, "selectablePanel"))
@@ -57,12 +63,12 @@ end
 
 function LoadProgressCastFormSettings(aForm)
 	local profile = GetCurrentProfile()
-
 	m_currentFormSettings = deepCopyTable(profile.castFormSettings)
 	
-	if m_currentFormSettings.showOnlyMyTarget == nil then
-		m_currentFormSettings.showOnlyMyTarget = false
+	if not aForm then
+		return
 	end
+	
 		
 	setLocaleText(getChild(aForm, "showImportantCasts"), m_currentFormSettings.showImportantCasts)
 	setLocaleText(getChild(aForm, "showImportantBuffs"), m_currentFormSettings.showImportantBuffs)

@@ -3,27 +3,27 @@
 	<Priority>50</Priority>
 	<Name>PlayerBar</Name>
 	<Children>
-		<Item href="HealthBar.xdb#xpointer(/WidgetPanel)"/>
-		<Item href="ManaBar.xdb#xpointer(/WidgetPanel)"/>
-		<Item href="ShieldBar.xdb#xpointer(/WidgetPanel)"/>
-		<Item href="Background.xdb#xpointer(/WidgetPanel)"/>
-		<Item href="ClassIcon.xdb#xpointer(/WidgetPanel)"/>
-		<Item href="ArrowIcon.xdb#xpointer(/WidgetPanel)"/>
-		<Item href="CheckIcon.xdb#xpointer(/WidgetPanel)"/>
-		<Item href="NameText.xdb#xpointer(/WidgetTextView)"/>
-		<Item href="DistText.xdb#xpointer(/WidgetTextView)"/>
-		<Item href="ProcText.xdb#xpointer(/WidgetTextView)"/>
-		<Item href="WoundsText.xdb#xpointer(/WidgetTextView)"/>
-		<Item href="Far.xdb#xpointer(/WidgetPanel)"/>
-		<Item href="ClearBar.xdb#xpointer(/WidgetPanel)"/>
-		<Item href="FarColored.xdb#xpointer(/WidgetPanel)"/>
-		<Item href="Highlight.xdb#xpointer(/WidgetPanel)"/>
-		<Item href="RolloverHighlight.xdb#xpointer(/WidgetPanel)"/>
-		<Item href="Invulnerable.xdb#xpointer(/WidgetPanel)"/>
+		<Item href="HealthBar.xdb"/>
+		<Item href="ManaBar.xdb"/>
+		<Item href="ShieldBar.xdb"/>
+		<Item href="Background.xdb"/>
+		<Item href="ClassIcon.xdb"/>
+		<Item href="ArrowIcon.xdb"/>
+		<Item href="CheckIcon.xdb"/>
+		<Item href="NameText.xdb"/>
+		<Item href="DistText.xdb"/>
+		<Item href="ProcText.xdb"/>
+		<Item href="WoundsText.xdb"/>
+		<Item href="Far.xdb"/>
+		<Item href="ClearBar.xdb"/>
+		<Item href="FarColored.xdb"/>
+		<Item href="Highlight.xdb"/>
+		<Item href="RolloverHighlight.xdb"/>
+		<Item href="Invulnerable.xdb"/>
 
-		<Item href="BuffPanelNegative.xdb#xpointer(/WidgetPanel)"/>
-		<Item href="BuffPanel.xdb#xpointer(/WidgetPanel)"/>
-		<Item href="BuffPanelImportant.xdb#xpointer(/WidgetPanel)"/>
+		<Item href="BuffPanelNegative.xdb"/>
+		<Item href="BuffPanel.xdb"/>
+		<Item href="BuffPanelImportant.xdb"/>
 	</Children>
 	<Variants>
 		<Item>

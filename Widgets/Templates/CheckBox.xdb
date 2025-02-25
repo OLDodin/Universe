@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <WidgetButton>
   <Name>CheckBox</Name>
-  <Priority>4</Priority>
   <Header>
-    <Prototype href="CheckBox/CheckBoxStone.Prototype.(WidgetButton).xdb#xpointer(/WidgetButton)" />
+    <Prototype href="CheckBox/CheckBoxStone.Prototype.(WidgetButton).xdb" />
   </Header>
 </WidgetButton>

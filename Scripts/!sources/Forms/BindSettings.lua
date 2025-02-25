@@ -1,4 +1,3 @@
-local m_template = nil
 local m_locale = getLocale()
 local m_currentFormSettings = nil
 
@@ -19,6 +18,8 @@ m_actionSwitch[RESSURECT_CLICK] = m_locale["RESSURECT_CLICK"]
 m_actionSwitch[AUTOCAST_CLICK] = m_locale["AUTOCAST_CLICK"]
 
 function CreateBindSettingsForm()
+	setTemplateWidget(getChild(mainForm, "Template"))
+	
 	local form=createWidget(mainForm, "bindSettingsForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 1280, 620, 200, 100)
 	hide(form)
 	priority(form, 505)
@@ -170,6 +171,10 @@ function CreateBindSettingsForm()
 end
 
 function SaveBindFormSettings(aForm)
+	if not aForm then
+		return m_currentFormSettings
+	end
+	
 	local group1 = getChild(aForm, "group1")
 	local group2 = getChild(aForm, "group2")
 	local group3 = getChild(aForm, "group3")
@@ -234,6 +239,10 @@ end
 function LoadBindFormSettings(aForm)
 	local profile = GetCurrentProfile()
 	m_currentFormSettings = deepCopyTable(profile.bindFormSettings)
+	
+	if not aForm then
+		return
+	end
 	
 	local group1 = getChild(aForm, "group1")
 	local group2 = getChild(aForm, "group2")

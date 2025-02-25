@@ -2,7 +2,7 @@
 <WidgetPanel>
 	<Priority>180</Priority>
 	<Name>CheckIcon</Name>
-	<BackLayer href="Textures/Arrow.xdb#xpointer(/WidgetLayerSimpleTexture)" />
+	<BackLayer href="../Textures/iconTexture.xdb" />
 	<Placement>
 		<X>
 			<Align>WIDGET_ALIGN_LOW</Align>

@@ -88,7 +88,7 @@ end
 
 
 
-function InitPanelsCache(aForm)
+function InitAboveHeadPanelsCache(aForm)
 	local settings = GetAboveHeadSettings()
 	if settings then
 		for i=1, CACHE_PANELS_SIZE do

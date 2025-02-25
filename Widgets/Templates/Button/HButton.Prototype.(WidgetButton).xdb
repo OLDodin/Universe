@@ -4,21 +4,30 @@
 		<isPrototype>true</isPrototype>
 	</Header>
 	<Priority>250</Priority>
+	<Placement>
+		<X>
+			<Size>0</Size>
+		</X>
+		<Y>
+			<Size>0</Size>
+		</Y>
+	</Placement>
 	<IgnoreDblClick>true</IgnoreDblClick>
+	<TextTag>button_label</TextTag>
 	<Variants>
 		<Item>
-			<TextFileRef href="ButtonExecute.txt" />
-			<LayerHighlight href="HButtonHighlighted.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)" />
+			<TextFileRef href="" />
+			<LayerHighlight href="HButtonHighlighted.(WidgetLayerTiledTexture).xdb" />
 			<PushedOffset x="-2" y="2" />
 			<StateNormal>
-				<LayerMain href="HButtonNormal.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)" />
+				<LayerMain href="HButtonNormal.(WidgetLayerTiledTexture).xdb" />
 				<FormatFileRef href="ButtonExecute.txt" />
 			</StateNormal>
 			<StatePushed>
-				<LayerMain href="HButtonPressed.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)" />
+				<LayerMain href="HButtonPressed.(WidgetLayerTiledTexture).xdb" />
 			</StatePushed>
 			<StateDisabled>
-				<LayerMain href="HButtonDisabled.(WidgetLayerTiledTexture).xdb#xpointer(/WidgetLayerTiledTexture)" />
+				<LayerMain href="HButtonDisabled.(WidgetLayerTiledTexture).xdb" />
 				<FormatFileRef href="ButtonExecute.txt" />
 			</StateDisabled>
 			<ReactionOnUp>true</ReactionOnUp>

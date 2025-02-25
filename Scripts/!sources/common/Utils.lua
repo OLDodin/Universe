@@ -420,8 +420,8 @@ end
 local templateWidget=nil
 
 function getDesc(name)
-	local widget=templateWidget and name and templateWidget.GetChildUnchecked and templateWidget:GetChildUnchecked(name, false)
-	return widget and widget.GetWidgetDesc and widget:GetWidgetDesc() or nil
+	local widget=templateWidget and name and templateWidget:GetChildUnchecked(name, false)
+	return widget and widget:GetWidgetDesc() or nil
 end
 
 function getParent(widget, num)
@@ -441,7 +441,7 @@ function createWidget(parent, widgetName, templateName, alignX, alignY, width, h
 	end
 	
 	widget = parent:CreateChildByDesc(desc)
-
+	
 	if not widget or not widget:IsValid() then
 		LogInfo("Fail create widget type of ", templateName)
 		return

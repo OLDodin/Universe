@@ -26,6 +26,8 @@ local m_importErrorForm = nil
 
 local m_progressActionPanelList = {}
 local m_progressBuffPanelList = {}
+local m_progressActionQueue = {}
+local m_progressBuffQueue = {}
 local m_raidPlayerPanelList = {}
 local m_raidPlayerMovePanel = nil
 local m_targeterPlayerPanelList = {}
@@ -184,19 +186,19 @@ end
 function HideFormsOfUnusedSubsystems()
 	local profile = GetCurrentProfile()
 	if not profile.mainFormSettings.useRaidSubSystem then
-		DnD.HideWdg(m_raidSettingsForm)
+		hide(m_raidSettingsForm)
 	end
 	if not profile.mainFormSettings.useTargeterSubSystem then
-		DnD.HideWdg(m_targeterSettingsForm)
+		hide(m_targeterSettingsForm)
 	end
 	if not profile.mainFormSettings.useBuffMngSubSystem then
-		DnD.HideWdg(m_configGroupBuffForm)
+		hide(m_configGroupBuffForm)
 	end
 	if not profile.mainFormSettings.useBindSubSystem then
-		DnD.HideWdg(m_bindSettingsForm)
+		hide(m_bindSettingsForm)
 	end
 	if not profile.mainFormSettings.useCastSubSystem then
-		DnD.HideWdg(m_progressCastSettingsForm)
+		hide(m_progressCastSettingsForm)
 	end
 end
 
@@ -353,38 +355,70 @@ end
 local function SwapSettingsForm(aForm)
 	if aForm:IsVisible() then
 		UndoSubsystemSettingsForm(aForm)
+		aForm:Show(false)
+	else
+		aForm:Show(true)
 	end
-	DnD.SwapWdg(aForm)
 end
 
 function SwapRaidSettingsForm(aWdg)
+	if not m_raidSettingsForm then
+		m_raidSettingsForm = CreateRaidSettingsForm()
+		LoadRaidFormSettings(m_raidSettingsForm)
+	end
 	SwapSettingsForm(m_raidSettingsForm)
 end
 
 function SwapTargeterSettingsForm(aWdg)
+	if not m_targeterSettingsForm then
+		m_targeterSettingsForm = CreateTargeterSettingsForm()
+		LoadTargeterFormSettings(m_targeterSettingsForm)
+	end
 	SwapSettingsForm(m_targeterSettingsForm)
 end
 
 function SwapProgressCastSettingsForm(aWdg)
+	if not m_progressCastSettingsForm then
+		m_progressCastSettingsForm = CreateProgressCastSettingsForm()
+		LoadProgressCastFormSettings(m_progressCastSettingsForm)
+	end
 	SwapSettingsForm(m_progressCastSettingsForm)
 end
 
 function SwapBindSettingsForm(aWdg)
+	if not m_bindSettingsForm then
+		m_bindSettingsForm = CreateBindSettingsForm()
+		LoadBindFormSettings(m_bindSettingsForm)
+	end
 	SwapSettingsForm(m_bindSettingsForm)
 end
 
 function SwapGroupBuffsSettingsForm(aWdg)
-	if not m_configGroupBuffForm:IsVisible() then 
+	if not m_configGroupBuffForm then
+		m_configGroupBuffForm = CreateConfigGroupBuffsForm()
+		LoadConfigGroupBuffsForm(m_configGroupBuffForm, 1, true)
+	elseif not m_configGroupBuffForm:IsVisible() then	
 		LoadConfigGroupBuffsForm(m_configGroupBuffForm, 1, true)
 	end
 	SwapSettingsForm(m_configGroupBuffForm)
 end
 
 function SwapMainSettingsForm(aWdg)
+	if not m_mainSettingForm then
+		m_mainSettingForm = CreateMainSettingsForm()
+		LoadMainFormSettings(m_mainSettingForm)
+	end
 	UpdateMainFormButtons(m_mainSettingForm)
 	SwapSettingsForm(m_mainSettingForm)
 end
 
+function SwapProfileForm(aWdg)
+	if not m_profilesForm then
+		m_profilesForm = CreateProfilesForm()	
+		LoadProfilesFormSettings(m_profilesForm)
+	end
+	DnD.SwapWdg(m_profilesForm)
+end
 
 function EditBuffGroup(aWdg, anIndex)
 	LoadConfigGroupBuffsForm(m_configGroupBuffForm, anIndex)
@@ -660,8 +694,8 @@ function TargetChanged()
 		SetGroupBuffPanelsInfoForTarget(targetID)
 	end
 	if m_castSubSystemLoaded then
-		ShowProgressBuffForTarget(targetID, m_progressActionPanelList)
-		ShowProgressBuffForTarget(targetID, m_progressBuffPanelList)
+		ShowProgressBuffForTarget(targetID, m_progressActionPanelList, m_progressActionQueue)
+		ShowProgressBuffForTarget(targetID, m_progressBuffPanelList, m_progressBuffQueue)
 	end
 end
 
@@ -911,40 +945,6 @@ local function CreateProgressCastCache(aPanelList, aParentWdg)
 	end
 end
 
-local function GetProgressCastPanelCastedByMe(aPanelList)
-	local profile = GetCurrentProfile()
-	local panelHeight = tonumber(profile.castFormSettings.panelHeightText)
-	
-	for _, progressPanel in ipairs(aPanelList) do
-		if progressPanel.isUsed and progressPanel.castedByMe then
-			if not profile.castFormSettings.showOnlyMyTarget or IsProgressCastPanelVisible(progressPanel) then
-				return progressPanel
-			end
-		end
-	end
-end
-
-local function UpdatePositionProgressCastPanels(aPanelList)
-	local profile = GetCurrentProfile()
-	local panelHeight = tonumber(profile.castFormSettings.panelHeightText)
-	
-	local cnt = 0
-	local panelCastedByMe = GetProgressCastPanelCastedByMe(aPanelList)
-	if panelCastedByMe then
-		move(panelCastedByMe.wdg, 0, 40)
-		cnt = 1
-	end
-	for _, progressPanel in ipairs(aPanelList) do
-		if progressPanel.isUsed and not progressPanel.castedByMe then
-			if not profile.castFormSettings.showOnlyMyTarget or IsProgressCastPanelVisible(progressPanel) then
-				local posY = 40 + cnt*(panelHeight+1)
-				move(progressPanel.wdg, 0, posY)
-				cnt = cnt + 1
-			end
-		end
-	end
-end
-
 local function GetProgressCastPanel(anID, aPanelList)
 	for _, progressPanel in ipairs(aPanelList) do
 		if progressPanel.isUsed and progressPanel.playerID == anID then
@@ -961,39 +961,21 @@ local function GetFreeProgressCastPanel(aPanelList)
 	end
 end
 
-local function ClearProgressPanelOnEndAnimationInPanelList(aParams, aPanelList)
+local function ClearProgressPanelOnEndAnimationInPanelList(aParams, aPanelList, aProgressQueue)
 	if aParams.effectType ~= ET_RESIZE then
 		return
 	end
 	for _, progressPanel in ipairs(aPanelList) do
 		if progressPanel.isUsed and aParams.wtOwner:IsEqual(progressPanel.barWdg) then
-			ClearProgressCastPanel(progressPanel)
-			UpdatePositionProgressCastPanels(aPanelList)
+			StopShowProgressForPanel(progressPanel, aPanelList, aProgressQueue)
 			break
 		end
 	end
 end
 
 local function ClearProgressPanelOnEndAnimation(aParams)
-	ClearProgressPanelOnEndAnimationInPanelList(aParams, m_progressActionPanelList)
-	ClearProgressPanelOnEndAnimationInPanelList(aParams, m_progressBuffPanelList)
-end
-
-function ShowProgressBuffForTarget(aTargetID, aPanelList)
-	local profile = GetCurrentProfile()
-	if not profile.castFormSettings.showOnlyMyTarget then
-		return
-	end
-	for _, progressPanel in ipairs(aPanelList) do
-		if progressPanel.isUsed then
-			if progressPanel.playerID == aTargetID then
-				SetProgressCastPanelVisible(progressPanel, true)
-			else
-				SetProgressCastPanelVisible(progressPanel, false)
-			end
-		end
-	end
-	UpdatePositionProgressCastPanels(aPanelList)
+	ClearProgressPanelOnEndAnimationInPanelList(aParams, m_progressActionPanelList, m_progressActionQueue)
+	ClearProgressPanelOnEndAnimationInPanelList(aParams, m_progressBuffPanelList, m_progressBuffQueue)
 end
 
 local function CreateRaidPanelCache()
@@ -2030,43 +2012,32 @@ local function UnitDeadChanged(aParams)
 	UnitDead(aParams)
 end
 
-local function GetProgressActionType(aParams)
-	local actionType = nil
-	if aParams.id then
-		actionType = ACTION_PROGRESS
-	end
-	if aParams.objectId then
-		actionType = BUFF_PROGRESS
-	end
-	return actionType
-end
-
-local function CheckProgressCastPanelForMyTarget(aPanel)
-	local profile = GetCurrentProfile()
-	if aPanel and profile.castFormSettings.showOnlyMyTarget then
-		local targetID = avatar.GetTarget()
-		if aPanel.playerID ~= targetID then
-			SetProgressCastPanelVisible(aPanel, false)
-		end
-	end
-end
-
-local function ProgressStart(aParams, aPanelList)
+local function ProgressStart(aParams, aPanelList, aProgressQueue)
 	local profile = GetCurrentProfile()
 	local actionType = GetProgressActionType(aParams)
-	if not profile.castFormSettings.showImportantCasts and aParams.id then 
-		return
-	end
-	if not profile.castFormSettings.showImportantBuffs and aParams.objectId then 
-		return
-	end
-	if isExist(aParams.objectId) and unit.IsPlayer(aParams.objectId) then
-		return
+	
+	if actionType == BUFF_PROGRESS and isExist(aParams.objectId) and unit.IsPlayer(aParams.objectId) then
+		return false
 	end
 	
-	if isExist(aParams.objectId or aParams.id) then
-		local progressName = aParams.buffName or aParams.name
-		local objNameLower = toLowerString(object.GetName(aParams.objectId or aParams.id))
+	local objID = aParams.objectId or aParams.id
+	local queuedParams = aProgressQueue[objID]
+	
+	local correctInfo = CheckCorrectInfo(queuedParams)
+	if not correctInfo then
+		return false
+	end
+
+	if profile.castFormSettings.showOnlyMyTarget then
+		local targetID = avatar.GetTarget()
+		if objID ~= targetID then
+			return false
+		end
+	end
+
+	if isExist(objID) then
+		local progressName = queuedParams.buffName or queuedParams.name
+		local objNameLower = toLowerString(object.GetName(objID))
 		for _, ignoreObj in ipairs(profile.castFormSettings.ignoreList) do
 			if progressName == ignoreObj.name then
 				local skipIgnoreName = false
@@ -2077,62 +2048,105 @@ local function ProgressStart(aParams, aPanelList)
 					end
 				end
 				if not skipIgnoreName then
-					return
+					return false
 				end
 			end
 		end
 	end
-	local panel = GetProgressCastPanel(aParams.objectId or aParams.id, aPanelList)
+	local cnt = 0
+	for _, progressPanel in ipairs(aPanelList) do
+		if progressPanel.isUsed then
+			cnt = cnt + 1
+		end
+	end
+	
+	local panel = GetProgressCastPanel(objID, aPanelList)
 	if panel then 
-		SetBaseInfoProgressCastPanel(panel, aParams, actionType)
-		CheckProgressCastPanelForMyTarget(panel)
+		SetBaseInfoProgressCastPanel(panel, queuedParams, actionType, queuedParams.buffInfo)
+		queuedParams.isShowedInGuiSlot = true
+		return true
 	else
 		panel = GetFreeProgressCastPanel(aPanelList)
 		if panel then 
-			SetBaseInfoProgressCastPanel(panel, aParams, actionType)
-			CheckProgressCastPanelForMyTarget(panel)
+			SetBaseInfoProgressCastPanel(panel, queuedParams, actionType, queuedParams.buffInfo)
 			UpdatePositionProgressCastPanels(aPanelList)
+			queuedParams.isShowedInGuiSlot = true
+			return true
+		else
+			return false
 		end	
 	end
 end
 
-local function ProgressEnd(aParams, aPanelList)
+local function ProgressEnd(aParams, aPanelList, aProgressQueue)
 	local panel = GetProgressCastPanel(aParams.objectId or aParams.id, aPanelList)
 	--несколько длительных контролей на цели, отображаем (а значит и удаляем) только последний
 	if panel and panel.buffID == aParams.buffId then
-		StopShowProgressForPanel(panel, aPanelList)
+		StopShowProgressForPanel(panel, aPanelList, aProgressQueue)
 	end
 end
 
 local function ActionProgressStart(aParams)
-	ProgressStart(aParams, m_progressActionPanelList)
+	local profile = GetCurrentProfile()
+	if not profile.castFormSettings.showImportantCasts then 
+		return
+	end
+	m_progressActionQueue[aParams.id] = table.sclone(aParams)
+	m_progressActionQueue[aParams.id].queueTimestamp_h = g_cachedTimestamp
+	ProgressStart(aParams, m_progressActionPanelList, m_progressActionQueue)
 end
 
 local function ActionProgressEnd(aParams)
-	ProgressEnd(aParams, m_progressActionPanelList)
+	m_progressActionQueue[aParams.id] = nil
+	ProgressEnd(aParams, m_progressActionPanelList, m_progressActionQueue)
+	TryShowProgressFromQueue(m_progressActionPanelList, m_progressActionQueue)
 end
 
 local function BuffProgressStart(aParams)
+	local profile = GetCurrentProfile()
+	if not profile.castFormSettings.showImportantBuffs then 
+		return
+	end
 	--при появлении длительного контроля сбрасываем отображение каста этого моба
-	StopShowProgressForPanel(GetProgressCastPanel(aParams.objectId, m_progressActionPanelList), m_progressActionPanelList)
-	ProgressStart(aParams, m_progressBuffPanelList)
+	StopShowProgressForPanel(GetProgressCastPanel(aParams.objectId, m_progressActionPanelList), m_progressActionPanelList, m_progressActionQueue)
+	
+	m_progressBuffQueue[aParams.objectId] = table.sclone(aParams)
+	m_progressBuffQueue[aParams.objectId].queueTimestamp_h = g_cachedTimestamp
+	m_progressBuffQueue[aParams.objectId].buffInfo = aParams.buffId and object.GetBuffInfo(aParams.buffId)
+	ProgressStart(aParams, m_progressBuffPanelList, m_progressBuffQueue)
 end
 
-function StopShowProgressForPanel(aPanel, aPanelList)
-	if aPanel then 
+local function BuffProgressEnd(aParams)
+	m_progressBuffQueue[aParams.objectId] = nil
+	ProgressEnd(aParams, m_progressBuffPanelList, m_progressBuffQueue)
+	TryShowProgressFromQueue(m_progressBuffPanelList, m_progressBuffQueue)
+end
+
+function TryShowProgressFromQueue(aPanelList, aProgressQueue)
+	for objID, info in pairs(aProgressQueue) do
+		if not info.isShowedInGuiSlot and ProgressStart(info, aPanelList, aProgressQueue) then	
+			return
+		end
+	end
+end
+
+function StopShowProgressForPanel(aPanel, aPanelList, aProgressQueue)
+	if aPanel then
+		if aPanel.playerID then
+			aProgressQueue[aPanel.playerID] = nil
+		end
 		ClearProgressCastPanel(aPanel)
 		UpdatePositionProgressCastPanels(aPanelList)
 	end
 end
 
-local function StopShowProgressNow(anObjID)
-	StopShowProgressForPanel(GetProgressCastPanel(anObjID, m_progressActionPanelList), m_progressActionPanelList)
-	StopShowProgressForPanel(GetProgressCastPanel(anObjID, m_progressBuffPanelList), m_progressBuffPanelList)
+function StopShowProgressNow(anObjID)
+	StopShowProgressForPanel(GetProgressCastPanel(anObjID, m_progressActionPanelList), m_progressActionPanelList, m_progressActionQueue)
+	StopShowProgressForPanel(GetProgressCastPanel(anObjID, m_progressBuffPanelList), m_progressBuffPanelList, m_progressBuffQueue)
+	m_progressActionQueue[anObjID] = nil
+	m_progressBuffQueue[anObjID] = nil
 end
 
-local function BuffProgressEnd(aParams)
-	ProgressEnd(aParams, m_progressBuffPanelList)
-end
 
 local function CheckSpawnAndDespawnAtSameTime(aParams)
 	for _, despawnedObjID in pairs(aParams.despawned) do
@@ -2313,17 +2327,12 @@ end
 
 local function GUIInit()
 	CreateMainBtn()
-	m_mainSettingForm = CreateMainSettingsForm()
-	m_profilesForm = CreateProfilesForm()
-	m_raidSettingsForm = CreateRaidSettingsForm()
-	m_targeterSettingsForm = CreateTargeterSettingsForm()
-	m_bindSettingsForm = CreateBindSettingsForm()
-	m_configGroupBuffForm = CreateConfigGroupBuffsForm()
+
 	m_buffsGroupParentForm = CreateGroupsParentForm()
 	m_exportProfileForm = CreateExportProfilesForm()
 	m_importProfileForm = CreateImportProfilesForm()
 	m_importErrorForm = CreateImportError()
-	m_progressCastSettingsForm = CreateProgressCastSettingsForm()
+	
 	
 	m_playerShortInfoForm = CreatePlayerShortInfoForm()
 	m_targeterInfoForm = CreateTargeterInfoForm()
@@ -2382,6 +2391,10 @@ local function OnEventSecondTimer()
 	if m_buffGroupSubSystemLoaded then
 		RemovePanelForNotExistObj(unitList)
 	end
+	if m_castSubSystemLoaded then
+		RemoveProgressForNotExistObj(unitList, m_progressActionPanelList, m_progressActionQueue)
+		RemoveProgressForNotExistObj(unitList, m_progressBuffPanelList, m_progressBuffQueue)
+	end
 	FabicLogInfo()
 end
 
@@ -2401,6 +2414,7 @@ function InitRaidSubSystem()
 		UnloadRaidSubSystem()
 	end
 	m_raidSubSystemLoaded = true
+	
 	CreateRaidPanelCache()
 	
 	--Событие на изменение состава группы (включая создание и роспуск).
@@ -2531,10 +2545,12 @@ function InitGroupBuffSubSystem()
 	end
 	m_buffGroupSubSystemLoaded = true
 	
-	InitPanelsCache(m_buffsGroupParentForm)
+	InitAboveHeadPanelsCache(m_buffsGroupParentForm)
+	
 	common.RegisterEventHandler(CannotAttachPanelAboveHead, "EVENT_CANNOT_ATTACH_WIDGET_3D")
 	
 	CreateGroupBuffPanels(m_buffsGroupParentForm)
+	
 	SetGroupBuffPanelsInfoForMe()
 	show(m_buffsGroupParentForm)
 	
@@ -2571,7 +2587,8 @@ end
 
 local function InitCastPanel(aPanel)
 	local profile = GetCurrentProfile()
-	resize(aPanel, tonumber(profile.castFormSettings.panelWidthText), tonumber(profile.castFormSettings.panelHeightText+1)*PROGRESS_PANELS_LIMIT)
+	--PROGRESS_PANELS_LIMIT+1 - moveheader + PROGRESS_PANELS_LIMIT
+	resize(aPanel, tonumber(profile.castFormSettings.panelWidthText), tonumber(profile.castFormSettings.panelHeightText+1)*(PROGRESS_PANELS_LIMIT+1))
 	if profile.castFormSettings.fixed then
 		DnD.HideWdg(getChild(aPanel, "MoveModePanel"))
 	else
@@ -2630,6 +2647,8 @@ function UnloadCastSubSystem()
 	end
 	m_progressActionPanelList = {}
 	m_progressBuffPanelList = {}
+	m_progressActionQueue = {}
+	m_progressBuffQueue = {}
 	
 	DnD.HideWdg(m_progressActionPanel)
 	DnD.HideWdg(m_progressBuffPanel)
@@ -2644,7 +2663,7 @@ end
 
 
 
-function GUIControllerInit()	
+function GUIControllerInit()
 	initTimeAbbr()
 	
 	InitClassIconsTexture()
@@ -2652,14 +2671,17 @@ function GUIControllerInit()
 	InitButtonTextures()
 	InitBackgroundsTextures()
 	
-	GUIInit()
 	
+	GUIInit()
 	InitializeDefaultSetting()
 	LoadLastUsedSetting()
+	
+	
 	LoadForms()
+	
 	InitBuffConditionMgr()
 	InitSpellConditionMgr()
-	
+
 	
 	common.RegisterReactionHandler(ButtonPressed, "execute")
 	common.RegisterReactionHandler(CheckBoxChangedOn, "CheckBoxChangedOn")
@@ -2672,7 +2694,7 @@ function GUIControllerInit()
 	AddReaction("UniverseButton", SwapMainSettingsForm)
 	AddReaction("closeExprotBtn", function (aWdg) DnD.SwapWdg(getParent(aWdg)) end)
 	AddReaction("closeButtonOK", function (aWdg) DnD.SwapWdg(getParent(aWdg)) end)
-	AddReaction("profilesButton", function () DnD.SwapWdg(m_profilesForm) end)
+	AddReaction("profilesButton", SwapProfileForm)
 	AddReaction("deleteButtonconfigProfilesContainer", DeleteProfile)
 	AddReaction("saveAsProfileButton", SaveProfileAs)
 	AddReaction("loadProfileButton", LoadProfileBtnPressed)
@@ -2741,6 +2763,7 @@ function GUIControllerInit()
 	if profile.mainFormSettings.useCastSubSystem then
 		InitCastSubSystem()
 	end
+
 	
 	TargetChanged()
 	DnD.SetDndCallbackFunc(OnDNDPickAttempt)

@@ -36,10 +36,6 @@ local function GenerateWidgetForContainer(anElement, aContainer, anIndex)
 			setText(createWidget(panel, "saveProfileButton", "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 50, 15, 85), "Save") 
 		end
 	elseif containerName == "groupBuffContainer" then
-		if anElement.isBuff==nil then anElement.isBuff=true end
-		if anElement.castByMe==nil then anElement.castByMe=false end
-		if anElement.isSpell==nil then anElement.isSpell=false end
-
 		setCheckBox(createWidget(panel, "isBuff"..tostring(anIndex), "CheckBox", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 25, 25, 140), anElement.isBuff)
 		setCheckBox(createWidget(panel, "castByMe"..tostring(anIndex), "CheckBox", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 25, 25, 90), anElement.castByMe)
 		setCheckBox(createWidget(panel, "isSpell"..tostring(anIndex), "CheckBox", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 25, 25, 40), anElement.isSpell)
@@ -48,7 +44,6 @@ local function GenerateWidgetForContainer(anElement, aContainer, anIndex)
 	elseif containerName == "raidBuffContainer" then
 		setLocaleText(createWidget(panel, "setHighlightColorButton"..containerName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 30, 25, 30))
 	elseif containerName == "targetBuffContainer" then
-		if anElement.castByMe==nil then anElement.castByMe=false end
 		setCheckBox(createWidget(panel, "castByMe"..tostring(anIndex), "CheckBox", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 25, 25, 60), anElement.castByMe)
 		setLocaleText(createWidget(panel, "setHighlightColorButton"..containerName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 30, 25, 30))
 	elseif containerName == "ignoreListContainer" then		

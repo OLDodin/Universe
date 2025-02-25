@@ -1,8 +1,9 @@
-local m_template = nil
 local m_currentFormSettings = nil
 
 
 function CreateTargeterSettingsForm()
+	setTemplateWidget(getChild(mainForm, "Template"))
+	
 	local form=createWidget(mainForm, "targeterSettingsForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 1000, 700, 200, 100)
 	hide(form)
 	priority(form, 505)
@@ -133,6 +134,10 @@ function CreateTargeterSettingsForm()
 end
 
 function SaveTargeterFormSettings(aForm)
+	if not aForm then
+		return m_currentFormSettings
+	end
+	
 	local settingsContainer = getChild(aForm, "settingsContainer")
 	local group1 = settingsContainer:At(0)
 	local group2 = settingsContainer:At(1)
@@ -204,6 +209,13 @@ function SaveTargeterFormSettings(aForm)
 end
 
 function LoadTargeterFormSettings(aForm)
+	local profile = GetCurrentProfile()
+	m_currentFormSettings = deepCopyTable(profile.targeterFormSettings)
+	
+	if not aForm then
+		return
+	end
+	
 	local settingsContainer = getChild(aForm, "settingsContainer")
 	local group1 = settingsContainer:At(0)
 	local group2 = settingsContainer:At(1)
@@ -217,17 +229,6 @@ function LoadTargeterFormSettings(aForm)
 	local group10 = settingsContainer:At(6)
 	local group11 = settingsContainer:At(7)
 	local group12 = settingsContainer:At(8)
-	
-	local profile = GetCurrentProfile()
-	m_currentFormSettings = deepCopyTable(profile.targeterFormSettings)
-	
-	if m_currentFormSettings.separateBuffDebuff == nil then m_currentFormSettings.separateBuffDebuff = false end
-	if m_currentFormSettings.twoColumnMode == nil then m_currentFormSettings.twoColumnMode = false end
-	if m_currentFormSettings.sortByName == nil then m_currentFormSettings.sortByName = true end
-	if m_currentFormSettings.sortByHP == nil then m_currentFormSettings.sortByHP = false end
-	if m_currentFormSettings.sortByClass == nil then m_currentFormSettings.sortByClass = false end
-	if m_currentFormSettings.sortByDead == nil then m_currentFormSettings.sortByDead = false end
-	if m_currentFormSettings.targetLimit == nil then m_currentFormSettings.targetLimit = "12" end
 	
 	setLocaleText(getChild(group1, "classColorModeButton"), m_currentFormSettings.classColorModeButton)
 	setLocaleText(getChild(group1, "showServerNameButton"), m_currentFormSettings.showServerNameButton)

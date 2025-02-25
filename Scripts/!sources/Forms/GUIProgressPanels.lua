@@ -57,24 +57,22 @@ function CreateProgressCastPanel(aParentPanel, aY)
 	setTextViewText(progressBar.nameMobWdg, g_tagTextValue, nil, nil, nil, 14*progressBar.fontScale)
 	setTextViewText(progressBar.nameTargetWdg, g_tagTextValue, nil, nil, nil, 14*progressBar.fontScale)
 	setTextViewText(progressBar.nameProgressWdg, g_tagTextValue, nil, nil, nil, 18*progressBar.fontScale)
-	
-	
+
 	return progressBar
 end
 
-function SetBaseInfoProgressCastPanel(aBar, aInfo, aType)
-	local correctInfo = false
-	local buffInfo = aInfo.buffId and object.GetBuffInfo(aInfo.buffId)
-	if buffInfo and buffInfo.remainingMs > 0 and buffInfo.durationMs > 0 then
-		correctInfo = true
+function CheckCorrectInfo(aInfo)
+	if aInfo.buffInfo and aInfo.buffInfo.remainingMs - (g_cachedTimestamp - aInfo.queueTimestamp_h) > 0 and aInfo.buffInfo.durationMs > 0 then
+		return true
 	end
-	if aInfo.spellId and aInfo.duration - aInfo.progress > 0 then
-		correctInfo = true
+	if aInfo.spellId and (aInfo.duration - aInfo.progress) - (g_cachedTimestamp - aInfo.queueTimestamp_h) > 0 then
+		return true
 	end
-	
-	if not correctInfo then
-		return
-	end
+
+	return false
+end
+
+function SetBaseInfoProgressCastPanel(aBar, aInfo, aType, aBuffInfo)
 	aBar.playerID = aInfo.objectId or aInfo.id 
 	aBar.actionType = aType
 	aBar.isUsed = true
@@ -96,19 +94,20 @@ function SetBaseInfoProgressCastPanel(aBar, aInfo, aType)
 
 	aBar.nameTargetWdg:SetVal(g_tagTextValue, "")
 	
-	if buffInfo then
-		local buffCreatorID = buffInfo.producer and buffInfo.producer.casterId or nil
+	if aBuffInfo then
+		local buffCreatorID = aBuffInfo.producer and aBuffInfo.producer.casterId or nil
 		aBar.castedByMe = g_myAvatarID == buffCreatorID
-		if buffInfo.texture then
-			setBackgroundTexture(aBar.iconWdg, buffInfo.texture)
+		if aBuffInfo.texture then
+			setBackgroundTexture(aBar.iconWdg, aBuffInfo.texture)
 			show(aBar.iconWdg)
 		else
 			hide(aBar.iconWdg)
 		end
-		resize(aBar.barWdg, fromPlacement.sizeX * (buffInfo.remainingMs / buffInfo.durationMs))
+		local remainingMs = aBuffInfo.remainingMs - (g_cachedTimestamp - aInfo.queueTimestamp_h)
+		resize(aBar.barWdg, fromPlacement.sizeX * (remainingMs / aBuffInfo.durationMs))
 		fromPlacement = aBar.barWdg:GetPlacementPlain()
 		aBar.barWdg:FinishResizeEffect()
-		aBar.barWdg:PlayResizeEffect( fromPlacement, toPlacement, buffInfo.remainingMs, EA_MONOTONOUS_INCREASE )
+		aBar.barWdg:PlayResizeEffect( fromPlacement, toPlacement, remainingMs, EA_MONOTONOUS_INCREASE )
 		setBackgroundColor(aBar.barWdg, { r = 0.8; g = 0.8; b = 0; a = 0.8 }) 
 		if buffCreatorID then 
 			aBar.nameTargetWdg:SetVal(g_tagTextValue, object.GetName(buffCreatorID))
@@ -123,10 +122,11 @@ function SetBaseInfoProgressCastPanel(aBar, aInfo, aType)
 		else
 			hide(aBar.iconWdg)
 		end
-		resize(aBar.barWdg, fromPlacement.sizeX * ((aInfo.duration - aInfo.progress) / aInfo.duration))
+		local remainingMs = (aInfo.duration - aInfo.progress) - (g_cachedTimestamp - aInfo.queueTimestamp_h)
+		resize(aBar.barWdg, fromPlacement.sizeX * (remainingMs / aInfo.duration))
 		fromPlacement = aBar.barWdg:GetPlacementPlain()
 		aBar.barWdg:FinishResizeEffect()
-		aBar.barWdg:PlayResizeEffect( fromPlacement, toPlacement, aInfo.duration - aInfo.progress, EA_MONOTONOUS_INCREASE )
+		aBar.barWdg:PlayResizeEffect( fromPlacement, toPlacement, remainingMs, EA_MONOTONOUS_INCREASE )
 		setBackgroundColor(aBar.barWdg, { r = 1.0; g = 0; b = 0; a = 0.8 })
 		if object.IsExist(aBar.playerID) then
 			local targetID = unit.GetTarget(aBar.playerID)
@@ -140,16 +140,16 @@ function SetBaseInfoProgressCastPanel(aBar, aInfo, aType)
 	show(aBar.wdg)
 end
 
-function IsProgressCastPanelVisible(aBar)
-	return aBar.wdg:IsVisible()
-end
 
-function SetProgressCastPanelVisible(aBar, aVisible)
-	if aVisible then
-		show(aBar.wdg)
-	else
-		hide(aBar.wdg)
+function GetProgressActionType(aParams)
+	local actionType = nil
+	if aParams.id then
+		actionType = ACTION_PROGRESS
 	end
+	if aParams.objectId then
+		actionType = BUFF_PROGRESS
+	end
+	return actionType
 end
 
 function ClearProgressCastPanel(aBar)
@@ -160,4 +160,92 @@ function ClearProgressCastPanel(aBar)
 	aBar.castedByMe = false
 	hide(aBar.wdg)
 	aBar.barWdg:FinishResizeEffect()
+end
+
+local function GetProgressCastPanelCastedByMe(aPanelList)
+	local profile = GetCurrentProfile()
+	local panelHeight = tonumber(profile.castFormSettings.panelHeightText)
+	
+	for _, progressPanel in ipairs(aPanelList) do
+		if progressPanel.isUsed and progressPanel.castedByMe then
+			return progressPanel
+		end
+	end
+end
+
+function UpdatePositionProgressCastPanels(aPanelList)
+	local profile = GetCurrentProfile()
+	local panelHeight = tonumber(profile.castFormSettings.panelHeightText)
+	
+	local cnt = 0
+	local panelCastedByMe = GetProgressCastPanelCastedByMe(aPanelList)
+	if panelCastedByMe then
+		move(panelCastedByMe.wdg, 0, 40)
+		cnt = 1
+	end
+	for _, progressPanel in ipairs(aPanelList) do
+		if progressPanel.isUsed and not progressPanel.castedByMe then
+			local posY = 40 + cnt*(panelHeight+1)
+			move(progressPanel.wdg, 0, posY)
+			cnt = cnt + 1
+		end
+	end
+end
+
+function ShowProgressBuffForTarget(aTargetID, aPanelList, aProgressQueue)
+	local profile = GetCurrentProfile()
+	if not profile.castFormSettings.showOnlyMyTarget then
+		return
+	end
+	
+	--освобождаем панели, но в очереди (aProgressQueue) оставляем
+	for _, progressPanel in ipairs(aPanelList) do
+		if progressPanel.isUsed then
+			if progressPanel.playerID then
+				aProgressQueue[progressPanel.playerID].isShowedInGuiSlot = false
+			end
+			ClearProgressCastPanel(progressPanel)
+		end
+	end
+	UpdatePositionProgressCastPanels(aPanelList)
+	if aTargetID then
+		TryShowProgressFromQueue(aPanelList, aProgressQueue)
+	end
+end
+
+function RemoveProgressForNotExistObj(anUnitList, aPanelList, aProgressQueue)
+	local reallyExist = false
+	
+	for _, panel in ipairs( aPanelList ) do
+		if panel.isUsed then
+			reallyExist = false
+			for _, existObjID in pairs(anUnitList) do
+				if existObjID == panel.playerID then
+					reallyExist = true
+					break
+				end
+			end
+			if not reallyExist then
+				StopShowProgressForPanel(panel, aPanelList, aProgressQueue)
+			end
+		end
+	end
+	
+	local despawnList = {}
+	for objID, _ in pairs( aProgressQueue ) do
+		reallyExist = false
+		for _, existObjID in pairs(anUnitList) do
+			if existObjID == objID then
+				reallyExist = true
+				break
+			end
+		end
+		if not reallyExist then
+			table.insert(despawnList, objID)
+		end
+	end
+	
+	for _, objID in ipairs( despawnList ) do
+		aProgressQueue[objID] = nil
+	end
 end

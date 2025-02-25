@@ -11,6 +11,8 @@ local m_group6 = nil
 local m_group7 = nil
 
 function CreateConfigGroupBuffsForm()
+	setTemplateWidget(getChild(mainForm, "Template"))
+	
 	local form=createWidget(mainForm, "configGroupBuffsForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 945, 700, 550, 130)
 	priority(form, 507)
 	hide(form)
@@ -115,12 +117,27 @@ function GetConfigGroupBuffsActiveNum()
 	return m_loadedWndInd
 end
 
-function SaveConfigGroupBuffsForm(aForm, aClose)
-	local group5 = getChild(aForm, "group5")
+function ClearAfterInitBuffConditionMgr()
+	for _, buffGroup in pairs(m_totalGroupsSettings.buffGroups) do
+		if buffGroup.buffs then
+			for _, buffSettings in ipairs(buffGroup.buffs) do
+				buffSettings.ind = nil -- clear after InitBuffConditionMgr
+			end
+		end
+	end
+end
 
+function SaveConfigGroupBuffsForm(aForm, aClose)
+	if not aForm then
+		ClearAfterInitBuffConditionMgr()
+		return m_totalGroupsSettings
+	end
+	
 	if m_loadedWndInd == 0 then
 		return m_totalGroupsSettings
 	end
+	
+	local group5 = getChild(aForm, "group5")
 	
 	m_currentFormSettings.name = getText(getChild(aForm, "currentGroupBuffName"))
 	
@@ -159,14 +176,15 @@ function SaveConfigGroupBuffsForm(aForm, aClose)
 
 	local container = getChild(group5, "groupBuffContainer")
 	if container and m_currentFormSettings.buffs then
-		for i, j in ipairs(m_currentFormSettings.buffs) do
-			j.name = getText(getChild(container, "Name"..tostring(i), true))
-			j.isBuff = getCheckBoxState(getChild(container, "isBuff"..tostring(i), true))
-			j.castByMe = getCheckBoxState(getChild(container, "castByMe"..tostring(i), true))
-			j.isSpell = getCheckBoxState(getChild(container, "isSpell"..tostring(i), true))
-			j.ind = nil -- clear after InitBuffConditionMgr
+		for i, buffSettings in ipairs(m_currentFormSettings.buffs) do
+			buffSettings.name = getText(getChild(container, "Name"..tostring(i), true))
+			buffSettings.isBuff = getCheckBoxState(getChild(container, "isBuff"..tostring(i), true))
+			buffSettings.castByMe = getCheckBoxState(getChild(container, "castByMe"..tostring(i), true))
+			buffSettings.isSpell = getCheckBoxState(getChild(container, "isSpell"..tostring(i), true))
 		end
 	end
+	
+	ClearAfterInitBuffConditionMgr()
 	
 	m_totalGroupsSettings.buffGroups[m_loadedWndInd] = m_currentFormSettings
 	
@@ -183,13 +201,15 @@ function LoadConfigGroupBuffsForm(aForm, anIndex, aInitLoad)
 	if aInitLoad then
 		m_totalGroupsSettings = deepCopyTable(profile.buffFormSettings)
 	end
-	local settingsContainer = getChild(aForm, "settingsContainer")
-	local group5 = getChild(aForm, "group5")
-	
-	
 	m_loadedWndInd = anIndex
 	m_currentFormSettings = m_totalGroupsSettings.buffGroups[m_loadedWndInd]
-	--deepCopyTable(profile.buffFormSettings.buffGroups[m_loadedWndInd])
+	
+	if not aForm then
+		return
+	end
+	
+	local settingsContainer = getChild(aForm, "settingsContainer")
+	local group5 = getChild(aForm, "group5")
 	
 	setText(getChild(m_group1, "widthBuffCntEdit"), m_currentFormSettings.w or 8)
 	setText(getChild(m_group1, "heightBuffCntEdit"), m_currentFormSettings.h or 1)
@@ -200,51 +220,7 @@ function LoadConfigGroupBuffsForm(aForm, anIndex, aInitLoad)
 		setText(getChild(m_group1, "buffsOpacityEdit"), m_currentFormSettings.buffsOpacity or "1.0")
 	end
 
-	if m_currentFormSettings.buffOnMe == nil then 
-		m_currentFormSettings.buffOnMe = true
-	end
-	if m_currentFormSettings.buffOnTarget == nil then 
-		m_currentFormSettings.buffOnTarget = false
-	end
-	if m_currentFormSettings.fixed == nil then 
-		m_currentFormSettings.fixed = false
-	end
-	if m_currentFormSettings.fixedInsidePanel == nil then 
-		m_currentFormSettings.fixedInsidePanel = false
-	end
-	if m_currentFormSettings.flipBuffsButton == nil then 
-		m_currentFormSettings.flipBuffsButton = false
-	end
-	if m_currentFormSettings.aboveHeadButton == nil then 
-		m_currentFormSettings.aboveHeadButton = false
-	end
-	if m_currentFormSettings.aboveHeadFriendPlayersButton == nil then 
-		m_currentFormSettings.aboveHeadFriendPlayersButton = false
-	end
-	if m_currentFormSettings.aboveHeadNotFriendPlayersButton == nil then 
-		m_currentFormSettings.aboveHeadNotFriendPlayersButton = false
-	end
-	if m_currentFormSettings.aboveHeadFriendMobsButton == nil then 
-		m_currentFormSettings.aboveHeadFriendMobsButton = false
-	end
-	if m_currentFormSettings.aboveHeadNotFriendMobsButton == nil then 
-		m_currentFormSettings.aboveHeadNotFriendMobsButton = false
-	end
-	if m_currentFormSettings.autoDebuffModeButtonUnk == nil then 
-		m_currentFormSettings.autoDebuffModeButtonUnk = false
-	end
-	if m_currentFormSettings.checkEnemyCleanableUnk == nil then 
-		m_currentFormSettings.checkEnemyCleanableUnk = false
-	end
-	if m_currentFormSettings.showImportantButton == nil then 
-		m_currentFormSettings.showImportantButton = false
-	end
-	if m_currentFormSettings.checkControlsButton == nil then 
-		m_currentFormSettings.checkControlsButton = false
-	end
-	if m_currentFormSettings.checkMovementsButton == nil then 
-		m_currentFormSettings.checkMovementsButton = false
-	end
+	
 	
 	local textArr = {}
 	for i, element in ipairs(m_totalGroupsSettings.buffGroups) do
@@ -263,7 +239,7 @@ function LoadConfigGroupBuffsForm(aForm, anIndex, aInitLoad)
 
 	setText(getChild(aForm, "buffGroupNameHeader"), ConcatWString(getLocale()["configGroupBuffsHeader"], m_commaWStr, m_currentFormSettings.name, m_commaWStr))
 	setText(getChild(aForm, "currentGroupBuffName"), m_currentFormSettings.name)
-	
+
 	if anIndex == 1 then
 		hide(getChild(aForm, "deleteGroupBuffsButton"))
 	else
@@ -296,9 +272,9 @@ function LoadConfigGroupBuffsForm(aForm, anIndex, aInitLoad)
 	if not m_currentFormSettings.buffs then
 		m_currentFormSettings.buffs = {}
 	end
-
+	
 	ShowValuesFromTable(m_currentFormSettings.buffs, aForm, getChild(group5, "groupBuffContainer"))
-
+	
 	if m_currentFormSettings.aboveHeadButton then
 		settingsContainer:RemoveItems()
 		settingsContainer:PushBack(m_group1)

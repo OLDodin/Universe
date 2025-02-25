@@ -90,13 +90,13 @@ end
 
 function GenerateBtnForDropDown(anWidget, aTextArr, aDefaultIndex, aColor)
 	local selectPanel = getChild(anWidget, "DropDownSelectPanel")
-	setTemplateWidget(selectPanel)
+	setTemplateWidget(m_template)
 	if not aColor then
 		aColor = "ColorWhite"
 	end
 	local cnt = 0
 	for i, txt in ipairs(aTextArr) do
-		local btn = createWidget(selectPanel, "modeBtn"..tostring(i), "SelectButton", WIDGET_ALIGN_BOTH, WIDGET_ALIGN_LOW, nil, 25, 0, 24*(i-1)+2)
+		local btn = createWidget(selectPanel, "modeBtn"..tostring(i), "DropDownSelectButton", WIDGET_ALIGN_BOTH, WIDGET_ALIGN_LOW, nil, 25, 0, 24*(i-1)+2)
 		setText(btn, txt, aColor)
 		show(btn)
 		cnt = cnt + 1
@@ -108,7 +108,6 @@ function GenerateBtnForDropDown(anWidget, aTextArr, aDefaultIndex, aColor)
 	setText(getChild(getChild(anWidget, "DropDownHeaderPanel"), "ModeNameTextView"), aTextArr[aDefaultIndex], "Neutral", "left", 11)
 	
 	resize(anWidget, nil, 24*(cnt+1))
-	setTemplateWidget(m_template)
 	
 	return anWidget
 end

@@ -2,7 +2,7 @@
 <WidgetPanel>
 	<Priority>160</Priority>
 	<Name>ArrowIcon</Name>
-	<BackLayer href="Textures/Arrow.xdb#xpointer(/WidgetLayerSimpleTexture)" />
+	<BackLayer href="Textures/Arrow.xdb" />
 	<Placement>
 		<X>
 			<Align>WIDGET_ALIGN_HIGH</Align>

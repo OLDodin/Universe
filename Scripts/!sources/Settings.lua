@@ -506,6 +506,112 @@ function LoadSettings(aProfileInd)
 		end
 	end
 	
+	if m_currentProfile.version < 3.32 or m_currentProfile.version == nil then
+		--вынес старые проверки из окон настроек
+		if m_currentProfile.raidFormSettings.raidBuffs.colorDebuffButton == nil then
+			m_currentProfile.raidFormSettings.raidBuffs.colorDebuffButton = false 
+		end
+		if m_currentProfile.raidFormSettings.raidBuffs.checkFriendCleanableButton == nil then
+			m_currentProfile.raidFormSettings.raidBuffs.checkFriendCleanableButton = false
+		end
+		if m_currentProfile.targeterFormSettings.separateBuffDebuff == nil then
+			m_currentProfile.targeterFormSettings.separateBuffDebuff = false 
+		end
+		if m_currentProfile.targeterFormSettings.twoColumnMode == nil then 
+			m_currentProfile.targeterFormSettings.twoColumnMode = false 
+		end
+		if m_currentProfile.targeterFormSettings.sortByName == nil then
+			m_currentProfile.targeterFormSettings.sortByName = true
+		end
+		if m_currentProfile.targeterFormSettings.sortByHP == nil then
+			m_currentProfile.targeterFormSettings.sortByHP = false
+		end
+		if m_currentProfile.targeterFormSettings.sortByClass == nil then
+			m_currentProfile.targeterFormSettings.sortByClass = false
+		end
+		if m_currentProfile.targeterFormSettings.sortByDead == nil then
+			m_currentProfile.targeterFormSettings.sortByDead = false 
+		end
+		if m_currentProfile.targeterFormSettings.targetLimit == nil then
+			m_currentProfile.targeterFormSettings.targetLimit = "12" 
+		end
+		
+		for _, buffSettings in ipairs(m_currentProfile.targeterFormSettings.raidBuffs.customBuffs) do
+			if buffSettings.castByMe == nil then
+				buffSettings.castByMe = false
+			end
+		end
+		
+		for _, buffGroupSettings in ipairs(m_currentProfile.buffFormSettings.buffGroups) do
+			if buffGroupSettings.buffOnMe == nil then 
+				buffGroupSettings.buffOnMe = true
+			end
+			if buffGroupSettings.buffOnTarget == nil then 
+				buffGroupSettings.buffOnTarget = false
+			end
+			if buffGroupSettings.fixed == nil then 
+				buffGroupSettings.fixed = false
+			end
+			if buffGroupSettings.fixedInsidePanel == nil then 
+				buffGroupSettings.fixedInsidePanel = false
+			end
+			if buffGroupSettings.flipBuffsButton == nil then 
+				buffGroupSettings.flipBuffsButton = false
+			end
+			if buffGroupSettings.aboveHeadButton == nil then 
+				buffGroupSettings.aboveHeadButton = false
+			end
+			if buffGroupSettings.aboveHeadFriendPlayersButton == nil then 
+				buffGroupSettings.aboveHeadFriendPlayersButton = false
+			end
+			if buffGroupSettings.aboveHeadNotFriendPlayersButton == nil then 
+				buffGroupSettings.aboveHeadNotFriendPlayersButton = false
+			end
+			if buffGroupSettings.aboveHeadFriendMobsButton == nil then 
+				buffGroupSettings.aboveHeadFriendMobsButton = false
+			end
+			if buffGroupSettings.aboveHeadNotFriendMobsButton == nil then 
+				buffGroupSettings.aboveHeadNotFriendMobsButton = false
+			end
+			if buffGroupSettings.autoDebuffModeButtonUnk == nil then 
+				buffGroupSettings.autoDebuffModeButtonUnk = false
+			end
+			if buffGroupSettings.checkEnemyCleanableUnk == nil then 
+				buffGroupSettings.checkEnemyCleanableUnk = false
+			end
+			if buffGroupSettings.showImportantButton == nil then 
+				buffGroupSettings.showImportantButton = false
+			end
+			if buffGroupSettings.checkControlsButton == nil then 
+				buffGroupSettings.checkControlsButton = false
+			end
+			if buffGroupSettings.checkMovementsButton == nil then 
+				buffGroupSettings.checkMovementsButton = false
+			end
+			if buffGroupSettings.buffs then
+				for _, buffSettings in ipairs(buffGroupSettings.buffs) do
+					if buffSettings.isBuff==nil then 
+						buffSettings.isBuff=true
+					end
+					if buffSettings.castByMe==nil then
+						buffSettings.castByMe=false
+					end
+					if buffSettings.isSpell==nil then
+						buffSettings.isSpell=false
+					end
+				end
+			end
+		end
+		
+		if m_currentProfile.castFormSettings.showOnlyMyTarget == nil then
+			m_currentProfile.castFormSettings.showOnlyMyTarget = false
+		end
+		
+		if m_currentProfile.mainFormSettings.useCastSubSystem == nil then 
+			m_currentProfile.mainFormSettings.useCastSubSystem = false 
+		end
+	end
+	
 	if m_currentProfile.version < GetSettingsVersion() or m_currentProfile.version == nil then
 		m_currentProfile.version = GetSettingsVersion()
 		SaveAllSettings(allProfiles)
@@ -547,5 +653,5 @@ function ExportProfileByIndex(anInd)
 end
 
 function GetSettingsVersion()
-	return 3.3;
+	return 3.32;
 end

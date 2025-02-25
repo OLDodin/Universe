@@ -21,11 +21,11 @@ end
 
 function TEventProfile:GetEventFunc()
 	self.MyFunc = function(aParams)
-		local startTime = getTimestamp()
+		local startTime = common.GetMks()
 		
 		self.OriginFunc(aParams)
 		
-		local workingTime = getTimestamp() - startTime
+		local workingTime = (common.GetMks() - startTime) / 1000
 		self.CallCount = self.CallCount + 1
 		self.TotalWorkingTime = self.TotalWorkingTime + workingTime
 		self.MaxWorkingTime = math.max(self.MaxWorkingTime, workingTime)

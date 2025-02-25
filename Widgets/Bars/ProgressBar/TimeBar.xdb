@@ -4,7 +4,7 @@
 	<Name>TimeBar</Name>
 	<Children>
 	</Children>
-	<BackLayer href="../Bar/Textures/Health.xdb#xpointer(/WidgetLayerTiledTexture)" />
+	<BackLayer href="../Bar/Textures/Health.xdb" />
 	<Placement>
 		<X>
 			<Align>WIDGET_ALIGN_LOW</Align>
