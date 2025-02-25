@@ -176,11 +176,15 @@ function SaveConfigGroupBuffsForm(aForm, aClose)
 
 	local container = getChild(group5, "groupBuffContainer")
 	if container and m_currentFormSettings.buffs then
-		for i, buffSettings in ipairs(m_currentFormSettings.buffs) do
-			buffSettings.name = getText(getChild(container, "Name"..tostring(i), true))
-			buffSettings.isBuff = getCheckBoxState(getChild(container, "isBuff"..tostring(i), true))
-			buffSettings.castByMe = getCheckBoxState(getChild(container, "castByMe"..tostring(i), true))
-			buffSettings.isSpell = getCheckBoxState(getChild(container, "isSpell"..tostring(i), true))
+		for i = 0, container:GetElementCount() - 1 do
+			local mainContainerElementPanel = container:At(i)
+			local containerElementPanel = getChild(mainContainerElementPanel, "containerPanel")
+			local settingObj = m_currentFormSettings.buffs[i+1]
+			settingObj.name = getText(getChild(containerElementPanel, "Name"..tostring(i+1)))
+			settingObj.isBuff = getCheckBoxState(getChild(containerElementPanel, "isBuff"..tostring(i+1)))
+			settingObj.castByMe = getCheckBoxState(getChild(containerElementPanel, "castByMe"..tostring(i+1)))
+			settingObj.isSpell = getCheckBoxState(getChild(containerElementPanel, "isSpell"..tostring(i+1)))
+			settingObj.nameLowerStr = nil
 		end
 	end
 	

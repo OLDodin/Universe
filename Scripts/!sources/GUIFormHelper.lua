@@ -2,9 +2,10 @@ local m_template = getChild(mainForm, "Template")
 
 local function GenerateWidgetForContainer(anElement, aContainer, anIndex)
 	setTemplateWidget(m_template)	
-	local ownerPanel=createWidget(mainForm, "containerMainPanel"..tostring(anIndex), "Panel", WIDGET_ALIGN_BOTH, WIDGET_ALIGN_LOW, nil, 30, nil, nil)
+	local editNameWdg = nil
+	local ownerPanel = createWidget(mainForm, "containerMainPanel"..tostring(anIndex), "Panel", WIDGET_ALIGN_BOTH, WIDGET_ALIGN_LOW, nil, 30, nil, nil)
 	setBackgroundColor(ownerPanel, {r=1, g=1, b=1, a=0.5})
-	local panel=createWidget(ownerPanel, "containerPanel", "PanelTransparent", WIDGET_ALIGN_BOTH, WIDGET_ALIGN_LOW, nil, 30, 0, 0)
+	local panel = createWidget(ownerPanel, "containerPanel", "PanelTransparent", WIDGET_ALIGN_BOTH, WIDGET_ALIGN_LOW, nil, 30, 0, 0)
 	setText(createWidget(panel, "Id", "TextView", WIDGET_ALIGN_LOW, WIDGET_ALIGN_CENTER, 30, 20, 10), anIndex)
 	local containerName = getName(aContainer)
 	
@@ -24,8 +25,8 @@ local function GenerateWidgetForContainer(anElement, aContainer, anIndex)
 			editLineWidth = 200
 		end
 		
-		local nameWidget=createWidget(panel, "Name"..tostring(anIndex), "EditLineTransparent", WIDGET_ALIGN_LOW, WIDGET_ALIGN_CENTER, editLineWidth, 20, 35)
-		setText(nameWidget, anElement.name)
+		editNameWdg = createWidget(panel, "Name"..tostring(anIndex), "EditLineTransparent", WIDGET_ALIGN_LOW, WIDGET_ALIGN_CENTER, editLineWidth, 20, 35)
+		setText(editNameWdg, anElement.name)
 	end
 	
 	if containerName == "configProfilesContainer" then
@@ -54,7 +55,27 @@ local function GenerateWidgetForContainer(anElement, aContainer, anIndex)
 	
 	setText(createWidget(panel, "deleteButton"..containerName, "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_CENTER, 15, 15, 10), "x")
 
-	return ownerPanel
+	return ownerPanel, editNameWdg
+end
+
+local function GetNameEditWdg(aContainerElement, anIndex)
+	return getChild(getChild(aContainerElement, "containerPanel"), "Name"..tostring(anIndex))
+end
+
+local function GetIndexForWidgetByMainPanel(anWidget)
+	local parentWdg = getParent(anWidget)
+	
+	while parentWdg do 
+		local wdgName = getName(parentWdg)
+		if findSimpleString(wdgName, "containerMainPanel") then
+			local nStr = string.gsub(wdgName, "containerMainPanel", "")
+			--container for 0
+			return tonumber(nStr) - 1
+		end
+		parentWdg = getParent(parentWdg)
+	end
 end
 
 SetGenerateWidgetForContainerFunc(GenerateWidgetForContainer)
+SetGetNameEditWdgFromContainerFunc(GetNameEditWdg)
+SetGetIndexForWidgetInContainerFunc(GetIndexForWidgetByMainPanel)

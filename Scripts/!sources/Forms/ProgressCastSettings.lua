@@ -52,9 +52,13 @@ function SaveProgressCastFormSettings(aForm)
 	
 	local container = getChild(aForm, "ignoreListContainer")
 	if container and m_currentFormSettings.ignoreList then
-		for i, j in ipairs(m_currentFormSettings.ignoreList) do
-			j.name = getText(getChild(container, "Name"..tostring(i), true))
-			j.exceptionsEditText = getText(getChild(aForm, "exceptionsEdit"..tostring(i), true))
+		for i = 0, container:GetElementCount() - 1 do
+			local mainContainerElementPanel = container:At(i)
+			local containerElementPanel = getChild(mainContainerElementPanel, "containerPanel")
+			local settingObj = m_currentFormSettings.ignoreList[i+1]
+			settingObj.name = getText(getChild(containerElementPanel, "Name"..tostring(i+1)))
+			settingObj.exceptionsEditText = getText(getChild(mainContainerElementPanel, "exceptionsEdit"..tostring(i+1)))
+			settingObj.nameLowerStr = nil
 		end
 	end
 	

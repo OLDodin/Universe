@@ -235,7 +235,7 @@ function CreateGroupBuffPanel(aForm, aSettings, anIsAboveHead, aPosInPlateIndex)
 			groupBuffPanel.panelWdg = createWidget(aForm, aSettings.buffGroupWdgName, "BuffGroup", nil, nil, panelWidth, panelHeight)
 		end
 
-		local groupBuffTopPanel = getChild(groupBuffPanel.panelWdg, "MoveModePanel", true)
+		local groupBuffTopPanel = getChild(groupBuffPanel.panelWdg, "MoveModePanel")
 		if aSettings.fixed or anIsAboveHead then
 			DnD.HideWdg(groupBuffTopPanel)
 		else

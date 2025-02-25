@@ -247,23 +247,23 @@ Global("WIDGET_ALIGN_BOTH", 3)
 Global("WIDGET_ALIGN_LOW_ABS", 4)
 
 function destroy(widget)
-	if widget and widget.DestroyWidget then widget:DestroyWidget() end
+	if widget then widget:DestroyWidget() end
 end
 
 function isVisible(widget)
-	if widget and widget.IsVisible then return widget:IsVisible() end
+	if widget then return widget:IsVisible() end
 	return nil
 end
 
 function getChild(widget, name, g)
 	if g==nil then g=false end
-	if not widget or not widget.GetChildUnchecked or not name then return nil end
+	if not widget or not name then return nil end
 	return widget:GetChildUnchecked(name, g)
 end
 
 function move(widget, posX, posY)
 	if not widget then return end
-	local BarPlace=widget.GetPlacementPlain and widget:GetPlacementPlain()
+	local BarPlace = widget:GetPlacementPlain()
 	if not BarPlace then return nil end
 	if posX then
 		BarPlace.posX = posX
@@ -273,36 +273,36 @@ function move(widget, posX, posY)
 		BarPlace.posY = posY
 		BarPlace.highPosY = posY
 	end
-	if widget.SetPlacementPlain then widget:SetPlacementPlain(BarPlace) end
+	widget:SetPlacementPlain(BarPlace)
 end
 
 function setFade(widget, fade)
-	if widget and fade and widget.SetFade then
+	if widget and fade then
 		widget:SetFade(fade)
 	end
 end
 
 function resize(widget, width, height)
 	if not widget then return end
-	local BarPlace=widget.GetPlacementPlain and widget:GetPlacementPlain()
+	local BarPlace = widget:GetPlacementPlain()
 	if not BarPlace then return nil end
 	if width then BarPlace.sizeX = width end
 	if height then BarPlace.sizeY = height end
-	if widget.SetPlacementPlain then widget:SetPlacementPlain(BarPlace) end
+	widget:SetPlacementPlain(BarPlace)
 end
 
 function align(widget, alignX, alignY)
 	if not widget then return end
-	local BarPlace=widget.GetPlacementPlain and widget:GetPlacementPlain()
+	local BarPlace = widget:GetPlacementPlain()
 	if not BarPlace then return nil end
 	if alignX then BarPlace.alignX = alignX end
 	if alignY then BarPlace.alignY = alignY end
-	if widget.SetPlacementPlain then widget:SetPlacementPlain(BarPlace) end
+	widget:SetPlacementPlain(BarPlace)
 end
 
 function updatePlacementPlain(widget, alignX, alignY, posX, posY, width, height)
 	if not widget then return end
-	local BarPlace=widget.GetPlacementPlain and widget:GetPlacementPlain()
+	local BarPlace = widget:GetPlacementPlain()
 	if not BarPlace then return nil end
 	if alignX then BarPlace.alignX = alignX end
 	if alignY then BarPlace.alignY = alignY end
@@ -321,7 +321,7 @@ end
 
 function priority(widget, priority)
 	if not widget or not priority then return nil end
-	if widget.SetPriority then widget:SetPriority(priority) end
+	widget:SetPriority(priority)
 end
 
 function show(widget)
@@ -338,11 +338,11 @@ end
 
 function setName(widget, name)
 	if not widget or not name then return nil end
-	if widget.SetName then widget:SetName(name) end
+	widget:SetName(name)
 end
 
 function getName(widget)
-	return widget and widget.GetName and widget:GetName() or nil
+	return widget and widget:GetName() or nil
 end
 
 function getText(widget)
@@ -456,7 +456,7 @@ function setTemplateWidget(widget)
 end
 
 function swap(widget)
-	if widget and widget.IsVisible and not widget:IsVisible() then
+	if widget and not widget:IsVisible() then
 		show(widget)
 	else
 		hide(widget)

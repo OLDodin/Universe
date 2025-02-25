@@ -3,6 +3,8 @@ local m_rightClickReactions={}
 local m_template = getChild(mainForm, "Template")
 local m_defaultMessage = getLocale()["enterName"]
 local m_generateFunc = nil
+local m_getNameEditWdgFunc = nil
+local m_getIndexForWidgetFunc = nil
 
 function AddReaction(aName, aFunc)
 	if not m_reactions then
@@ -137,26 +139,26 @@ function SetGenerateWidgetForContainerFunc(aFunc)
 	m_generateFunc = aFunc
 end
 
-local function GetContainFromParent(anWidget)
-	local container = getParent(anWidget, 5)
-	if apitype(container) ~= "Widget_ScrollableContainerSafe" then
-		container = getParent(anWidget, 4)
+function SetGetNameEditWdgFromContainerFunc(aFunc)
+	m_getNameEditWdgFunc = aFunc
+end
+
+function SetGetIndexForWidgetInContainerFunc(aFunc)
+	m_getIndexForWidgetFunc = aFunc
+end
+
+local function GetContainerFromParent(anWidget)
+	local parentWdg = getParent(anWidget)
+	while parentWdg do
+		if apitype(parentWdg) == "Widget_ScrollableContainerSafe" then
+			return parentWdg
+		end
+		parentWdg = getParent(parentWdg)
 	end
-	return container
 end
 
 function GetIndexForWidget(anWidget)
-	local container = GetContainFromParent(anWidget)
-	if not container then 
-		return nil
-	end
-	local searchingName = getName(anWidget)
-	for i=0, container:GetElementCount() do
-		local childWithName = getChild(container:At(i), searchingName, true)
-		if childWithName and anWidget:IsEqual(childWithName) then 
-			return i
-		end
-	end
+	return m_getIndexForWidgetFunc(anWidget)
 end
 
 function ShowValuesFromTable(aTable, aForm, aContainer)
@@ -189,7 +191,7 @@ function ShowValuesFromTable(aTable, aForm, aContainer)
 end
 
 function DeleteContainer(aTable, anWidget, aForm)
-	local container = GetContainFromParent(anWidget)
+	local container = GetContainerFromParent(anWidget)
 	local index = GetIndexForWidget(anWidget)
 	if not container or not aTable or not index then
 		return
@@ -215,15 +217,20 @@ function UpdateTableValuesFromContainer(aTable, aForm, aContainer)
 	if not aContainer or not aTable then 
 		return nil 
 	end
+	if GetTableSize(aTable) ~= aContainer:GetElementCount() then
+		return nil 
+	end
 	local containerName = getName(aContainer)
-	for i, j in ipairs(aTable) do
-		local editLine = getChild(aContainer, "Name"..tostring(i), true)
+	
+	for i = 0, aContainer:GetElementCount() - 1 do
+		local editLine = m_getNameEditWdgFunc(aContainer:At(i), i+1)
 		editLine:SetFocus(false)
-		j.name = getText(editLine)
+		local tableElement = aTable[i+1]
+		tableElement.name = getText(editLine)
 		if containerName == "myTargetsContainer" then
-			j.nameLowerStr = toLowerString(j.name)
+			tableElement.nameLowerStr = toLowerString(tableElement.name)
 		else
-			j.nameLowerStr = nil
+			tableElement.nameLowerStr = nil
 		end
 	end
 end
@@ -264,12 +271,12 @@ function AddElementFromForm(aTable, aForm, aContainer)
 	end
 	
 	local index = GetTableSize(aTable)
-	local wdg = m_generateFunc(newElement, aContainer, index)
+	local wdg, editNameWdg = m_generateFunc(newElement, aContainer, index)
 	if wdg then 
 		aContainer:PushBack(wdg) 
 		aContainer:ForceReposition()
 		aContainer:EnsureVisible(wdg)
-		getChild(wdg, "Name"..tostring(index), true):SetFocus(true)
+		editNameWdg:SetFocus(true)
 	end
 	
 	return true

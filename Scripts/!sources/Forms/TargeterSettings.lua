@@ -190,9 +190,13 @@ function SaveTargeterFormSettings(aForm)
 	
 	local container = getChild(group6, "targetBuffContainer")
 	if container and m_currentFormSettings.raidBuffs.customBuffs then
-		for i, j in ipairs(m_currentFormSettings.raidBuffs.customBuffs) do
-			j.name = getText(getChild(container, "Name"..tostring(i), true))
-			j.castByMe = getCheckBoxState(getChild(container, "castByMe"..tostring(i), true))
+		for i = 0, container:GetElementCount() - 1 do
+			local mainContainerElementPanel = container:At(i)
+			local containerElementPanel = getChild(mainContainerElementPanel, "containerPanel")
+			local settingObj = m_currentFormSettings.raidBuffs.customBuffs[i+1]
+			settingObj.name = getText(getChild(containerElementPanel, "Name"..tostring(i+1)))
+			settingObj.castByMe = getCheckBoxState(getChild(containerElementPanel, "castByMe"..tostring(i+1)))
+			settingObj.nameLowerStr = nil
 		end
 	end
 
