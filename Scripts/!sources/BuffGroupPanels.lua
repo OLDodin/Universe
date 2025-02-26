@@ -186,8 +186,10 @@ function DestroyGroupBuffPanels()
 	for _, groupBuffPanel in pairs(m_groupBuffPanels) do
 		if groupBuffPanel.panelWdg then
 			local groupBuffTopPanel = getChild(groupBuffPanel.panelWdg, "MoveModePanel")
-			DnD.Remove(groupBuffTopPanel)
-			DnD.HideWdg(groupBuffTopPanel)
+			if groupBuffTopPanel then
+				DnD.Remove(groupBuffTopPanel)
+				DnD.HideWdg(groupBuffTopPanel)
+			end
 			for _, buffSlot in pairs(groupBuffPanel.guiBuffList) do
 				stopLoopBlink(buffSlot.info.buffHighlight)
 			end
@@ -199,7 +201,7 @@ function DestroyGroupBuffPanels()
 	m_lastTargetID = nil
 end
 
-function CreateGroupsParentForm()
+function InitGroupsParentForm()
 	return getChild(mainForm, "BuffForm")
 end
 
@@ -226,37 +228,40 @@ function CreateGroupBuffPanel(aForm, aSettings, anIsAboveHead, aPosInPlateIndex)
 	if h and w and size and aSettings.buffs and (anIsAboveHead or not aSettings.aboveHeadButton) then
 		local num = math.min(w*h, table.getn(aSettings.buffs))
 		if num == 0 then num = w*h end
-		setTemplateWidget(aForm)
+		setTemplateWidget("common")
 		local panelWidth = math.max(size*math.min(w, num), GetMinGroupPanelSize(anIsAboveHead))
 		local panelHeight = size*math.min(h, math.ceil(num/w))+30
 		if anIsAboveHead then
-			groupBuffPanel.panelWdg = createWidget(mainForm, "BuffGroup"..tostring(aPosInPlateIndex), "BuffGroup", nil, nil, panelWidth, panelHeight)			
+			groupBuffPanel.panelWdg = createWidget(getChild(mainForm, "AboveHeadCachePanel"), "BuffGroup"..tostring(aPosInPlateIndex), "PanelTransparent", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, panelWidth, panelHeight)			
 		else
-			groupBuffPanel.panelWdg = createWidget(aForm, aSettings.buffGroupWdgName, "BuffGroup", nil, nil, panelWidth, panelHeight)
+			groupBuffPanel.panelWdg = createWidget(aForm, aSettings.buffGroupWdgName, "PanelTransparent", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, panelWidth, panelHeight)
 		end
-
-		local groupBuffTopPanel = getChild(groupBuffPanel.panelWdg, "MoveModePanel")
-		if aSettings.fixed or anIsAboveHead then
-			DnD.HideWdg(groupBuffTopPanel)
-		else
-			DnD.ShowWdg(groupBuffTopPanel)
-		end
-		setText(getChild(groupBuffTopPanel, "PanelNameText"), aSettings.name, "ColorWhite", "center", 17, true, true)
-		setFade(groupBuffTopPanel, 0.7)
+		priority(groupBuffPanel.panelWdg, 250)
 		
 		local buffAlign = WIDGET_ALIGN_LOW
 		if aSettings.flipBuffsButton then
 			buffAlign = WIDGET_ALIGN_HIGH
-			align(groupBuffTopPanel, WIDGET_ALIGN_HIGH)
 			align(groupBuffPanel.panelWdg, WIDGET_ALIGN_HIGH)
 		end
-		if anIsAboveHead then
-			--buffAlign = WIDGET_ALIGN_CENTER
-		else
+		
+		if not anIsAboveHead then
+			setTemplateWidget("bar")
+			local groupBuffTopPanel = createWidget(groupBuffPanel.panelWdg, "MoveModePanel", "MoveModePanel")
+			if aSettings.fixed then
+				DnD.HideWdg(groupBuffTopPanel)
+			else
+				DnD.ShowWdg(groupBuffTopPanel)
+			end
+			setText(getChild(groupBuffTopPanel, "PanelNameText"), aSettings.name, "ColorWhite", "center", 17, true, true)
+			setFade(groupBuffTopPanel, 0.7)
+		
+			if aSettings.flipBuffsButton then
+				align(groupBuffTopPanel, WIDGET_ALIGN_HIGH)
+			end
+
 			DnD.Init(groupBuffPanel.panelWdg, groupBuffTopPanel, true, false)
-		end
-				
-		setTemplateWidget(m_template)	
+		end		
+		setTemplateWidget("common")
 		for j=1, w*h do
 			local x = ((j-1)%w)*size
 			local y = math.floor((j-1)/w)*size
@@ -281,7 +286,7 @@ function CreateGroupBuffPanel(aForm, aSettings, anIsAboveHead, aPosInPlateIndex)
 			updatePlacementPlain(currBuff.info.buffStackCntWdg, WIDGET_ALIGN_LOW, WIDGET_ALIGN_HIGH, 1, 1, currBuff.info.buffSize, GetTextSizeByBuffSize(currBuff.info.buffSize)+1)
 			
 			setTextViewText(currBuff.info.buffStackCntWdg, g_tagTextValue, nil, "ColorWhite", "right", GetTextSizeByBuffSize(currBuff.info.buffSize), nil, 1)
-			setTextViewText(currBuff.info.buffTimerWdg, g_tagTextValue, nil, "ColorWhite", "center", GetTextSizeByBuffSize(currBuff.info.buffSize), nil, 1)
+			setTextViewText(currBuff.info.buffTimerWdg, g_tagTextValue, nil, "ColorWhite", "center", GetTextSizeByBuffSize(currBuff.info.buffSize), 1, 1)
 						
 			groupBuffPanel.guiBuffList[j] = currBuff
 		end
@@ -305,6 +310,9 @@ function ResetPanelPos(aInd)
 		return
 	end
 	local groupBuffTopPanel = getChild(m_groupBuffPanels[aInd].panelWdg, "MoveModePanel")
+	if not groupBuffTopPanel then
+		return
+	end
 	DnD.Remove(groupBuffTopPanel)
 	SetConfig("DnD:"..DnD.GetWidgetTreePath(m_groupBuffPanels[aInd].panelWdg), {posX = 500, posY = 400, highPosX = 500, highPosY = 0})
 	DnD.Init(m_groupBuffPanels[aInd].panelWdg, groupBuffTopPanel, true, false)
@@ -314,10 +322,12 @@ function UpdateVisibleForGroupBuffTopPanel(aSettings)
 	for i, groupBuffPanel in pairs(m_groupBuffPanels) do
 		if groupBuffPanel.panelWdg then
 			local groupBuffTopPanel = getChild(groupBuffPanel.panelWdg, "MoveModePanel")
-			if aSettings.buffGroups[i].fixed then
-				DnD.HideWdg(groupBuffTopPanel)
-			else
-				DnD.ShowWdg(groupBuffTopPanel)
+			if groupBuffTopPanel then
+				if aSettings.buffGroups[i].fixed then
+					DnD.HideWdg(groupBuffTopPanel)
+				else
+					DnD.ShowWdg(groupBuffTopPanel)
+				end
 			end
 		end
 	end
@@ -328,10 +338,12 @@ function SetVisibleForGroupBuffTopPanel(aInd, aVisible)
 		return
 	end
 	local groupBuffTopPanel = getChild(m_groupBuffPanels[aInd].panelWdg, "MoveModePanel")
-	if aVisible then
-		DnD.ShowWdg(groupBuffTopPanel)
-	else
-		DnD.HideWdg(groupBuffTopPanel)
+	if groupBuffTopPanel then
+		if aVisible then
+			DnD.ShowWdg(groupBuffTopPanel)
+		else
+			DnD.HideWdg(groupBuffTopPanel)
+		end
 	end
 end
 

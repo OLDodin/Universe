@@ -17,7 +17,7 @@ for /d %%B in (.\*) do (
 for %%i in (*.lua) do (
 	call :CompileFunction %%i "false"
 )
-goto :EXIT
+goto :DONE
 
 
 :CompileFunction
@@ -35,15 +35,30 @@ echo Converting %srcPath%
 
 cd /d "c:\LuaJIT\x86\" 
 c:\LuaJIT\x86\luajit.exe -bg "%srcPath%" "%destPath%.luac.x86"
+IF %ERRORLEVEL% NEQ 0 (
+  goto :ERROR
+)
 cd /d "c:\LuaJIT\x64\" 
 c:\LuaJIT\x64\luajit.exe -bg "%srcPath%" "%destPath%.luac.x64"
+IF %ERRORLEVEL% NEQ 0 (
+  goto :ERROR
+)
 cd /d %startPath%
 
 exit /b
 
 
 
-:EXIT
+:ERROR
+echo \\\
+echo Compiling error
+echo \\\
+goto :EXIT
+
+:DONE
 echo Done
+
+:EXIT
 pause
+
 endlocal

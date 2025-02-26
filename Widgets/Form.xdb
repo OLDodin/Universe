@@ -3,12 +3,12 @@
 	<Name>Universe</Name>
 	<Priority>4600</Priority>
 	<Children>
-		<Item href="Bars/FormProgressAction.xdb#xpointer(/WidgetPanel)"/>
-		<Item href="Bars/FormProgressBuff.xdb#xpointer(/WidgetPanel)"/>
-		<Item href="Bars/Form.xdb#xpointer(/WidgetPanel)"/>
-		<Item href="Bars/FormTargeter.xdb#xpointer(/WidgetPanel)"/>
-		<Item href="Buffs/Form.xdb#xpointer(/WidgetPanel)"/>
-		<Item href="Templates/Main.xdb#xpointer(/WidgetPanel)"/>
+		<Item href="Bars/ProgressActionPanel.xdb"/>
+		<Item href="Bars/ProgressBuffPanel.xdb"/>
+		<Item href="Bars/RaidPanel.xdb"/>
+		<Item href="Bars/TargetPanel.xdb"/>
+		<Item href="Buffs/BuffPanel.xdb"/>
+		<Item href="AboveHead/AboveHeadCachePanel.xdb"/>
 	</Children>
 	<BackLayer href="" />
 	<FrontLayer href="" />

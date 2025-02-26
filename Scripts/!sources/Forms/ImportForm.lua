@@ -1,4 +1,5 @@
 function CreateImportProfilesForm()
+	setTemplateWidget("common")
 	local form=createWidget(mainForm, "importProfilesForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 600, 280, 800, 450)
 	priority(form, 506)
 	hide(form)
@@ -17,6 +18,7 @@ function CreateImportProfilesForm()
 end
 
 function CreateImportError()
+	setTemplateWidget("common")
 	local form=createWidget(mainForm, "importProfilesError", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 350, 100, 50, 100)
 	priority(form, 515)
 	hide(form)

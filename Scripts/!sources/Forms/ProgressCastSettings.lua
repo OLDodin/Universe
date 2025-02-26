@@ -1,7 +1,7 @@
 local m_currentFormSettings = nil
 
 function CreateProgressCastSettingsForm()
-	setTemplateWidget(getChild(mainForm, "Template"))
+	setTemplateWidget("common")
 	
 	local form=createWidget(mainForm, "castSettingsForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 700, 410, 200, 100)
 	hide(form)

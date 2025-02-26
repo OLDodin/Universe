@@ -2,7 +2,6 @@
 <WidgetPanel>
 	<Name>TopPanel</Name>
 	<Children>
-		<Item href="PartyButton.xdb#xpointer(/WidgetButton)"/>
 		<Item href="CheckButton.xdb#xpointer(/WidgetButton)"/>
 		<Item href="ShopButton.xdb#xpointer(/WidgetButton)"/>
 		<Item href="ConfigButton.xdb#xpointer(/WidgetButton)"/>

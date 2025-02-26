@@ -1,7 +1,7 @@
 local m_currentFormSettings = nil
 
 function CreateMainSettingsForm()
-	setTemplateWidget(getChild(mainForm, "Template"))
+	setTemplateWidget("common")
 	
 	local form=createWidget(mainForm, "mainSettingsForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 600, 360, 200, 100)
 	hide(form)
@@ -91,7 +91,7 @@ end
 
 
 function CreateMainBtn()
-	setTemplateWidget(getChild(mainForm, "Template"))
+	setTemplateWidget("common")
 		
 	local button=createWidget(mainForm, "UniverseButton", "Button", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 30, 25, 350, 120)
 	setText(button, "U")

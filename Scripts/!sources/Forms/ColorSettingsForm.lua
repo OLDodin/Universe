@@ -5,7 +5,7 @@ function GetColorSettingsHeight()
 end
 
 function CreateSimpleColorSettingsForm(aParent, aColor, aHeaderName)
-	setTemplateWidget(m_template)
+	setTemplateWidget("common")
 	
 	local form=createWidget(aParent, "colorSettingsForm", "PanelTransparent", WIDGET_ALIGN_CENTER, WIDGET_ALIGN_BOTH, 290, nil, 0, 0)
 	setLocaleTextEx(createWidget(form, aHeaderName, "TextView", WIDGET_ALIGN_BOTH, WIDGET_ALIGN_LOW, nil, 25, 0, 10), nil, "ColorWhite", "center")
@@ -65,7 +65,7 @@ function CreateColorSettingsForm(aParent, anInfo)
 		anInfo.highlightColor = {r=0, g=1, b=0, a=1}
 	end
 	
-	setTemplateWidget(m_template)
+	setTemplateWidget("common")
 	
 	local form=createWidget(aParent, "colorSettingsForm", "PanelTransparent", WIDGET_ALIGN_CENTER, WIDGET_ALIGN_BOTH, 290, nil, 0, 0)
 	

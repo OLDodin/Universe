@@ -2,7 +2,7 @@ local m_currentFormSettings = nil
 
 
 function CreateTargeterSettingsForm()
-	setTemplateWidget(getChild(mainForm, "Template"))
+	setTemplateWidget("common")
 	
 	local form=createWidget(mainForm, "targeterSettingsForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 1000, 700, 200, 100)
 	hide(form)

@@ -2,9 +2,6 @@
 <WidgetPanel>
 	<Name>BuffForm</Name>
 	<Priority>250</Priority>
-	<Children>
-		<Item href="Group/Group.xdb#xpointer(/WidgetPanel)"/>
-	</Children>
 	<Placement>
 		<QuantumScale>false</QuantumScale>
 		<X>

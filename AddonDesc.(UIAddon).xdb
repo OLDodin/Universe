@@ -67,6 +67,15 @@
 			<textures href="Widgets/Textures/Textures.xdb#xpointer(/UIRelatedTextures)"/>
 		</Item>
 	</texturesGroups>
-  <visObjects href=""/>
+	<widgetGroups>
+		<Item>
+			<groupName>common</groupName>
+			<widgets href="Widgets/Resources/common/WidgetTemplates.xdb" />
+		</Item>
+		<Item>
+			<groupName>bar</groupName>
+			<widgets href="Widgets/Resources/bar/WidgetTemplates.xdb" />
+		</Item>
+	</widgetGroups>
 	<addon_name>Universe</addon_name>
 </UIAddon>

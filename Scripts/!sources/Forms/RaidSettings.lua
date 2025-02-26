@@ -1,7 +1,7 @@
 local m_currentFormSettings = nil
 
 function CreateRaidSettingsForm()
-	setTemplateWidget(getChild(mainForm, "Template"))
+	setTemplateWidget("common")
 	
 	local form=createWidget(mainForm, "raidSettingsForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 730, 660, 200, 100)
 	hide(form)

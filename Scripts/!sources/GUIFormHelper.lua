@@ -1,7 +1,7 @@
 local m_template = getChild(mainForm, "Template")
 
 local function GenerateWidgetForContainer(anElement, aContainer, anIndex)
-	setTemplateWidget(m_template)	
+	setTemplateWidget("common")
 	local editNameWdg = nil
 	local ownerPanel = createWidget(mainForm, "containerMainPanel"..tostring(anIndex), "Panel", WIDGET_ALIGN_BOTH, WIDGET_ALIGN_LOW, nil, 30, nil, nil)
 	setBackgroundColor(ownerPanel, {r=1, g=1, b=1, a=0.5})

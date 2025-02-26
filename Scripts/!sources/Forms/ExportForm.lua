@@ -1,4 +1,5 @@
 function CreateExportProfilesForm()
+	setTemplateWidget("common")
 	local form=createWidget(mainForm, "exportProfilesForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 600, 280, 800, 450)
 	priority(form, 506)
 	hide(form)
@@ -18,5 +19,5 @@ end
 
 function SetEditText(aForm, aTxt)
 	setText(getChild(aForm, "EditBox1"), aTxt)
-	DnD.ShowWdg(aForm)
+	aForm:Show(true)
 end

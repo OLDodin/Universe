@@ -1,11 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <WidgetPanel>
-	<Name>RaidPanel</Name>
+	<Name>TargetPanel</Name>
 	<Priority>2</Priority>
 	<Children>
-		<Item href="TopPanel/TopPanel.xdb#xpointer(/WidgetButton)"/>
-		<Item href="Bar/Bar.xdb#xpointer(/WidgetButton)"/>
-		<Item href="AddBar/AddBar.xdb#xpointer(/WidgetButton)"/>
+		<Item href="TopTargeterPanel/TopPanel.xdb#xpointer(/WidgetButton)"/>
 	</Children>
 	<BackLayer href="" />
 	<FrontLayer href="" />

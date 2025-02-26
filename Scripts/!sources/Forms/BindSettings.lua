@@ -18,7 +18,7 @@ m_actionSwitch[RESSURECT_CLICK] = m_locale["RESSURECT_CLICK"]
 m_actionSwitch[AUTOCAST_CLICK] = m_locale["AUTOCAST_CLICK"]
 
 function CreateBindSettingsForm()
-	setTemplateWidget(getChild(mainForm, "Template"))
+	setTemplateWidget("common")
 	
 	local form=createWidget(mainForm, "bindSettingsForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 1280, 620, 200, 100)
 	hide(form)

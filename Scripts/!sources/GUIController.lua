@@ -76,9 +76,11 @@ function DeleteProfile(aWdg)
 end
 
 function OnTalentsChanged()
-	LoadLastUsedSetting()
-	LoadForms()
-	ReloadAll()
+	if IsProfileIndexChanged() then
+		LoadLastUsedSetting()
+		LoadForms()
+		ReloadAll()
+	end
 end
 
 function ReloadAll()
@@ -116,7 +118,6 @@ function ReloadAll()
 		UnloadCastSubSystem()
 	end
 	
-	
 	TargetChanged()
 end
 
@@ -147,14 +148,19 @@ end
 
 function ExportProfile(aWdg)
 	local index = GetIndexForWidget(aWdg)
-	
+	if not m_exportProfileForm then
+		m_exportProfileForm = CreateExportProfilesForm()
+	end
 	SetEditText(m_exportProfileForm, ExportProfileByIndex(index+1))
 end
 
 function ImportProfile()
 	local importedProfile = StartDeserialize(GetImportText(m_importProfileForm))
 	if not importedProfile then
-		DnD.ShowWdg(m_importErrorForm)
+		if not m_importErrorForm then
+			m_importErrorForm = CreateImportError()
+		end
+		m_importErrorForm:Show(true)
 		return
 	else	
 		importedProfile.name = ConcatWString(toWString(importedProfile.name), userMods.ToWString("-import"))
@@ -165,12 +171,15 @@ function ImportProfile()
 		allProfiles[GetTableSize(allProfiles)] = importedProfile
 		SaveAllSettings(allProfiles)
 		
-		DnD.HideWdg(m_importProfileForm)
+		m_importProfileForm:Show(false)
 	end
 end
 
 function ShowImportProfile(aWdg)
-	DnD.ShowWdg(m_importProfileForm)
+	if not m_importProfileForm then
+		m_importProfileForm = CreateImportProfilesForm()
+		m_importProfileForm:Show(true)
+	end
 end
 
 function LoadForms()
@@ -911,6 +920,9 @@ local function OnPlayerBarPointing(aParams)
 	end
 	
 	if playerBar and not m_moveMode and playerBar.playerID then
+		if not m_playerShortInfoForm then
+			m_playerShortInfoForm = CreatePlayerShortInfoForm()
+		end
 		InitPlayerShortInfoForm(playerBar.playerID)
 		show(m_playerShortInfoForm)
 	end
@@ -919,6 +931,9 @@ end
 function OnDropDownBtnPointing(aParams) 
 	if aParams.sender == "targeterModeBtn" then
 		if aParams.active and m_currTargetType == TARGETS_DISABLE then
+			if not m_targeterInfoForm then
+				m_targeterInfoForm = CreateTargeterInfoForm()
+			end
 			local targeterPlace = m_targetPanel:GetPlacementPlain()
 			move(m_targeterInfoForm, targeterPlace.posX+30, targeterPlace.posY+30)
 			show(m_targeterInfoForm)
@@ -2328,20 +2343,12 @@ end
 local function GUIInit()
 	CreateMainBtn()
 
-	m_buffsGroupParentForm = CreateGroupsParentForm()
-	m_exportProfileForm = CreateExportProfilesForm()
-	m_importProfileForm = CreateImportProfilesForm()
-	m_importErrorForm = CreateImportError()
-	
-	
-	m_playerShortInfoForm = CreatePlayerShortInfoForm()
-	m_targeterInfoForm = CreateTargeterInfoForm()
-
-	m_raidPanel = CreateRaidPanel()
-	m_targetPanel = CreateTargeterPanel()
+	m_buffsGroupParentForm = InitGroupsParentForm()
+	m_raidPanel = InitRaidPanel()
+	m_targetPanel = InitTargeterPanel()
 	m_raidPartyButtons = CreateRaidPartyBtn(m_raidPanel)
-	m_progressActionPanel = CreateProgressActionPanel()
-	m_progressBuffPanel = CreateProgressBuffPanel()
+	m_progressActionPanel = InitProgressActionPanel()
+	m_progressBuffPanel = InitProgressBuffPanel()
 end
 
 local function OnEventSecondTimer()
@@ -2746,7 +2753,7 @@ function GUIControllerInit()
 	AddReaction("useCastSubSystem", UseCastSubSystemChecked)
 	
 	AddRightClickReaction("targeterDropDown", TargetWorkSwitch)
-	
+
 	local profile = GetCurrentProfile()
 	if profile.mainFormSettings.useRaidSubSystem then
 		InitRaidSubSystem()	
@@ -2763,7 +2770,6 @@ function GUIControllerInit()
 	if profile.mainFormSettings.useCastSubSystem then
 		InitCastSubSystem()
 	end
-
 	
 	TargetChanged()
 	DnD.SetDndCallbackFunc(OnDNDPickAttempt)

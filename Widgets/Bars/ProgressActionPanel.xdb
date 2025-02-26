@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <WidgetPanel>
-	<Name>ProgressBuffPanel</Name>
+	<Name>ProgressActionPanel</Name>
 	<Priority>1</Priority>
 	<Children>
-		<Item href="../Buffs/Group/TopPanel/Panel.xdb#xpointer(/WidgetPanel)"/>
-		<Item href="ProgressBar/Bar.xdb#xpointer(/WidgetButton)"/>
+		<Item href="../Resources/bar/TopMovingPanel/Panel.xdb"/>
 	</Children>
 	<BackLayer href="" />
 	<FrontLayer href="" />
@@ -13,12 +12,12 @@
 		<X>
 			<Align>WIDGET_ALIGN_LOW</Align>
 			<Size>250</Size>
-			<Pos>300</Pos>
+			<Pos>450</Pos>
 		</X>
 		<Y>
 			<Align>WIDGET_ALIGN_LOW</Align>
 			<Size>175</Size>
-			<Pos>200</Pos>
+			<Pos>240</Pos>
 		</Y>
 	</Placement>
 	<PickChildrenOnly>true</PickChildrenOnly>

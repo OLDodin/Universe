@@ -7,8 +7,7 @@ local m_template = getChild(mainForm, "Template")
 local m_defaultPanelHeight = 40
 local m_panelWidth = 0
 
-local function CreateProgressPanel(aPanelName)
-	setTemplateWidget(mainForm)
+local function InitProgressPanel(aPanelName)
 	local progressPanel = getChild(mainForm, aPanelName)
 	local topPanel = getChild(progressPanel, "MoveModePanel")
 	
@@ -19,16 +18,16 @@ local function CreateProgressPanel(aPanelName)
 	return progressPanel
 end
 
-function CreateProgressActionPanel()
-	return CreateProgressPanel("ProgressActionPanel")
+function InitProgressActionPanel()
+	return InitProgressPanel("ProgressActionPanel")
 end
 
-function CreateProgressBuffPanel()
-	return CreateProgressPanel("ProgressBuffPanel")
+function InitProgressBuffPanel()
+	return InitProgressPanel("ProgressBuffPanel")
 end
 
 function CreateProgressCastPanel(aParentPanel, aY)
-	setTemplateWidget(aParentPanel)
+	setTemplateWidget("bar")
 	local profile = GetCurrentProfile()
 	local panelWidth = tonumber(profile.castFormSettings.panelWidthText)
 	local panelHeight = tonumber(profile.castFormSettings.panelHeightText)

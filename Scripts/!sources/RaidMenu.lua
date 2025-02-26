@@ -209,7 +209,7 @@ function ShowMenu(aPlayerBar, aParams, aRaidPanelWdg, aRaidPanelSize, aMyUniqueI
 	GenerateMenuInfos(aPlayerBar, aMyUniqueID)
 	if not m_menuInfos then return end
 	
-	setTemplateWidget(m_template)
+	setTemplateWidget("common")
 	local menuHeight=(table.maxn(m_menuInfos)+1)*20+8
 	local menuX = aParams.x
 	local menuY = aParams.y

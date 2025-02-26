@@ -674,7 +674,7 @@ function ResetPlayerPanelPosition(aPlayerBar, aX, aY, aFormSettings)
 end
 
 function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings, aNum)
-	setTemplateWidget(aParentPanel)
+	setTemplateWidget("bar")
 	local barColor = aFormSettings.friendColor
 	
 	local panelWidth = tonumber(aFormSettings.raidWidthText)
@@ -772,9 +772,9 @@ function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings, aNum)
 	
 	playerBar.buffSlotsNeg = {}
 	playerBar.usedBuffSlotNegCnt = 0
-	setTemplateWidget(m_template)
 	
-
+	
+	setTemplateWidget("common")
 	for i = 1, buffSlotCnt do
 		CreateBuffSlot(playerBar.buffPanelWdg, buffSize, playerBar.buffSlots, i, WIDGET_ALIGN_LOW, aFormSettings.buffsOpacityText, aFormSettings.showBuffTimeButton)
 		CreateBuffSlot(playerBar.buffPanelNegativeWdg, buffSize, playerBar.buffSlotsNeg, i, WIDGET_ALIGN_HIGH, aFormSettings.buffsOpacityText, aFormSettings.showBuffTimeButton)
@@ -826,7 +826,7 @@ function CreateBuffSlot(aParent, aBuffSize, anResArray, anIndex, anAlign, aBuffs
 		setFade(buffSlot.buffIcon, aBuffsOpacity)
 		setFade(buffSlot.buffHighlight, aBuffsOpacity)
 	end
-	setTextViewText(buffSlot.buffStackCnt, g_tagTextValue, nil, "ColorWhite", "right", GetTextSizeByBuffSize(buffSlot.buffSize), nil, 1)
+	setTextViewText(buffSlot.buffStackCnt, g_tagTextValue, nil, "ColorWhite", "right", GetTextSizeByBuffSize(buffSlot.buffSize), 1, 1)
 	setTextViewText(buffSlot.buffTime, g_tagTextValue, nil, "ColorWhite", "center", GetTimeTextSizeByBuffSize(buffSlot.buffSize), 1, 1)
 
 	if anResArray then
@@ -883,7 +883,7 @@ function ApplyRaidSettingsToGUI(aTopPanelForm)
 	DnD.Enable(wtTopPanel, activeNum==0)
 end
 
-function CreateRaidPanel()
+function InitRaidPanel()
 	local raidPanel = getChild(mainForm, "RaidPanel")
 	local wtTopPanel = getChild(raidPanel, "TopPanel")
 	DnD.Init(raidPanel, wtTopPanel, true)
@@ -902,10 +902,10 @@ end
 function CreateRaidPartyBtn(aRaidPanel)
 	local raidPartyButtons = {}
 	local wtTopPanel = getChild(aRaidPanel, "TopPanel")
-	setTemplateWidget(wtTopPanel)
+	setTemplateWidget("bar")
 	for i = 1, 4 do
 		local raidPartyButton = {}
-		raidPartyButton.wdg = createWidget(wtTopPanel, "UTargetTopPanel", "PartyButton", nil, nil, nil, nil, (i-1)*20+37, nil, nil, nil)
+		raidPartyButton.wdg = createWidget(wtTopPanel, "PartyButton"..tostring(i), "PartyButton", nil, nil, nil, nil, (i-1)*20+37, nil, nil, nil)
 		raidPartyButton.active = true
 		raidPartyButton.showed = false
 		setBackgroundTexture(raidPartyButton.wdg, g_texParty[i])
@@ -993,14 +993,14 @@ function ApplyTargetSettingsToGUI(aTopPanelForm)
 	ApplyTargetSettingsToGUIInternal(aTopPanelForm, activeNum)
 end
 
-function CreateTargeterPanel()
+function InitTargeterPanel()
 	local targeterPanel = getChild(mainForm, "TargetPanel")
 	move(targeterPanel, 500, 380)
 	local wtTopPanel = getChild(targeterPanel, "TopTargeterPanel")
 	DnD.Init(targeterPanel, wtTopPanel, true, true, {0,-50,-50,0})
 	resize(wtTopPanel, 200, nil)
 	
-	setTemplateWidget(m_template)
+	setTemplateWidget("common")
 	local modePanel = createWidget(targeterPanel, "targeterDropDown", "DropDownPanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 170, 20, 20, 240)
 	m_targetModeName = getChild(getChild(modePanel, "DropDownHeaderPanel"), "ModeNameTextView")
 	m_targetLockBtn = getChild(wtTopPanel, "ButtonLocker")
@@ -1028,6 +1028,7 @@ function CreateTargeterPanel()
 end
 
 function CreateTargeterInfoForm()
+	setTemplateWidget("common")
 	local form=createWidget(mainForm, "targeterInfoForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 250, 70, 0, 0)
 	priority(form, 508)
 	hide(form)

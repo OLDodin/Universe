@@ -418,10 +418,25 @@ function setBackgroundColor(widget, color)
 end
 
 local templateWidget=nil
+local addonRelatedWidgetGroups = {}
+
 
 function getDesc(name)
-	local widget=templateWidget and name and templateWidget:GetChildUnchecked(name, false)
-	return widget and widget:GetWidgetDesc() or nil
+	if not templateWidget then
+		return nil
+	end
+	local valueType = type(templateWidget)
+	if valueType == "string" then
+		local wdgGroup = addonRelatedWidgetGroups[templateWidget]
+		if not wdgGroup then
+			wdgGroup = common.GetAddonRelatedWidgetGroup(templateWidget)
+			addonRelatedWidgetGroups[templateWidget] = wdgGroup
+		end
+		return wdgGroup:GetWidget(name)
+	else
+		local widget = templateWidget:GetChildUnchecked(name, false)
+		return widget and widget:GetWidgetDesc() or nil
+	end
 end
 
 function getParent(widget, num)
@@ -431,6 +446,7 @@ function getParent(widget, num)
 	if num==1 then return parent end
 	return getParent(parent, num-1)
 end
+
 
 function createWidget(parent, widgetName, templateName, alignX, alignY, width, height, posX, posY)
 	local widget = nil
@@ -500,10 +516,7 @@ end
 -- Timers functions
 --------------------------------------------------------------------------------
 
-
-
-local template=getChild(mainForm, "Template")
-
+local timersInited = false
 local timers={}
 local m_loopEffects={}
 
@@ -526,7 +539,7 @@ end
 
 function startTimer(name, callback, speed, one)
 	if name and timers[name] then destroy(timers[name].widget) end
-	setTemplateWidget(template)
+	setTemplateWidget("common")
 	local timerWidget=createWidget(mainForm, name, "Timer")
 	if not timerWidget or not name or not callback then return nil end
 	local newTimer = {}
@@ -535,7 +548,10 @@ function startTimer(name, callback, speed, one)
 	newTimer.one=one
 	newTimer.speed=tonumber(speed) or 1
 
-	common.RegisterEventHandler(timerTick, "EVENT_EFFECT_FINISHED")
+	if not timersInited then
+		common.RegisterEventHandler(timerTick, "EVENT_EFFECT_FINISHED")
+		timersInited = true
+	end
     timerWidget:PlayFadeEffect(1.0, 1.0, newTimer.speed*1000, EA_MONOTONOUS_INCREASE, true)
 	
 	timers[name] = newTimer
@@ -543,7 +559,10 @@ function startTimer(name, callback, speed, one)
 end
 
 function stopTimer(name)
-    common.UnRegisterEventHandler(timerTick, "EVENT_EFFECT_FINISHED")
+	if name and timers[name] then
+		timers[name].widget:FinishFadeEffect(false, false)
+	end
+    --common.UnRegisterEventHandler(timerTick, "EVENT_EFFECT_FINISHED")
 end
 
 function setTimeout(name, speed)

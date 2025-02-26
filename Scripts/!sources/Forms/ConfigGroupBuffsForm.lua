@@ -11,7 +11,7 @@ local m_group6 = nil
 local m_group7 = nil
 
 function CreateConfigGroupBuffsForm()
-	setTemplateWidget(getChild(mainForm, "Template"))
+	setTemplateWidget("common")
 	
 	local form=createWidget(mainForm, "configGroupBuffsForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 945, 700, 550, 130)
 	priority(form, 507)
@@ -236,7 +236,7 @@ function LoadConfigGroupBuffsForm(aForm, anIndex, aInitLoad)
 		destroy(groupBuffSelector)
 	end
 	
-	setTemplateWidget(getChild(mainForm, "Template"))
+	setTemplateWidget("common")
 	groupBuffSelector = createWidget(aForm, "groupBuffSelector", "DropDownPanel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 250, 25, 280, 50)
 	GenerateBtnForDropDown(groupBuffSelector, textArr)
 	setText(getChild(getChild(groupBuffSelector, "DropDownHeaderPanel"), "ModeNameTextView"), m_currentFormSettings.name, "Neutral", "left", 11)

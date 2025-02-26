@@ -92,7 +92,7 @@ end
 
 function GenerateBtnForDropDown(anWidget, aTextArr, aDefaultIndex, aColor)
 	local selectPanel = getChild(anWidget, "DropDownSelectPanel")
-	setTemplateWidget(m_template)
+	setTemplateWidget("common")
 	if not aColor then
 		aColor = "ColorWhite"
 	end

@@ -14,6 +14,7 @@ local m_bracketBeginWStr = userMods.ToWString("(")
 local m_bracketEndWStr = userMods.ToWString(")")
 
 function CreatePlayerShortInfoForm()
+	setTemplateWidget("common")
 	local form=createWidget(mainForm, "playerShortInfoForm", "Panel", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_HIGH, 350, 130, 100, 120)
 	priority(form, 508)
 	hide(form)

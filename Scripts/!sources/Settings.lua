@@ -321,6 +321,10 @@ function InitializeDefaultSetting()
 	SetCurrentProfileInd(1)
 end
 
+function IsProfileIndexChanged()
+	return m_currentProfileInd ~= LoadCurrentProfileInd()
+end
+
 function LoadLastUsedSetting()
 	LoadSettings(LoadCurrentProfileInd())
 end

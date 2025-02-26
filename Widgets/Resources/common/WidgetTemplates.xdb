@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<UIRelatedWidgets>
+	<items>
+		<Item>
+			<name>Panel</name>
+			<widget href="Panel.xdb" />
+		</Item>
+		<Item>
+			<name>EditLine</name>
+			<widget href="EditLine.xdb" />
+		</Item>
+		<Item>
+			<name>EditLineTransparent</name>
+			<widget href="EditLineTransparent.xdb" />
+		</Item>
+		<Item>
+			<name>Button</name>
+			<widget href="Button.xdb" />
+		</Item>
+		<Item>
+			<name>CheckBox</name>
+			<widget href="CheckBox.xdb" />
+		</Item>
+		<Item>
+			<name>TextView</name>
+			<widget href="TextView.xdb" />
+		</Item>
+		<Item>
+			<name>TextContainer</name>
+			<widget href="TextContainer.xdb" />
+		</Item>
+		<Item>
+			<name>ScrollableContainer</name>
+			<widget href="ScrollableContainer.xdb" />
+		</Item>
+		<Item>
+			<name>Timer</name>
+			<widget href="Timer.xdb" />
+		</Item>
+		<Item>
+			<name>BuffTemplate</name>
+			<widget href="Buff/Buff.xdb" />
+		</Item>
+		<Item>
+			<name>EditBox</name>
+			<widget href="EditBox.xdb" />
+		</Item>
+		<Item>
+			<name>SliderPanel</name>
+			<widget href="SliderPanel/SliderPanel.(WidgetPanel).xdb" />
+		</Item>
+		<Item>
+			<name>ImageBox</name>
+			<widget href="ImageBox/ImageBox.xdb" />
+		</Item>
+		<Item>
+			<name>Cross</name>
+			<widget href="MsgBoxBtnCross.xdb" />
+		</Item>
+		<Item>
+			<name>DropDownPanel</name>
+			<widget href="DropDownPanel/DropDownPanel.xdb" />
+		</Item>
+		<Item>
+			<name>DropDownSelectButton</name>
+			<widget href="DropDownSelectButton/DropDownSelectButton.xdb" />
+		</Item>
+		<Item>
+			<name>PanelTransparent</name>
+			<widget href="PanelTransparent.xdb" />
+		</Item>
+	</items>
+</UIRelatedWidgets>
+
