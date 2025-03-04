@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<WidgetButton>
+	<Name>EmptyButton</Name>
+	<Variants>
+		<Item>
+			<Reaction>execute</Reaction>
+			<ReactionRightClick>executeRightClick</ReactionRightClick>
+		</Item>
+	</Variants>
+	<BackLayer href="" />
+</WidgetButton>

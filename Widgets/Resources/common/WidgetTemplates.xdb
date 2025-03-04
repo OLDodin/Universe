@@ -73,6 +73,10 @@
 			<name>PanelTransparent</name>
 			<widget href="PanelTransparent.xdb" />
 		</Item>
+		<Item>
+			<name>EmptyButton</name>
+			<widget href="EmptyButton.xdb" />
+		</Item>
 	</items>
 </UIRelatedWidgets>
 

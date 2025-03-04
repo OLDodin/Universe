@@ -158,6 +158,9 @@ local function GetContainerFromParent(anWidget)
 end
 
 function GetIndexForWidget(anWidget)
+	if not m_getIndexForWidgetFunc then
+		return nil
+	end
 	return m_getIndexForWidgetFunc(anWidget)
 end
 
@@ -214,7 +217,7 @@ function DeleteContainer(aTable, anWidget, aForm)
 end
 
 function UpdateTableValuesFromContainer(aTable, aForm, aContainer)
-	if not aContainer or not aTable then 
+	if not aContainer or not aTable or not m_getNameEditWdgFunc then 
 		return nil 
 	end
 	if GetTableSize(aTable) ~= aContainer:GetElementCount() then
