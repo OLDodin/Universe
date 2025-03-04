@@ -3,7 +3,7 @@ local m_currentFormSettings = nil
 function CreateProgressCastSettingsForm()
 	setTemplateWidget("common")
 	
-	local form=createWidget(mainForm, "castSettingsForm", "PanelWnd", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 700, 410, 200, 100)
+	local form=createWidget(mainForm, "castSettingsForm", "PanelWnd", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 750, 410, 200, 100)
 	hide(form)
 	WndMgr.AddWnd(form)
 	
@@ -27,8 +27,8 @@ function CreateProgressCastSettingsForm()
 	
 	setLocaleText(createWidget(form, "resetPanelCastPosButton", "Button", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 200, 30, 20, 290))
 	
-	setLocaleText(createWidget(form, "ignoreListTxt", "TextView", nil, nil, 200, 25, 370, 50))
-	createWidget(form, "ignoreListContainer", "ScrollableContainer", nil, nil, 310, 215, 370, 70)
+	setLocaleText(createWidget(form, "ignoreListTxt", "TextView", nil, nil, 220, 25, 370, 50))
+	createWidget(form, "ignoreListContainer", "ScrollableContainer", nil, nil, 380, 215, 360, 70)
 	setLocaleText(createWidget(form, "addIgnoreCastsButton", "Button", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 280, 25, 385, 290))
 	
 	DnD.Init(form, form, true)
