@@ -13,9 +13,9 @@ local m_group7 = nil
 function CreateConfigGroupBuffsForm()
 	setTemplateWidget("common")
 	
-	local form=createWidget(mainForm, "configGroupBuffsForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 945, 700, 550, 130)
-	priority(form, 507)
+	local form=createWidget(mainForm, "configGroupBuffsForm", "PanelWnd", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 945, 700, 550, 130)
 	hide(form)
+	WndMgr.AddWnd(form)
 	
 	createWidget(form, "buffGroupNameHeader", "TextView",  WIDGET_ALIGN_CENTER, nil, 420, 20, nil, 16)
 	setText(createWidget(form, "closeSomeSettingsButton", "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 20, 20, 20, 20), "x")

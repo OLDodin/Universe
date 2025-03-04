@@ -2,9 +2,9 @@
 function CreateProfilesForm()
 	setTemplateWidget("common")
 	
-	local form=createWidget(mainForm, "configProfilesForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 600, 280, 800, 450)
-	priority(form, 506)
+	local form=createWidget(mainForm, "configProfilesForm", "PanelWnd", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 600, 280, 800, 450)
 	hide(form)
+	WndMgr.AddWnd(form)
 
 	setLocaleText(createWidget(form, "configProfilesHeader", "TextView",  WIDGET_ALIGN_CENTER, nil, 250, 20, nil, 20))
 	setText(createWidget(form, "closeButton", "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 20, 20, 20, 20), "x")

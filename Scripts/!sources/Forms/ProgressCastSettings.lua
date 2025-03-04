@@ -3,9 +3,9 @@ local m_currentFormSettings = nil
 function CreateProgressCastSettingsForm()
 	setTemplateWidget("common")
 	
-	local form=createWidget(mainForm, "castSettingsForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 700, 410, 200, 100)
+	local form=createWidget(mainForm, "castSettingsForm", "PanelWnd", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 700, 410, 200, 100)
 	hide(form)
-	priority(form, 505)
+	WndMgr.AddWnd(form)
 	
 	setText(createWidget(form, "closeSomeSettingsButton", "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 20, 20, 20, 20), "x")
 

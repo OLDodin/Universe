@@ -2,9 +2,9 @@ local m_imagebox = nil
 
 function CreateHelpForm()
 	setTemplateWidget("common")
-	local form=createWidget(mainForm, "helpForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 1180, 780, 800, 450)
-	priority(form, 507)
+	local form=createWidget(mainForm, "helpForm", "PanelWnd", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 1180, 780, 800, 450)
 	hide(form)
+	WndMgr.AddWnd(form)
 	
 	setLocaleText(createWidget(form, "helpHeader", "TextView",  WIDGET_ALIGN_CENTER, nil, 300, 20, nil, 10))
 	setText(createWidget(form, "closeButton", "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 20, 20, 20, 10), "x")

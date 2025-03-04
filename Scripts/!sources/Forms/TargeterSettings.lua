@@ -4,9 +4,9 @@ local m_currentFormSettings = nil
 function CreateTargeterSettingsForm()
 	setTemplateWidget("common")
 	
-	local form=createWidget(mainForm, "targeterSettingsForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 1000, 700, 200, 100)
+	local form=createWidget(mainForm, "targeterSettingsForm", "PanelWnd", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 1000, 700, 200, 100)
 	hide(form)
-	priority(form, 505)
+	WndMgr.AddWnd(form)
 	
 	local settingsContainer = createWidget(form, "settingsContainer", "ScrollableContainer", nil, nil, 350, 610, 5, 40)
 

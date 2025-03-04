@@ -1,4 +1,4 @@
-local m_originalFunc = DnD.OnPickAttempt
+local m_originalPickFunc = DnD.OnPickAttempt
 
 function DnD.SetDndCallbackFunc(aPickAttempFunc)
 	DnD.PickAttemptPrepareFunc = aPickAttempFunc
@@ -11,5 +11,5 @@ DnD.OnPickAttempt = function( params )
 			DnD.PickAttemptPrepareFunc(params)
 		end
 	end
-	m_originalFunc(params)
+	m_originalPickFunc(params)
 end

@@ -3,9 +3,9 @@ local m_currentFormSettings = nil
 function CreateMainSettingsForm()
 	setTemplateWidget("common")
 	
-	local form=createWidget(mainForm, "mainSettingsForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 600, 360, 200, 100)
+	local form=createWidget(mainForm, "mainSettingsForm", "PanelWnd", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 600, 360, 200, 100)
 	hide(form)
-	priority(form, 505)
+	WndMgr.AddWnd(form)
 
 	setLocaleText(createWidget(form, "configHeader", "TextView",  WIDGET_ALIGN_CENTER, nil, 100, 20, nil, 20))
 	setText(createWidget(form, "closeSomeSettingsButton", "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 20, 20, 20, 20), "x")
@@ -93,7 +93,7 @@ end
 function CreateMainBtn()
 	setTemplateWidget("common")
 		
-	local button=createWidget(mainForm, "UniverseButton", "Button", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 30, 25, 350, 120)
+	local button=createWidget(mainForm, "UniverseButton", "Button", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 32, 32, 350, 120)
 	setText(button, "U")
 	DnD.Init(button, button, true)
 end

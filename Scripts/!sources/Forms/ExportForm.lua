@@ -1,8 +1,8 @@
 function CreateExportProfilesForm()
 	setTemplateWidget("common")
-	local form=createWidget(mainForm, "exportProfilesForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 600, 280, 800, 450)
-	priority(form, 506)
+	local form=createWidget(mainForm, "exportProfilesForm", "PanelWnd", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 600, 280, 800, 450)
 	hide(form)
+	WndMgr.AddWnd(form)
 	
 	setLocaleText(createWidget(form, "exportProfilesHeader", "TextView",  WIDGET_ALIGN_CENTER, nil, 450, 20, nil, 20))
 	setText(createWidget(form, "closeButton", "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 20, 20, 20, 20), "x")
@@ -19,5 +19,4 @@ end
 
 function SetEditText(aForm, aTxt)
 	setText(getChild(aForm, "EditBox1"), aTxt)
-	aForm:Show(true)
 end

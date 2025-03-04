@@ -152,6 +152,7 @@ function ExportProfile(aWdg)
 		m_exportProfileForm = CreateExportProfilesForm()
 	end
 	SetEditText(m_exportProfileForm, ExportProfileByIndex(index+1))
+	WndMgr.ShowWdg(m_exportProfileForm)
 end
 
 function ImportProfile()
@@ -160,7 +161,7 @@ function ImportProfile()
 		if not m_importErrorForm then
 			m_importErrorForm = CreateImportError()
 		end
-		m_importErrorForm:Show(true)
+		WndMgr.ShowWdg(m_importErrorForm)
 		return
 	else	
 		importedProfile.name = ConcatWString(toWString(importedProfile.name), userMods.ToWString("-import"))
@@ -171,15 +172,15 @@ function ImportProfile()
 		allProfiles[GetTableSize(allProfiles)] = importedProfile
 		SaveAllSettings(allProfiles)
 		
-		m_importProfileForm:Show(false)
+		WndMgr.HideWdg(m_importProfileForm)
 	end
 end
 
 function ShowImportProfile(aWdg)
 	if not m_importProfileForm then
 		m_importProfileForm = CreateImportProfilesForm()
-		m_importProfileForm:Show(true)
 	end
+	WndMgr.ShowWdg(m_importProfileForm)
 end
 
 function LoadForms()
@@ -195,19 +196,19 @@ end
 function HideFormsOfUnusedSubsystems()
 	local profile = GetCurrentProfile()
 	if not profile.mainFormSettings.useRaidSubSystem then
-		hide(m_raidSettingsForm)
+		WndMgr.HideWdg(m_raidSettingsForm)
 	end
 	if not profile.mainFormSettings.useTargeterSubSystem then
-		hide(m_targeterSettingsForm)
+		WndMgr.HideWdg(m_targeterSettingsForm)
 	end
 	if not profile.mainFormSettings.useBuffMngSubSystem then
-		hide(m_configGroupBuffForm)
+		WndMgr.HideWdg(m_configGroupBuffForm)
 	end
 	if not profile.mainFormSettings.useBindSubSystem then
-		hide(m_bindSettingsForm)
+		WndMgr.HideWdg(m_bindSettingsForm)
 	end
 	if not profile.mainFormSettings.useCastSubSystem then
-		hide(m_progressCastSettingsForm)
+		WndMgr.HideWdg(m_progressCastSettingsForm)
 	end
 end
 
@@ -231,12 +232,12 @@ local function UndoSubsystemSettingsForm(aForm)
 end
 
 function UndoButtonPressed(aWdg) 
-	DnD.SwapWdg(getParent(aWdg))
+	WndMgr.SwapWnd(getParent(aWdg))
 	UndoSubsystemSettingsForm(getParent(aWdg))
 end
 
 function SaveButtonPressed(aWdg)
-	DnD.SwapWdg(getParent(aWdg))
+	WndMgr.SwapWnd(getParent(aWdg))
 	local index = GetCurrentProfileInd()
 	local profilesList = GetAllProfiles()
 	
@@ -301,7 +302,7 @@ function HelpButtonPressed()
 	if not m_helpForm then 
 		m_helpForm = CreateHelpForm() 
 	end 
-	DnD.SwapWdg(m_helpForm)
+	WndMgr.SwapWnd(m_helpForm)
 end
 
 function ResetGroupBuffPanelPos(aWdg)
@@ -364,9 +365,9 @@ end
 local function SwapSettingsForm(aForm)
 	if aForm:IsVisible() then
 		UndoSubsystemSettingsForm(aForm)
-		aForm:Show(false)
+		WndMgr.HideWdg(aForm)
 	else
-		aForm:Show(true)
+		WndMgr.ShowWdg(aForm)
 	end
 end
 
@@ -426,7 +427,7 @@ function SwapProfileForm(aWdg)
 		m_profilesForm = CreateProfilesForm()	
 		LoadProfilesFormSettings(m_profilesForm)
 	end
-	DnD.SwapWdg(m_profilesForm)
+	WndMgr.SwapWnd(m_profilesForm)
 end
 
 function EditBuffGroup(aWdg, anIndex)
@@ -2697,10 +2698,10 @@ function GUIControllerInit()
 	common.RegisterReactionHandler(DropDownBtnRightClick, "DropDownBtnRightClick")
 	common.RegisterReactionHandler(SelectDropDownBtnPressed, "SelectDropDownBtnPressed")
 	
-	AddReaction("closeButton", function (aWdg) DnD.SwapWdg(getParent(aWdg)) end)
+	AddReaction("closeButton", function (aWdg) WndMgr.SwapWnd(getParent(aWdg)) end)
 	AddReaction("UniverseButton", SwapMainSettingsForm)
-	AddReaction("closeExprotBtn", function (aWdg) DnD.SwapWdg(getParent(aWdg)) end)
-	AddReaction("closeButtonOK", function (aWdg) DnD.SwapWdg(getParent(aWdg)) end)
+	AddReaction("closeExprotBtn", function (aWdg) WndMgr.SwapWnd(getParent(aWdg)) end)
+	AddReaction("closeButtonOK", function (aWdg) WndMgr.SwapWnd(getParent(aWdg)) end)
 	AddReaction("profilesButton", SwapProfileForm)
 	AddReaction("deleteButtonconfigProfilesContainer", DeleteProfile)
 	AddReaction("saveAsProfileButton", SaveProfileAs)
@@ -2828,4 +2829,5 @@ function GUIControllerInit()
 	common.RegisterReactionHandler(OnShopChange, "OnShopChange")
 	common.RegisterReactionHandler(OnAssertChange, "OnAssertChange")
 	common.RegisterReactionHandler(EditLineEsc, "EditLineEsc")
+	common.RegisterReactionHandler(function (aParams) WndMgr.OnWndClicked(aParams.widget) end, "PanelWndClick")
 end

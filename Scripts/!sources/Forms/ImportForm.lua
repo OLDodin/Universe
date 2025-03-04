@@ -1,8 +1,8 @@
 function CreateImportProfilesForm()
 	setTemplateWidget("common")
-	local form=createWidget(mainForm, "importProfilesForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 600, 280, 800, 450)
-	priority(form, 506)
+	local form=createWidget(mainForm, "importProfilesForm", "PanelWnd", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 600, 280, 800, 450)
 	hide(form)
+	WndMgr.AddWnd(form)
 
 	setLocaleText(createWidget(form, "importProfilesHeader", "TextView",  WIDGET_ALIGN_CENTER, nil, 450, 20, nil, 20))
 	setText(createWidget(form, "closeButton", "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 20, 20, 20, 20), "x")
@@ -19,9 +19,9 @@ end
 
 function CreateImportError()
 	setTemplateWidget("common")
-	local form=createWidget(mainForm, "importProfilesError", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 350, 100, 50, 100)
-	priority(form, 515)
+	local form=createWidget(mainForm, "importProfilesError", "PanelWnd", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 350, 100, 50, 100)
 	hide(form)
+	WndMgr.AddWnd(form)
 	
 	setLocaleText(createWidget(form, "importErrorTxt", "TextView",  WIDGET_ALIGN_CENTER, nil, 300, 20, nil, 20))
 	setText(createWidget(form, "closeButton", "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 20, 20, 20, 20), "x")

@@ -2,6 +2,10 @@
 <UIRelatedWidgets>
 	<items>
 		<Item>
+			<name>PanelWnd</name>
+			<widget href="PanelWnd.xdb" />
+		</Item>
+		<Item>
 			<name>Panel</name>
 			<widget href="Panel.xdb" />
 		</Item>

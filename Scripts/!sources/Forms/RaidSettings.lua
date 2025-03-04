@@ -3,9 +3,9 @@ local m_currentFormSettings = nil
 function CreateRaidSettingsForm()
 	setTemplateWidget("common")
 	
-	local form=createWidget(mainForm, "raidSettingsForm", "Panel", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 730, 660, 200, 100)
+	local form=createWidget(mainForm, "raidSettingsForm", "PanelWnd", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 730, 660, 200, 100)
 	hide(form)
-	priority(form, 505)
+	WndMgr.AddWnd(form)
 	
 	local settingsContainer = createWidget(form, "settingsContainer", "ScrollableContainer", nil, nil, 350, 545, 5, 40)
 	
