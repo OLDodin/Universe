@@ -16,4 +16,5 @@
 			<Reaction>PanelWndClick</Reaction>
 		</Item>
 	</Variants>
+	<useDefaultSounds>false</useDefaultSounds>
 </WidgetButton>

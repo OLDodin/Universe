@@ -240,12 +240,6 @@ end
 -- Widget funtions
 --------------------------------------------------------------------------------
 
-Global("WIDGET_ALIGN_LOW", 0)
-Global("WIDGET_ALIGN_HIGH", 1)
-Global("WIDGET_ALIGN_CENTER", 2)
-Global("WIDGET_ALIGN_BOTH", 3)
-Global("WIDGET_ALIGN_LOW_ABS", 4)
-
 function destroy(widget)
 	if widget then widget:DestroyWidget() end
 end
