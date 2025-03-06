@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <WidgetPanel>
 	<Name>SliderPanel</Name>
-	<BackLayer href="OptionFrame.(WidgetLayerSimpleTexture).xdb#xpointer(/WidgetLayerSimpleTexture)" />
+	<BackLayer href="" />
 	<Children>
 		<Item href="Description.(WidgetTextView).xdb#xpointer(/WidgetTextView)" />
 		<Item href="Value.(WidgetTextView).xdb#xpointer(/WidgetTextView)" />

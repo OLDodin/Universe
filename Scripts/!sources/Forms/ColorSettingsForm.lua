@@ -13,17 +13,18 @@ function CreateSimpleColorSettingsForm(aParent, aColor, aHeaderName)
 	local backPreview = createWidget(form, "backPreview", "ImageBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 76, 76, 207, 52)
 	local colorPreview = createWidget(form, "colorPreview", "ImageBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 70, 70, 210, 55)
 	
-	local redWdg = CreateSlider(form, "redSlider", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 200, 25, 10, 40, 80)
-	local greenWdg = CreateSlider(form, "greenSlider", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 200, 25, 10, 65, 80)
-	local blueWdg = CreateSlider(form, "blueSlider", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 200, 25, 10, 90, 80)
-	local alphaWdg = CreateSlider(form, "alphaSlider", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 200, 25, 10, 115, 80)
+	local redWdg = CreateSlider(form, "redSlider", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 200, 25, 10, 40)
+	local greenWdg = CreateSlider(form, "greenSlider", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 200, 25, 10, 65)
+	local blueWdg = CreateSlider(form, "blueSlider", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 200, 25, 10, 90)
+	local alphaWdg = CreateSlider(form, "alphaSlider", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 200, 25, 10, 115)
 	
 	local sliderParams	= {
 							valueMin	= 0,
 							valueMax	= 1.0,
 							stepsCount	= 20,
 							value		= 1.0,
-							execute		= function( value ) 
+							sliderWidth		= 80,
+							sliderChangedFunc = function( value ) 
 								local color = {}
 								color.r = redWdg:Get()
 								color.g = greenWdg:Get()
@@ -36,16 +37,16 @@ function CreateSimpleColorSettingsForm(aParent, aColor, aHeaderName)
 	
 	sliderParams.description = getLocale()["red"]
 	sliderParams.value = aColor.r
-	redWdg:Set(sliderParams)
+	redWdg:Init(sliderParams)
 	sliderParams.description = getLocale()["green"]
 	sliderParams.value = aColor.g
-	greenWdg:Set(sliderParams)
+	greenWdg:Init(sliderParams)
 	sliderParams.description = getLocale()["blue"]
 	sliderParams.value = aColor.b
-	blueWdg:Set(sliderParams)
+	blueWdg:Init(sliderParams)
 	sliderParams.description = getLocale()["alpha"]
 	sliderParams.value = aColor.a
-	alphaWdg:Set(sliderParams)
+	alphaWdg:Init(sliderParams)
 	
 	colorPreview:SetBackgroundColor(aColor)
 	backPreview:SetBackgroundTexture(g_texColorBack)
@@ -77,9 +78,9 @@ function CreateColorSettingsForm(aParent, anInfo)
 	
 	local colorPreview = createWidget(form, "colorPreview", "ImageBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 70, 70, 210, 70)	
 	
-	local redWdg = CreateSlider(form, "redSlider", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 200, 25, 10, 70, 80)
-	local greenWdg = CreateSlider(form, "greenSlider", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 200, 25, 10, 95, 80)
-	local blueWdg = CreateSlider(form, "blueSlider", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 200, 25, 10, 120, 80)
+	local redWdg = CreateSlider(form, "redSlider", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 200, 25, 10, 70)
+	local greenWdg = CreateSlider(form, "greenSlider", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 200, 25, 10, 95)
+	local blueWdg = CreateSlider(form, "blueSlider", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 200, 25, 10, 120)
 	--local alphaWdg = CreateSlider(form, "alphaSlider", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 250, 25, 10, 145, 120)
 	
 	local sliderParams	= {
@@ -87,7 +88,8 @@ function CreateColorSettingsForm(aParent, anInfo)
 							valueMax	= 1.0,
 							stepsCount	= 20,
 							value		= 1.0,
-							execute		= function( value ) 
+							sliderWidth		= 80,
+							sliderChangedFunc = function( value ) 
 								local color = {}
 								color.r = redWdg:Get()
 								color.g = greenWdg:Get()
@@ -101,16 +103,16 @@ function CreateColorSettingsForm(aParent, anInfo)
 	
 	sliderParams.description = getLocale()["red"]
 	sliderParams.value = anInfo.highlightColor.r
-	redWdg:Set(sliderParams)
+	redWdg:Init(sliderParams)
 	sliderParams.description = getLocale()["green"]
 	sliderParams.value = anInfo.highlightColor.g
-	greenWdg:Set(sliderParams)
+	greenWdg:Init(sliderParams)
 	sliderParams.description = getLocale()["blue"]
 	sliderParams.value = anInfo.highlightColor.b
-	blueWdg:Set(sliderParams)
+	blueWdg:Init(sliderParams)
 	--sliderParams.description = getLocale()["alpha"]
 	--sliderParams.value = anInfo.highlightColor.a
-	--alphaWdg:Set(sliderParams)
+	--alphaWdg:Init(sliderParams)
 	
 	colorPreview:SetBackgroundColor(anInfo.highlightColor)
 	

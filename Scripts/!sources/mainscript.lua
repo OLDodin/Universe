@@ -1,7 +1,7 @@
 Global("g_debugSubsrb", false)
 Global("g_tagTextValue", toWString("textViewValue"))
 
-local IsAOPanelEnabled = GetConfig( "EnableAOPanel" ) or GetConfig( "EnableAOPanel" ) == nil
+local IsAOPanelEnabled = true
 local IsBtnInAOPanelNow = false
 function onAOPanelStart( params )
 	if IsAOPanelEnabled then
@@ -37,17 +37,6 @@ function onAOPanelChange( params )
 	end
 end
 
-function enableAOPanelIntegration( enable )
-	IsAOPanelEnabled = enable
-	SetConfig( "EnableAOPanel", enable )
-
-	if enable then
-		onAOPanelStart()
-	else
-		IsBtnInAOPanelNow = false
-		DnD.ShowWdg(getChild(mainForm, "UniverseButton"))
-	end
-end
 
 function onInterfaceToggle(aParams)
 	if aParams.toggleTarget == ENUM_InterfaceToggle_Target_All then

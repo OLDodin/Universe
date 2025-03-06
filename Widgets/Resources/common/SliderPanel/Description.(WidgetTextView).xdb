@@ -5,7 +5,7 @@
 		<X>
 			<Align>WIDGET_ALIGN_LOW</Align>
 			<Sizing>WIDGET_SIZING_INTERNAL</Sizing>
-			<Pos>4</Pos>
+			<Pos>0</Pos>
 		</X>
 		<Y>	
 			<Align>WIDGET_ALIGN_CENTER</Align>
