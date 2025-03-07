@@ -62,7 +62,6 @@ local m_menu = nil
 local m_menuWidth = 210
 local m_menuInfos = {}
 local m_whisperMode = false
-local m_template = getChild(mainForm, "Template")
 
 local function CloseMenu()
 	if m_menu then

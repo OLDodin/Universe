@@ -1,4 +1,3 @@
-local m_template = getChild(mainForm, "Template")
 
 local function GenerateWidgetForContainer(anElement, aContainer, anIndex)
 	setTemplateWidget("common")

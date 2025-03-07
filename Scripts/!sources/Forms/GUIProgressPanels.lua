@@ -3,7 +3,6 @@ Global("PROGRESS_PANELS_LIMIT", 10)
 Global("ACTION_PROGRESS", 2)
 Global("BUFF_PROGRESS", 3)
 
-local m_template = getChild(mainForm, "Template")
 local m_defaultPanelHeight = 40
 local m_panelWidth = 0
 

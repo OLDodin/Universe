@@ -13,8 +13,6 @@ Global("g_classPriority", {
 	["UNKNOWN"]		= 12
 })
 
-local m_template = getChild(mainForm, "Template")
-
 
 local m_manaColor = { r=0, g=0.3, b=1, a=1 }
 local m_energyColor =	{ r=1, g=0.3, b=0, a=1 }

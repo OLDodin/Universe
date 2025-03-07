@@ -1,6 +1,5 @@
 local m_reactions={}
 local m_rightClickReactions={}
-local m_template = getChild(mainForm, "Template")
 local m_defaultMessage = getLocale()["enterName"]
 local m_generateFunc = nil
 local m_getNameEditWdgFunc = nil

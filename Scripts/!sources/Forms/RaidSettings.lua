@@ -108,6 +108,13 @@ function CreateRaidSettingsForm()
 	settingsContainer:PushBack(group12)
 	
 	
+	CreateColorSettingsPanel(group8, g_relationColors[FRIEND_PANEL], "friendColorHeader")
+	CreateColorSettingsPanel(group9, g_needClearColor, "needClearColorHeader")
+	CreateColorSettingsPanel(group10, g_selectionColor, "selectionColorHeader")
+	CreateColorSettingsPanel(group11, g_farColor, "farColorHeader")
+	CreateColorSettingsPanel(group12, g_invulnerableColor, "invulnerableColorHeader")
+	
+	
 	setLocaleText(createWidget(group6, "raidBuffsButton", "TextView", nil, nil, 200, 25, 75, 3))
 	createWidget(group6, "autoDebuffModeButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 350, 25, 5, 33)
 	createWidget(group6, "checkFriendCleanableButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 350, 25, 5, 63)
@@ -267,17 +274,11 @@ function LoadRaidFormSettings(aForm)
 	
 	ShowValuesFromTable(m_currentFormSettings.raidBuffs.customBuffs, aForm, getChild(group7, "raidBuffContainer"))
 	
-	destroy(getChild(group8, "colorSettingsForm"))
-	destroy(getChild(group9, "colorSettingsForm"))
-	destroy(getChild(group10, "colorSettingsForm"))
-	destroy(getChild(group11, "colorSettingsForm"))
-	destroy(getChild(group12, "colorSettingsForm"))
-
-	CreateSimpleColorSettingsForm(group8, m_currentFormSettings.friendColor, "friendColorHeader")
-	CreateSimpleColorSettingsForm(group9, m_currentFormSettings.clearColor, "needClearColorHeader")
-	CreateSimpleColorSettingsForm(group10, m_currentFormSettings.selectionColor, "selectionColorHeader")
-	CreateSimpleColorSettingsForm(group11, m_currentFormSettings.farColor, "farColorHeader")
-	CreateSimpleColorSettingsForm(group12, m_currentFormSettings.invulnerableColor, "invulnerableColorHeader")
+	UpdateColorSettingsPanel(getChild(group8, "colorSettingsForm"), m_currentFormSettings.friendColor)
+	UpdateColorSettingsPanel(getChild(group9, "colorSettingsForm"), m_currentFormSettings.clearColor)
+	UpdateColorSettingsPanel(getChild(group10, "colorSettingsForm"), m_currentFormSettings.selectionColor)
+	UpdateColorSettingsPanel(getChild(group11, "colorSettingsForm"), m_currentFormSettings.farColor)
+	UpdateColorSettingsPanel(getChild(group12, "colorSettingsForm"), m_currentFormSettings.invulnerableColor)
 end
 
 function AddRaidBuffToSroller(aForm)
@@ -291,7 +292,7 @@ function DeleteRaidBuffFromSroller(aForm, aDeletingWdg)
 	
 	local colorForm = getChild(panelOfElement, "colorSettingsForm")
 	if colorForm then
-		destroy(colorForm)
+		DestroyColorPanel(colorForm)
 		resize(panelOfElement, nil, 30)
 		raidBuffContainer:ForceReposition()
 	else
@@ -305,10 +306,10 @@ function CreateColorSettingsForRaidBuffScroller(aForm, anIndex)
 	
 	local colorForm = getChild(panelOfElement, "colorSettingsForm")
 	if colorForm then
-		destroy(colorForm)
+		DestroyColorPanel(colorForm)
 		resize(panelOfElement, nil, 30)		
 	else
-		colorForm = CreateColorSettingsForm(panelOfElement, m_currentFormSettings.raidBuffs.customBuffs[anIndex+1])
+		colorForm = CreateColorPanelForBuff(panelOfElement, m_currentFormSettings.raidBuffs.customBuffs[anIndex+1])
 		resize(panelOfElement, nil, GetColorSettingsHeight())
 	end
 	raidBuffContainer:ForceReposition()
@@ -320,7 +321,7 @@ function UpdateColorSettingsForRaidBuffScroller(aForm, anIndex)
 
 	local colorForm = getChild(panelOfElement, "colorSettingsForm")
 	SaveBuffColorHighlight(colorForm, m_currentFormSettings.raidBuffs.customBuffs[anIndex+1])
-	destroy(colorForm)
+	DestroyColorPanel(colorForm)
 	resize(panelOfElement, nil, 30)
 	raidBuffContainer:ForceReposition()
 end

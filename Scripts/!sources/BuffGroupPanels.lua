@@ -1,6 +1,5 @@
 local m_groupBuffPanels = {}
 local m_lastTargetID = nil
-local m_template = getChild(mainForm, "Template")
 
 local function GetTextSizeByBuffSize(aSize)
 	return math.floor(aSize/2.5)

@@ -108,6 +108,12 @@ function CreateTargeterSettingsForm()
 	settingsContainer:PushBack(group10)
 	settingsContainer:PushBack(group11)
 	settingsContainer:PushBack(group12)
+	
+	CreateColorSettingsPanel(group8, g_relationColors[FRIEND_PANEL], "friendColorHeader")
+	CreateColorSettingsPanel(group9, g_relationColors[NEITRAL_PANEL], "neitralColorHeader")
+	CreateColorSettingsPanel(group10, g_relationColors[ENEMY_PANEL], "enemyColorHeader")
+	CreateColorSettingsPanel(group11, g_selectionColor, "selectionColorHeader")
+	CreateColorSettingsPanel(group12, g_invulnerableColor, "invulnerableColorHeader")
 
 	
 	setLocaleText(createWidget(group5, "raidBuffsButton", "TextView", nil, nil, 200, 25, 75, 3))
@@ -194,9 +200,11 @@ function SaveTargeterFormSettings(aForm)
 			local mainContainerElementPanel = container:At(i)
 			local containerElementPanel = getChild(mainContainerElementPanel, "containerPanel")
 			local settingObj = m_currentFormSettings.raidBuffs.customBuffs[i+1]
-			settingObj.name = getText(getChild(containerElementPanel, "Name"..tostring(i+1)))
+			local editLine = getChild(containerElementPanel, "Name"..tostring(i+1))
+			settingObj.name = getText(editLine)
 			settingObj.castByMe = getCheckBoxState(getChild(containerElementPanel, "castByMe"..tostring(i+1)))
 			settingObj.nameLowerStr = nil
+			editLine:SetFocus(false)
 		end
 	end
 
@@ -272,17 +280,11 @@ function LoadTargeterFormSettings(aForm)
 	ShowValuesFromTable(m_currentFormSettings.raidBuffs.customBuffs, aForm, getChild(group6, "targetBuffContainer"))
 	ShowValuesFromTable(m_currentFormSettings.myTargets, aForm, getChild(group7, "myTargetsContainer"))
 	
-	destroy(getChild(group8, "colorSettingsForm"))
-	destroy(getChild(group9, "colorSettingsForm"))
-	destroy(getChild(group10, "colorSettingsForm"))
-	destroy(getChild(group11, "colorSettingsForm"))
-	destroy(getChild(group12, "colorSettingsForm"))
-	
-	CreateSimpleColorSettingsForm(group8, m_currentFormSettings.friendColor, "friendColorHeader")
-	CreateSimpleColorSettingsForm(group9, m_currentFormSettings.neitralColor, "neitralColorHeader")
-	CreateSimpleColorSettingsForm(group10, m_currentFormSettings.enemyColor, "enemyColorHeader")
-	CreateSimpleColorSettingsForm(group11, m_currentFormSettings.selectionColor, "selectionColorHeader")
-	CreateSimpleColorSettingsForm(group12, m_currentFormSettings.invulnerableColor, "invulnerableColorHeader")
+	UpdateColorSettingsPanel(getChild(group8, "colorSettingsForm"), m_currentFormSettings.friendColor)
+	UpdateColorSettingsPanel(getChild(group9, "colorSettingsForm"), m_currentFormSettings.neitralColor)
+	UpdateColorSettingsPanel(getChild(group10, "colorSettingsForm"), m_currentFormSettings.enemyColor)
+	UpdateColorSettingsPanel(getChild(group11, "colorSettingsForm"), m_currentFormSettings.selectionColor)
+	UpdateColorSettingsPanel(getChild(group12, "colorSettingsForm"), m_currentFormSettings.invulnerableColor)
 end
 
 function AddTargetBuffToSroller(aForm)
@@ -300,7 +302,7 @@ function DeleteTargetBuffFromSroller(aForm, aDeletingWdg)
 	local panelOfElement = container:At(GetIndexForWidget(aDeletingWdg))
 	local colorForm = getChild(panelOfElement, "colorSettingsForm")
 	if colorForm then
-		destroy(colorForm)
+		DestroyColorPanel(colorForm)
 		resize(panelOfElement, nil, 30)
 		container:ForceReposition()
 	else
@@ -318,10 +320,10 @@ function CreateColorSettingsForTargetBuffScroller(aForm, anIndex)
 	
 	local colorForm = getChild(panelOfElement, "colorSettingsForm")
 	if colorForm then
-		destroy(colorForm)
+		DestroyColorPanel(colorForm)
 		resize(panelOfElement, nil, 30)		
 	else
-		colorForm = CreateColorSettingsForm(panelOfElement, m_currentFormSettings.raidBuffs.customBuffs[anIndex+1])
+		colorForm = CreateColorPanelForBuff(panelOfElement, m_currentFormSettings.raidBuffs.customBuffs[anIndex+1])
 		resize(panelOfElement, nil, GetColorSettingsHeight())
 	end
 	container:ForceReposition()
@@ -333,7 +335,7 @@ function UpdateColorSettingsForTargetBuffScroller(aForm, anIndex)
 
 	local colorForm = getChild(panelOfElement, "colorSettingsForm")
 	SaveBuffColorHighlight(colorForm, m_currentFormSettings.raidBuffs.customBuffs[anIndex+1])
-	destroy(colorForm)
+	DestroyColorPanel(colorForm)
 	resize(panelOfElement, nil, 30)
 	container:ForceReposition()
 end

@@ -180,11 +180,13 @@ function SaveConfigGroupBuffsForm(aForm, aClose)
 			local mainContainerElementPanel = container:At(i)
 			local containerElementPanel = getChild(mainContainerElementPanel, "containerPanel")
 			local settingObj = m_currentFormSettings.buffs[i+1]
-			settingObj.name = getText(getChild(containerElementPanel, "Name"..tostring(i+1)))
+			local editLine = getChild(containerElementPanel, "Name"..tostring(i+1))
+			settingObj.name = getText(editLine)
 			settingObj.isBuff = getCheckBoxState(getChild(containerElementPanel, "isBuff"..tostring(i+1)))
 			settingObj.castByMe = getCheckBoxState(getChild(containerElementPanel, "castByMe"..tostring(i+1)))
 			settingObj.isSpell = getCheckBoxState(getChild(containerElementPanel, "isSpell"..tostring(i+1)))
 			settingObj.nameLowerStr = nil
+			editLine:SetFocus(false)
 		end
 	end
 	
@@ -194,7 +196,7 @@ function SaveConfigGroupBuffsForm(aForm, aClose)
 	
 	if aClose then
 		m_loadedWndInd = 0
-		DnD.HideWdg(aForm)
+		--DnD.HideWdg(aForm)
 	end
 
 	return m_totalGroupsSettings
@@ -331,7 +333,7 @@ function DeleteBuffsInsideGroupFromSroller(aForm, aDeletingWdg)
 	local panelOfElement = groupBuffContainer:At(GetIndexForWidget(aDeletingWdg))
 	local colorForm = getChild(panelOfElement, "colorSettingsForm")
 	if colorForm then
-		destroy(colorForm)
+		DestroyColorPanel(colorForm)
 		resize(panelOfElement, nil, 30)	
 		groupBuffContainer:ForceReposition()
 	else
@@ -375,10 +377,10 @@ function CreateColorSettingsForBuffsGroupScroller(aForm, anIndex)
 	
 	local colorForm = getChild(panelOfElement, "colorSettingsForm")
 	if colorForm then
-		destroy(colorForm)
+		DestroyColorPanel(colorForm)
 		resize(panelOfElement, nil, 30)		
 	else
-		colorForm = CreateColorSettingsForm(panelOfElement, m_currentFormSettings.buffs[anIndex+1])
+		colorForm = CreateColorPanelForBuff(panelOfElement, m_currentFormSettings.buffs[anIndex+1])
 		resize(panelOfElement, nil, GetColorSettingsHeight())
 	end
 	groupBuffContainer:ForceReposition()
@@ -390,7 +392,7 @@ function UpdateColorSettingsForBuffsGroupScroller(aForm, anIndex)
 	local panelOfElement = groupBuffContainer:At(anIndex)
 	local colorForm = getChild(panelOfElement, "colorSettingsForm")
 	SaveBuffColorHighlight(colorForm, m_currentFormSettings.buffs[anIndex+1])
-	destroy(colorForm)
+	DestroyColorPanel(colorForm)
 	resize(panelOfElement, nil, 30)
 	groupBuffContainer:ForceReposition()
 end

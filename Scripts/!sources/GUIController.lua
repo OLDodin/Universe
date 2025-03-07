@@ -237,10 +237,10 @@ function UndoButtonPressed(aWdg)
 end
 
 function SaveButtonPressed(aWdg)
-	WndMgr.SwapWnd(getParent(aWdg))
 	local index = GetCurrentProfileInd()
 	local profilesList = GetAllProfiles()
-	
+
+	local needSwapWnd = true
 	local nameSettingForm = getName(getParent(aWdg))
 	if nameSettingForm == "bindSettingsForm" then
 		profilesList[index].bindFormSettings = SaveBindFormSettings(m_bindSettingsForm)
@@ -248,8 +248,12 @@ function SaveButtonPressed(aWdg)
 		profilesList[index].buffFormSettings = SaveConfigGroupBuffsForm(m_configGroupBuffForm, true)
 	elseif findSimpleString(nameSettingForm, "BuffGroup") then
 		profilesList[index].buffFormSettings = SaveConfigGroupBuffsForm(m_configGroupBuffForm, false)
-	elseif nameSettingForm == "castSettingsForm" or nameSettingForm == "ProgressActionPanel" or nameSettingForm == "ProgressBuffPanel" then
+		needSwapWnd = false
+	elseif nameSettingForm == "castSettingsForm" then
 		profilesList[index].castFormSettings = SaveProgressCastFormSettings(m_progressCastSettingsForm)
+	elseif nameSettingForm == "ProgressActionPanel" or nameSettingForm == "ProgressBuffPanel" then
+		profilesList[index].castFormSettings = SaveProgressCastFormSettings(m_progressCastSettingsForm)
+		needSwapWnd = false
 	elseif nameSettingForm == "raidSettingsForm" then
 		profilesList[index].raidFormSettings = SaveRaidFormSettings(m_raidSettingsForm)
 	elseif nameSettingForm == "targeterSettingsForm" then
@@ -258,6 +262,10 @@ function SaveButtonPressed(aWdg)
 		profilesList[index].mainFormSettings = SaveMainFormSettings(m_mainSettingForm)
 	end
 	profilesList[index].version = GetSettingsVersion()
+	if needSwapWnd then
+		--скрываем окно после сохранения - иначе setfocus(false) не сработают
+		WndMgr.SwapWnd(getParent(aWdg))
+	end
 	
 	SaveAllSettings(profilesList)
 	ReloadAll()
@@ -265,6 +273,8 @@ function SaveButtonPressed(aWdg)
 	if nameSettingForm == "mainSettingsForm" then
 		HideFormsOfUnusedSubsystems()
 	end
+	
+	
 end
 
 function SaveTargeterChanges()
