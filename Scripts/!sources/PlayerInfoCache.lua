@@ -231,6 +231,16 @@ function UpdateFabric()
 	end
 end
 
+function SecondUpdateFabric()
+	for playerID, player in pairs(m_players) do
+		if isExist(playerID) then
+			if player.buffs then
+				player.buffs:SecondUpdate()
+			end
+		end
+	end
+end
+
 local tick = 0
 function FabicLogInfo()
 	if not g_debugSubsrb then
@@ -274,9 +284,10 @@ function UnitDead(aParams)
 		if playerInfo and playerInfo.dead then
 			playerInfo.dead.eventFunc(aParams)
 		end
+		--[[
 		if playerInfo and playerInfo.hp then
 			playerInfo.hp.eventFunc(aParams)
-		end
+		end]]
 	end
 end
 

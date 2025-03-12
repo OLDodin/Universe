@@ -18,6 +18,7 @@ function PlayerBase:SubscribeBuffPlateGui(anID, aLiteners, aEventFunc)
 
 	local params = {}
 	params.unitId = anID
+	params.initRead = true
 	aEventFunc(params)
 end
 
@@ -36,6 +37,7 @@ function PlayerBase:SubscribeAboveHeadGui(anID, aLitener, aEventFunc)
 
 	local params = {}
 	params.unitId = anID
+	params.initRead = true
 	aEventFunc(params)
 end
 
@@ -55,6 +57,7 @@ function PlayerBase:SubscribeTargetGui(anID, aLitener, aEventFunc)
 
 	local params = {}
 	params.unitId = anID
+	params.initRead = true
 	aEventFunc(params)
 end
 
@@ -73,6 +76,7 @@ function PlayerBase:SubscribeRaidGui(anID, aLitener, aEventFunc)
 
 	local params = {}
 	params.unitId = anID
+	params.initRead = true
 	aEventFunc(params)
 end
 

@@ -6,7 +6,6 @@ local cachedUnRegisterEventHandler = common.UnRegisterEventHandler
 
 function PlayerHP:Init(anID)
 	self.playerID = anID
-	self.unitParams = {}
 	self.objParams = {}
 	self.shield = 0
 	self.hp = 0
@@ -99,13 +98,32 @@ end
 
 function PlayerHP:GetEventFunc()
 	return function(aParams)
-		local playerID = aParams.unitId or aParams.id
-		if isExist(playerID) then
-			local healthInfo = cachedGetHealthInfo(playerID)
-			if healthInfo then 
-				self.shield = healthInfo.additionalPercents 
-				self.hp = healthInfo.valuePercents
-				self.isInvulnerable = healthInfo.isInvulnerable
+		--[[if object.IsDead(aParams.unitId) then
+			self.shield = 0
+			self.hp = 0
+			self.isInvulnerable = false
+			self:UpdateValueIfNeededInternal()
+		else]]
+		if aParams.initRead then
+			local playerID = aParams.id or aParams.unitId
+			if isExist(playerID) then
+				local healthInfo = cachedGetHealthInfo(playerID)
+				if healthInfo then 
+					self.shield = healthInfo.additionalPercents 
+					self.hp = healthInfo.valuePercents
+					self.isInvulnerable = healthInfo.isInvulnerable
+				end
+				self:UpdateValueIfNeededInternal()
+			end
+		else
+			if aParams.additionalPercentsDelta then
+				self.shield = math.max(self.shield + aParams.additionalPercentsDelta, 0)
+			end
+			if aParams.healthPercentsDelta then
+				self.hp = math.max(math.min(self.hp + aParams.healthPercentsDelta, 100), 0)
+			end
+			if aParams.isInvulnerableChanged then
+				self.isInvulnerable = not self.isInvulnerable
 			end
 			self:UpdateValueIfNeededInternal()
 		end
@@ -113,21 +131,16 @@ function PlayerHP:GetEventFunc()
 end
 
 function PlayerHP:RegisterEvent(anID)
-	self.unitParams.unitId = anID
-	cachedRegisterEventHandler(self.eventFunc, "EVENT_UNIT_HEALTH_CHANGED", self.unitParams)
 	self.objParams.id = anID
 	cachedRegisterEventHandler(self.eventFunc, "EVENT_OBJECT_HEALTH_CHANGED", self.objParams)
 	if g_debugSubsrb then
-		self.base:reg("hp")
 		self.base:reg("hp")
 	end
 end
 
 function PlayerHP:UnRegisterEvent()
-	cachedUnRegisterEventHandler(self.eventFunc, "EVENT_UNIT_HEALTH_CHANGED", self.unitParams)
 	cachedUnRegisterEventHandler(self.eventFunc, "EVENT_OBJECT_HEALTH_CHANGED", self.objParams)
 	if g_debugSubsrb then
-		self.base:unreg("hp")
 		self.base:unreg("hp")
 	end
 end

@@ -281,6 +281,8 @@ function SaveTargeterChanges()
 	local profilesList = GetAllProfiles()
 	profilesList[GetCurrentProfileInd()].targeterFormSettings = SaveTargeterFormSettings(m_targeterSettingsForm)
 	SaveAllSettings(profilesList)
+	--обновляем m_currentProfile
+	LoadLastUsedSetting()
 end
 
 function SetColorBuffGroup(aWdg)
@@ -605,9 +607,11 @@ local function FindClickedInProgressCast(anWdg, aPanelList)
 end
 
 local function FindClickedInTarget(anWdg)
-	for _, playerBar in ipairs(m_targeterPlayerPanelList) do
-		if playerBar.isUsed and anWdg:IsEqual(playerBar.wdg) then
-			return playerBar
+	for _, statusGroup in ipairs(m_targeterPlayerPanelList) do
+		for _, playerBar in ipairs(statusGroup) do
+			if playerBar.isUsed and anWdg:IsEqual(playerBar.wdg) then
+				return playerBar
+			end
 		end
 	end
 end
@@ -679,11 +683,13 @@ end
 function TargetChangedForTargeter(aTargetID)
 	local profile = GetCurrentProfile()
 	if m_targetSubSystemLoaded and profile.targeterFormSettings.highlightSelectedButton then
-		for _, playerBar in ipairs(m_targeterPlayerPanelList) do
-			if aTargetID and playerBar.isUsed and playerBar.playerID and aTargetID == playerBar.playerID then
-				PlayerTargetsHighlightChanged(true, playerBar)
-			elseif playerBar.highlight then
-				PlayerTargetsHighlightChanged(false, playerBar)
+		for _, statusGroup in ipairs(m_targeterPlayerPanelList) do
+			for _, playerBar in ipairs(statusGroup) do
+				if aTargetID and playerBar.isUsed and playerBar.playerID and aTargetID == playerBar.playerID then
+					PlayerTargetsHighlightChanged(true, playerBar)
+				elseif playerBar.highlight then
+					PlayerTargetsHighlightChanged(false, playerBar)
+				end
 			end
 		end
 	end
@@ -1599,6 +1605,16 @@ local function SetNecessaryTargets(anObjID, anInCombat)
 	end
 end
 
+local function CreateTargeterSubPanelCache(aProfile, aParentArr, aX)
+	for i = 1, TARGETS_LIMIT do
+		local playerPanel = CreatePlayerPanel(m_targetPanel, aX, i-1, false, aProfile.targeterFormSettings, i)
+		table.insert(aParentArr, playerPanel)
+		if aProfile.targeterFormSettings.twoColumnMode then
+			align(playerPanel.wdg, WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW)
+		end
+	end
+end
+
 local function CreateTargeterPanelCache()
 	local profile = GetCurrentProfile()
 	if profile.targeterFormSettings.targetLimit then
@@ -1606,24 +1622,24 @@ local function CreateTargeterPanelCache()
 	else
 		TARGETS_LIMIT = 12
 	end
-	local limit = TARGETS_LIMIT
+	--normal
+	table.insert(m_targeterPlayerPanelList, {})
+	--combat
+	table.insert(m_targeterPlayerPanelList, {})
+	
+	CreateTargeterSubPanelCache(profile, m_targeterPlayerPanelList[1], 0)
 	if profile.targeterFormSettings.twoColumnMode then
-		limit = TARGETS_LIMIT * 2
-	end	
-	for i = 1, limit do
-		local playerPanel = CreatePlayerPanel(m_targetPanel, i <= TARGETS_LIMIT and 0 or 1, i-1, false, profile.targeterFormSettings, i)
-		m_targeterPlayerPanelList[i] = playerPanel
-		if profile.targeterFormSettings.twoColumnMode then
-			align(playerPanel.wdg, WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW)
-		end
+		CreateTargeterSubPanelCache(profile, m_targeterPlayerPanelList[2], 1)
 	end
 end
 
 local function ClearTargetPanels()
 	UnsubscribeTargetListener()
-	for _, playerBar in ipairs(m_targeterPlayerPanelList) do
-		HidePlayerBar(playerBar)
-		playerBar.playerID = nil
+	for _, statusGroup in ipairs(m_targeterPlayerPanelList) do
+		for _, playerBar in ipairs(statusGroup) do
+			HidePlayerBar(playerBar)
+			playerBar.playerID = nil
+		end
 	end
 	
 	FabricDestroyUnused()
@@ -1694,28 +1710,6 @@ local function SelectTargetTypePressed(aWdg, anIndex)
 	SaveTargeterChanges()
 end
 
-local function SeparateTargeterPanelList(anObjList, aPanelListShift)
-	local findedList = {} 
-	local freeList = {}
-	for i = aPanelListShift+1, TARGETS_LIMIT+aPanelListShift do
-		local playerBar = m_targeterPlayerPanelList[i]
-		local found = false
-		for _, info in ipairs(anObjList) do
-			if playerBar.playerID == info.objID
-			and (playerBar.formSettings.classColorModeButton or playerBar.panelColorType == info.relationType)
-			then
-				findedList[playerBar.playerID] = playerBar
-				found = true
-				break
-			end			
-		end
-		if not found then
-			table.insert(freeList, playerBar)
-		end
-	end
-	return findedList, freeList
-end
-
 local function SortBySettings(anArr)
 	local profile = GetCurrentProfile()
 
@@ -1754,35 +1748,19 @@ local function SortBySettings(anArr)
 	table.sort(anArr, SortByWeight)
 end
 
-local function SortAndSetTarget(aTargetUnion, aPanelListShift, aPanelPosShift)
-	local cnt = 0
+local function SetTargetPanels(aSortedTargetList, aTargeterPanelList, aReusedPanels, aFreePanels, aPanelPosShift)
+	local cnt = 1
 	local listOfObjToUpdate = {}
 	local newTargeterPlayerPanelList = {}
-	local listOfObjForType = {}
 	local profile = GetCurrentProfile()
 	local playerBar = nil
-	--формируем список для отображения
-	for _, unitsByType in ipairs(aTargetUnion) do
-		SortBySettings(unitsByType)
-		for _, targetInfo in pairs(unitsByType) do
-			local objID = targetInfo.objID
-			if cnt < TARGETS_LIMIT and isExist(objID) then
-				table.insert(listOfObjForType, targetInfo)
-				cnt = cnt + 1
-			end
-		end
-	end
-	--находим панели уже отображаемых игроков
-	local reusedPanels, freePanels = SeparateTargeterPanelList(listOfObjForType, aPanelListShift)
-	local freePanelInd = 1
-	cnt = aPanelListShift + 1
+
 	--собираем панели в новом порядке, используя как подходящие так и обновляя инфу
-	for _, targetInfo in ipairs(listOfObjForType) do
+	for _, targetInfo in ipairs(aSortedTargetList) do
 		local objID = targetInfo.objID
-		playerBar = reusedPanels[objID]
+		playerBar = aReusedPanels[objID]
 		if not playerBar then
-			playerBar = freePanels[freePanelInd]
-			freePanelInd = freePanelInd + 1
+			playerBar = table.remove(aFreePanels)
 			if playerBar.playerID then
 				UnsubscribeTargetListener(playerBar.playerID)
 			end
@@ -1794,17 +1772,15 @@ local function SortAndSetTarget(aTargetUnion, aPanelListShift, aPanelPosShift)
 			table.insert(listOfObjToUpdate, updateInfo)
 		end
 		playerBar.isUsed = true
-		m_targeterPlayerPanelList[cnt] = playerBar
+		aTargeterPanelList[cnt] = playerBar
 
 		cnt = cnt + 1
 	end
 	local usedCnt = cnt
 	--в список всех панелей добавляем все оставшиеся
-	for _, bar in ipairs(freePanels) do
-		if not bar.isUsed then
-			m_targeterPlayerPanelList[cnt] = bar
-			cnt = cnt + 1
-		end
+	for i = cnt, TARGETS_LIMIT do
+		aTargeterPanelList[cnt] = table.remove(aFreePanels)
+		cnt = cnt + 1
 	end
 	--обновляем инфу на панелях
 	for _, updateInfo in ipairs(listOfObjToUpdate) do
@@ -1817,11 +1793,10 @@ local function SortAndSetTarget(aTargetUnion, aPanelListShift, aPanelPosShift)
 	end
 
 	--расставляем панели и скрываем не используемые
-	for i = aPanelListShift + 1, TARGETS_LIMIT+aPanelListShift do
-		playerBar = m_targeterPlayerPanelList[i]
-		
-		ResetPlayerPanelPosition(playerBar, aPanelPosShift, i-aPanelListShift-1, profile.targeterFormSettings)
-		if not playerBar.isUsed then
+	for i, playerBar in ipairs(aTargeterPanelList) do
+		if playerBar.isUsed then
+			ResetPlayerPanelPosition(playerBar, aPanelPosShift, i-1, profile.targeterFormSettings)
+		else
 			if playerBar.playerID then
 				UnsubscribeTargetListener(playerBar.playerID)
 				HidePlayerBar(playerBar)
@@ -1829,7 +1804,7 @@ local function SortAndSetTarget(aTargetUnion, aPanelListShift, aPanelPosShift)
 			playerBar.playerID = nil
 		end
 	end
-	return usedCnt-aPanelListShift
+	return usedCnt
 end
 
 local function GetArrByCombatStatus(aStatus, aType)
@@ -1886,6 +1861,50 @@ local function MakeTargetUnion(aType, aStatus)
 	return targetUnion
 end
 
+local function GetObjListToDisplay(aTargetUnion)
+	local cnt = 0
+	local listOfObjForDisplay = {}
+	--формируем список для отображения
+	for _, unitsByType in ipairs(aTargetUnion) do
+		SortBySettings(unitsByType)
+		for _, targetInfo in pairs(unitsByType) do
+			if cnt < TARGETS_LIMIT and isExist(targetInfo.objID) then
+				table.insert(listOfObjForDisplay, targetInfo)
+				cnt = cnt + 1
+			end
+		end
+	end
+	return listOfObjForDisplay
+end
+
+local function IsSameTargetPanel(anObjList, aPlayerBar)
+	for _, info in ipairs(anObjList) do
+		if aPlayerBar.playerID == info.objID
+		and (aPlayerBar.formSettings.classColorModeButton or aPlayerBar.panelColorType == info.relationType)
+		then
+			return true
+		end			
+	end
+	return false
+end
+
+local function SeparateTargeterPanelList(anObjList1, anObjList2)
+	local findedList = {} 
+	local freeList = {}
+	for _, statusGroup in ipairs(m_targeterPlayerPanelList) do
+		for _, playerBar in ipairs(statusGroup) do
+			local found = IsSameTargetPanel(anObjList1, playerBar)
+			found = found or IsSameTargetPanel(anObjList2, playerBar)
+			if found then
+				findedList[playerBar.playerID] = playerBar
+			else
+				table.insert(freeList, playerBar)
+			end
+		end
+	end
+	return findedList, freeList
+end
+
 function TryRedrawTargeter(aType, aDelayRedraw)
 	-- под мышью - обновим список целей раз в 2 сек
 	-- aDelayRedraw - обновим список целей раз в 0,1 сек
@@ -1907,25 +1926,30 @@ function RedrawTargeter(aType, anIsTypeChanged)
 		SwitchTargetsBtn(aType)
 	end
 	local profile = GetCurrentProfile()
-	for _, playerBar in ipairs(m_targeterPlayerPanelList) do
-		playerBar.isUsed = false
+	for _, statusGroup in ipairs(m_targeterPlayerPanelList) do
+		for _, playerBar in ipairs(statusGroup) do
+			playerBar.isUsed = false
+		end
 	end
 	
 	local targetUnion = MakeTargetUnion(aType, false)
-	
-	
 	local targetUnionCombat = {}
 	if profile.targeterFormSettings.twoColumnMode then
 		targetUnionCombat = MakeTargetUnion(aType, true)
 	end
 	
+	local nonCombatListToDisplay = GetObjListToDisplay(targetUnion)
+	local combatListToDisplay = GetObjListToDisplay(targetUnionCombat)
+	--находим панели уже отображаемых игроков
+	local reusedPanels, freePanels = SeparateTargeterPanelList(nonCombatListToDisplay, combatListToDisplay)
+	
 	local cntSimple = 0
 	local cntCombat = 0
 	if profile.targeterFormSettings.twoColumnMode then
-		cntSimple = SortAndSetTarget(targetUnion, 0, 0)
-		cntCombat = SortAndSetTarget(targetUnionCombat, TARGETS_LIMIT, 1)
+		cntSimple = SetTargetPanels(nonCombatListToDisplay, m_targeterPlayerPanelList[1], reusedPanels, freePanels, 0)
+		cntCombat = SetTargetPanels(combatListToDisplay, m_targeterPlayerPanelList[2], reusedPanels, freePanels, 1)
 	else
-		cntSimple = SortAndSetTarget(targetUnion, 0, 0)
+		cntSimple = SetTargetPanels(nonCombatListToDisplay, m_targeterPlayerPanelList[1], reusedPanels, freePanels, 0)
 	end
 
 	local maxPeopleCnt = math.min(math.max(cntSimple, cntCombat), TARGETS_LIMIT)
@@ -2386,18 +2410,20 @@ local function OnEventSecondTimer()
 	table.insert(unitList, g_myAvatarID)
 	if m_targetSubSystemLoaded then
 		local eraseSomeTarget = false
-		for _, playerBar in ipairs(m_targeterPlayerPanelList) do
-			local reallyExist = false
-			if playerBar.isUsed then
-				for _, objID in pairs(unitList) do
-					if objID == playerBar.playerID then
-						reallyExist = true
-						break
+		for _, statusGroup in ipairs(m_targeterPlayerPanelList) do
+			for _, playerBar in ipairs(statusGroup) do
+				local reallyExist = false
+				if playerBar.isUsed then
+					for _, objID in pairs(unitList) do
+						if objID == playerBar.playerID then
+							reallyExist = true
+							break
+						end
 					end
-				end
-				if not reallyExist then
-					eraseSomeTarget = true
-					EraseTarget(playerBar.playerID)
+					if not reallyExist then
+						eraseSomeTarget = true
+						EraseTarget(playerBar.playerID)
+					end
 				end
 			end
 		end
@@ -2413,6 +2439,8 @@ local function OnEventSecondTimer()
 		RemoveProgressForNotExistObj(unitList, m_progressActionPanelList, m_progressActionQueue)
 		RemoveProgressForNotExistObj(unitList, m_progressBuffPanelList, m_progressBuffQueue)
 	end
+	
+	SecondUpdateFabric()
 	FabicLogInfo()
 end
 
@@ -2550,8 +2578,10 @@ function UnloadTargeterSubSystem()
 	m_targetSubSystemLoaded = false
 	
 	ClearTargetPanels()
-	for _, playerBar in ipairs(m_targeterPlayerPanelList) do
-		DestroyPlayerPanel(playerBar)
+	for _, statusGroup in ipairs(m_targeterPlayerPanelList) do
+		for _, playerBar in ipairs(statusGroup) do
+			DestroyPlayerPanel(playerBar)
+		end
 	end
 	m_targeterPlayerPanelList = {}
 	DnD.HideWdg(m_targetPanel)

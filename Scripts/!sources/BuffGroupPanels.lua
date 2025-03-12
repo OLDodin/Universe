@@ -145,21 +145,30 @@ end
 
 local function UpdateTick(aGroupBuffBar)
 	for _, buffSlot in pairs(aGroupBuffBar.guiBuffList) do
-		if buffSlot.info.buffTimeStr then
-			local remainingMs = buffSlot.buffFinishedTime_h - g_cachedTimestamp
-			if remainingMs > 0 then
-				local buffTimeStr = getTimeString(remainingMs)
-				if buffSlot.info.buffTimeStr ~= buffTimeStr then 
-					buffSlot.info.buffTimerWdg:SetVal(g_tagTextValue, buffTimeStr)
-					buffSlot.info.buffTimeStr = buffTimeStr
-				end
-			else
-				buffSlot.info.buffTimeStr = nil
-				buffSlot.info.buffTimerWdg:Show(false)
+		if buffSlot.buffID and buffSlot.info.buffTimeStr then
+			local remainingMs = math.max(buffSlot.buffFinishedTime_h - g_cachedTimestamp, 0)
+			local buffTimeStr = getTimeString(remainingMs)
+			if buffSlot.info.buffTimeStr ~= buffTimeStr then 
+				buffSlot.info.buffTimerWdg:SetVal(g_tagTextValue, buffTimeStr)
+				buffSlot.info.buffTimeStr = buffTimeStr
 			end
 		end
 	end
 end
+
+--очень, очень редко не приходит удаление баффа, удаляем сами
+local function SecondTick(aGroupBuffBar)
+	local removingBuffs = {}
+	for _, buffInfo in pairs(aGroupBuffBar.buffsQueue) do
+		if buffInfo.durationMs > 0 and buffInfo.buffFinishedTime_h - g_cachedTimestamp < -1500 then
+			table.insert(removingBuffs, buffInfo)
+		end
+	end
+	for _, buffInfo in ipairs(removingBuffs) do
+		aGroupBuffBar.listenerRemoveBuffNegative(buffInfo.id, aGroupBuffBar)
+	end
+end
+
 
 local function SpellChanged(aSpellInfo, aGroupBuffBar, anInfoObj)
 	aSpellInfo.stackCount = 0
@@ -210,6 +219,7 @@ function CreateGroupBuffPanel(aForm, aSettings, anIsAboveHead, aPosInPlateIndex)
 	groupBuffPanel.listenerRemoveBuffNegative = PlayerRemoveBuff
 	groupBuffPanel.listenerChangeImportantBuff = PlayerAddBuff
 	groupBuffPanel.listenerUpdateTick = UpdateTick
+	groupBuffPanel.listenerSecondTick = SecondTick
 	groupBuffPanel.listenerSpellChanged = SpellChanged
 	groupBuffPanel.listenerSpellRemoved = SpellRemoved
 	groupBuffPanel.guiBuffList = {}

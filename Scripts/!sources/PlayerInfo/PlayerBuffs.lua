@@ -81,11 +81,27 @@ function PlayerBuffs:TryDestroy()
 	return false
 end
 
-function PlayerBuffs:UpdateValueIfNeeded()
+function PlayerBuffs:SecondUpdate()
 	self.updateCnt = self.updateCnt + 1
-	if self.updateCnt == 6000 then
+	if self.updateCnt == 600 then
 		self:ClearLastValues()
 	end
+	
+	for i, buffPlate in pairs(self.base.guiBuffPlatesListeners) do
+		buffPlate.listenerSecondTick(buffPlate)
+	end
+	if self.base.guiAboveHeadListener then
+		self.base.guiAboveHeadListener.listenerSecondTick(self.base.guiAboveHeadListener)
+	end
+	if self.base.guiRaidListener then
+		self.base.guiRaidListener.listenerSecondTick(self.base.guiRaidListener)
+	end
+	if self.base.guiTargetListener then
+		self.base.guiTargetListener.listenerSecondTick(self.base.guiTargetListener)
+	end
+end
+
+function PlayerBuffs:UpdateValueIfNeeded()
 	for i, buffPlate in pairs(self.base.guiBuffPlatesListeners) do
 		buffPlate.listenerUpdateTick(buffPlate)
 	end

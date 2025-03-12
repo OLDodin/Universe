@@ -16,7 +16,7 @@
 			<HighPos>1</HighPos>
 		</Y>
 	</Placement>
-	<FormatFileRef href="ProcText.txt" />
+	<FormatFileRef href="DistText.txt" />
 	<TransparentInput>true</TransparentInput>
 	<Visible>false</Visible>
 </WidgetTextView>

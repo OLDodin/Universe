@@ -125,8 +125,8 @@ function GenerateMenuInfos(aPlayerBar, aMyUniqueID)
 			CloseMenu() end)
 	end
 
-	if not isClickOnAvatar and not interaction.HasExchange() and unit.IsPlayer(playerID) then AddToMenu("tradeMenuButton", function () if isExist(playerID) then interaction.InviteToExchange(object.GetName(playerID)) end CloseMenu() end) end
-	if not isClickOnAvatar and matchMaking.GetCurrentBattleInfo() == nil and unit.IsPlayer(playerID) then AddToMenu("followMenuButton", function () if isExist(playerID) then avatar.SelectTarget(playerID) avatar.SetFollowTarget(true) end CloseMenu() end) end
+	if not isClickOnAvatar and not interaction.HasExchange() and isExist(playerID) and unit.IsPlayer(playerID) then AddToMenu("tradeMenuButton", function () if isExist(playerID) then interaction.InviteToExchange(object.GetName(playerID)) end CloseMenu() end) end
+	if not isClickOnAvatar and matchMaking.GetCurrentBattleInfo() == nil and isExist(playerID) and unit.IsPlayer(playerID) then AddToMenu("followMenuButton", function () if isExist(playerID) then avatar.SelectTarget(playerID) avatar.SetFollowTarget(true) end CloseMenu() end) end
 
 	if isRaid() then
 		if uniqueID and raid.IsPlayerInAvatarsRaid(uniqueID) then
@@ -174,6 +174,7 @@ function GenerateMenuInfos(aPlayerBar, aMyUniqueID)
 		end
 	elseif isGroup() then
 		if (playerID and group.IsCreatureInGroup(playerID)) or (uniqueID and group.GetMemberInfo(uniqueID)) then
+		
 			if isClickOnAvatar 		then
 				if group.IsLeader() and not group.IsAutomatic() then
 					AddToMenu("createRaidMenuButton", function () raid.Create() CloseMenu() end)
@@ -201,9 +202,6 @@ function GenerateMenuInfos(aPlayerBar, aMyUniqueID)
 end
 
 function ShowMenu(aPlayerBar, aParams, aRaidPanelWdg, aRaidPanelSize, aMyUniqueID)
-	if not aPlayerBar.playerID then
-		return
-	end
 	CloseMenu()
 	GenerateMenuInfos(aPlayerBar, aMyUniqueID)
 	if not m_menuInfos then return end

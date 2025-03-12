@@ -205,7 +205,6 @@ local function PlayerDeadChanged(anInfo, aPlayerBar)
 	if aPlayerBar.optimizeInfo.userState ~= userState and aPlayerBar.optimizeInfo.userState ~= OFF_STATE then
 		if userState == DEAD_STATE then
 			aPlayerBar.textWdg:SetVal("Afk-off", m_deadWStr)
-			--PlayerHPChanged(0, aPlayerBar)
 		else
 			if aPlayerBar.optimizeInfo.userState == AFK_STATE then
 				return
@@ -258,27 +257,6 @@ local function HasCleanableBuff(aPlayerBar)
 	return false
 end
 
-local function PlayerRemoveBuff(aBuffID, aPlayerBar, aCnt, anArray)
-	aPlayerBar.buffsQueue[aBuffID] = nil
-	
-	local buffSlot, removeIndex = FindBuffSlot(aPlayerBar, aBuffID, aCnt, anArray)
-	if buffSlot then
-		hide(buffSlot.buffWdg)
-		stopLoopBlink(buffSlot.buffHighlight)
-		if removeIndex ~= GetTableSize(anArray) then
-			for i = removeIndex, aCnt do
-				anArray[i] = anArray[i+1]
-			end
-			anArray[aCnt] = buffSlot
-			for i = removeIndex, aCnt do
-				move(anArray[i].buffWdg, 2+(i-1)*tonumber(aPlayerBar.formSettings.buffSize), 3)
-			end
-		end
-		return true, buffSlot
-	end
-	return false, nil
-end
-
 local function TryShowBuffFromQueue(aPlayerBar, aPositive)
 	local listener = nil
 	for _, buffInfo in pairs(aPlayerBar.buffsQueue) do
@@ -297,6 +275,29 @@ local function TryShowBuffFromQueue(aPlayerBar, aPositive)
 			end
 		end
 	end
+end
+
+local function PlayerRemoveBuff(aBuffID, aPlayerBar, aCnt, anArray)
+	aPlayerBar.buffsQueue[aBuffID] = nil
+	
+	local buffSlot, removeIndex = FindBuffSlot(aPlayerBar, aBuffID, aCnt, anArray)
+	if buffSlot then
+		hide(buffSlot.buffWdg)
+		stopLoopBlink(buffSlot.buffHighlight)
+		buffSlot.buffTimeStr = nil
+		buffSlot.durationMs_h = 0
+		if removeIndex ~= GetTableSize(anArray) then
+			for i = removeIndex, aCnt do
+				anArray[i] = anArray[i+1]
+			end
+			anArray[aCnt] = buffSlot
+			for i = removeIndex, aCnt do
+				move(anArray[i].buffWdg, 2+(i-1)*tonumber(aPlayerBar.formSettings.buffSize), 3)
+			end
+		end
+		return true, buffSlot
+	end
+	return false, nil
 end
 
 local function PlayerRemoveBuffPositive(aBuffID, aPlayerBar)
@@ -367,6 +368,7 @@ local function PlayerAddBuff(aBuffInfo, aPlayerBar, anArray, aCnt, anInfoObj)
 	end
 	
 	buffSlot.buffFinishedTime_h = aBuffInfo.remainingMs + g_cachedTimestamp
+	buffSlot.durationMs_h = aBuffInfo.durationMs
 	if buffSlot.needShowTime then
 		if aBuffInfo.remainingMs > 0 then
 			buffSlot.buffTimeStr = getTimeString(aBuffInfo.remainingMs, true)
@@ -436,16 +438,11 @@ end
 local function UpdateTickForBuffArray(anArray)
 	for _, buffSlot in ipairs(anArray) do
 		if buffSlot.buffTimeStr then
-			local remainingMs = buffSlot.buffFinishedTime_h - g_cachedTimestamp
-			if remainingMs > 0 then
-				local buffTimeStr = getTimeString(remainingMs, true)
-				if buffSlot.buffTimeStr ~= buffTimeStr then 
-					buffSlot.buffTime:SetVal(g_tagTextValue, buffTimeStr)
-					buffSlot.buffTimeStr = buffTimeStr
-				end
-			else
-				buffSlot.buffTimeStr = nil
-				buffSlot.buffTime:Show(false)
+			local remainingMs = math.max(buffSlot.buffFinishedTime_h - g_cachedTimestamp, 0)
+			local buffTimeStr = getTimeString(remainingMs, true)
+			if buffSlot.buffTimeStr ~= buffTimeStr then 
+				buffSlot.buffTime:SetVal(g_tagTextValue, buffTimeStr)
+				buffSlot.buffTimeStr = buffTimeStr
 			end
 		end
 	end
@@ -455,6 +452,23 @@ local function UpdateTick(aPlayerBar)
 	if aPlayerBar.isUsed and aPlayerBar.formSettings.showBuffTimeButton then
 		UpdateTickForBuffArray(aPlayerBar.buffSlots)
 		UpdateTickForBuffArray(aPlayerBar.buffSlotsNeg)
+	end
+end
+
+--очень, очень редко не приходит удаление баффа, удаляем сами
+local function SecondTick(aPlayerBar)
+	if aPlayerBar.isUsed then
+		local removingBuffs = {}
+		for _, buffInfo in pairs(aPlayerBar.buffsQueue) do
+			if buffInfo.durationMs > 0 and buffInfo.buffFinishedTime_h - g_cachedTimestamp < -1500 then			
+				table.insert(removingBuffs, buffInfo)
+			end
+		end
+		for _, buffInfo in ipairs(removingBuffs) do
+			aPlayerBar.listenerRemoveBuff(buffInfo.id, aPlayerBar)
+			aPlayerBar.listenerRemoveBuffNegative(buffInfo.id, aPlayerBar)
+			aPlayerBar.listenerRemoveImportantBuff(buffInfo.id, aPlayerBar)
+		end
 	end
 end
 
@@ -499,6 +513,7 @@ function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettin
 		hide(buffSlot.buffWdg)
 		buffSlot.buffID = nil
 		buffSlot.buffFinishedTime_h = 0
+		buffSlot.durationMs_h = 0
 		buffSlot.buffTimeStr = nil
 		stopLoopBlink(buffSlot.buffHighlight)
 	end
@@ -508,6 +523,7 @@ function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettin
 		hide(buffSlot.buffWdg)
 		buffSlot.buffID = nil
 		buffSlot.buffFinishedTime_h = 0
+		buffSlot.durationMs_h = 0
 		buffSlot.buffTimeStr = nil
 		stopLoopBlink(buffSlot.buffHighlight)
 	end
@@ -799,6 +815,7 @@ function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings, aNum)
 	playerBar.listenerChangeImportantBuff = PlayerAddImportantBuff
 	playerBar.listenerRemoveImportantBuff = PlayerRemoveImportantBuff
 	playerBar.listenerUpdateTick = UpdateTick
+	playerBar.listenerSecondTick = SecondTick
 	return playerBar
 end
 
@@ -811,6 +828,7 @@ function CreateBuffSlot(aParent, aBuffSize, anResArray, anIndex, anAlign, aBuffs
 	buffSlot.buffTime = getChild(buffSlot.buffWdg, "DotText")
 	buffSlot.needShowTime = aNeedShowBuffTime
 	buffSlot.buffFinishedTime_h = 0
+	buffSlot.durationMs_h = 0
 	buffSlot.buffSize = aBuffSize
 	
 	updatePlacementPlain(buffSlot.buffStackCnt, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 0, 0-math.floor(aBuffSize/10), aBuffSize, GetTextSizeByBuffSize(aBuffSize)+1)
