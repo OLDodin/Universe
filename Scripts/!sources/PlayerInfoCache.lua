@@ -284,10 +284,9 @@ function UnitDead(aParams)
 		if playerInfo and playerInfo.dead then
 			playerInfo.dead.eventFunc(aParams)
 		end
-		--[[
 		if playerInfo and playerInfo.hp then
 			playerInfo.hp.eventFunc(aParams)
-		end]]
+		end
 	end
 end
 

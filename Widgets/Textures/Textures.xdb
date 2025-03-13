@@ -119,5 +119,9 @@
 			<name>colorBack</name>
 			<textureItem href="ColorBack/forest.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
 		</Item>
+		<Item>
+			<name>notFound</name>
+			<textureItem href="notFound.xdb" />
+		</Item>
 	</Items>
 </UIRelatedTextures>

@@ -339,10 +339,11 @@ local function PlayerAddBuff(aBuffInfo, aPlayerBar, anArray, aCnt, anInfoObj)
 		aBuffInfo.buffFinishedTime_h = aBuffInfo.remainingMs + g_cachedTimestamp
 	end
 	aPlayerBar.buffsQueue[aBuffInfo.id] = table.sclone(aBuffInfo)
-
-	if not aBuffInfo.texture then
-		return false
+	local buffTexture = aBuffInfo.texture
+	if not buffTexture then
+		buffTexture = g_texNotFound
 	end
+
 	local buffSlot = FindBuffSlot(aPlayerBar, aBuffInfo.id, aCnt, anArray)
 	local res = false
 	if not buffSlot then
@@ -354,7 +355,7 @@ local function PlayerAddBuff(aBuffInfo, aPlayerBar, anArray, aCnt, anInfoObj)
 		buffSlot = anArray[newCnt]
 		buffSlot.buffID = aBuffInfo.id
 		buffSlot.buffWdg:Show(true)
-		buffSlot.buffIcon:SetBackgroundTexture(aBuffInfo.texture)
+		buffSlot.buffIcon:SetBackgroundTexture(buffTexture)
 		res = true
 	end
 	aPlayerBar.buffsQueue[aBuffInfo.id].isShowedInGuiSlot = true

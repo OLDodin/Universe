@@ -1,5 +1,6 @@
 Global( "PlayerHP", {} )
 
+local cachedIsDead = object.IsDead
 local cachedGetHealthInfo = object.GetHealthInfo
 local cachedRegisterEventHandler = common.RegisterEventHandler
 local cachedUnRegisterEventHandler = common.UnRegisterEventHandler
@@ -98,32 +99,21 @@ end
 
 function PlayerHP:GetEventFunc()
 	return function(aParams)
-		--[[if object.IsDead(aParams.unitId) then
+		local playerID = aParams.id or aParams.unitId
+		if not isExist(playerID) then
+			return
+		end
+		if cachedIsDead(playerID) then
 			self.shield = 0
 			self.hp = 0
 			self.isInvulnerable = false
 			self:UpdateValueIfNeededInternal()
-		else]]
-		if aParams.initRead then
-			local playerID = aParams.id or aParams.unitId
-			if isExist(playerID) then
-				local healthInfo = cachedGetHealthInfo(playerID)
-				if healthInfo then 
-					self.shield = healthInfo.additionalPercents 
-					self.hp = healthInfo.valuePercents
-					self.isInvulnerable = healthInfo.isInvulnerable
-				end
-				self:UpdateValueIfNeededInternal()
-			end
 		else
-			if aParams.additionalPercentsDelta then
-				self.shield = math.max(self.shield + aParams.additionalPercentsDelta, 0)
-			end
-			if aParams.healthPercentsDelta then
-				self.hp = math.max(math.min(self.hp + aParams.healthPercentsDelta, 100), 0)
-			end
-			if aParams.isInvulnerableChanged then
-				self.isInvulnerable = not self.isInvulnerable
+			local healthInfo = cachedGetHealthInfo(playerID)
+			if healthInfo then 
+				self.shield = healthInfo.additionalPercents 
+				self.hp = healthInfo.valuePercents
+				self.isInvulnerable = healthInfo.isInvulnerable
 			end
 			self:UpdateValueIfNeededInternal()
 		end

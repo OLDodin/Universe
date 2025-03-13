@@ -42,9 +42,11 @@ local function PlayerAddBuff(aBuffInfo, aGroupBuffBar, anInfoObj)
 	local posInPlateIndex = anInfoObj and anInfoObj.ind or nil
 --LogInfo("PlayerAddBuff = ", aBuffInfo.name, " ind ", posInPlateIndex)
 	
-	if not aBuffInfo.texture then
-		return
+	local buffTexture = aBuffInfo.texture
+	if not buffTexture then
+		buffTexture = g_texNotFound
 	end
+	
 	local buffSlot = FindBufSlot(aGroupBuffBar, aBuffInfo.id)
 	if aGroupBuffBar.fixedInsidePanel then
 		if not posInPlateIndex then
@@ -54,7 +56,7 @@ local function PlayerAddBuff(aBuffInfo, aGroupBuffBar, anInfoObj)
 		if buffSlot then
 			if not buffSlot.buffWdg:IsVisible() then
 				buffSlot.buffWdg:Show(true)
-				buffSlot.info.buffIcon:SetBackgroundTexture(aBuffInfo.texture)
+				buffSlot.info.buffIcon:SetBackgroundTexture(buffTexture)
 			end
 		end
 	else
@@ -67,7 +69,7 @@ local function PlayerAddBuff(aBuffInfo, aGroupBuffBar, anInfoObj)
 				aGroupBuffBar.usedBuffSlotCnt = newCnt
 				
 				buffSlot.buffWdg:Show(true)
-				buffSlot.info.buffIcon:SetBackgroundTexture(aBuffInfo.texture)
+				buffSlot.info.buffIcon:SetBackgroundTexture(buffTexture)
 				resize(aGroupBuffBar.panelWdg, math.max(buffSlot.info.buffSize*math.min(aGroupBuffBar.panelWidthBuffCnt, aGroupBuffBar.usedBuffSlotCnt), GetMinGroupPanelSize(aGroupBuffBar.abovehead)), buffSlot.info.buffSize*math.min(aGroupBuffBar.panelHeightBuffCnt, math.ceil(aGroupBuffBar.usedBuffSlotCnt/aGroupBuffBar.panelWidthBuffCnt))+30)
 			end
 		end
@@ -147,10 +149,15 @@ local function UpdateTick(aGroupBuffBar)
 	for _, buffSlot in pairs(aGroupBuffBar.guiBuffList) do
 		if buffSlot.buffID and buffSlot.info.buffTimeStr then
 			local remainingMs = math.max(buffSlot.buffFinishedTime_h - g_cachedTimestamp, 0)
-			local buffTimeStr = getTimeString(remainingMs)
-			if buffSlot.info.buffTimeStr ~= buffTimeStr then 
-				buffSlot.info.buffTimerWdg:SetVal(g_tagTextValue, buffTimeStr)
-				buffSlot.info.buffTimeStr = buffTimeStr
+			if remainingMs > 0 then
+				local buffTimeStr = getTimeString(remainingMs)
+				if buffSlot.info.buffTimeStr ~= buffTimeStr then 
+					buffSlot.info.buffTimerWdg:SetVal(g_tagTextValue, buffTimeStr)
+					buffSlot.info.buffTimeStr = buffTimeStr
+				end
+			else
+				buffSlot.info.buffTimeStr = nil
+				hide(buffSlot.info.buffTimerWdg)
 			end
 		end
 	end
@@ -160,7 +167,7 @@ end
 local function SecondTick(aGroupBuffBar)
 	local removingBuffs = {}
 	for _, buffInfo in pairs(aGroupBuffBar.buffsQueue) do
-		if buffInfo.durationMs > 0 and buffInfo.buffFinishedTime_h - g_cachedTimestamp < -1500 then
+		if buffInfo.durationMs and buffInfo.durationMs > 0 and buffInfo.buffFinishedTime_h - g_cachedTimestamp < -1500 then
 			table.insert(removingBuffs, buffInfo)
 		end
 	end
