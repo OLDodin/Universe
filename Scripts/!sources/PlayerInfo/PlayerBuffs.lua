@@ -2,6 +2,7 @@ Global( "PlayerBuffs", {} )
 
 local cachedGetBuffInfo = object.GetBuffInfo
 local cachedGetBuffsWithProperties = object.GetBuffsWithProperties
+local cachedGetBuffs = object.GetBuffs
 local cachedRegisterEventHandler = common.RegisterEventHandler
 local cachedUnRegisterEventHandler = common.UnRegisterEventHandler
 local cachedGetBuffsInfo = object.GetBuffsInfo
@@ -153,28 +154,29 @@ function PlayerBuffs:CallListenerIfNeeded(aBuffID, aListener, aCondition, aRaidT
 	return aBuffInfo
 end
 
-function PlayerBuffs:GetReadAllEventFunc(aParams, aListener, aCondition, aRaidType, anIgnoreBuffsList)
-	if aListener and aCondition then
-		local unitBuffs = cachedGetBuffsWithProperties(aParams.unitId, true, true)
-		if next(unitBuffs) then
-			local buffsInfo = cachedGetBuffsInfo(unitBuffs)
-			for buffID, buffInfo in pairs(buffsInfo or {}) do
-				self:CallListenerIfNeeded(buffID, aListener, aCondition, aRaidType, anIgnoreBuffsList, buffInfo)
-			end
+function PlayerBuffs:ReadAllBuffInfo(aUnitBuffs, aListener, aCondition, aRaidType, anIgnoreBuffsList)
+	if next(aUnitBuffs) then
+		local buffsInfo = cachedGetBuffsInfo(aUnitBuffs)
+		for buffID, buffInfo in pairs(buffsInfo or {}) do
+			self:CallListenerIfNeeded(buffID, aListener, aCondition, aRaidType, anIgnoreBuffsList, buffInfo)
 		end
-		unitBuffs = cachedGetBuffsWithProperties(aParams.unitId, false, true)
-		if next(unitBuffs) then
-			local buffsInfo = cachedGetBuffsInfo(unitBuffs)
-			for buffID, buffInfo in pairs(buffsInfo or {}) do
-				self:CallListenerIfNeeded(buffID, aListener, aCondition, aRaidType, anIgnoreBuffsList, buffInfo)
-			end
+	end
+end
+
+function PlayerBuffs:ReadAllBuffs(aParams, aListener, aCondition, aRaidType, anIgnoreBuffsList)
+	if aListener and aCondition then
+		if aCondition.settings.systemBuffButton then
+			self:ReadAllBuffInfo(cachedGetBuffs(aParams.unitId), aListener, aCondition, aRaidType, anIgnoreBuffsList)
+		else
+			self:ReadAllBuffInfo(cachedGetBuffsWithProperties(aParams.unitId, true, true), aListener, aCondition, aRaidType, anIgnoreBuffsList)
+			self:ReadAllBuffInfo(cachedGetBuffsWithProperties(aParams.unitId, false, true), aListener, aCondition, aRaidType, anIgnoreBuffsList)
 		end
 	end
 end
 
 function PlayerBuffs:GetReadAllRaidEventFunc()
 	return function(aParams)
-		self:GetReadAllEventFunc(aParams, self.base.guiRaidListener, GetBuffConditionForRaid(), true, self.ignoreRaidBuffsID)
+		self:ReadAllBuffs(aParams, self.base.guiRaidListener, GetBuffConditionForRaid(), true, self.ignoreRaidBuffsID)
 	end
 end
 
@@ -182,7 +184,7 @@ function PlayerBuffs:GetReadAllTargetEventFunc()
 	return function(aParams)
 		local profile = GetCurrentProfile()
 		local asRaid = profile.targeterFormSettings.separateBuffDebuff
-		self:GetReadAllEventFunc(aParams, self.base.guiTargetListener, GetBuffConditionForTargeter(), asRaid, self.ignoreTargeterBuffsID)
+		self:ReadAllBuffs(aParams, self.base.guiTargetListener, GetBuffConditionForTargeter(), asRaid, self.ignoreTargeterBuffsID)
 	end
 end
 
@@ -190,7 +192,7 @@ function PlayerBuffs:GetReadAllBuffPlatesEventFunc()
 	return function(aParams)
 		for i, buffPlate in pairs(self.base.guiBuffPlatesListeners) do
 			self:InitIgnorePlatesBuffsList(i)
-			self:GetReadAllEventFunc(aParams, buffPlate, GetBuffConditionForBuffPlate(i), false, self.ignorePlateBuffsID[i])
+			self:ReadAllBuffs(aParams, buffPlate, GetBuffConditionForBuffPlate(i), false, self.ignorePlateBuffsID[i])
 		end
 	end
 end
@@ -198,7 +200,7 @@ end
 function PlayerBuffs:GetReadAllAboveHeadEventFunc()
 	return function(aParams)
 		--LogInfo("GetReadAllAboveHeadEventFunc ", self.playerID)
-		self:GetReadAllEventFunc(aParams, self.base.guiAboveHeadListener, GetBuffConditionForAboveHead(), false, self.ignoreAboveHeadBuffsID)
+		self:ReadAllBuffs(aParams, self.base.guiAboveHeadListener, GetBuffConditionForAboveHead(), false, self.ignoreAboveHeadBuffsID)
 		--LogInfo("GetReadAllAboveHeadEventFunc end")
 	end
 end

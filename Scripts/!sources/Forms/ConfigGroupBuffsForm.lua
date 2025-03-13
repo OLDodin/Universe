@@ -30,7 +30,7 @@ function CreateConfigGroupBuffsForm()
 	
 	m_group1 = createWidget(form, "group1", "Panel")
 	align(m_group1, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)
-	resize(m_group1, 335, 128)
+	resize(m_group1, 335, 158)
 	
 	m_group2 = createWidget(form, "group2", "Panel")
 	align(m_group2, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)
@@ -69,6 +69,7 @@ function CreateConfigGroupBuffsForm()
 	createWidget(m_group1, "heightBuffCntEdit", "EditLine", nil, nil, 70, 25, 260, 38)
 	createWidget(m_group1, "sizeBuffGroupEdit", "EditLine", nil, nil, 70, 25, 260, 68)
 	createWidget(m_group1, "buffsOpacityEdit", "EditLine", nil, nil, 70, 25, 260, 98)
+	setLocaleText(createWidget(m_group1, "systemBuffButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 320, 25, 5, 128), false)
 	
 	setLocaleText(createWidget(m_group2, "buffOnMe", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 320, 25, 5, 3), true)
 	setLocaleText(createWidget(m_group2, "buffOnTarget", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 320, 25, 5, 33), true)
@@ -146,6 +147,7 @@ function SaveConfigGroupBuffsForm(aForm, aClose)
 	m_currentFormSettings.size = tonumber(getTextString(getChild(m_group1, "sizeBuffGroupEdit")))
 	local buffsOpacityEdit = getChild(m_group1, "buffsOpacityEdit")
 	m_currentFormSettings.buffsOpacity = CheckEditVal(tonumber(getTextString(buffsOpacityEdit)), 1.0, 0.1, 1.0, buffsOpacityEdit)
+	m_currentFormSettings.systemBuffButton = getCheckBoxState(getChild(m_group1, "systemBuffButton"))
 	
 	m_currentFormSettings.buffOnMe = getCheckBoxState(getChild(m_group2, "buffOnMe"))
 	m_currentFormSettings.buffOnTarget = getCheckBoxState(getChild(m_group2, "buffOnTarget"))
@@ -225,7 +227,7 @@ function LoadConfigGroupBuffsForm(aForm, anIndex, aInitLoad)
 	else
 		setText(getChild(m_group1, "buffsOpacityEdit"), m_currentFormSettings.buffsOpacity or "1.0")
 	end
-
+	setCheckBox(getChild(m_group1, "systemBuffButton"), m_currentFormSettings.systemBuffButton)
 	
 	
 	local textArr = {}

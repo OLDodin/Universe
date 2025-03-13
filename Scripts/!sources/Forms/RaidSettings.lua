@@ -23,7 +23,7 @@ function CreateRaidSettingsForm()
 
 	local group4 = createWidget(form, "group4", "Panel")
 	align(group4, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)
-	resize(group4, 315, 161)
+	resize(group4, 315, 191)
 	
 	local group5 = createWidget(form, "group5", "Panel")
 	align(group5, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)
@@ -89,6 +89,7 @@ function CreateRaidSettingsForm()
 	createWidget(group4, "buffSizeEdit", "EditLine", nil, nil, 70, 25, 235, 68)
 	createWidget(group4, "buffsOpacityEdit", "EditLine", nil, nil, 70, 25, 235, 98)
 	createWidget(group4, "showBuffTimeButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 300, 25, 5, 128)
+	createWidget(group4, "systemBuffButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 300, 25, 5, 158)
 	
 	setLocaleText(createWidget(group5, "distanceSettingsFormHeader", "TextView",  WIDGET_ALIGN_CENTER, nil, 250, 20, nil, 3))
 	setLocaleText(createWidget(group5, "distanceText", "TextView", nil, nil, 200, 25, 5, 38))
@@ -189,6 +190,7 @@ function SaveRaidFormSettings(aForm)
 	local buffsOpacityEdit = getChild(group4, "buffsOpacityEdit")
 	m_currentFormSettings.buffsOpacityText = CheckEditVal(tonumber(getTextString(buffsOpacityEdit)), 1.0, 0.1, 1.0, buffsOpacityEdit)
 	m_currentFormSettings.showBuffTimeButton = getCheckBoxState(getChild(group4, "showBuffTimeButton"))
+	m_currentFormSettings.raidBuffs.systemBuffButton = getCheckBoxState(getChild(group4, "systemBuffButton"))
 	
 	m_currentFormSettings.distanceText = getTextString(getChild(group5, "distanceEdit"))
 	m_currentFormSettings.showGrayOnDistanceButton = getCheckBoxState(getChild(group5, "showGrayOnDistanceButton"))
@@ -260,6 +262,7 @@ function LoadRaidFormSettings(aForm)
 		setText(getChild(group4, "buffsOpacityEdit"), m_currentFormSettings.buffsOpacityText)
 	end
 	setLocaleText(getChild(group4, "showBuffTimeButton"), m_currentFormSettings.showBuffTimeButton)
+	setLocaleText(getChild(group4, "systemBuffButton"), m_currentFormSettings.raidBuffs.systemBuffButton)
 	
 	setText(getChild(group5, "distanceEdit"), m_currentFormSettings.distanceText)
 	setLocaleText(getChild(group5, "showGrayOnDistanceButton"), m_currentFormSettings.showGrayOnDistanceButton)

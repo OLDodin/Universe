@@ -24,7 +24,7 @@ function CreateTargeterSettingsForm()
 	
 	local group4 = createWidget(form, "group4", "Panel")
 	align(group4, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)
-	resize(group4, 315, 188)
+	resize(group4, 315, 218)
 	
 	local group5 = createWidget(form, "group5", "Panel")
 	align(group5, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)
@@ -97,6 +97,7 @@ function CreateTargeterSettingsForm()
 	createWidget(group4, "buffSizeEdit", "EditLine", nil, nil, 70, 25, 235, 98)
 	createWidget(group4, "buffsOpacityEdit", "EditLine", nil, nil, 70, 25, 235, 128)
 	createWidget(group4, "showBuffTimeButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 300, 25, 5, 158)
+	createWidget(group4, "systemBuffButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 300, 25, 5, 188)
 
 	
 	settingsContainer:PushBack(group1)
@@ -189,6 +190,7 @@ function SaveTargeterFormSettings(aForm)
 	m_currentFormSettings.targetLimit = tostring(CheckEditVal(tonumber(getTextString(targetLimitEdit)), 12, 1, 30, targetLimitEdit))
 
 	m_currentFormSettings.showBuffTimeButton = getCheckBoxState(getChild(group4, "showBuffTimeButton"))
+	m_currentFormSettings.raidBuffs.systemBuffButton = getCheckBoxState(getChild(group4, "systemBuffButton"))
 
 	m_currentFormSettings.raidBuffs.checkEnemyCleanable = getCheckBoxState(getChild(group5, "checkEnemyCleanable"))
 	m_currentFormSettings.raidBuffs.checkControlsButton = getCheckBoxState(getChild(group5, "checkControlsButton"))
@@ -272,6 +274,7 @@ function LoadTargeterFormSettings(aForm)
 		setText(getChild(group4, "buffsOpacityEdit"), m_currentFormSettings.buffsOpacityText)
 	end
 	setLocaleText(getChild(group4, "showBuffTimeButton"), m_currentFormSettings.showBuffTimeButton)
+	setLocaleText(getChild(group4, "systemBuffButton"), m_currentFormSettings.raidBuffs.systemBuffButton)
 	
 	setLocaleText(getChild(group5, "checkEnemyCleanable"), m_currentFormSettings.raidBuffs.checkEnemyCleanable)
 	setLocaleText(getChild(group5, "checkControlsButton"), m_currentFormSettings.raidBuffs.checkControlsButton)

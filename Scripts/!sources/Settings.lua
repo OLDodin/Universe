@@ -615,6 +615,13 @@ function LoadSettings(aProfileInd)
 			m_currentProfile.mainFormSettings.useCastSubSystem = false 
 		end
 	end
+	if m_currentProfile.version < 3.36 or m_currentProfile.version == nil then
+		m_currentProfile.raidFormSettings.raidBuffs.systemBuffButton = false
+		m_currentProfile.targeterFormSettings.raidBuffs.systemBuffButton = false
+		for _, buffGroupSettings in ipairs(m_currentProfile.buffFormSettings.buffGroups) do
+			buffGroupSettings.systemBuffButton = false
+		end
+	end
 	
 	if m_currentProfile.version < GetSettingsVersion() or m_currentProfile.version == nil then
 		m_currentProfile.version = GetSettingsVersion()
@@ -657,5 +664,5 @@ function ExportProfileByIndex(anInd)
 end
 
 function GetSettingsVersion()
-	return 3.32;
+	return 3.36;
 end

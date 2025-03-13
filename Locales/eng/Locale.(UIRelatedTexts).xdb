@@ -1445,5 +1445,9 @@
       <name>targeterInfoTxt</name>
       <resource href="targeterInfoTxt.txt"/>
     </Item>
+	<Item>
+      <name>systemBuffButton</name>
+      <resource href="systemBuffButton.txt"/>
+    </Item>
   </items>
 </UIRelatedTexts>

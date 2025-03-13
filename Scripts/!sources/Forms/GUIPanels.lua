@@ -370,7 +370,7 @@ local function PlayerAddBuff(aBuffInfo, aPlayerBar, anArray, aCnt, anInfoObj)
 	buffSlot.buffFinishedTime_h = aBuffInfo.remainingMs + g_cachedTimestamp
 	buffSlot.durationMs_h = aBuffInfo.durationMs
 	if buffSlot.needShowTime then
-		if aBuffInfo.remainingMs > 0 then
+		if aBuffInfo.durationMs > 0 and aBuffInfo.remainingMs > 0 then
 			buffSlot.buffTimeStr = getTimeString(aBuffInfo.remainingMs, true)
 			buffSlot.buffTime:SetVal(g_tagTextValue, buffSlot.buffTimeStr)
 			show(buffSlot.buffTime)
@@ -438,11 +438,16 @@ end
 local function UpdateTickForBuffArray(anArray)
 	for _, buffSlot in ipairs(anArray) do
 		if buffSlot.buffTimeStr then
-			local remainingMs = math.max(buffSlot.buffFinishedTime_h - g_cachedTimestamp, 0)
-			local buffTimeStr = getTimeString(remainingMs, true)
-			if buffSlot.buffTimeStr ~= buffTimeStr then 
-				buffSlot.buffTime:SetVal(g_tagTextValue, buffTimeStr)
-				buffSlot.buffTimeStr = buffTimeStr
+			local remainingMs = buffSlot.buffFinishedTime_h - g_cachedTimestamp
+			if remainingMs > 0 then
+				local buffTimeStr = getTimeString(remainingMs, true)
+				if buffSlot.buffTimeStr ~= buffTimeStr then 
+					buffSlot.buffTime:SetVal(g_tagTextValue, buffTimeStr)
+					buffSlot.buffTimeStr = buffTimeStr
+				end
+			else
+				buffSlot.buffTimeStr = nil
+				hide(buffSlot.buffTime)
 			end
 		end
 	end

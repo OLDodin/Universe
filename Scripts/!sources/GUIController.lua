@@ -1609,7 +1609,7 @@ local function CreateTargeterSubPanelCache(aProfile, aParentArr, aX)
 	for i = 1, TARGETS_LIMIT do
 		local playerPanel = CreatePlayerPanel(m_targetPanel, aX, i-1, false, aProfile.targeterFormSettings, i)
 		table.insert(aParentArr, playerPanel)
-		if aProfile.targeterFormSettings.twoColumnMode then
+		if aProfile.targeterFormSettings.twoColumnMode and not aProfile.targeterFormSettings.gorisontalModeButton then
 			align(playerPanel.wdg, WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW)
 		end
 	end
