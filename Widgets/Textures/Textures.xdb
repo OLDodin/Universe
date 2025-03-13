@@ -3,125 +3,125 @@
 	<Items>
 		<Item>
 			<name>BossIcon</name>
-			<textureItem href="Class/Boss.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
+			<textureItem href="Class/Boss.(UISingleTexture).xdb" />
 		</Item>
 		<Item>
 			<name>EliteIcon</name>
-			<textureItem href="Class/Elite.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
+			<textureItem href="Class/Elite.(UISingleTexture).xdb" />
 		</Item>
 		<Item>
 			<name>FlavorEliteIcon</name>
-			<textureItem href="Class/FlavorElite.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
+			<textureItem href="Class/FlavorElite.(UISingleTexture).xdb" />
 		</Item>
 		<Item>
 			<name>MiniBossIcon</name>
-			<textureItem href="Class/MiniBoss.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
+			<textureItem href="Class/MiniBoss.(UISingleTexture).xdb" />
 		</Item>
 		<Item>
 			<name>RaidBossIcon</name>
-			<textureItem href="Class/RaidBoss.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
+			<textureItem href="Class/RaidBoss.(UISingleTexture).xdb" />
 		</Item>
 		<Item>
 			<name>RaidEliteIcon</name>
-			<textureItem href="Class/RaidElite.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
+			<textureItem href="Class/RaidElite.(UISingleTexture).xdb" />
 		</Item>
 		
 		<Item>
 			<name>EngineerIcon</name>
-			<textureItem href="Class/Engineer.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
+			<textureItem href="Class/Engineer.(UISingleTexture).xdb" />
 		</Item>
 
 		<Item>
 			<name>BardIcon</name>
-			<textureItem href="Class/Bard.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
+			<textureItem href="Class/Bard.(UISingleTexture).xdb" />
 		</Item>
 		<Item>
 			<name>DruidIcon</name>
-			<textureItem href="Class/Druid.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
+			<textureItem href="Class/Druid.(UISingleTexture).xdb" />
 		</Item>
 		<Item>
 			<name>MageIcon</name>
-			<textureItem href="Class/Mage.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
+			<textureItem href="Class/Mage.(UISingleTexture).xdb" />
 		</Item>
 		<Item>
 			<name>PaladinIcon</name>
-			<textureItem href="Class/Paladin.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
+			<textureItem href="Class/Paladin.(UISingleTexture).xdb" />
 		</Item>
 		<Item>
 			<name>PriestIcon</name>
-			<textureItem href="Class/Priest.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
+			<textureItem href="Class/Priest.(UISingleTexture).xdb" />
 		</Item>
 		<Item>
 			<name>PsionicIcon</name>
-			<textureItem href="Class/Psionic.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
+			<textureItem href="Class/Psionic.(UISingleTexture).xdb" />
 		</Item>
 		<Item>
 			<name>StalkerIcon</name>
-			<textureItem href="Class/Stalker.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
+			<textureItem href="Class/Stalker.(UISingleTexture).xdb" />
 		</Item>
 		<Item>
 			<name>WarriorIcon</name>
-			<textureItem href="Class/Warrior.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
+			<textureItem href="Class/Warrior.(UISingleTexture).xdb" />
 		</Item>
 		<Item>
 			<name>NecromancerIcon</name>
-			<textureItem href="Class/Necromancer.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
+			<textureItem href="Class/Necromancer.(UISingleTexture).xdb" />
 		</Item>
 		<Item>
 			<name>WarlockIcon</name>
-			<textureItem href="Class/Warlock.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
+			<textureItem href="Class/Warlock.(UISingleTexture).xdb" />
 		</Item>
 		<Item>
 			<name>UnknownIcon</name>
-			<textureItem href="Class/Unknown.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
+			<textureItem href="Class/Unknown.(UISingleTexture).xdb" />
 		</Item>
 
 		<Item>
 			<name>Party1</name>
-			<textureItem href="Buttons/Party1.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
+			<textureItem href="Buttons/Party1.(UISingleTexture).xdb" />
 		</Item>
 		<Item>
 			<name>Party2</name>
-			<textureItem href="Buttons/Party2.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
+			<textureItem href="Buttons/Party2.(UISingleTexture).xdb" />
 		</Item>
 		<Item>
 			<name>Party3</name>
-			<textureItem href="Buttons/Party3.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
+			<textureItem href="Buttons/Party3.(UISingleTexture).xdb" />
 		</Item>
 		<Item>
 			<name>Party4</name>
-			<textureItem href="Buttons/Party4.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
+			<textureItem href="Buttons/Party4.(UISingleTexture).xdb" />
 		</Item>
 
 		<Item>
 			<name>True</name>
-			<textureItem href="Check/True.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
+			<textureItem href="Check/True.(UISingleTexture).xdb" />
 		</Item>
 		<Item>
 			<name>False</name>
-			<textureItem href="Check/False.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
+			<textureItem href="Check/False.(UISingleTexture).xdb" />
 		</Item>
 		<Item>
 			<name>Unknown</name>
-			<textureItem href="Check/Unknown.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
+			<textureItem href="Check/Unknown.(UISingleTexture).xdb" />
 		</Item>
 		
 		<Item>
 			<name>help1</name>
-			<textureItem href="Help/U1.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
+			<textureItem href="Help/U1.(UISingleTexture).xdb" />
 		</Item>
 		<Item>
 			<name>help2</name>
-			<textureItem href="Help/U2.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
+			<textureItem href="Help/U2.(UISingleTexture).xdb" />
 		</Item>
 		
 		<Item>
 			<name>colorBack</name>
-			<textureItem href="ColorBack/forest.(UISingleTexture).xdb#xpointer(/UISingleTexture)" />
+			<textureItem href="ColorBack/forest.(UISingleTexture).xdb" />
 		</Item>
 		<Item>
 			<name>notFound</name>
-			<textureItem href="notFound.xdb" />
+			<textureItem href="NotFound/NotFound.(UISingleTexture).xdb" />
 		</Item>
 	</Items>
 </UIRelatedTextures>
