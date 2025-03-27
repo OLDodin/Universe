@@ -29,6 +29,7 @@
 		<Item href="Scripts/PlayerInfoCache.lua"/>
 		<Item href="Scripts/ScriptSerialization.lua"/>
 		<Item href="Scripts/Settings.lua"/>
+		<Item href="Scripts/BuffWdgController.lua"/>
 		<Item href="Scripts/common/WndManager.lua"/>
 		<Item href="Scripts/Forms/Slider.lua"/>
 		<Item href="Scripts/Forms/ColorSettingsForm.lua"/>

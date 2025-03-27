@@ -231,16 +231,6 @@ function UpdateFabric()
 	end
 end
 
-function SecondUpdateFabric()
-	for playerID, player in pairs(m_players) do
-		if isExist(playerID) then
-			if player.buffs then
-				player.buffs:SecondUpdate()
-			end
-		end
-	end
-end
-
 local tick = 0
 function FabicLogInfo()
 	if not g_debugSubsrb then
@@ -260,10 +250,8 @@ end
 function BuffsChanged(aParams)
 	for objId, buffs in pairs( aParams.objects ) do
 		if m_players[objId] then
-			for buffId, active in pairs( buffs ) do
-				if active then
-					m_players[objId].buffs.changeEventFunc(buffId)
-				end
+			for buffId, _ in pairs( buffs ) do
+				m_players[objId].buffs.changeEventFunc(buffId)
 			end
 		end
 	end 

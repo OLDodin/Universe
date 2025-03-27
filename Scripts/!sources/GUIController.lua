@@ -1,3 +1,13 @@
+local cachedIsPlayer = unit.IsPlayer
+local cachedIsPet = unit.IsPet
+local cachedCanSelectTarget = unit.CanSelectTarget
+local cachedIsEnemy = object.IsEnemy
+local cachedIsFriend = object.IsFriend
+local cachedGetReputationLevel = unit.GetReputationLevel
+local cachedGetName = object.GetName
+local cachedGetClass = unit.GetClass
+local cachedGetHealthInfo = object.GetHealthInfo
+
 local m_raidSubSystemLoaded = false
 local m_targetSubSystemLoaded = false
 local m_buffGroupSubSystemLoaded = false
@@ -533,7 +543,7 @@ local function ShowPartyBtns(aPartyCnt)
 	end
 end
 
-local function OnRaidFilter(aParams)
+function OnRaidFilter(aParams)
 	for _, partyButton in ipairs(m_raidPartyButtons) do
 		if aParams.widget:IsEqual(partyButton.wdg) then
 			partyButton.active = not partyButton.active
@@ -547,13 +557,13 @@ local function OnRaidFilter(aParams)
 	RaidChanged(nil, true)
 end
 
-local function OnShopChange()
+function OnShopChange()
 	GetBuffConditionForRaid():SwitchShowShop()
 	
 	RaidChanged(nil, true)
 end
 
-local function OnAssertChange(aParams)
+function OnAssertChange(aParams)
 	local wdgOwnerName = getName(getParent(aParams.widget, 2))
 	if wdgOwnerName == "ProgressActionPanel" or wdgOwnerName == "ProgressBuffPanel" then
 		--пока не подтвердим пложение на обеих панельках не сбрасываем флаг перемещния
@@ -568,11 +578,11 @@ local function OnAssertChange(aParams)
 	SaveButtonPressed(getParent(aParams.widget))
 end
 
-local function EditLineEsc(aParams)
+function EditLineEsc(aParams)
 	aParams.widget:SetFocus(false)
 end
 
-local function OnCheckChange()
+function OnCheckChange()
 	if raid.IsExist() then
 		raid.StartReadyCheck()
 	elseif group.IsExist() then
@@ -580,11 +590,11 @@ local function OnCheckChange()
 	end
 end
 
-local function ReadyCheckEnded()
+function ReadyCheckEnded()
 	HideReadyCheck()
 end
 
-local function ReadyCheckChanged()
+function ReadyCheckChanged()
 	local checkInfo = nil
 	if raid.IsExist() then
 		checkInfo = raid.GetReadyCheckInfo()
@@ -594,7 +604,7 @@ local function ReadyCheckChanged()
 	ShowReadyCheck(checkInfo, m_currentRaid)
 end
 
-local function ReadyCheckStarted()
+function ReadyCheckStarted()
 	ReadyCheckChanged()
 end
 
@@ -894,15 +904,15 @@ local function OnPlayerSelect(aParams, aLeftClick)
 	
 end
 
-local function OnLeftClick(aParams)
+function OnLeftClick(aParams)
 	OnPlayerSelect(aParams, true)
 end
 
-local function OnRightClick(aParams)
+function OnRightClick(aParams)
 	OnPlayerSelect(aParams, false)
 end
 
-local function OnPlayerBarPointing(aParams)
+function OnPlayerBarPointing(aParams)
 	if not aParams.widget:IsValid() then
 		return
 	end
@@ -960,7 +970,7 @@ function OnDropDownBtnPointing(aParams)
 	end
 end
 
-local function TargetLockChanged(aParams)
+function TargetLockChanged(aParams)
 	TargetLockBtn(m_targetPanel)
 end
 
@@ -1186,9 +1196,9 @@ local function BuildRaidGUI(aCurrentRaid, aReusedRaidListeners)
 	if aCurrentRaid.type == SOLO_TYPE then
 		local playerInfo = {}
 		playerInfo.id = g_myAvatarID
-		playerInfo.name = object.GetName(playerInfo.id)
+		playerInfo.name = cachedGetName(playerInfo.id)
 		playerInfo.state = GROUP_MEMBER_STATE_NEAR
-		playerInfo.className = unit.GetClass(playerInfo.id).className
+		playerInfo.className = cachedGetClass(playerInfo.id).className
 		m_raidPlayerPanelList[1][1].isUsed = true
 		SetBaseInfoPlayerPanel(m_raidPlayerPanelList[1][1], playerInfo, true, profile.raidFormSettings, FRIEND_PANEL)
 		FabricMakeRaidPlayerInfo(playerInfo.id, m_raidPlayerPanelList[1][1])
@@ -1202,7 +1212,7 @@ local function BuildRaidGUI(aCurrentRaid, aReusedRaidListeners)
 					playerBar.isUsed = true
 					if (playerInfo.id and not aReusedRaidListeners[playerInfo.id]) or not playerInfo.id then
 						local isLeader = false
-						if playerInfo.id and unit.IsPlayer(playerInfo.id) then
+						if playerInfo.id and cachedIsPlayer(playerInfo.id) then
 							isLeader = playerInfo.uniqueId:IsEqual(m_currentRaid.currentLeaderUniqueID)
 						end
 						SetBaseInfoPlayerPanel(playerBar, playerInfo, isLeader, profile.raidFormSettings, FRIEND_PANEL)
@@ -1509,13 +1519,10 @@ local function AddTargetInList(aNewTargetInfo, anObjArr)
 end
 
 local function SetNecessaryTargets(anObjID, anInCombat)
-	if not object.IsExist(anObjID) then
-		return
-	end
 	local profile = GetCurrentProfile()
-	local isPlayer = unit.IsPlayer(anObjID)
-	local isPet = isPlayer and false or unit.IsPet(anObjID)
-	local isCanSelect = unit.CanSelectTarget(anObjID)
+	local isPlayer = cachedIsPlayer(anObjID)
+	local isPet = isPlayer and false or cachedIsPet(anObjID)
+	local isCanSelect = cachedCanSelectTarget(anObjID)
 	if profile.targeterFormSettings.hideUnselectableButton and not isPlayer and not isPet then
 		if not isCanSelect then
 			m_targetUnselectable[anObjID] = true
@@ -1524,12 +1531,12 @@ local function SetNecessaryTargets(anObjID, anInCombat)
 	end
 	m_targetUnselectable[anObjID] = nil
 	
-	local isEnemy = object.IsEnemy(anObjID)
-	local isFriend = isEnemy and false or object.IsFriend(anObjID)
+	local isEnemy = cachedIsEnemy(anObjID)
+	local isFriend = isEnemy and false or cachedIsFriend(anObjID)
 	local isNeitral = not isEnemy and not isFriend
 	
 	if not isPlayer and not isPet and not isEnemy then
-		if unit.GetReputationLevel(anObjID) == REPUTATION_LEVEL_NEUTRAL then
+		if cachedGetReputationLevel(anObjID) == REPUTATION_LEVEL_NEUTRAL then
 			isFriend = false
 			isNeitral = true
 		end
@@ -1540,13 +1547,11 @@ local function SetNecessaryTargets(anObjID, anInCombat)
 	newValue.inCombat = anInCombat
 	newValue.isCanSelect = ((isPlayer or isCanSelect) and 0) or 1
 
-	newValue.objName = object.GetName(newValue.objID)
+	newValue.objName = cachedGetName(newValue.objID)
 	newValue.objNameLower = toLowerString(newValue.objName)
 		
-	--LogInfo("SetNecessaryTargets ", newValue.objName, " isPlayer = ", isPlayer, " isEnemy = ", isEnemy, " isFriend = ", isFriend)	
-		
 	if profile.targeterFormSettings.sortByClass then
-		newValue.className = unit.GetClass(anObjID).className
+		newValue.className = cachedGetClass(anObjID).className
 		newValue.classPriority = g_classPriority[newValue.className] or g_classPriority["UNKNOWN"]
 	end
 	if profile.targeterFormSettings.sortByDead then
@@ -1557,7 +1562,7 @@ local function SetNecessaryTargets(anObjID, anInCombat)
 		end
 	end
 	if profile.targeterFormSettings.sortByHP then
-		local healthInfo = object.GetHealthInfo(anObjID)
+		local healthInfo = cachedGetHealthInfo(anObjID)
 		newValue.hp = healthInfo and healthInfo.valuePercents
 	end
 	if isEnemy then
@@ -1942,7 +1947,7 @@ function RedrawTargeter(aType, anIsTypeChanged)
 	local combatListToDisplay = GetObjListToDisplay(targetUnionCombat)
 	--находим панели уже отображаемых игроков
 	local reusedPanels, freePanels = SeparateTargeterPanelList(nonCombatListToDisplay, combatListToDisplay)
-	
+
 	local cntSimple = 0
 	local cntCombat = 0
 	if profile.targeterFormSettings.twoColumnMode then
@@ -2066,7 +2071,7 @@ local function ProgressStart(aParams, aPanelList, aProgressQueue)
 	local profile = GetCurrentProfile()
 	local actionType = GetProgressActionType(aParams)
 	
-	if actionType == BUFF_PROGRESS and isExist(aParams.objectId) and unit.IsPlayer(aParams.objectId) then
+	if actionType == BUFF_PROGRESS and isExist(aParams.objectId) and cachedIsPlayer(aParams.objectId) then
 		return false
 	end
 	
@@ -2087,7 +2092,7 @@ local function ProgressStart(aParams, aPanelList, aProgressQueue)
 
 	if isExist(objID) then
 		local progressName = queuedParams.buffName or queuedParams.name
-		local objNameLower = toLowerString(object.GetName(objID))
+		local objNameLower = toLowerString(cachedGetName(objID))
 		for _, ignoreObj in ipairs(profile.castFormSettings.ignoreList) do
 			if progressName == ignoreObj.name then
 				local skipIgnoreName = false
@@ -2212,7 +2217,6 @@ end
 
 local function UnitChanged(aParams)
 	local profile = GetCurrentProfile()
-	
 	local existSpawned = {}
 	if m_buffGroupSubSystemLoaded or m_targetSubSystemLoaded or m_castSubSystemLoaded then
 		for _, objID in pairs(aParams.spawned) do
@@ -2221,7 +2225,7 @@ local function UnitChanged(aParams)
 			end
 		end
 	end
-	
+
 	--сначала все системы despawned
 	if m_buffGroupSubSystemLoaded then
 		DespawnedUnitsForAboveHead(aParams.despawned)
@@ -2248,28 +2252,28 @@ local function UnitChanged(aParams)
 	end
 	
 	FabricDestroyUnused()
-	
+
 	--все системы spawned
 	if m_buffGroupSubSystemLoaded then
 		SpawnedUnitsForAboveHead(existSpawned)
 	end
-	
+
 	if m_targetSubSystemLoaded and m_currTargetType ~= TARGETS_DISABLE then	
 		for _, objID in pairs(existSpawned) do
 			local isCombat = false
 			if profile.targeterFormSettings.twoColumnMode then
 				isCombat = object.IsInCombat(objID)
 			end
+
 			EraseTarget(objID)
 			SetNecessaryTargets(objID, isCombat)
-		end
-			
+		end	
 		TryRedrawTargeter(m_currTargetType, false)
 	end
-	
+
 	if m_castSubSystemLoaded and profile.castFormSettings.showImportantCasts then
 		for _, objID in pairs(existSpawned) do
-			if not unit.IsPlayer(objID) then
+			if not cachedIsPlayer(objID) then
 				local mobActionProgressInfo = unit.GetMobActionProgress(objID)
 				if mobActionProgressInfo then
 					mobActionProgressInfo.id = objID
@@ -2281,7 +2285,6 @@ local function UnitChanged(aParams)
 end
 
 local function UnitNameChanged(aParams)
-	--LogInfo("UnitNameChanged ", aParams.id, "   ", object.GetName(aParams.id))
 	local param = {}
 	param.spawned = {}
 	param.spawned[0] = aParams.id
@@ -2386,7 +2389,7 @@ local function GUIInit()
 	m_progressBuffPanel = InitProgressBuffPanel()
 end
 
-local function OnEventSecondTimer()
+function OnEventSecondTimer()
 	--при таргетере под курсором мыши перерисовываем лишь раз в 2 секунды (чтобы легче выбрать)
 	if m_targetSubSystemLoaded and m_needRedrawTargeter then
 		m_redrawPauseCnt = m_redrawPauseCnt + 1
@@ -2440,8 +2443,16 @@ local function OnEventSecondTimer()
 		RemoveProgressForNotExistObj(unitList, m_progressBuffPanelList, m_progressBuffQueue)
 	end
 	
-	SecondUpdateFabric()
 	FabicLogInfo()
+end
+
+-- затычка №3 бывает что после выхода с БГ остаётся пустой рейд и иногда (но всегда) он сам чинится без событий
+function FixRaid()
+	if m_raidSubSystemLoaded and m_currentRaid.type ~= SOLO_TYPE then
+		if GetTableSize(m_currentRaid.members) == 0 then
+			RaidChanged(nil, true)
+		end
+	end
 end
 
 local function Update()
@@ -2660,7 +2671,7 @@ function InitCastSubSystem()
 	if profile.castFormSettings.showImportantCasts then
 		local unitList = avatar.GetUnitList()
 		for _, objID in pairs(unitList) do
-			if isExist(objID) and not unit.IsPlayer(objID) then
+			if isExist(objID) and not cachedIsPlayer(objID) then
 				local mobActionProgressInfo = unit.GetMobActionProgress(objID)
 				if mobActionProgressInfo then
 					mobActionProgressInfo.id = objID
@@ -2815,7 +2826,7 @@ function GUIControllerInit()
 	TargetChanged()
 	DnD.SetDndCallbackFunc(OnDNDPickAttempt)
 	
-	
+	startTimer("fixRaid", FixRaid, 30)
 	startTimer("updateTimer", Update, 0.1)
 	common.RegisterEventHandler(OnEventSecondTimer, "EVENT_SECOND_TIMER")
 	

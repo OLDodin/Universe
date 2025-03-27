@@ -57,6 +57,9 @@ function WndMgr.OnWndClicked(aWnd)
 end
 
 function WndMgr.SwapWnd(aWnd)
+	if not aWnd then
+		return
+	end
 	if aWnd:IsVisible() then
 		WndMgr.HideWdg(aWnd)
 	else
@@ -65,10 +68,16 @@ function WndMgr.SwapWnd(aWnd)
 end
 
 function WndMgr.ShowWdg(aWnd)
+	if not aWnd then
+		return
+	end
 	ForegroundWnd(aWnd)
 	aWnd:Show(true)
 end
 
 function WndMgr.HideWdg(aWnd)
+	if not aWnd then
+		return
+	end
 	aWnd:Show(false)
 end

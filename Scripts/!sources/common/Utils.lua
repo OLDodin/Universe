@@ -3,6 +3,7 @@ local cachedFromWString = userMods.FromWString
 local cachedIsExist = object.IsExist
 local cachedIsUnit = object.IsUnit
 local cachedCreateValuedText = common.CreateValuedText
+local cachedTableSClone = table.sclone
 
 local cachedTimeAbbr = {}
 
@@ -917,7 +918,7 @@ function updateCachedTimestamp()
 end
 
 function copyTable(t)
-	return table.sclone(t)
+	return cachedTableSClone(t)
 end
 
 function deepCopyTable(t)

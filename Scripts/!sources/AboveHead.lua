@@ -164,13 +164,8 @@ function CannotAttachPanelAboveHead(aParams)
 end
 
 function HideBuffsOnPanel(aPanel)
-	aPanel.usedBuffSlotCnt = 0
+	ClearAllBuffSlot(aPanel.guiBuffList)
 	aPanel.buffsQueue = {}
-	for _, buffSettings in pairs(aPanel.guiBuffList) do
-		hide(buffSettings.buffWdg)
-		buffSettings.buffID = nil
-		buffSettings.buffFinishedTime_h = 0
-	end
 end
 
 local function HideAllAboveHeadPanels()
@@ -197,9 +192,6 @@ function RemoveAllAboveHeadPanels()
 	
 	for i=1, CACHE_PANELS_SIZE do
 		if m_cachePanels[i] then
-			for _, buffSlot in pairs(m_cachePanels[i].guiBuffList) do
-				stopLoopBlink(buffSlot.info.buffHighlight)
-			end
 			destroy(m_cachePanels[i].panelWdg)
 		end
 	end

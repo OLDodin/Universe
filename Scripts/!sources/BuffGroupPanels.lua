@@ -5,196 +5,42 @@ local function GetTextSizeByBuffSize(aSize)
 	return math.floor(aSize/2.5)
 end
 
-local function FindBufSlot(aGroupBuffBar, aBuffID)
-	for i, buffSlot in pairs(aGroupBuffBar.guiBuffList) do
-		if buffSlot.buffID == aBuffID then
-			return buffSlot, i
-		end
-	end
+local function PlayerAddSomeBuff(aBuffInfo, aGroupBuffBar, anInfoObj, aCleanableBuff)
+	return PlayerAddBuff(aBuffInfo, aGroupBuffBar, aGroupBuffBar.guiBuffList, anInfoObj, aCleanableBuff)
 end
 
-local function GetMinGroupPanelSize(anIsAboveHead)
-	if anIsAboveHead then
-		return 80
-	end
-	return 220
+local function PlayerChangeSomeBuff(aBuffID, aBuffDynamicInfo, aGroupBuffBar)
+	PlayerChangeBuff(aBuffID, aBuffDynamicInfo, aGroupBuffBar, aGroupBuffBar.guiBuffList)
 end
 
-local function TryShowBuffFromQueue(aGroupBuffBar)
-	for _, buffInfo in pairs(aGroupBuffBar.buffsQueue) do
-		if not buffInfo.isShowedInGuiSlot then
-			if buffInfo.remainingMs > 0 then
-				buffInfo.remainingMs = math.max(buffInfo.buffFinishedTime_h - g_cachedTimestamp, 0)
-			end
-			aGroupBuffBar.listenerChangeBuffNegative(buffInfo, aGroupBuffBar, buffInfo.additionalInfo)
-			return
-		end
-	end
-end
-
-local function PlayerAddBuff(aBuffInfo, aGroupBuffBar, anInfoObj)
-	aBuffInfo.additionalInfo = anInfoObj
-	if aBuffInfo.remainingMs > 0 then
-		aBuffInfo.buffFinishedTime_h = aBuffInfo.remainingMs + g_cachedTimestamp
-	end
-	aGroupBuffBar.buffsQueue[aBuffInfo.id] = table.sclone(aBuffInfo)
-	
-	local posInPlateIndex = anInfoObj and anInfoObj.ind or nil
---LogInfo("PlayerAddBuff = ", aBuffInfo.name, " ind ", posInPlateIndex)
-	
-	local buffTexture = aBuffInfo.texture
-	if not buffTexture then
-		buffTexture = g_texNotFound
-	end
-	
-	local buffSlot = FindBufSlot(aGroupBuffBar, aBuffInfo.id)
-	if aGroupBuffBar.fixedInsidePanel then
-		if not posInPlateIndex then
-			posInPlateIndex = 1
-		end
-		buffSlot = aGroupBuffBar.guiBuffList[posInPlateIndex]
-		if buffSlot then
-			if not buffSlot.buffWdg:IsVisible() then
-				buffSlot.buffWdg:Show(true)
-				buffSlot.info.buffIcon:SetBackgroundTexture(buffTexture)
-			end
-		end
-	else
-		if not buffSlot then
-			local newCnt = aGroupBuffBar.usedBuffSlotCnt + 1
-			buffSlot = aGroupBuffBar.guiBuffList[newCnt]	
-		--	LogInfo("PlayerAddBuff 1 = ", newCnt)
-			if buffSlot then
-		--	LogInfo("PlayerAddBuff 2")
-				aGroupBuffBar.usedBuffSlotCnt = newCnt
-				
-				buffSlot.buffWdg:Show(true)
-				buffSlot.info.buffIcon:SetBackgroundTexture(buffTexture)
-				resize(aGroupBuffBar.panelWdg, math.max(buffSlot.info.buffSize*math.min(aGroupBuffBar.panelWidthBuffCnt, aGroupBuffBar.usedBuffSlotCnt), GetMinGroupPanelSize(aGroupBuffBar.abovehead)), buffSlot.info.buffSize*math.min(aGroupBuffBar.panelHeightBuffCnt, math.ceil(aGroupBuffBar.usedBuffSlotCnt/aGroupBuffBar.panelWidthBuffCnt))+30)
-			end
-		end
-	end
-	if not buffSlot then
-		return
-	end
-	
-	aGroupBuffBar.buffsQueue[aBuffInfo.id].isShowedInGuiSlot = true
-	
-	buffSlot.buffID = aBuffInfo.id
-	buffSlot.buffFinishedTime_h = aBuffInfo.remainingMs + g_cachedTimestamp
-	setFade(buffSlot.info.buffIcon, buffSlot.info.settingsOpacity)
-	
-	if aBuffInfo.stackCount <= 1 then 
-		hide(buffSlot.info.buffStackCntWdg)
-	else
-		show(buffSlot.info.buffStackCntWdg)
-		buffSlot.info.buffStackCntWdg:SetVal(g_tagTextValue, tostring(aBuffInfo.stackCount))
-	end
-	
-	if aBuffInfo.remainingMs > 0 then
-		local buffTimeStr = getTimeString(aBuffInfo.remainingMs)
-		buffSlot.info.buffTimerWdg:SetVal(g_tagTextValue, buffTimeStr)
-		buffSlot.info.buffTimeStr = buffTimeStr
-		show(buffSlot.info.buffTimerWdg)
-	else
-		buffSlot.info.buffTimeStr = nil
-		hide(buffSlot.info.buffTimerWdg)
-	end
-	
-	if anInfoObj and anInfoObj.useHighlightBuff then 
-		show(buffSlot.info.buffHighlight)
-		setBackgroundColor(buffSlot.info.buffHighlight, anInfoObj.highlightColor)
-		if anInfoObj.blinkHighlight then
-			startLoopBlink(buffSlot.info.buffHighlight, 0.5)
-		end
-	else
-		hide(buffSlot.info.buffHighlight)
-		stopLoopBlink(buffSlot.info.buffHighlight)
-	end
-	
-	return buffSlot
-end
-
-local function PlayerRemoveBuff(aBuffID, aGroupBuffBar)
-	aGroupBuffBar.buffsQueue[aBuffID] = nil
-	local buffSlot, removeIndex  = FindBufSlot(aGroupBuffBar, aBuffID)
-	if buffSlot then
-		buffSlot.buffID = nil
-		if aGroupBuffBar.fixedInsidePanel then	
-			hide(buffSlot.buffWdg)
-			stopLoopBlink(buffSlot.info.buffHighlight)
-		else
-			hide(buffSlot.buffWdg)
-			stopLoopBlink(buffSlot.info.buffHighlight)
-			if removeIndex ~= GetTableSize(aGroupBuffBar.guiBuffList) then
-				for i = removeIndex, aGroupBuffBar.usedBuffSlotCnt do
-					aGroupBuffBar.guiBuffList[i] = aGroupBuffBar.guiBuffList[i+1]
-				end
-				aGroupBuffBar.guiBuffList[aGroupBuffBar.usedBuffSlotCnt] = buffSlot
-				for i = removeIndex, aGroupBuffBar.usedBuffSlotCnt do
-					local x = ((i-1)%aGroupBuffBar.panelWidthBuffCnt)*buffSlot.info.buffSize
-					local y = math.floor((i-1)/aGroupBuffBar.panelWidthBuffCnt)*buffSlot.info.buffSize
-					move(aGroupBuffBar.guiBuffList[i].buffWdg, x, y+30)
-				end
-			end
-			aGroupBuffBar.usedBuffSlotCnt = math.max(aGroupBuffBar.usedBuffSlotCnt - 1, 0)
-			
-			resize(aGroupBuffBar.panelWdg, math.max(buffSlot.info.buffSize*math.min(aGroupBuffBar.panelWidthBuffCnt, aGroupBuffBar.usedBuffSlotCnt), GetMinGroupPanelSize(aGroupBuffBar.abovehead)), buffSlot.info.buffSize*math.min(aGroupBuffBar.panelHeightBuffCnt, math.ceil(aGroupBuffBar.usedBuffSlotCnt/aGroupBuffBar.panelWidthBuffCnt))+30)
-		end
+local function PlayerRemoveSomeBuff(aBuffID, aGroupBuffBar)
+	local wasRemoved, buffSlot = PlayerRemoveBuff(aBuffID, aGroupBuffBar, aGroupBuffBar.guiBuffList)
+	if wasRemoved then	
 		TryShowBuffFromQueue(aGroupBuffBar)
 	end
 end
 
 local function UpdateTick(aGroupBuffBar)
-	for _, buffSlot in pairs(aGroupBuffBar.guiBuffList) do
-		if buffSlot.buffID and buffSlot.info.buffTimeStr then
-			local remainingMs = math.max(buffSlot.buffFinishedTime_h - g_cachedTimestamp, 0)
-			if remainingMs > 0 then
-				local buffTimeStr = getTimeString(remainingMs)
-				if buffSlot.info.buffTimeStr ~= buffTimeStr then 
-					buffSlot.info.buffTimerWdg:SetVal(g_tagTextValue, buffTimeStr)
-					buffSlot.info.buffTimeStr = buffTimeStr
-				end
-			else
-				buffSlot.info.buffTimeStr = nil
-				hide(buffSlot.info.buffTimerWdg)
-			end
-		end
-	end
+	UpdateTimeForBuffArray(aGroupBuffBar.guiBuffList, true)
 end
-
---очень, очень редко не приходит удаление баффа, удаляем сами
-local function SecondTick(aGroupBuffBar)
-	local removingBuffs = {}
-	for _, buffInfo in pairs(aGroupBuffBar.buffsQueue) do
-		if buffInfo.durationMs and buffInfo.durationMs > 0 and buffInfo.buffFinishedTime_h - g_cachedTimestamp < -1500 then
-			table.insert(removingBuffs, buffInfo)
-		end
-	end
-	for _, buffInfo in ipairs(removingBuffs) do
-		aGroupBuffBar.listenerRemoveBuffNegative(buffInfo.id, aGroupBuffBar)
-	end
-end
-
 
 local function SpellChanged(aSpellInfo, aGroupBuffBar, anInfoObj)
 	aSpellInfo.stackCount = 0
 	aSpellInfo.texture = getSpellTextureFromCache(aSpellInfo.spellID)
 	aSpellInfo.id = aSpellInfo.objectId
 
-	local buffSlot = PlayerAddBuff(aSpellInfo, aGroupBuffBar, anInfoObj)
+	local buffSlot = PlayerAddSomeBuff(aSpellInfo, aGroupBuffBar, anInfoObj)
 	if buffSlot then
 		if aSpellInfo.remainingMs > 0 then
-			setFade(buffSlot.info.buffIcon, 0.4)
+			setFade(buffSlot.buffIcon, 0.4)
 		else
-			setFade(buffSlot.info.buffIcon, 1)
+			setFade(buffSlot.buffIcon, 1)
 		end
 	end
 end
 
-
 local function SpellRemoved(anID, aGroupBuffBar)
-	PlayerRemoveBuff(anID, aGroupBuffBar)
+	PlayerRemoveSomeBuff(anID, aGroupBuffBar)
 end
 
 function DestroyGroupBuffPanels()
@@ -205,9 +51,7 @@ function DestroyGroupBuffPanels()
 				DnD.Remove(groupBuffTopPanel)
 				DnD.HideWdg(groupBuffTopPanel)
 			end
-			for _, buffSlot in pairs(groupBuffPanel.guiBuffList) do
-				stopLoopBlink(buffSlot.info.buffHighlight)
-			end
+			HideBuffsOnPanel(groupBuffPanel)
 			destroy(groupBuffPanel.panelWdg)
 		end
 	end
@@ -222,11 +66,11 @@ end
 
 function CreateGroupBuffPanel(aForm, aSettings, anIsAboveHead, aPosInPlateIndex)
 	local groupBuffPanel = {}
-	groupBuffPanel.listenerChangeBuffNegative = PlayerAddBuff
-	groupBuffPanel.listenerRemoveBuffNegative = PlayerRemoveBuff
-	groupBuffPanel.listenerChangeImportantBuff = PlayerAddBuff
+	groupBuffPanel.listenerAddBuffNegative = PlayerAddSomeBuff
+	groupBuffPanel.listenerChangeBuff = PlayerChangeSomeBuff
+	groupBuffPanel.listenerRemoveBuffNegative = PlayerRemoveSomeBuff
+	groupBuffPanel.listenerChangeImportantBuff = PlayerAddSomeBuff
 	groupBuffPanel.listenerUpdateTick = UpdateTick
-	groupBuffPanel.listenerSecondTick = SecondTick
 	groupBuffPanel.listenerSpellChanged = SpellChanged
 	groupBuffPanel.listenerSpellRemoved = SpellRemoved
 	groupBuffPanel.guiBuffList = {}
@@ -278,33 +122,12 @@ function CreateGroupBuffPanel(aForm, aSettings, anIsAboveHead, aPosInPlateIndex)
 			DnD.Init(groupBuffPanel.panelWdg, groupBuffTopPanel, true, false)
 		end		
 		setTemplateWidget("common")
-		for j=1, w*h do
-			local x = ((j-1)%w)*size
-			local y = math.floor((j-1)/w)*size
+		local fontSize = GetTextSizeByBuffSize(size)
+		for i=1, w*h do
+			local x = ((i-1)%w)*size
+			local y = math.floor((i-1)/w)*size + 30
 			
-			local currBuff = {}
-			currBuff.buffFinishedTime_h = 0
-			currBuff.info = {}
-			currBuff.info.buffSize = size
-			currBuff.buffWdg = createWidget(groupBuffPanel.panelWdg, "b"..tostring(j), "BuffTemplate", buffAlign, nil, currBuff.info.buffSize, currBuff.info.buffSize, x, 30+y)
-			currBuff.info.buffIcon = getChild(currBuff.buffWdg, "DotIcon")
-			currBuff.info.buffHighlight = getChild(currBuff.buffWdg, "DotHighlight")
-			currBuff.info.buffTimerWdg = getChild(currBuff.buffWdg, "DotText")
-			currBuff.info.buffStackCntWdg = getChild(currBuff.buffWdg, "DotStackText")
-			currBuff.info.settingsOpacity = aSettings.buffsOpacity
-			
-			if currBuff.info.settingsOpacity ~= 1 then
-				setFade(currBuff.info.buffIcon, aSettings.buffsOpacity)
-				setFade(currBuff.info.buffHighlight, aSettings.buffsOpacity)
-			end
-			
-			updatePlacementPlain(currBuff.info.buffTimerWdg, nil, nil, 1, 0, currBuff.info.buffSize, round(currBuff.info.buffSize/2.4)+1)
-			updatePlacementPlain(currBuff.info.buffStackCntWdg, WIDGET_ALIGN_LOW, WIDGET_ALIGN_HIGH, 1, 1, currBuff.info.buffSize, GetTextSizeByBuffSize(currBuff.info.buffSize)+1)
-			
-			setTextViewText(currBuff.info.buffStackCntWdg, g_tagTextValue, nil, "ColorWhite", "right", GetTextSizeByBuffSize(currBuff.info.buffSize), nil, 1)
-			setTextViewText(currBuff.info.buffTimerWdg, g_tagTextValue, nil, "ColorWhite", "center", GetTextSizeByBuffSize(currBuff.info.buffSize), 1, 1)
-						
-			groupBuffPanel.guiBuffList[j] = currBuff
+			table.insert(groupBuffPanel.guiBuffList, CreateBuffSlot(groupBuffPanel.panelWdg, "bs"..tostring(i), buffAlign, WIDGET_ALIGN_LOW, x, y, size, fontSize, fontSize, aSettings.buffsOpacity, true, false))
 		end
 	end
 	return groupBuffPanel

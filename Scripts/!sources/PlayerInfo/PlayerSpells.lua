@@ -143,6 +143,7 @@ function PlayerSpells:CallListenerIfNeeded(aSpellID, aRemainingMs, aListener, aC
 							spellInfo.remainingMs = 0
 						end
 					end
+					spellInfo.durationMs = spellInfo.remainingMs
 	
 					aListener.listenerSpellChanged(spellInfo, aListener, findedObj)
 				else

@@ -13,6 +13,12 @@ Global("g_classPriority", {
 	["UNKNOWN"]		= 12
 })
 
+local cachedIsPlayer = unit.IsPlayer
+local cachedGetClass = unit.GetClass
+local cachedIsDead = object.IsDead
+local cachedGetPlayerShardName = unit.GetPlayerShardName
+local cachedGetQuality = unit.GetQuality
+local cachedTableSClone = table.sclone
 
 local m_manaColor = { r=0, g=0.3, b=1, a=1 }
 local m_energyColor =	{ r=1, g=0.3, b=0, a=1 }
@@ -39,7 +45,7 @@ local function SetArrowAngle(anArrowIcon, anAngle)
 end
 
 local function ChangeSelectable(anInfo, aPlayerBar)
-	local barColor = copyTable(aPlayerBar.optimizeInfo.barColor)
+	local barColor = cachedTableSClone(aPlayerBar.optimizeInfo.barColor)
 	if anInfo then
 		barColor.a = 1
 		hide(aPlayerBar.farBarBackgroundWdg)
@@ -234,86 +240,30 @@ function PlayerTargetsHighlightChanged(anInfo, aPlayerBar)
 	aPlayerBar.highlight = anInfo
 	aPlayerBar.highlightWdg:Show(anInfo)
 	if not compareColor(aPlayerBar.optimizeInfo.barBackgroundColor, barColor) then
-		aPlayerBar.optimizeInfo.barBackgroundColor = copyTable(barColor)
+		aPlayerBar.optimizeInfo.barBackgroundColor = cachedTableSClone(barColor)
 		setBackgroundColor(aPlayerBar.barBackgroundWdg, barColor)
 	end
 end
 
-local function FindBuffSlot(aPlayerBar, aBuffID, aCnt, anArray)
-	for i=1, aCnt do
-		if anArray[i].buffID == aBuffID then
-			return anArray[i], i
-		end
-	end
-	return nil, nil
+
+local function GetTextSizeByBuffSize(aSize)
+	return math.floor(aSize/1.6)
 end
 
-local function HasCleanableBuff(aPlayerBar)
-	for _, buffInfo in pairs(aPlayerBar.buffsQueue) do
-		if not buffInfo.isPositive and buffInfo.cleanableBuff then
-			return true
-		end
-	end
-	return false
-end
-
-local function TryShowBuffFromQueue(aPlayerBar, aPositive)
-	local listener = nil
-	for _, buffInfo in pairs(aPlayerBar.buffsQueue) do
-		if not buffInfo.isShowedInGuiSlot then
-			if aPositive and buffInfo.isPositive then
-				listener = aPlayerBar.listenerChangeBuff
-			elseif not aPositive and not buffInfo.isPositive then	
-				listener = aPlayerBar.listenerChangeBuffNegative
-			end
-			if listener then
-				if buffInfo.remainingMs > 0 then
-					buffInfo.remainingMs = math.max(buffInfo.buffFinishedTime_h - g_cachedTimestamp, 0)
-				end
-				listener(buffInfo, aPlayerBar, buffInfo.additionalInfo)
-				return
-			end
-		end
-	end
-end
-
-local function PlayerRemoveBuff(aBuffID, aPlayerBar, aCnt, anArray)
-	aPlayerBar.buffsQueue[aBuffID] = nil
-	
-	local buffSlot, removeIndex = FindBuffSlot(aPlayerBar, aBuffID, aCnt, anArray)
-	if buffSlot then
-		hide(buffSlot.buffWdg)
-		stopLoopBlink(buffSlot.buffHighlight)
-		buffSlot.buffTimeStr = nil
-		buffSlot.durationMs_h = 0
-		if removeIndex ~= GetTableSize(anArray) then
-			for i = removeIndex, aCnt do
-				anArray[i] = anArray[i+1]
-			end
-			anArray[aCnt] = buffSlot
-			for i = removeIndex, aCnt do
-				move(anArray[i].buffWdg, 2+(i-1)*tonumber(aPlayerBar.formSettings.buffSize), 3)
-			end
-		end
-		return true, buffSlot
-	end
-	return false, nil
+local function GetTimeTextSizeByBuffSize(aSize)
+	return math.floor(aSize/2.0)
 end
 
 local function PlayerRemoveBuffPositive(aBuffID, aPlayerBar)
-	local wasRemoved, buffSlot = PlayerRemoveBuff(aBuffID, aPlayerBar, aPlayerBar.usedBuffSlotCnt, aPlayerBar.buffSlots)
-	if wasRemoved then
-		aPlayerBar.usedBuffSlotCnt = math.max(aPlayerBar.usedBuffSlotCnt - 1, 0)
-		
+	local wasRemoved, buffSlot = PlayerRemoveBuff(aBuffID, aPlayerBar, aPlayerBar.buffSlots)
+	if wasRemoved then	
 		TryShowBuffFromQueue(aPlayerBar, true)
 	end
 end
 
 local function PlayerRemoveBuffNegative(aBuffID, aPlayerBar)
-	local wasRemoved, buffSlot = PlayerRemoveBuff(aBuffID, aPlayerBar, aPlayerBar.usedBuffSlotNegCnt, aPlayerBar.buffSlotsNeg)
-	if wasRemoved then
-		aPlayerBar.usedBuffSlotNegCnt = math.max(aPlayerBar.usedBuffSlotNegCnt - 1, 0)
-		
+	local wasRemoved, buffSlot = PlayerRemoveBuff(aBuffID, aPlayerBar, aPlayerBar.buffSlotsNeg)
+	if wasRemoved then	
 		TryShowBuffFromQueue(aPlayerBar, false)
 	end
 	if aPlayerBar.formSettings.raidBuffs.colorDebuffButton and not HasCleanableBuff(aPlayerBar) then
@@ -325,80 +275,9 @@ local function PlayerRemoveBuffNegative(aBuffID, aPlayerBar)
 	end
 end
 
-local function GetTextSizeByBuffSize(aSize)
-	return math.floor(aSize/1.6)
-end
+local function PlayerAddBuffNegative(aBuffInfo, aPlayerBar, anInfoObj, aCleanableBuff)
+	PlayerAddBuff(aBuffInfo, aPlayerBar, aPlayerBar.buffSlotsNeg, anInfoObj, aCleanableBuff)
 
-local function GetTimeTextSizeByBuffSize(aSize)
-	return math.floor(aSize/2.0)
-end
-
-local function PlayerAddBuff(aBuffInfo, aPlayerBar, anArray, aCnt, anInfoObj)
-	aBuffInfo.additionalInfo = anInfoObj
-	if aBuffInfo.remainingMs > 0 then
-		aBuffInfo.buffFinishedTime_h = aBuffInfo.remainingMs + g_cachedTimestamp
-	end
-	aPlayerBar.buffsQueue[aBuffInfo.id] = table.sclone(aBuffInfo)
-	local buffTexture = aBuffInfo.texture
-	if not buffTexture then
-		buffTexture = g_texNotFound
-	end
-
-	local buffSlot = FindBuffSlot(aPlayerBar, aBuffInfo.id, aCnt, anArray)
-	local res = false
-	if not buffSlot then
-		local newCnt = aCnt + 1
-		if newCnt > GetTableSize(anArray) then
-			return res
-		end
-		
-		buffSlot = anArray[newCnt]
-		buffSlot.buffID = aBuffInfo.id
-		buffSlot.buffWdg:Show(true)
-		buffSlot.buffIcon:SetBackgroundTexture(buffTexture)
-		res = true
-	end
-	aPlayerBar.buffsQueue[aBuffInfo.id].isShowedInGuiSlot = true
-	
-
-	if aBuffInfo.stackCount <= 1 then 
-		hide(buffSlot.buffStackCnt)
-	else
-		show(buffSlot.buffStackCnt)
-		buffSlot.buffStackCnt:SetVal(g_tagTextValue, tostring(aBuffInfo.stackCount))
-	end
-	
-	buffSlot.buffFinishedTime_h = aBuffInfo.remainingMs + g_cachedTimestamp
-	buffSlot.durationMs_h = aBuffInfo.durationMs
-	if buffSlot.needShowTime then
-		if aBuffInfo.durationMs > 0 and aBuffInfo.remainingMs > 0 then
-			buffSlot.buffTimeStr = getTimeString(aBuffInfo.remainingMs, true)
-			buffSlot.buffTime:SetVal(g_tagTextValue, buffSlot.buffTimeStr)
-			show(buffSlot.buffTime)
-		else
-			buffSlot.buffTimeStr = nil
-			hide(buffSlot.buffTime)
-		end
-	end
-	
-	if anInfoObj and anInfoObj.useHighlightBuff then 
-		show(buffSlot.buffHighlight)
-		setBackgroundColor(buffSlot.buffHighlight, anInfoObj.highlightColor)
-		if anInfoObj.blinkHighlight then
-			startLoopBlink(buffSlot.buffHighlight, 0.5)
-		end
-	else
-		hide(buffSlot.buffHighlight)
-		stopLoopBlink(buffSlot.buffHighlight)
-	end
-	
-	return res
-end
-
-local function PlayerAddBuffNegative(aBuffInfo, aPlayerBar, anInfoObj)
-	if PlayerAddBuff(aBuffInfo, aPlayerBar, aPlayerBar.buffSlotsNeg, aPlayerBar.usedBuffSlotNegCnt, anInfoObj) then
-		aPlayerBar.usedBuffSlotNegCnt = aPlayerBar.usedBuffSlotNegCnt + 1
-	end
 	if aPlayerBar.formSettings.raidBuffs.colorDebuffButton and HasCleanableBuff(aPlayerBar) then
 		show(aPlayerBar.clearBarWdg)
 		if not compareColor(aPlayerBar.optimizeInfo.shieldContainerColor, g_shieldContainerCleanableColor) then
@@ -408,10 +287,8 @@ local function PlayerAddBuffNegative(aBuffInfo, aPlayerBar, anInfoObj)
 	end
 end
 
-local function PlayerAddBuffPositive(aBuffInfo, aPlayerBar, anInfoObj)
-	if PlayerAddBuff(aBuffInfo, aPlayerBar, aPlayerBar.buffSlots, aPlayerBar.usedBuffSlotCnt, anInfoObj) then
-		aPlayerBar.usedBuffSlotCnt = aPlayerBar.usedBuffSlotCnt + 1
-	end
+local function PlayerAddBuffPositive(aBuffInfo, aPlayerBar, anInfoObj, aCleanableBuff)
+	PlayerAddBuff(aBuffInfo, aPlayerBar, aPlayerBar.buffSlots, anInfoObj, aCleanableBuff)
 end
 
 local function PlayerAddImportantBuff(aBuffInfo, aPlayerBar)
@@ -430,51 +307,38 @@ local function PlayerAddImportantBuff(aBuffInfo, aPlayerBar)
 	end
 end
 
-local function PlayerRemoveImportantBuff(aBuffID, aPlayerBar)
+local function PlayerChangeImportantBuff(aBuffID, aBuffDynamicInfo, aPlayerBar)
 	if aPlayerBar.importantBuff.buffID == aBuffID then
-		hide(aPlayerBar.importantBuff.buffWdg)
+		local buffSlot = aPlayerBar.importantBuff
+		if aBuffDynamicInfo.stackCount <= 1 then 
+			hide(buffSlot.buffStackCnt)
+		else
+			show(buffSlot.buffStackCnt)
+			buffSlot.buffStackCnt:SetVal(g_tagTextValue, tostring(aBuffDynamicInfo.stackCount))
+		end
 	end
 end
 
-local function UpdateTickForBuffArray(anArray)
-	for _, buffSlot in ipairs(anArray) do
-		if buffSlot.buffTimeStr then
-			local remainingMs = buffSlot.buffFinishedTime_h - g_cachedTimestamp
-			if remainingMs > 0 then
-				local buffTimeStr = getTimeString(remainingMs, true)
-				if buffSlot.buffTimeStr ~= buffTimeStr then 
-					buffSlot.buffTime:SetVal(g_tagTextValue, buffTimeStr)
-					buffSlot.buffTimeStr = buffTimeStr
-				end
-			else
-				buffSlot.buffTimeStr = nil
-				hide(buffSlot.buffTime)
-			end
-		end
+local function PlayerRemoveImportantBuff(aBuffID, aPlayerBar)
+	if aPlayerBar.importantBuff.buffID == aBuffID then
+		hide(aPlayerBar.importantBuff.buffWdg)
+		aPlayerBar.importantBuff.buffID = nil
+	end
+end
+
+local function PlayerChangeSomeBuff(aBuffID, aBuffDynamicInfo, aPlayerBar)
+	PlayerChangeImportantBuff(aBuffID, aBuffDynamicInfo, aPlayerBar)
+	-- в  guipanel важные баффы отдельно и не всегда попадает в список отображаемых обыным способом
+	if aPlayerBar.buffsQueue[aBuffID] then
+		PlayerChangeBuff(aBuffID, aBuffDynamicInfo, aPlayerBar, aPlayerBar.buffSlots)
+		PlayerChangeBuff(aBuffID, aBuffDynamicInfo, aPlayerBar, aPlayerBar.buffSlotsNeg)
 	end
 end
 
 local function UpdateTick(aPlayerBar)
 	if aPlayerBar.isUsed and aPlayerBar.formSettings.showBuffTimeButton then
-		UpdateTickForBuffArray(aPlayerBar.buffSlots)
-		UpdateTickForBuffArray(aPlayerBar.buffSlotsNeg)
-	end
-end
-
---очень, очень редко не приходит удаление баффа, удаляем сами
-local function SecondTick(aPlayerBar)
-	if aPlayerBar.isUsed then
-		local removingBuffs = {}
-		for _, buffInfo in pairs(aPlayerBar.buffsQueue) do
-			if buffInfo.durationMs > 0 and buffInfo.buffFinishedTime_h - g_cachedTimestamp < -1500 then			
-				table.insert(removingBuffs, buffInfo)
-			end
-		end
-		for _, buffInfo in ipairs(removingBuffs) do
-			aPlayerBar.listenerRemoveBuff(buffInfo.id, aPlayerBar)
-			aPlayerBar.listenerRemoveBuffNegative(buffInfo.id, aPlayerBar)
-			aPlayerBar.listenerRemoveImportantBuff(buffInfo.id, aPlayerBar)
-		end
+		UpdateTimeForBuffArray(aPlayerBar.buffSlots, false)
+		UpdateTimeForBuffArray(aPlayerBar.buffSlotsNeg, false)
 	end
 end
 
@@ -506,33 +370,17 @@ function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettin
 	aPlayerBar.optimizeInfo.canSelectByDist = true
 	aPlayerBar.optimizeInfo.currDist = -1
 	aPlayerBar.panelColorType = aRelationType
-	aPlayerBar.optimizeInfo.shieldContainerColor = copyTable(g_shieldContainerNormalColor)
+	aPlayerBar.optimizeInfo.shieldContainerColor = cachedTableSClone(g_shieldContainerNormalColor)
 	
 	local isUnitExist = isExist(aPlayerInfo.id)
 	aPlayerBar.isPlayerExist = isUnitExist
 	
-	local isPlayer = isUnitExist and unit.IsPlayer(aPlayerInfo.id) or false
+	local isPlayer = isUnitExist and cachedIsPlayer(aPlayerInfo.id) or false
 	
-	aPlayerBar.usedBuffSlotCnt = 0
 	aPlayerBar.buffsQueue = {}
-	for _, buffSlot in ipairs(aPlayerBar.buffSlots) do
-		hide(buffSlot.buffWdg)
-		buffSlot.buffID = nil
-		buffSlot.buffFinishedTime_h = 0
-		buffSlot.durationMs_h = 0
-		buffSlot.buffTimeStr = nil
-		stopLoopBlink(buffSlot.buffHighlight)
-	end
+	ClearAllBuffSlot(aPlayerBar.buffSlots)
+	ClearAllBuffSlot(aPlayerBar.buffSlotsNeg)
 	
-	aPlayerBar.usedBuffSlotNegCnt = 0
-	for _, buffSlot in ipairs(aPlayerBar.buffSlotsNeg) do
-		hide(buffSlot.buffWdg)
-		buffSlot.buffID = nil
-		buffSlot.buffFinishedTime_h = 0
-		buffSlot.durationMs_h = 0
-		buffSlot.buffTimeStr = nil
-		stopLoopBlink(buffSlot.buffHighlight)
-	end
 	hide(aPlayerBar.importantBuff.buffWdg)
 	aPlayerBar.importantBuff.buffID = nil
 	
@@ -541,9 +389,9 @@ function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettin
 	
 	setBackgroundColor(aPlayerBar.shieldContainerWdg, aPlayerBar.optimizeInfo.shieldContainerColor)
 	
-	local barColor = copyTable(aFormSettings.friendColor)
+	local barColor = cachedTableSClone(aFormSettings.friendColor)
 	if isUnitExist and (aFormSettings.showManaButton or aFormSettings.classColorModeButton) then
-		local playerClass = unit.GetClass(aPlayerInfo.id)
+		local playerClass = cachedGetClass(aPlayerInfo.id)
 		if playerClass and playerClass.className then 	
 			aPlayerInfo.className = playerClass.className
 			if aFormSettings.showManaButton and aPlayerBar.optimizeInfo.className ~= playerClass.className then
@@ -563,19 +411,19 @@ function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettin
 				if not color then
 					color = g_classColors["UNKNOWN"]
 				end
-				barColor = copyTable(color)
+				barColor = cachedTableSClone(color)
 			end
 		end
 	end
 	
 	if isUnitExist then
-		if not aFormSettings.classColorModeButton or (aFormSettings.classColorModeButton and not unit.IsPlayer(aPlayerInfo.id)) then
+		if not aFormSettings.classColorModeButton or (aFormSettings.classColorModeButton and not cachedIsPlayer(aPlayerInfo.id)) then
 			if aPlayerBar.panelColorType == FRIEND_PANEL then
-				barColor = copyTable(aFormSettings.friendColor)
+				barColor = cachedTableSClone(aFormSettings.friendColor)
 			elseif aPlayerBar.panelColorType == NEITRAL_PANEL then
-				barColor = copyTable(aFormSettings.neitralColor)
+				barColor = cachedTableSClone(aFormSettings.neitralColor)
 			elseif aPlayerBar.panelColorType == ENEMY_PANEL then
-				barColor = copyTable(aFormSettings.enemyColor)
+				barColor = cachedTableSClone(aFormSettings.enemyColor)
 			end
 		end
 	end
@@ -594,16 +442,15 @@ function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettin
 	local leaderWStr = anIsLeader and m_leaderWStr or m_emptyWStr
 	local userState = (aPlayerInfo.state == GROUP_MEMBER_STATE_OFFLINE or aPlayerInfo.state == RAID_MEMBER_STATE_OFFLINE) and OFF_STATE 
 	or (aPlayerInfo.state == GROUP_MEMBER_STATE_AFK or aPlayerInfo.state == RAID_MEMBER_STATE_AFK) and AFK_STATE
-	or (isUnitExist and object.IsDead(aPlayerInfo.id)) and DEAD_STATE
+	or (isUnitExist and cachedIsDead(aPlayerInfo.id)) and DEAD_STATE
 	or NORMAL_STATE
 	
 	local offAfkWStr = userState == OFF_STATE and m_offWStr 
 	or userState == AFK_STATE and m_afkWStr
 	or userState == DEAD_STATE and m_deadWStr
 	or m_emptyWStr
-	if userState == DEAD_STATE then
-		PlayerHPChanged(0, aPlayerBar)
-	else
+	
+	if userState == OFF_STATE or not isUnitExist then
 		PlayerHPChanged(100, aPlayerBar)
 	end
 	
@@ -614,8 +461,8 @@ function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettin
 
 	if aFormSettings.showServerNameButton then
 		local shardName = m_emptyWStr
-		if --[[cartographer.IsOnCommon() and ]]aPlayerInfo.id and isUnitExist and unit.IsPlayer(aPlayerInfo.id) then
-			shardName = unit.GetPlayerShardName(aPlayerInfo.id)
+		if --[[cartographer.IsOnCommon() and ]]aPlayerInfo.id and isUnitExist and cachedIsPlayer(aPlayerInfo.id) then
+			shardName = cachedGetPlayerShardName(aPlayerInfo.id)
 			if shardName then 
 				shardName = shardName:ToAbbr()
 			end
@@ -627,7 +474,7 @@ function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettin
 		if aPlayerBar.optimizeInfo.shardName ~= shardName then
 			aPlayerBar.optimizeInfo.shardName = shardName
 			if not shardName:IsEmpty() then
-				shardName = ConcatWString(m_shardBeginWStr, shardName, m_shardEndWStr)
+				shardName = m_shardBeginWStr..shardName..m_shardEndWStr
 			end
 			aPlayerBar.textWdg:SetVal("Server", shardName)
 		end
@@ -651,13 +498,13 @@ function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettin
 		local mobQuality = nil
 		if isPlayer then 
 			if not aPlayerInfo.className then
-				local playerClass = unit.GetClass(aPlayerInfo.id)
+				local playerClass = cachedGetClass(aPlayerInfo.id)
 				if playerClass and playerClass.className then 	
 					aPlayerInfo.className = playerClass.className
 				end
 			end
 		elseif isUnitExist then
-			mobQuality = unit.GetQuality(aPlayerInfo.id)
+			mobQuality = cachedGetQuality(aPlayerInfo.id)
 		end
 		local textureIndexForIcon = aPlayerInfo.className or mobQuality or "UNKNOWN"
 		
@@ -669,13 +516,13 @@ function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettin
 	end
 
 	if not compareColor(aPlayerBar.optimizeInfo.barColor, barColor) then
-		aPlayerBar.optimizeInfo.barColor = copyTable(barColor)
+		aPlayerBar.optimizeInfo.barColor = cachedTableSClone(barColor)
 		setBackgroundColor(aPlayerBar.barWdg, barColor)
 	end
 	
 	HideReadyStateInGUI(aPlayerBar)
 	
-	DnD.ShowWdg(aPlayerBar.wdg)
+	show(aPlayerBar.wdg)
 end
 
 function ResetPlayerPanelPosition(aPlayerBar, aX, aY, aFormSettings)
@@ -699,7 +546,6 @@ function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings, aNum)
 	
 	local panelWidth = tonumber(aFormSettings.raidWidthText)
 	local panelHeight = tonumber(aFormSettings.raidHeightText)
-	local buffSize = tonumber(aFormSettings.buffSize)
 	local mod1 = aFormSettings.gorisontalModeButton and aY or aX
 	local mod2 = aFormSettings.gorisontalModeButton and aX or aY
 	local posX = mod1*panelWidth
@@ -740,8 +586,8 @@ function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings, aNum)
 	playerBar.optimizeInfo = {}
 	playerBar.optimizeInfo.name = m_emptyWStr
 	playerBar.optimizeInfo.shardName = m_emptyWStr
-	playerBar.optimizeInfo.barColor = copyTable(barColor)
-	playerBar.optimizeInfo.shieldContainerColor = copyTable(g_shieldContainerNormalColor)
+	playerBar.optimizeInfo.barColor = cachedTableSClone(barColor)
+	playerBar.optimizeInfo.shieldContainerColor = cachedTableSClone(g_shieldContainerNormalColor)
 	playerBar.optimizeInfo.posX = posX
 	playerBar.optimizeInfo.posY = posY
 	playerBar.optimizeInfo.canSelect = true
@@ -749,6 +595,7 @@ function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings, aNum)
 	playerBar.isUsed = false
 	playerBar.wasVisible = false
 	playerBar.panelColorType = FRIEND_PANEL
+	playerBar.buffSize = tonumber(aFormSettings.buffSize)
 	
 	local shieldTextFontSize = 10
 	if panelHeight > 59 then
@@ -784,26 +631,23 @@ function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings, aNum)
 	setBackgroundColor(playerBar.clearBarWdg, aFormSettings.clearColor or g_needClearColor)
 	resize(playerBar.clearBarWdg, panelWidth-6, panelHeight-4)
 		
-	local buffSlotCnt = math.floor((panelWidth)*0.85 / buffSize)
+	local buffSlotCnt = math.floor((panelWidth)*0.85 / playerBar.buffSize)
 	
 	playerBar.buffsQueue = {}
 	playerBar.buffSlots = {}
-	playerBar.usedBuffSlotCnt = 0
-	
 	playerBar.buffSlotsNeg = {}
-	playerBar.usedBuffSlotNegCnt = 0
 	
-	
+	local stackBuffSize = GetTextSizeByBuffSize(playerBar.buffSize)
+	local timeBuffSize = GetTimeTextSizeByBuffSize(playerBar.buffSize)
 	setTemplateWidget("common")
 	for i = 1, buffSlotCnt do
-		CreateBuffSlot(playerBar.buffPanelWdg, buffSize, playerBar.buffSlots, i, WIDGET_ALIGN_LOW, aFormSettings.buffsOpacityText, aFormSettings.showBuffTimeButton)
-		CreateBuffSlot(playerBar.buffPanelNegativeWdg, buffSize, playerBar.buffSlotsNeg, i, WIDGET_ALIGN_HIGH, aFormSettings.buffsOpacityText, aFormSettings.showBuffTimeButton)
+		table.insert(playerBar.buffSlots, CreateBuffSlot(playerBar.buffPanelWdg, "b"..tostring(i), WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 2+(i-1)*playerBar.buffSize, 4, playerBar.buffSize, stackBuffSize, timeBuffSize, aFormSettings.buffsOpacityText, aFormSettings.showBuffTimeButton, true))
+		table.insert(playerBar.buffSlotsNeg, CreateBuffSlot(playerBar.buffPanelNegativeWdg, "bn"..tostring(i), WIDGET_ALIGN_HIGH, WIDGET_ALIGN_HIGH, 2+(i-1)*playerBar.buffSize, 4, playerBar.buffSize, stackBuffSize, timeBuffSize, aFormSettings.buffsOpacityText, aFormSettings.showBuffTimeButton, true))
 	end
 	
 	local importantSize = panelHeight-16
-	playerBar.importantBuff = CreateBuffSlot(playerBar.buffPanelImportantWdg, importantSize, nil, 0, WIDGET_ALIGN_CENTER, 1.0, false)
+	playerBar.importantBuff = CreateBuffSlot(playerBar.buffPanelImportantWdg, "bi", WIDGET_ALIGN_CENTER, WIDGET_ALIGN_CENTER, 0, 0, importantSize, GetTextSizeByBuffSize(importantSize)-1, timeBuffSize, 1.0, false, true)
 	updatePlacementPlain(playerBar.importantBuff.buffStackCnt, WIDGET_ALIGN_LOW, WIDGET_ALIGN_HIGH, 1, 1)
-	move(playerBar.importantBuff.buffWdg, 0, 0)
 	
 	playerBar.listenerHP = PlayerHPChanged
 	playerBar.listenerShield = PlayerShieldChanged
@@ -814,47 +658,15 @@ function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings, aNum)
 	playerBar.listenerAfk = PlayerAfkChanged
 	playerBar.listenerDead = PlayerDeadChanged
 	playerBar.listenerCanSelect = PlayerCanSelectChanged
-	playerBar.listenerChangeBuff = PlayerAddBuffPositive
-	playerBar.listenerChangeBuffNegative = PlayerAddBuffNegative
+	playerBar.listenerAddBuff = PlayerAddBuffPositive
+	playerBar.listenerAddBuffNegative = PlayerAddBuffNegative
+	playerBar.listenerChangeBuff = PlayerChangeSomeBuff
 	playerBar.listenerRemoveBuff = PlayerRemoveBuffPositive
 	playerBar.listenerRemoveBuffNegative = PlayerRemoveBuffNegative
 	playerBar.listenerChangeImportantBuff = PlayerAddImportantBuff
 	playerBar.listenerRemoveImportantBuff = PlayerRemoveImportantBuff
 	playerBar.listenerUpdateTick = UpdateTick
-	playerBar.listenerSecondTick = SecondTick
 	return playerBar
-end
-
-function CreateBuffSlot(aParent, aBuffSize, anResArray, anIndex, anAlign, aBuffsOpacity, aNeedShowBuffTime)
-	local buffSlot = {}
-	buffSlot.buffWdg = createWidget(aParent, "mybuff"..anIndex, "BuffTemplate", anAlign, anAlign, aBuffSize, aBuffSize, 2+(anIndex-1)*aBuffSize, 4)
-	buffSlot.buffIcon = getChild(buffSlot.buffWdg, "DotIcon")
-	buffSlot.buffHighlight = getChild(buffSlot.buffWdg, "DotHighlight")
-	buffSlot.buffStackCnt = getChild(buffSlot.buffWdg, "DotStackText")
-	buffSlot.buffTime = getChild(buffSlot.buffWdg, "DotText")
-	buffSlot.needShowTime = aNeedShowBuffTime
-	buffSlot.buffFinishedTime_h = 0
-	buffSlot.durationMs_h = 0
-	buffSlot.buffSize = aBuffSize
-	
-	updatePlacementPlain(buffSlot.buffStackCnt, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 0, 0-math.floor(aBuffSize/10), aBuffSize, GetTextSizeByBuffSize(aBuffSize)+1)
-	if not aNeedShowBuffTime then
-		hide(buffSlot.buffTime)
-	else
-		updatePlacementPlain(buffSlot.buffTime, WIDGET_ALIGN_LOW, WIDGET_ALIGN_HIGH, 0, 0, aBuffSize, GetTimeTextSizeByBuffSize(aBuffSize)+1)
-	end
-	
-	if aBuffsOpacity ~= 1.0 then
-		setFade(buffSlot.buffIcon, aBuffsOpacity)
-		setFade(buffSlot.buffHighlight, aBuffsOpacity)
-	end
-	setTextViewText(buffSlot.buffStackCnt, g_tagTextValue, nil, "ColorWhite", "right", GetTextSizeByBuffSize(buffSlot.buffSize), 1, 1)
-	setTextViewText(buffSlot.buffTime, g_tagTextValue, nil, "ColorWhite", "center", GetTimeTextSizeByBuffSize(buffSlot.buffSize), 1, 1)
-
-	if anResArray then
-		table.insert(anResArray, buffSlot)	
-	end
-	return buffSlot
 end
 
 function DestroyPlayerPanel(aPlayerBar)

@@ -13,7 +13,14 @@ function PlayerBuffs:Init(anID)
 	self.ignoreRaidBuffsID = {}
 	self.ignoreTargeterBuffsID = {}
 	self.ignorePlateBuffsID = {}
-	self.updateCnt = 0
+	self.ignoreAboveHeadBuffsID = {}
+	
+	self.workingRaidBuffsID = {}
+	self.workingTargeterBuffsID = {}
+	self.workingPlateBuffsID = {}
+	self.workingAboveHeadBuffsID = {}
+	
+	self.wasBuffChanges = false
 	
 	self.readAllBuffPlatesEventFunc = self:GetReadAllBuffPlatesEventFunc()
 	self.readAllRaidEventFunc = self:GetReadAllRaidEventFunc()
@@ -29,16 +36,28 @@ function PlayerBuffs:Init(anID)
 	self:RegisterEvent(anID)
 end
 
-function PlayerBuffs:ClearLastValues()
-	self.updateCnt = 0
+function PlayerBuffs:ClearRaidBuffsValues()
 	self.ignoreRaidBuffsID = {}
+	self.workingRaidBuffsID = {}
+end
+
+function PlayerBuffs:ClearTargeterBuffsValues()
 	self.ignoreTargeterBuffsID = {}
+	self.workingTargeterBuffsID = {}
+end
+
+function PlayerBuffs:ClearPlateBuffsValues()
 	self.ignorePlateBuffsID = {}
+	self.workingPlateBuffsID = {}
+end
+
+function PlayerBuffs:ClearAboveHeadBuffsValues()
 	self.ignoreAboveHeadBuffsID = {}
+	self.workingAboveHeadBuffsID = {}
 end
 
 function PlayerBuffs:SubscribeTargetGui(aLitener)
-	self:ClearLastValues()
+	self:ClearTargeterBuffsValues()
 	self.base:SubscribeTargetGui(self.playerID, aLitener, self.readAllTargetEventFunc)
 end
 
@@ -47,7 +66,7 @@ function PlayerBuffs:UnsubscribeTargetGui()
 end
 
 function PlayerBuffs:SubscribeRaidGui(aLitener)
-	self:ClearLastValues()
+	self:ClearRaidBuffsValues()
 	self.base:SubscribeRaidGui(self.playerID, aLitener, self.readAllRaidEventFunc)
 end
 
@@ -56,7 +75,7 @@ function PlayerBuffs:UnsubscribeRaidGui()
 end
 
 function PlayerBuffs:SubscribeAboveHeadGui(aLitener)
-	self:ClearLastValues()
+	self:ClearAboveHeadBuffsValues()
 	self.base:SubscribeAboveHeadGui(self.playerID, aLitener, self.readAllAboveHeadEventFunc)
 end
 
@@ -65,7 +84,7 @@ function PlayerBuffs:UnsubscribeAboveHeadGui()
 end
 
 function PlayerBuffs:SubscribeBuffPlateGui(aLiteners)
-	self:ClearLastValues()
+	self:ClearPlateBuffsValues()
 	self.base:SubscribeBuffPlateGui(self.playerID, aLiteners, self.readAllBuffPlatesEventFunc)
 end
 
@@ -82,28 +101,48 @@ function PlayerBuffs:TryDestroy()
 	return false
 end
 
-function PlayerBuffs:SecondUpdate()
-	self.updateCnt = self.updateCnt + 1
-	if self.updateCnt == 600 then
-		self:ClearLastValues()
+local function FindBuffID(aBuffID, aBuffArray)
+	for _, buffID in pairs(aBuffArray) do
+		if aBuffID == buffID then
+			return true
+		end
 	end
-	
-	for i, buffPlate in pairs(self.base.guiBuffPlatesListeners) do
-		buffPlate.listenerSecondTick(buffPlate)
+	return false
+end
+
+--[[
+	затычка - очень редко EVENT_OBJECT_BUFF_REMOVED может не прийти
+	сверяем список баффов на объекте
+	сам по себе EVENT_OBJECT_BUFF_REMOVED может в ПВП приходить с задержкой относительно 
+	изменения списка в GetBuffs
+]]
+function PlayerBuffs:CheckExist(aWorkingBuffArray, aExistBuffArray)
+	local notExistArr = {}
+	for buffID, _ in pairs(aWorkingBuffArray) do
+		if not FindBuffID(buffID, aExistBuffArray) then
+			table.insert(notExistArr, buffID)
+		end
 	end
-	if self.base.guiAboveHeadListener then
-		self.base.guiAboveHeadListener.listenerSecondTick(self.base.guiAboveHeadListener)
-	end
-	if self.base.guiRaidListener then
-		self.base.guiRaidListener.listenerSecondTick(self.base.guiRaidListener)
-	end
-	if self.base.guiTargetListener then
-		self.base.guiTargetListener.listenerSecondTick(self.base.guiTargetListener)
+	for _, buffID in ipairs(notExistArr) do
+		self.delEventFunc( { buffId = buffID } )
 	end
 end
 
 function PlayerBuffs:UpdateValueIfNeeded()
-	for i, buffPlate in pairs(self.base.guiBuffPlatesListeners) do
+	if self.wasBuffChanges then
+		local currBuffs = cachedGetBuffs(self.playerID)
+		
+		self:CheckExist(self.workingRaidBuffsID, currBuffs)
+		self:CheckExist(self.workingTargeterBuffsID, currBuffs)
+		self:CheckExist(self.workingAboveHeadBuffsID, currBuffs)
+		for _, plateBuff in pairs(self.workingPlateBuffsID) do
+			self:CheckExist(plateBuff, currBuffs)
+		end
+		
+		self.wasBuffChanges = false
+	end
+	
+	for _, buffPlate in pairs(self.base.guiBuffPlatesListeners) do
 		buffPlate.listenerUpdateTick(buffPlate)
 	end
 	if self.base.guiAboveHeadListener then
@@ -117,149 +156,181 @@ function PlayerBuffs:UpdateValueIfNeeded()
 	end
 end
 
-function PlayerBuffs:InitIgnorePlatesBuffsList(anIndex)
+function PlayerBuffs:InitPlatesBuffsList(anIndex)
 	if not self.ignorePlateBuffsID[anIndex] then
 		self.ignorePlateBuffsID[anIndex] = {}
 	end
+	if not self.workingPlateBuffsID[anIndex] then
+		self.workingPlateBuffsID[anIndex] = {}
+	end
 end
 
-function PlayerBuffs:CallListenerIfNeeded(aBuffID, aListener, aCondition, aRaidType, anIgnoreBuffsList, aBuffInfo)
-	if aListener and not anIgnoreBuffsList[aBuffID] then
-		local buffInfo = aBuffID and aBuffInfo
-		if not buffInfo then
-			buffInfo = aBuffID and cachedGetBuffInfo(aBuffID)
-		end
-		if buffInfo and buffInfo.name then
-			if aCondition:IsImportant(buffInfo) then
-				aListener.listenerChangeImportantBuff(buffInfo, aListener)
-			end
-			local searchResult, findedObj, cleanableBuff = aCondition:Check(buffInfo)
-			if searchResult then
-				buffInfo.cleanableBuff = cleanableBuff
-				if aRaidType then
-					if buffInfo.isPositive then
-						aListener.listenerChangeBuff(buffInfo, aListener, findedObj)
-					else
-						aListener.listenerChangeBuffNegative(buffInfo, aListener, findedObj)
-					end
-				else
-					aListener.listenerChangeBuffNegative(buffInfo, aListener, findedObj)
-				end
-			else
-				anIgnoreBuffsList[aBuffID] = true
-			end
-			return buffInfo
-		end
+local function CallAddListenerIfNeeded(aBuffID, aListener, aCondition, aRaidType, anIgnoreBuffsList, aWorkingBuffsList, aBuffInfo)
+	if not aListener or anIgnoreBuffsList[aBuffID] then
+		return aBuffInfo
 	end
+
+	local buffInfo = aBuffInfo or cachedGetBuffInfo(aBuffID)
+	if buffInfo and buffInfo.name then
+		local ignoreBuff = true
+		if aCondition:IsImportant(buffInfo) then
+			ignoreBuff = false
+			aListener.listenerChangeImportantBuff(buffInfo, aListener)
+		end
+		local searchResult, findedObj, cleanableBuff = aCondition:Check(buffInfo)
+		if searchResult then
+			ignoreBuff = false
+			if aRaidType and buffInfo.isPositive then
+				aListener.listenerAddBuff(buffInfo, aListener, findedObj, cleanableBuff)
+			else
+				aListener.listenerAddBuffNegative(buffInfo, aListener, findedObj, cleanableBuff)
+			end
+		end
+		if ignoreBuff then
+			anIgnoreBuffsList[aBuffID] = true
+		else
+			aWorkingBuffsList[aBuffID] = true
+		end
+		return buffInfo
+	end
+
 	return aBuffInfo
 end
 
-function PlayerBuffs:ReadAllBuffInfo(aUnitBuffs, aListener, aCondition, aRaidType, anIgnoreBuffsList)
+local function ReadAllBuffInfo(aUnitBuffs, aListener, aCondition, aRaidType, anIgnoreBuffsList, aWorkingBuffsList)
 	if next(aUnitBuffs) then
 		local buffsInfo = cachedGetBuffsInfo(aUnitBuffs)
 		for buffID, buffInfo in pairs(buffsInfo or {}) do
-			self:CallListenerIfNeeded(buffID, aListener, aCondition, aRaidType, anIgnoreBuffsList, buffInfo)
+			CallAddListenerIfNeeded(buffID, aListener, aCondition, aRaidType, anIgnoreBuffsList, aWorkingBuffsList, buffInfo)
 		end
 	end
 end
 
-function PlayerBuffs:ReadAllBuffs(aParams, aListener, aCondition, aRaidType, anIgnoreBuffsList)
+local function ReadAllBuffs(aParams, aListener, aCondition, aRaidType, anIgnoreBuffsList, aWorkingBuffsList)
 	if aListener and aCondition then
 		if aCondition.settings.systemBuffButton then
-			self:ReadAllBuffInfo(cachedGetBuffs(aParams.unitId), aListener, aCondition, aRaidType, anIgnoreBuffsList)
+			ReadAllBuffInfo(cachedGetBuffs(aParams.unitId), aListener, aCondition, aRaidType, anIgnoreBuffsList, aWorkingBuffsList)
 		else
-			self:ReadAllBuffInfo(cachedGetBuffsWithProperties(aParams.unitId, true, true), aListener, aCondition, aRaidType, anIgnoreBuffsList)
-			self:ReadAllBuffInfo(cachedGetBuffsWithProperties(aParams.unitId, false, true), aListener, aCondition, aRaidType, anIgnoreBuffsList)
+			ReadAllBuffInfo(cachedGetBuffsWithProperties(aParams.unitId, true, true), aListener, aCondition, aRaidType, anIgnoreBuffsList, aWorkingBuffsList)
+			ReadAllBuffInfo(cachedGetBuffsWithProperties(aParams.unitId, false, true), aListener, aCondition, aRaidType, anIgnoreBuffsList, aWorkingBuffsList)
 		end
 	end
 end
 
 function PlayerBuffs:GetReadAllRaidEventFunc()
 	return function(aParams)
-		self:ReadAllBuffs(aParams, self.base.guiRaidListener, GetBuffConditionForRaid(), true, self.ignoreRaidBuffsID)
+		ReadAllBuffs(aParams, self.base.guiRaidListener, GetBuffConditionForRaid(), true, self.ignoreRaidBuffsID, self.workingRaidBuffsID)
 	end
 end
 
 function PlayerBuffs:GetReadAllTargetEventFunc()
 	return function(aParams)
-		local profile = GetCurrentProfile()
-		local asRaid = profile.targeterFormSettings.separateBuffDebuff
-		self:ReadAllBuffs(aParams, self.base.guiTargetListener, GetBuffConditionForTargeter(), asRaid, self.ignoreTargeterBuffsID)
+		local asRaid = GetCurrentProfile().targeterFormSettings.separateBuffDebuff
+		ReadAllBuffs(aParams, self.base.guiTargetListener, GetBuffConditionForTargeter(), asRaid, self.ignoreTargeterBuffsID, self.workingTargeterBuffsID)
 	end
 end
 
 function PlayerBuffs:GetReadAllBuffPlatesEventFunc()
 	return function(aParams)
 		for i, buffPlate in pairs(self.base.guiBuffPlatesListeners) do
-			self:InitIgnorePlatesBuffsList(i)
-			self:ReadAllBuffs(aParams, buffPlate, GetBuffConditionForBuffPlate(i), false, self.ignorePlateBuffsID[i])
+			self:InitPlatesBuffsList(i)
+			ReadAllBuffs(aParams, buffPlate, GetBuffConditionForBuffPlate(i), false, self.ignorePlateBuffsID[i], self.workingPlateBuffsID[i])
 		end
 	end
 end
 
 function PlayerBuffs:GetReadAllAboveHeadEventFunc()
 	return function(aParams)
-		--LogInfo("GetReadAllAboveHeadEventFunc ", self.playerID)
-		self:ReadAllBuffs(aParams, self.base.guiAboveHeadListener, GetBuffConditionForAboveHead(), false, self.ignoreAboveHeadBuffsID)
-		--LogInfo("GetReadAllAboveHeadEventFunc end")
+		ReadAllBuffs(aParams, self.base.guiAboveHeadListener, GetBuffConditionForAboveHead(), false, self.ignoreAboveHeadBuffsID, self.workingAboveHeadBuffsID)
 	end
 end
 
 function PlayerBuffs:GetAddEventFunc()
 	return function(aParams)
-		local profile = GetCurrentProfile()
-		local asRaid = profile.targeterFormSettings.separateBuffDebuff
+		local asRaid = GetCurrentProfile().targeterFormSettings.separateBuffDebuff
 		
-		local buffInfo = self:CallListenerIfNeeded(aParams.buffId, self.base.guiRaidListener, GetBuffConditionForRaid(), true, self.ignoreRaidBuffsID)
-		buffInfo = self:CallListenerIfNeeded(aParams.buffId, self.base.guiTargetListener, GetBuffConditionForTargeter(), asRaid, self.ignoreTargeterBuffsID, buffInfo)
+		self.wasBuffChanges = true
+		
+		local buffInfo = CallAddListenerIfNeeded(aParams.buffId, self.base.guiRaidListener, GetBuffConditionForRaid(), true, self.ignoreRaidBuffsID, self.workingRaidBuffsID)
+		buffInfo = CallAddListenerIfNeeded(aParams.buffId, self.base.guiTargetListener, GetBuffConditionForTargeter(), asRaid, self.ignoreTargeterBuffsID, self.workingTargeterBuffsID, buffInfo)
 		
 		for i, buffPlate in pairs(self.base.guiBuffPlatesListeners) do
-			self:InitIgnorePlatesBuffsList(i)
-			buffInfo = self:CallListenerIfNeeded(aParams.buffId, buffPlate, GetBuffConditionForBuffPlate(i), false, self.ignorePlateBuffsID[i], buffInfo)
+			self:InitPlatesBuffsList(i)
+			buffInfo = CallAddListenerIfNeeded(aParams.buffId, buffPlate, GetBuffConditionForBuffPlate(i), false, self.ignorePlateBuffsID[i], self.workingPlateBuffsID[i], buffInfo)
 		end
 		
-		self:CallListenerIfNeeded(aParams.buffId, self.base.guiAboveHeadListener, GetBuffConditionForAboveHead(), false, self.ignoreAboveHeadBuffsID, buffInfo)
+		CallAddListenerIfNeeded(aParams.buffId, self.base.guiAboveHeadListener, GetBuffConditionForAboveHead(), false, self.ignoreAboveHeadBuffsID, self.workingAboveHeadBuffsID, buffInfo)
 	end
 end
 
 function PlayerBuffs:GetDelEventFunc()
 	return function(aParams)
-		if self.base.guiRaidListener then
-			self.base.guiRaidListener.listenerRemoveBuff(aParams.buffId, self.base.guiRaidListener)
-			self.base.guiRaidListener.listenerRemoveBuffNegative(aParams.buffId, self.base.guiRaidListener)
-			self.base.guiRaidListener.listenerRemoveImportantBuff(aParams.buffId, self.base.guiRaidListener)
-		end
-		local profile = GetCurrentProfile()
-		local asRaid = profile.targeterFormSettings.separateBuffDebuff
-		if self.base.guiTargetListener then
+		local buffID = aParams.buffId
+		local asRaid = GetCurrentProfile().targeterFormSettings.separateBuffDebuff
+		self.wasBuffChanges = true
+		
+		self.ignoreRaidBuffsID[buffID] = nil
+		self.ignoreTargeterBuffsID[buffID] = nil
+		self.ignoreAboveHeadBuffsID[buffID] = nil
+		for _, plateBuff in pairs(self.ignorePlateBuffsID) do
+			plateBuff[buffID] = nil
+		end	
+		
+		if self.base.guiRaidListener and self.workingRaidBuffsID[buffID] then
+			self.workingRaidBuffsID[buffID] = nil
+			
+			self.base.guiRaidListener.listenerRemoveBuff(buffID, self.base.guiRaidListener)
+			self.base.guiRaidListener.listenerRemoveBuffNegative(buffID, self.base.guiRaidListener)
+			self.base.guiRaidListener.listenerRemoveImportantBuff(buffID, self.base.guiRaidListener)
+		end	
+		
+		if self.base.guiTargetListener and self.workingTargeterBuffsID[buffID] then
+			self.workingTargeterBuffsID[buffID] = nil
+			
 			if asRaid then
-				self.base.guiTargetListener.listenerRemoveBuff(aParams.buffId, self.base.guiTargetListener)
+				self.base.guiTargetListener.listenerRemoveBuff(buffID, self.base.guiTargetListener)
 			end
-			self.base.guiTargetListener.listenerRemoveBuffNegative(aParams.buffId, self.base.guiTargetListener)
+			self.base.guiTargetListener.listenerRemoveBuffNegative(buffID, self.base.guiTargetListener)
 		end
 		
 		for i, buffPlate in pairs(self.base.guiBuffPlatesListeners) do
-			buffPlate.listenerRemoveBuffNegative(aParams.buffId, buffPlate)
+			if self.workingPlateBuffsID[i][buffID] then
+				self.workingPlateBuffsID[i][buffID] = nil
+				
+				buffPlate.listenerRemoveBuffNegative(buffID, buffPlate)
+			end
 		end
-		if self.base.guiAboveHeadListener then
-			self.base.guiAboveHeadListener.listenerRemoveBuffNegative(aParams.buffId, self.base.guiAboveHeadListener)
+		
+		if self.base.guiAboveHeadListener and self.workingAboveHeadBuffsID[buffID] then
+			self.workingAboveHeadBuffsID[buffID] = nil
+			
+			self.base.guiAboveHeadListener.listenerRemoveBuffNegative(buffID, self.base.guiAboveHeadListener)
 		end
 	end
 end
 
+local function CallChangeListenerIfNeeded(aBuffID, aBuffDynamicInfo, aListener, aWorkingBuffsList)
+	if aListener and aWorkingBuffsList[aBuffID] then
+		aListener.listenerChangeBuff(aBuffID, aBuffDynamicInfo, aListener)
+	end
+end
+
 function PlayerBuffs:GetChangedEventFunc()
-	return function(aParams)
-		local profile = GetCurrentProfile()
-		local asRaid = profile.targeterFormSettings.separateBuffDebuff
+	return function(aBuffID)	
+		self.wasBuffChanges = true
 		
-		local buffInfo = self:CallListenerIfNeeded(aParams, self.base.guiRaidListener, GetBuffConditionForRaid(), true, self.ignoreRaidBuffsID)
-		buffInfo = self:CallListenerIfNeeded(aParams, self.base.guiTargetListener, GetBuffConditionForTargeter(), asRaid, self.ignoreTargeterBuffsID, buffInfo)
+		local buffDynamicInfo = object.GetBuffDynamicInfo(aBuffID)
+		if not buffDynamicInfo then
+			return
+		end
+		CallChangeListenerIfNeeded(aBuffID, buffDynamicInfo, self.base.guiRaidListener, self.workingRaidBuffsID)
+		CallChangeListenerIfNeeded(aBuffID, buffDynamicInfo, self.base.guiTargetListener, self.workingTargeterBuffsID)
 		
 		for i, buffPlate in pairs(self.base.guiBuffPlatesListeners) do
-			self:InitIgnorePlatesBuffsList(i)
-			buffInfo = self:CallListenerIfNeeded(aParams, buffPlate, GetBuffConditionForBuffPlate(i), false, self.ignorePlateBuffsID[i], buffInfo)
+			self:InitPlatesBuffsList(i)
+			CallChangeListenerIfNeeded(aBuffID, buffDynamicInfo, buffPlate, self.workingPlateBuffsID[i])
 		end
-		self:CallListenerIfNeeded(aParams, self.base.guiAboveHeadListener, GetBuffConditionForAboveHead(), false, self.ignoreAboveHeadBuffsID, buffInfo)
+		CallChangeListenerIfNeeded(aBuffID, buffDynamicInfo, self.base.guiAboveHeadListener, self.workingAboveHeadBuffsID)
 	end
 end
 
