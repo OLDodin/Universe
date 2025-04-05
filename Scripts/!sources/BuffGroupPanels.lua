@@ -304,7 +304,7 @@ function DespawnedUnitsForAboveHead(aDespawnedUnitList)
 		return
 	end
 	
-	for _, objID in pairs(aDespawnedUnitList) do
+	for _, objID in ipairs(aDespawnedUnitList) do
 		if objID then
 			RemovePanelAboveHead(objID)
 			UnsubscribeAboveHeadListeners(objID)

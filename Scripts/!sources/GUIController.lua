@@ -2219,7 +2219,7 @@ local function UnitChanged(aParams)
 	local profile = GetCurrentProfile()
 	local existSpawned = {}
 	if m_buffGroupSubSystemLoaded or m_targetSubSystemLoaded or m_castSubSystemLoaded then
-		for _, objID in pairs(aParams.spawned) do
+		for _, objID in ipairs(aParams.spawned) do
 			if isExist(objID) then
 				table.insert(existSpawned, objID)
 			end
@@ -2231,7 +2231,7 @@ local function UnitChanged(aParams)
 		DespawnedUnitsForAboveHead(aParams.despawned)
 	end
 	if m_targetSubSystemLoaded and m_currTargetType ~= TARGETS_DISABLE then	
-		for _, objID in pairs(aParams.despawned) do
+		for _, objID in ipairs(aParams.despawned) do
 			if objID then
 				EraseTarget(objID)
 			end
@@ -2244,7 +2244,7 @@ local function UnitChanged(aParams)
 	end
 	
 	if m_castSubSystemLoaded and profile.castFormSettings.showImportantCasts then
-		for _, objID in pairs(aParams.despawned) do
+		for _, objID in ipairs(aParams.despawned) do
 			if objID then
 				StopShowProgressNow(objID)
 			end
@@ -2285,11 +2285,12 @@ local function UnitChanged(aParams)
 end
 
 local function UnitNameChanged(aParams)
-	local param = {}
-	param.spawned = {}
-	param.spawned[0] = aParams.id
-	param.despawned = {}
 	if isExist(aParams.id) then
+		local param = {}
+		param.spawned = {}
+		param.spawned[1] = aParams.id
+		param.despawned = {}
+	
 		UnitChanged(param)
 	end
 end

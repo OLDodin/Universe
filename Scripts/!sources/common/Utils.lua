@@ -689,7 +689,7 @@ function getItemIdFromName(aName)
 	
 	if not cacheItemId then
 		cacheItemId = GetAVLWStrTree()
-		local inventory = avatar.GetInventoryItemIds()
+		local inventory = containerLib.GetItems(ITEM_CONT_INVENTORY)
 		if not inventory then return nil end
 
 		for i, itemId in pairs(inventory) do
