@@ -251,7 +251,9 @@ function BuffsChanged(aParams)
 	for objId, buffs in pairs( aParams.objects ) do
 		if m_players[objId] then
 			for buffId, _ in pairs( buffs ) do
-				m_players[objId].buffs.changeEventFunc(buffId)
+				if object.IsValidBuff(buffId) then
+					m_players[objId].buffs.changeEventFunc(buffId)
+				end
 			end
 		end
 	end 
