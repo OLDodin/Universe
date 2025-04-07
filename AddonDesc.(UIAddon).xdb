@@ -3,8 +3,18 @@
 	<AutoStart>true</AutoStart>
 	<Form href="Widgets/Form.xdb#xpointer(/WidgetForm)"/>
 	<Name>Universe</Name>
-	<localizedNameFileRef href="name.txt"/>
-	<localizedDescFileRef href="desc.txt"/>
+	<userAddonInfo>
+		<name href="name.txt" />
+		<description href="desc.txt" />
+		<license href="LICENSE" />
+		<sourceLink href="" />
+		<supportLink href="" />
+		<author>OLDodin</author>
+		<version></version>
+		<apiVersion>-1</apiVersion>
+		<buildTime>0</buildTime>
+		<useCommonScripts>false</useCommonScripts>
+	</userAddonInfo>
 	<ScriptFileRefs>
 		<Item href="Scripts/common/AddonBase.lua"/>
 		<Item href="Scripts/common/LibDnD.lua"/>
@@ -79,5 +89,4 @@
 			<widgets href="Widgets/Resources/bar/WidgetTemplates.xdb" />
 		</Item>
 	</widgetGroups>
-	<addon_name>Universe</addon_name>
 </UIAddon>

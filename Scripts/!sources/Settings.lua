@@ -660,7 +660,13 @@ end
 
 function ExportProfileByIndex(anInd)
 	local allProfiles = userMods.GetGlobalConfigSection("TR_ProfilesArr")
-	return StartSerialize(allProfiles[anInd])
+	local exportCopyProfile = deepCopyTable(allProfiles[anInd])
+	for _, buffGroupSettings in ipairs(exportCopyProfile.buffFormSettings.buffGroups) do
+		buffGroupSettings.fixed = false
+	end
+	exportCopyProfile.castFormSettings.fixed = false
+	
+	return StartSerialize(exportCopyProfile)
 end
 
 function GetSettingsVersion()

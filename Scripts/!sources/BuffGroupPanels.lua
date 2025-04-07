@@ -118,6 +118,7 @@ function CreateGroupBuffPanel(aForm, aSettings, anIsAboveHead, aPosInPlateIndex)
 			if aSettings.flipBuffsButton then
 				align(groupBuffTopPanel, WIDGET_ALIGN_HIGH)
 			end
+			move(groupBuffPanel.panelWdg, 200, math.min(100+aPosInPlateIndex*10, 350))
 
 			DnD.Init(groupBuffPanel.panelWdg, groupBuffTopPanel, true, false)
 		end		
