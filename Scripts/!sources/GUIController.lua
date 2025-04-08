@@ -2390,7 +2390,7 @@ end
 
 --при отключении нашего аддона возвращаем дефолтовый интерфейс рейда
 function AddonStateChanged(aParams)
-	if aParams.name == common.GetAddonSysName() and aParams.state == ADDON_STATE_UNLOADING then
+	if aParams.state == ADDON_STATE_UNLOADING then
 		if not GetCurrentProfile().raidFormSettings.showStandartRaidButton and m_raidSubSystemLoaded then
 			if (raid.IsExist() or group.IsExist()) and IsRaidGUIEnabled() then
 				local raidForm = common.GetAddonMainForm("Raid")
@@ -2866,7 +2866,7 @@ function GUIControllerInit()
 	
 	common.RegisterEventHandler(AvatarClassFormChanged, "EVENT_AVATAR_CLASS_FORM_CHANGED" )
 	
-	common.RegisterEventHandler(AddonStateChanged, "EVENT_ADDON_LOAD_STATE_CHANGED")
+	common.RegisterEventHandler(AddonStateChanged, "EVENT_ADDON_LOAD_STATE_CHANGED", { name = common.GetAddonSysName() })
 		
 	--EVENT_TRACK_ADDED
 
