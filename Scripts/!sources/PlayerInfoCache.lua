@@ -1,3 +1,4 @@
+local cachedIsValidBuff = object.IsValidBuff
 local m_players = {}
 
 local function CreatePlayerSubInfo(anID, aSubClass)
@@ -249,10 +250,13 @@ end
 
 function BuffsChanged(aParams)
 	for objId, buffs in pairs( aParams.objects ) do
-		if m_players[objId] then
-			for buffId, _ in pairs( buffs ) do
-				if object.IsValidBuff(buffId) then
-					m_players[objId].buffs.changeEventFunc(buffId)
+		local playerInfo = m_players[objId]
+		if playerInfo then
+			for buffID, _ in pairs( buffs ) do
+				if cachedIsValidBuff(buffID) then
+					playerInfo.buffs.changeEventFunc(buffID)
+				else
+					playerInfo.buffs.delEventFunc( { buffId = buffID } )
 				end
 			end
 		end

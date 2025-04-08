@@ -2362,7 +2362,6 @@ local function ApplyUnloadRaidSettings(anIsUnloadRaidSubsystem)
 	if anIsUnloadRaidSubsystem or profile.raidFormSettings.showStandartRaidButton then
 		if raid.IsExist() or group.IsExist() then
 			if IsRaidGUIEnabled() or raid.IsExist() then
-				--show(raidForm)
 				show(getChild(raidForm, "Raid"))
 				show(getChild(raidForm, "Toolbar"))
 			else
@@ -2373,7 +2372,6 @@ local function ApplyUnloadRaidSettings(anIsUnloadRaidSubsystem)
 	else
 		SwitchPartyGUIToRaidGUI()
 
-		--hide(raidForm)
 		hide(getChild(raidForm, "Raid"))
 		hide(getChild(raidForm, "Toolbar"))
 	end	
@@ -2388,6 +2386,19 @@ local function GUIInit()
 	m_raidPartyButtons = CreateRaidPartyBtn(m_raidPanel)
 	m_progressActionPanel = InitProgressActionPanel()
 	m_progressBuffPanel = InitProgressBuffPanel()
+end
+
+--при отключении нашего аддона возвращаем дефолтовый интерфейс рейда
+function AddonStateChanged(aParams)
+	if aParams.name == common.GetAddonSysName() and aParams.state == ADDON_STATE_UNLOADING then
+		if not GetCurrentProfile().raidFormSettings.showStandartRaidButton and m_raidSubSystemLoaded then
+			if (raid.IsExist() or group.IsExist()) and IsRaidGUIEnabled() then
+				local raidForm = common.GetAddonMainForm("Raid")
+				show(getChild(raidForm, "Raid"))
+				show(getChild(raidForm, "Toolbar"))
+			end
+		end
+	end
 end
 
 function OnEventSecondTimer()
@@ -2405,7 +2416,6 @@ function OnEventSecondTimer()
 	local profile = GetCurrentProfile()
 	if not profile.raidFormSettings.showStandartRaidButton and m_raidSubSystemLoaded then
 		local raidForm = common.GetAddonMainForm("Raid")
-		--hide(raidForm) - теперь глючит перетаскивание в сумке
 		hide(getChild(raidForm, "Raid"))
 		hide(getChild(raidForm, "Toolbar"))
 	end
@@ -2855,6 +2865,8 @@ function GUIControllerInit()
 	common.RegisterEventHandler(OnTalentsChanged, "EVENT_TALENTS_CHANGED" )
 	
 	common.RegisterEventHandler(AvatarClassFormChanged, "EVENT_AVATAR_CLASS_FORM_CHANGED" )
+	
+	common.RegisterEventHandler(AddonStateChanged, "EVENT_ADDON_LOAD_STATE_CHANGED")
 		
 	--EVENT_TRACK_ADDED
 

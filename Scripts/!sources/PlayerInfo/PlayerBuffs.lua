@@ -199,8 +199,7 @@ end
 
 local function ReadAllBuffInfo(aUnitBuffs, aListener, aCondition, aRaidType, anIgnoreBuffsList, aWorkingBuffsList)
 	if next(aUnitBuffs) then
-		local buffsInfo = cachedGetBuffsInfo(aUnitBuffs)
-		for buffID, buffInfo in pairs(buffsInfo or {}) do
+		for buffID, buffInfo in pairs(cachedGetBuffsInfo(aUnitBuffs) or {}) do
 			CallAddListenerIfNeeded(buffID, aListener, aCondition, aRaidType, anIgnoreBuffsList, aWorkingBuffsList, buffInfo)
 		end
 	end
@@ -208,12 +207,7 @@ end
 
 local function ReadAllBuffs(aParams, aListener, aCondition, aRaidType, anIgnoreBuffsList, aWorkingBuffsList)
 	if aListener and aCondition then
-		if aCondition.settings.systemBuffButton then
-			ReadAllBuffInfo(cachedGetBuffs(aParams.unitId), aListener, aCondition, aRaidType, anIgnoreBuffsList, aWorkingBuffsList)
-		else
-			ReadAllBuffInfo(cachedGetBuffsWithProperties(aParams.unitId, true, true), aListener, aCondition, aRaidType, anIgnoreBuffsList, aWorkingBuffsList)
-			ReadAllBuffInfo(cachedGetBuffsWithProperties(aParams.unitId, false, true), aListener, aCondition, aRaidType, anIgnoreBuffsList, aWorkingBuffsList)
-		end
+		ReadAllBuffInfo(cachedGetBuffs(aParams.unitId, not aCondition.settings.systemBuffButton), aListener, aCondition, aRaidType, anIgnoreBuffsList, aWorkingBuffsList)
 	end
 end
 
