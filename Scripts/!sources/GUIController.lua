@@ -1004,11 +1004,8 @@ local function GetFreeProgressCastPanel(aPanelList)
 end
 
 local function ClearProgressPanelOnEndAnimationInPanelList(aParams, aPanelList, aProgressQueue)
-	if aParams.effectType ~= ET_RESIZE then
-		return
-	end
 	for _, progressPanel in ipairs(aPanelList) do
-		if progressPanel.isUsed and aParams.wtOwner:IsEqual(progressPanel.barWdg) then
+		if progressPanel.isUsed and aParams.wtOwner == progressPanel.barWdg then
 			StopShowProgressForPanel(progressPanel, aPanelList, aProgressQueue)
 			break
 		end
@@ -1016,7 +1013,11 @@ local function ClearProgressPanelOnEndAnimationInPanelList(aParams, aPanelList, 
 end
 
 local function ClearProgressPanelOnEndAnimation(aParams)
-	ClearProgressPanelOnEndAnimationInPanelList(aParams, m_progressActionPanelList, m_progressActionQueue)
+	if aParams.effectType ~= ET_RESIZE then
+		return
+	end
+	--у непрерывно идущих экшенов могут перестать приходить EVENT_MOB_ACTION_PROGRESS_START / FINISH, нельзя удалять для работы затычки
+	--ClearProgressPanelOnEndAnimationInPanelList(aParams, m_progressActionPanelList, m_progressActionQueue)
 	ClearProgressPanelOnEndAnimationInPanelList(aParams, m_progressBuffPanelList, m_progressBuffQueue)
 end
 
@@ -1670,7 +1671,7 @@ local function LoadTargeterData()
 	local isCombat = false
 	local unitList = avatar.GetUnitList()
 	table.insert(unitList, g_myAvatarID)
-	for _, objID in pairs(unitList) do
+	for _, objID in ipairs(unitList) do
 		if profile.targeterFormSettings.twoColumnMode then
 			isCombat = object.IsInCombat(objID)
 		end
@@ -2067,32 +2068,29 @@ local function UnitDeadChanged(aParams)
 	UnitDead(aParams)
 end
 
-local function ProgressStart(aParams, aPanelList, aProgressQueue)
+local function ProgressStart(anID, aPanelList, aProgressQueue, aType)
 	local profile = GetCurrentProfile()
-	local actionType = GetProgressActionType(aParams)
-	
-	if actionType == BUFF_PROGRESS and isExist(aParams.objectId) and cachedIsPlayer(aParams.objectId) then
+	if aType == BUFF_PROGRESS and isExist(anID) and cachedIsPlayer(anID) then
 		return false
 	end
+
+	local queuedParams = aProgressQueue[anID]
 	
-	local objID = aParams.objectId or aParams.id
-	local queuedParams = aProgressQueue[objID]
-	
-	local correctInfo = CheckCorrectInfo(queuedParams)
+	local correctInfo = CheckCorrectInfo(queuedParams, aType)
 	if not correctInfo then
 		return false
 	end
 
 	if profile.castFormSettings.showOnlyMyTarget then
 		local targetID = avatar.GetTarget()
-		if objID ~= targetID then
+		if anID ~= targetID then
 			return false
 		end
 	end
 
-	if isExist(objID) then
+	if isExist(anID) then
 		local progressName = queuedParams.buffName or queuedParams.name
-		local objNameLower = toLowerString(cachedGetName(objID))
+		local objNameLower = toLowerString(cachedGetName(anID))
 		for _, ignoreObj in ipairs(profile.castFormSettings.ignoreList) do
 			if progressName == ignoreObj.name then
 				local skipIgnoreName = false
@@ -2108,22 +2106,16 @@ local function ProgressStart(aParams, aPanelList, aProgressQueue)
 			end
 		end
 	end
-	local cnt = 0
-	for _, progressPanel in ipairs(aPanelList) do
-		if progressPanel.isUsed then
-			cnt = cnt + 1
-		end
-	end
 	
-	local panel = GetProgressCastPanel(objID, aPanelList)
+	local panel = GetProgressCastPanel(anID, aPanelList)
 	if panel then 
-		SetBaseInfoProgressCastPanel(panel, queuedParams, actionType, queuedParams.buffInfo)
+		SetBaseInfoProgressCastPanel(panel, queuedParams, aType)
 		queuedParams.isShowedInGuiSlot = true
 		return true
 	else
 		panel = GetFreeProgressCastPanel(aPanelList)
 		if panel then 
-			SetBaseInfoProgressCastPanel(panel, queuedParams, actionType, queuedParams.buffInfo)
+			SetBaseInfoProgressCastPanel(panel, queuedParams, aType)
 			UpdatePositionProgressCastPanels(aPanelList)
 			queuedParams.isShowedInGuiSlot = true
 			return true
@@ -2148,13 +2140,13 @@ local function ActionProgressStart(aParams)
 	end
 	m_progressActionQueue[aParams.id] = table.sclone(aParams)
 	m_progressActionQueue[aParams.id].queueTimestamp_h = g_cachedTimestamp
-	ProgressStart(aParams, m_progressActionPanelList, m_progressActionQueue)
+	ProgressStart(aParams.id, m_progressActionPanelList, m_progressActionQueue, ACTION_PROGRESS)
 end
 
 local function ActionProgressEnd(aParams)
 	m_progressActionQueue[aParams.id] = nil
 	ProgressEnd(aParams, m_progressActionPanelList, m_progressActionQueue)
-	TryShowProgressFromQueue(m_progressActionPanelList, m_progressActionQueue)
+	TryShowProgressFromQueue(m_progressActionPanelList, m_progressActionQueue, ACTION_PROGRESS)
 end
 
 local function BuffProgressStart(aParams)
@@ -2168,18 +2160,18 @@ local function BuffProgressStart(aParams)
 	m_progressBuffQueue[aParams.objectId] = table.sclone(aParams)
 	m_progressBuffQueue[aParams.objectId].queueTimestamp_h = g_cachedTimestamp
 	m_progressBuffQueue[aParams.objectId].buffInfo = aParams.buffId and object.GetBuffInfo(aParams.buffId)
-	ProgressStart(aParams, m_progressBuffPanelList, m_progressBuffQueue)
+	ProgressStart(aParams.objectId, m_progressBuffPanelList, m_progressBuffQueue, BUFF_PROGRESS)
 end
 
 local function BuffProgressEnd(aParams)
 	m_progressBuffQueue[aParams.objectId] = nil
 	ProgressEnd(aParams, m_progressBuffPanelList, m_progressBuffQueue)
-	TryShowProgressFromQueue(m_progressBuffPanelList, m_progressBuffQueue)
+	TryShowProgressFromQueue(m_progressBuffPanelList, m_progressBuffQueue, BUFF_PROGRESS)
 end
 
-function TryShowProgressFromQueue(aPanelList, aProgressQueue)
+function TryShowProgressFromQueue(aPanelList, aProgressQueue, aType)
 	for objID, info in pairs(aProgressQueue) do
-		if not info.isShowedInGuiSlot and ProgressStart(info, aPanelList, aProgressQueue) then	
+		if not info.isShowedInGuiSlot and ProgressStart(objID, aPanelList, aProgressQueue, aType) then	
 			return
 		end
 	end
@@ -2428,7 +2420,7 @@ function OnEventSecondTimer()
 			for _, playerBar in ipairs(statusGroup) do
 				local reallyExist = false
 				if playerBar.isUsed then
-					for _, objID in pairs(unitList) do
+					for _, objID in ipairs(unitList) do
 						if objID == playerBar.playerID then
 							reallyExist = true
 							break
@@ -2474,6 +2466,18 @@ local function Update()
 		RedrawTargeter(m_currTargetType)
 		m_needRedrawTargeter = false
 		m_redrawPauseCnt = 0
+	end
+	
+	-- затычка №4 у непрерывно идущих экшенов могут перестать приходить EVENT_MOB_ACTION_PROGRESS_START / FINISH
+	for objID, progressInfo in pairs(m_progressActionQueue) do
+		local remainingMs = (progressInfo.duration - progressInfo.progress) - (g_cachedTimestamp - progressInfo.queueTimestamp_h)
+		if remainingMs <= 0 and  not cachedIsPlayer(objID) then
+			local mobActionProgressInfo = unit.GetMobActionProgress(objID)
+			if mobActionProgressInfo then
+				mobActionProgressInfo.id = objID
+				ActionProgressStart(mobActionProgressInfo)
+			end
+		end
 	end
 end
 
@@ -2681,7 +2685,7 @@ function InitCastSubSystem()
 	
 	if profile.castFormSettings.showImportantCasts then
 		local unitList = avatar.GetUnitList()
-		for _, objID in pairs(unitList) do
+		for _, objID in ipairs(unitList) do
 			if isExist(objID) and not cachedIsPlayer(objID) then
 				local mobActionProgressInfo = unit.GetMobActionProgress(objID)
 				if mobActionProgressInfo then
@@ -2695,7 +2699,7 @@ function InitCastSubSystem()
 	-- эти события приходят очень редко и только для единичных юнитов (слушать всех юнитов по одиночке через PlayerInfo не даст выгоды) 
 	-- и к тому же для EVENT_OBJECT_BUFF_PROGRESS_ADDED невозможно узнать если уже на юните такой бафф (если бафф повесился до spawn-а юнита у нас)
 	common.RegisterEventHandler(ActionProgressStart, "EVENT_MOB_ACTION_PROGRESS_START")
-	common.RegisterEventHandler(ActionProgressEnd, "EVENT_MOB_ACTION_PROGRESS_FINISH")
+	common.RegisterEventHandler(ActionProgressEnd, "EVENT_MOB_ACTION_PROGRESS_FINISH")	
 	common.RegisterEventHandler(BuffProgressStart, "EVENT_OBJECT_BUFF_PROGRESS_ADDED")
 	common.RegisterEventHandler(BuffProgressEnd, "EVENT_OBJECT_BUFF_PROGRESS_REMOVED")
 	common.RegisterEventHandler(ClearProgressPanelOnEndAnimation, "EVENT_EFFECT_FINISHED")
@@ -2858,8 +2862,6 @@ function GUIControllerInit()
 	common.RegisterEventHandler(OnDragTo, "EVENT_DND_DRAG_TO")
 	common.RegisterEventHandler(OnDragEnd, "EVENT_DND_DROP_ATTEMPT")
 	common.RegisterEventHandler(OnDragCancelled, "EVENT_DND_DRAG_CANCELLED")
-
-	common.RegisterEventHandler(effectDone, "EVENT_EFFECT_FINISHED")
 	
 	common.RegisterEventHandler(OnInterfaceToggle, "EVENT_INTERFACE_TOGGLE" )
 	common.RegisterEventHandler(OnTalentsChanged, "EVENT_TALENTS_CHANGED" )

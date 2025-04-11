@@ -59,30 +59,27 @@ function CreateProgressCastPanel(aParentPanel, aY)
 	return progressBar
 end
 
-function CheckCorrectInfo(aInfo)
-	if aInfo.buffInfo and aInfo.buffInfo.remainingMs - (g_cachedTimestamp - aInfo.queueTimestamp_h) > 0 and aInfo.buffInfo.durationMs > 0 then
-		return true
-	end
-	if aInfo.spellId and (aInfo.duration - aInfo.progress) - (g_cachedTimestamp - aInfo.queueTimestamp_h) > 0 then
-		return true
+function CheckCorrectInfo(aInfo, aType)
+	if aType == BUFF_PROGRESS then
+		if aInfo.buffInfo and aInfo.buffInfo.remainingMs - (g_cachedTimestamp - aInfo.queueTimestamp_h) > 0 and aInfo.buffInfo.durationMs > 0 then
+			return true
+		end
+	elseif aType == ACTION_PROGRESS then
+		if (aInfo.duration - aInfo.progress) - (g_cachedTimestamp - aInfo.queueTimestamp_h) > 0 then
+			return true
+		end
 	end
 
 	return false
 end
 
-function SetBaseInfoProgressCastPanel(aBar, aInfo, aType, aBuffInfo)
+function SetBaseInfoProgressCastPanel(aBar, aInfo, aType)
 	aBar.playerID = aInfo.objectId or aInfo.id 
 	aBar.actionType = aType
 	aBar.isUsed = true
 	aBar.buffID = aInfo.buffId
 	aBar.castedByMe = false
-	
 
-	local fromPlacement = aBar.barWdg:GetPlacementPlain()
-	fromPlacement.sizeX = m_panelWidth
-	local toPlacement = copyTable(fromPlacement)
-	toPlacement.sizeX = 0
-	
 	aBar.nameProgressWdg:SetVal(g_tagTextValue, aInfo.buffName or aInfo.name)
 	if object.IsExist(aBar.playerID) then
 		aBar.nameMobWdg:SetVal(g_tagTextValue, object.GetName(aBar.playerID))
@@ -92,28 +89,30 @@ function SetBaseInfoProgressCastPanel(aBar, aInfo, aType, aBuffInfo)
 
 	aBar.nameTargetWdg:SetVal(g_tagTextValue, "")
 	
-	if aBuffInfo then
-		local buffCreatorID = aBuffInfo.producer and aBuffInfo.producer.casterId or nil
-		aBar.castedByMe = g_myAvatarID == buffCreatorID
-		if aBuffInfo.texture then
-			setBackgroundTexture(aBar.iconWdg, aBuffInfo.texture)
-			show(aBar.iconWdg)
-		else
-			hide(aBar.iconWdg)
-		end
-		local remainingMs = aBuffInfo.remainingMs - (g_cachedTimestamp - aInfo.queueTimestamp_h)
-		resize(aBar.barWdg, fromPlacement.sizeX * (remainingMs / aBuffInfo.durationMs))
-		fromPlacement = aBar.barWdg:GetPlacementPlain()
-		aBar.barWdg:FinishResizeEffect()
-		aBar.barWdg:PlayResizeEffect( fromPlacement, toPlacement, remainingMs, EA_MONOTONOUS_INCREASE )
-		setBackgroundColor(aBar.barWdg, { r = 0.8; g = 0.8; b = 0; a = 0.8 }) 
-		if buffCreatorID then 
-			aBar.nameTargetWdg:SetVal(g_tagTextValue, object.GetName(buffCreatorID))
-		end
-	end
+	aBar.barWdg:FinishResizeEffect()
 	
-	if aInfo.spellId then
-		local texture = getSpellTextureFromCache(aInfo.spellId)
+	if aType == BUFF_PROGRESS then
+		if aInfo.buffInfo then
+			local buffCreatorID = aInfo.buffInfo.producer and aInfo.buffInfo.producer.casterId or nil
+			aBar.castedByMe = g_myAvatarID == buffCreatorID
+			if aInfo.buffInfo.texture then
+				setBackgroundTexture(aBar.iconWdg, aInfo.buffInfo.texture)
+				show(aBar.iconWdg)
+			else
+				hide(aBar.iconWdg)
+			end
+			local remainingMs = aInfo.buffInfo.remainingMs - (g_cachedTimestamp - aInfo.queueTimestamp_h)
+			aBar.barWdg:PlayResizeEffect( { sizeX = m_panelWidth * (remainingMs / aInfo.buffInfo.durationMs) }, { sizeX = 0 }, remainingMs, EA_MONOTONOUS_INCREASE, true )
+			setBackgroundColor(aBar.barWdg, { r = 0.8; g = 0.8; b = 0; a = 0.8 }) 
+			if buffCreatorID then 
+				aBar.nameTargetWdg:SetVal(g_tagTextValue, object.GetName(buffCreatorID))
+			end
+		end
+	elseif aType == ACTION_PROGRESS then
+		local texture = nil
+		if aInfo.spellId then
+			texture = getSpellTextureFromCache(aInfo.spellId)
+		end
 		if texture then
 			setBackgroundTexture(aBar.iconWdg, texture)
 			show(aBar.iconWdg)
@@ -121,10 +120,7 @@ function SetBaseInfoProgressCastPanel(aBar, aInfo, aType, aBuffInfo)
 			hide(aBar.iconWdg)
 		end
 		local remainingMs = (aInfo.duration - aInfo.progress) - (g_cachedTimestamp - aInfo.queueTimestamp_h)
-		resize(aBar.barWdg, fromPlacement.sizeX * (remainingMs / aInfo.duration))
-		fromPlacement = aBar.barWdg:GetPlacementPlain()
-		aBar.barWdg:FinishResizeEffect()
-		aBar.barWdg:PlayResizeEffect( fromPlacement, toPlacement, remainingMs, EA_MONOTONOUS_INCREASE )
+		aBar.barWdg:PlayResizeEffect( { sizeX = m_panelWidth * (remainingMs / aInfo.duration) }, { sizeX = 0 }, remainingMs, EA_MONOTONOUS_INCREASE, true )
 		setBackgroundColor(aBar.barWdg, { r = 1.0; g = 0; b = 0; a = 0.8 })
 		if object.IsExist(aBar.playerID) then
 			local targetID = unit.GetTarget(aBar.playerID)
@@ -138,17 +134,6 @@ function SetBaseInfoProgressCastPanel(aBar, aInfo, aType, aBuffInfo)
 	show(aBar.wdg)
 end
 
-
-function GetProgressActionType(aParams)
-	local actionType = nil
-	if aParams.id then
-		actionType = ACTION_PROGRESS
-	end
-	if aParams.objectId then
-		actionType = BUFF_PROGRESS
-	end
-	return actionType
-end
 
 function ClearProgressCastPanel(aBar)
 	aBar.actionType = nil

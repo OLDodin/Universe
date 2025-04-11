@@ -511,109 +511,75 @@ end
 -- Timers functions
 --------------------------------------------------------------------------------
 
-local timersInited = false
-local timers={}
-local m_loopEffects={}
+local m_timersInited = false
+local m_timers = {}
 
-function timerTick(params)
-	if not params.effectType == ET_FADE then return end
+function timerTick(aParams)
+	if aParams.effectType ~= ET_FADE then return end
 	local timerForTick = nil
-	for _, someTimer in pairs(timers) do
-		if params.wtOwner:IsEqual(someTimer.widget) then
+	for _, someTimer in pairs(m_timers) do
+		if aParams.wtOwner == someTimer.widget then
 			timerForTick = someTimer
 			break
 		end
 	end
 	if not timerForTick then return end
 
-	if not timerForTick.one then
-		timerForTick.widget:PlayFadeEffect( 1.0, 1.0, timerForTick.speed*1000, EA_MONOTONOUS_INCREASE, true)
-	end
 	timerForTick.callback()
 end
 
-function startTimer(name, callback, speed, one)
-	if name and timers[name] then destroy(timers[name].widget) end
+function startTimer(aName, aCallback, aSpeed, anOnce)
+	destroyTimer(aName)
 	setTemplateWidget("common")
-	local timerWidget=createWidget(mainForm, name, "Timer")
-	if not timerWidget or not name or not callback then return nil end
-	local newTimer = {}
-	newTimer.callback=callback
-	newTimer.widget=timerWidget
-	newTimer.one=one
-	newTimer.speed=tonumber(speed) or 1
+	local timerWidget = createWidget(mainForm, aName, "Timer")
+	local newTimerInfo = {}
+	newTimerInfo.callback = aCallback
+	newTimerInfo.widget = timerWidget
+	newTimerInfo.once = anOnce
+	newTimerInfo.speed = (tonumber(aSpeed) or 1) * 1000
 
-	if not timersInited then
-		common.RegisterEventHandler(timerTick, "EVENT_EFFECT_FINISHED")
-		timersInited = true
+	if not m_timersInited then
+		common.RegisterEventHandler(timerTick, "EVENT_EFFECT_SEQUENCE_STEP")
+		m_timersInited = true
 	end
-    timerWidget:PlayFadeEffect(1.0, 1.0, newTimer.speed*1000, EA_MONOTONOUS_INCREASE, true)
 	
-	timers[name] = newTimer
+	timerWidget:PlayFadeEffectSequence({ { 1.0, 1.0, newTimerInfo.speed, EA_MONOTONOUS_INCREASE }, cycled = not anOnce, sendStepEvent = true })
+	
+	m_timers[aName] = newTimerInfo
+
 	return true
 end
 
-function stopTimer(name)
-	if name and timers[name] then
-		timers[name].widget:FinishFadeEffect(false, false)
-	end
-    --common.UnRegisterEventHandler(timerTick, "EVENT_EFFECT_FINISHED")
-end
-
-function setTimeout(name, speed)
-	if name and timers[name] and speed then
-		timers[name].speed=tonumber(speed) or 1
+function stopTimer(aName)
+	local timerInfo = m_timers[aName]
+	if timerInfo then
+		timerInfo.widget:FinishFadeEffect()
 	end
 end
 
-function destroyTimer(name)
-	if timers[name] then destroy(timers[name].widget) end
-	timers[name]=nil
-end
-
-function effectDone(aParams)
-	if aParams.effectType ~= ET_FADE then 
-		return 
-	end
-
-	local findedWdg = nil
-	for _, v in pairs(m_loopEffects) do
-		if v.widget:IsValid() and aParams.wtOwner:IsEqual(v.widget) then
-			findedWdg = v
-			break
-		end
-	end
-	if not findedWdg then return end
-
-	if findedWdg.widget then
-		findedWdg.widget:PlayFadeEffect( 0.0, 1.0, findedWdg.speed*1000, EA_SYMMETRIC_FLASH, true)
+function setTimeout(aName, aSpeed)
+	local timerInfo = m_timers[aName]
+	if timerInfo then
+		timerInfo.speed = (tonumber(aSpeed) or 1) * 1000
+		timerInfo.widget:FinishFadeEffect()
+		timerInfo.widget:PlayFadeEffectSequence({ { 1.0, 1.0, timerInfo.speed, EA_MONOTONOUS_INCREASE }, cycled = not timerInfo.once, sendStepEvent = true })
 	end
 end
+
+function destroyTimer(aName)
+	local timerInfo = m_timers[aName]
+	if timerInfo then
+		destroy(timerInfo.widget)
+	end
+	m_timers[aName] = nil
+end
+
 
 function startLoopBlink(aWdg, aSpeed)
-	for i, v in pairs(m_loopEffects) do
-		if aWdg:IsEqual(v.widget) then
-			v.speed = aSpeed
-			return
-		end
-	end
-
-	local obj = {}
-	obj.widget = aWdg
-	obj.speed = aSpeed
-	table.insert(m_loopEffects, obj)
-	
-	aWdg:PlayFadeEffect( 0.0, 1.0, aSpeed*1000, EA_SYMMETRIC_FLASH, true)
+	aWdg:PlayFadeEffectSequence({ { 0.0, 1.0, aSpeed * 1000, EA_SYMMETRIC_FLASH }, cycled = true })
 end
 
 function stopLoopBlink(aWdg)
-	for i, v in pairs(m_loopEffects) do
-		if aWdg:IsEqual(v.widget) then
-			table.remove(m_loopEffects, i)
-			break
-		end
-	end
-	
 	aWdg:FinishFadeEffect()
 end
 

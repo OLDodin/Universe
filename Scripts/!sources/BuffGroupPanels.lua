@@ -282,7 +282,7 @@ function SpawnedUnitsForAboveHead(aSpawnedUnitList)
 		return
 	end
 	
-	for _, objID in pairs(aSpawnedUnitList) do
+	for _, objID in ipairs(aSpawnedUnitList) do
 		local needPanel, isPlayer = CheckSettingsCondition(aboveHeadSettings, objID)
 		if needPanel then
 			priority = NORMAL_PRIORITY_PANELS
