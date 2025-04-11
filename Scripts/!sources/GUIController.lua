@@ -2009,10 +2009,11 @@ local function InitTargeterData()
 	SwitchTargetsBtn(m_currTargetType)
 end
 
---есть существа которые враждено-нейтральные и становятся враждебными без уведомлений
---поэтому затычка - при изменении хп проверяем существ всегда, не только при включенной сортировке по хп
 local function UnitsHPChanged(aParams)
 	local profile = GetCurrentProfile()
+	if not profile.targeterFormSettings.sortByHP then
+		return
+	end
 	if not m_targetSubSystemLoaded then
 		return
 	end
@@ -2022,6 +2023,7 @@ local function UnitsHPChanged(aParams)
 	if not aParams then
 		return
 	end
+
 	local someTargetUpdated = false
 	for _, playerID in ipairs(aParams) do 
 		-- пока не получили EVENT_UNITS_CHANGED данные могут быть невалидными
@@ -2469,6 +2471,7 @@ local function Update()
 	end
 	
 	-- затычка №4 у непрерывно идущих экшенов могут перестать приходить EVENT_MOB_ACTION_PROGRESS_START / FINISH
+	-- по словам разработчиков это из-за не работающего EVENT_MOB_ACTION_PROGRESS_FREEZE
 	for objID, progressInfo in pairs(m_progressActionQueue) do
 		local remainingMs = (progressInfo.duration - progressInfo.progress) - (g_cachedTimestamp - progressInfo.queueTimestamp_h)
 		if remainingMs <= 0 and  not cachedIsPlayer(objID) then
