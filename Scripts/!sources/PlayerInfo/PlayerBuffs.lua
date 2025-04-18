@@ -1,7 +1,6 @@
 Global( "PlayerBuffs", {} )
 
 local cachedGetBuffInfo = object.GetBuffInfo
-local cachedGetBuffsWithProperties = object.GetBuffsWithProperties
 local cachedGetBuffs = object.GetBuffs
 local cachedRegisterEventHandler = common.RegisterEventHandler
 local cachedUnRegisterEventHandler = common.UnRegisterEventHandler
@@ -197,17 +196,14 @@ local function CallAddListenerIfNeeded(aBuffID, aListener, aCondition, aRaidType
 	return aBuffInfo
 end
 
-local function ReadAllBuffInfo(aUnitBuffs, aListener, aCondition, aRaidType, anIgnoreBuffsList, aWorkingBuffsList)
-	if next(aUnitBuffs) then
-		for buffID, buffInfo in pairs(cachedGetBuffsInfo(aUnitBuffs) or {}) do
-			CallAddListenerIfNeeded(buffID, aListener, aCondition, aRaidType, anIgnoreBuffsList, aWorkingBuffsList, buffInfo)
-		end
-	end
-end
-
 local function ReadAllBuffs(aParams, aListener, aCondition, aRaidType, anIgnoreBuffsList, aWorkingBuffsList)
 	if aListener and aCondition then
-		ReadAllBuffInfo(cachedGetBuffs(aParams.unitId, not aCondition.settings.systemBuffButton), aListener, aCondition, aRaidType, anIgnoreBuffsList, aWorkingBuffsList)
+		local unitBuffs = cachedGetBuffs(aParams.unitId, not aCondition.settings.systemBuffButton)
+		if next(unitBuffs) then
+			for buffID, buffInfo in pairs(cachedGetBuffsInfo(unitBuffs) or {}) do
+				CallAddListenerIfNeeded(buffID, aListener, aCondition, aRaidType, anIgnoreBuffsList, aWorkingBuffsList, buffInfo)
+			end
+		end
 	end
 end
 
