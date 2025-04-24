@@ -47,21 +47,16 @@ Global("g_groupsTypes", {})
 
 function BuffCondition:IsImportant(aBuffInfo)
 	if self.settings.showImportantButton then
-		for _, groupName in pairs(aBuffInfo.groups) do
-			if 	groupName == "buffsofinterest" then
-				return true
-			end
+		if aBuffInfo.groups["buffsofinterest"] then
+			return true
 		end		
 	end
 	return false
 end
 
 function BuffCondition:CheckShop(aBuffInfo)
-	for _, groupName in pairs(aBuffInfo.groups) do
-		if 	groupName == "Food"
-		then
-			return true
-		end
+	if aBuffInfo.groups["Food"] then
+		return true
 	end	
 
 	if self.treeShopCreated then
@@ -74,7 +69,7 @@ function BuffCondition:CheckShop(aBuffInfo)
 end
 
 function BuffCondition:Check(aBuffInfo)
-	--[[for _, groupName in pairs(aBuffInfo.groups) do
+	--[[for groupName, _ in pairs(aBuffInfo.groups) do
 		if not g_groupsTypes[groupName] then
 			g_groupsTypes[groupName] = true
 			LogInfo("found aBuffInfo = ", aBuffInfo.name, "  groupName = ", groupName)
@@ -113,15 +108,10 @@ function BuffCondition:Check(aBuffInfo)
 		then
 			local isCleanable = false
 			
-			for _, groupName in pairs(aBuffInfo.groups) do
-				if 	groupName == "magics" or
-					groupName == "stackablemagics"
-				then
-					isCleanable = true
-					break
-				end
-			end		
-
+			if aBuffInfo.groups["magics"] or aBuffInfo.groups["stackablemagics"] then
+				isCleanable = true
+			end
+			
 			if self.settings.autoDebuffModeButton or isCleanable then
 				return true, searchRes, isCleanable
 			end
@@ -130,33 +120,20 @@ function BuffCondition:Check(aBuffInfo)
 		if aBuffInfo.isPositive and 
 		(self.settings.checkEnemyCleanable or (self.settings.checkEnemyCleanableUnk and aBuffInfo.ownerId and object.IsExist(aBuffInfo.ownerId) and not object.IsFriend(aBuffInfo.ownerId))) 
 		then
-			for _, groupName in pairs(aBuffInfo.groups) do
-				if 	groupName == "magics" or 
-					groupName == "stackablemagics"
-				then
-					return true, searchRes, true
-				end
+			if aBuffInfo.groups["magics"] or aBuffInfo.groups["stackablemagics"] then
+				return true, searchRes, true
 			end	
 		end
 
 		if self.settings.checkControlsButton then
-			for _, groupName in pairs(aBuffInfo.groups) do
-				if 	groupName == "controls" or 
-					groupName == "stuns" or
-					groupName == "Disarms" or
-					groupName == "fears"
-				then
-					return true, searchRes
-				end
+			if aBuffInfo.groups["controls"] or aBuffInfo.groups["stuns"] or aBuffInfo.groups["Disarms"] or aBuffInfo.groups["fears"] then
+				return true, searchRes
 			end					
 		end
 		
 		if self.settings.checkMovementsButton and not aBuffInfo.isPositive then
-			for _, groupName in pairs(aBuffInfo.groups) do
-				if 	groupName == "movementimpairing"
-				then
-					return true, searchRes
-				end
+			if aBuffInfo.groups["movementimpairing"] then
+				return true, searchRes
 			end					
 		end
 	end

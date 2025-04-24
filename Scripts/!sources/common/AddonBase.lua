@@ -176,7 +176,7 @@ function LogTable( t, tabstep )
 			LogInfo( TabString, i, ":" )
 			LogTable( v, tabstep + 1 )
 		else
-			LogInfo( TabString, i, " = ", tostring(v) )
+			LogInfo( TabString, i, " = ", v )
 		end
 		isEmpty = false
 	end
