@@ -42,7 +42,7 @@ function CreateConfigGroupBuffsForm()
 		
 	m_group4 = createWidget(form, "group4", "Panel")
 	align(m_group4, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)
-	resize(m_group4, 335, 181)
+	resize(m_group4, 335, 241)
 		
 	local group5 = createWidget(form, "group5", "Panel")
 	align(group5, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)
@@ -87,10 +87,12 @@ function CreateConfigGroupBuffsForm()
 	
 	setLocaleTextEx(createWidget(m_group4, "raidBuffsButton", "TextView", nil, nil, 320, 25, 5, 3), nil, "ColorWhite", "center")
 	setLocaleText(createWidget(m_group4, "autoDebuffModeButtonUnk", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 320, 25, 5, 33), true)
-	setLocaleText(createWidget(m_group4, "checkEnemyCleanableUnk", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 320, 25, 5, 63), true)
-	setLocaleText(createWidget(m_group4, "showImportantButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 320, 25, 5, 93), true)
-	setLocaleText(createWidget(m_group4, "checkControlsButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 320, 25, 5, 123), true)
-	setLocaleText(createWidget(m_group4, "checkMovementsButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 320, 25, 5, 153), true)
+	setLocaleText(createWidget(m_group4, "checkFriendCleanableUnk", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 320, 25, 5, 63), true)
+	setLocaleText(createWidget(m_group4, "checkEnemyCleanableDebuffUnk", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 320, 25, 5, 93), true)
+	setLocaleText(createWidget(m_group4, "checkEnemyCleanableUnk", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 320, 25, 5, 123), true)
+	setLocaleText(createWidget(m_group4, "showImportantButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 320, 25, 5, 153), true)
+	setLocaleText(createWidget(m_group4, "checkControlsButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 320, 25, 5, 183), true)
+	setLocaleText(createWidget(m_group4, "checkMovementsButton", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 320, 25, 5, 213), true)
 	
 	settingsContainer:PushBack(m_group7)
 	settingsContainer:PushBack(m_group1)
@@ -171,6 +173,8 @@ function SaveConfigGroupBuffsForm(aForm, aClose)
 	end
 	
 	m_currentFormSettings.autoDebuffModeButtonUnk = getCheckBoxState(getChild(m_group4, "autoDebuffModeButtonUnk"))
+	m_currentFormSettings.checkFriendCleanableUnk = getCheckBoxState(getChild(m_group4, "checkFriendCleanableUnk"))
+	m_currentFormSettings.checkEnemyCleanableDebuffUnk = getCheckBoxState(getChild(m_group4, "checkEnemyCleanableDebuffUnk"))
 	m_currentFormSettings.checkEnemyCleanableUnk = getCheckBoxState(getChild(m_group4, "checkEnemyCleanableUnk"))
 	m_currentFormSettings.showImportantButton = getCheckBoxState(getChild(m_group4, "showImportantButton"))
 	m_currentFormSettings.checkControlsButton = getCheckBoxState(getChild(m_group4, "checkControlsButton"))
@@ -272,6 +276,8 @@ function LoadConfigGroupBuffsForm(aForm, anIndex, aInitLoad)
 	end
 	
 	setCheckBox(getChild(m_group4, "autoDebuffModeButtonUnk"), m_currentFormSettings.autoDebuffModeButtonUnk)
+	setCheckBox(getChild(m_group4, "checkFriendCleanableUnk"), m_currentFormSettings.checkFriendCleanableUnk)
+	setCheckBox(getChild(m_group4, "checkEnemyCleanableDebuffUnk"), m_currentFormSettings.checkEnemyCleanableDebuffUnk)
 	setCheckBox(getChild(m_group4, "checkEnemyCleanableUnk"), m_currentFormSettings.checkEnemyCleanableUnk)
 	setCheckBox(getChild(m_group4, "showImportantButton"), m_currentFormSettings.showImportantButton)
 	setCheckBox(getChild(m_group4, "checkControlsButton"), m_currentFormSettings.checkControlsButton)

@@ -1449,5 +1449,13 @@
       <name>systemBuffButton</name>
       <resource href="systemBuffButton.txt"/>
     </Item>
+	<Item>
+      <name>checkFriendCleanableUnk</name>
+      <resource href="checkFriendCleanableUnk.txt"/>
+    </Item>
+	<Item>
+      <name>checkEnemyCleanableDebuffUnk</name>
+      <resource href="checkEnemyCleanableDebuffUnk.txt"/>
+    </Item>
   </items>
 </UIRelatedTexts>

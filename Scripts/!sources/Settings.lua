@@ -67,6 +67,7 @@ local function GenerateAboveHeadGroup()
 	correctAboveHeadSettings.h = 1
 	correctAboveHeadSettings.size = 50
 	correctAboveHeadSettings.buffsOpacity = 1
+	correctAboveHeadSettings.systemBuffButton = false
 	correctAboveHeadSettings.aboveHeadButton = true
 	
 	correctAboveHeadSettings.buffOnMe = false
@@ -76,6 +77,8 @@ local function GenerateAboveHeadGroup()
 	correctAboveHeadSettings.flipBuffsButton = false
 	correctAboveHeadSettings.autoDebuffModeButtonUnk = false
 	correctAboveHeadSettings.checkEnemyCleanableUnk = false
+	correctAboveHeadSettings.checkFriendCleanableUnk = false
+	correctAboveHeadSettings.checkEnemyCleanableDebuffUnk = false
 	correctAboveHeadSettings.showImportantButton = false
 	correctAboveHeadSettings.checkControlsButton = true
 	correctAboveHeadSettings.checkMovementsButton = true
@@ -622,6 +625,12 @@ function LoadSettings(aProfileInd)
 			buffGroupSettings.systemBuffButton = false
 		end
 	end
+	if m_currentProfile.version < 3.44 or m_currentProfile.version == nil then
+		for _, buffGroupSettings in ipairs(m_currentProfile.buffFormSettings.buffGroups) do
+			buffGroupSettings.checkFriendCleanableUnk = false
+			buffGroupSettings.checkEnemyCleanableDebuffUnk = false
+		end
+	end
 	
 	if m_currentProfile.version < GetSettingsVersion() or m_currentProfile.version == nil then
 		m_currentProfile.version = GetSettingsVersion()
@@ -670,5 +679,5 @@ function ExportProfileByIndex(anInd)
 end
 
 function GetSettingsVersion()
-	return 3.36;
+	return 3.44;
 end

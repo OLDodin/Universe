@@ -1,6 +1,7 @@
 Global( "BuffCondition", {} )
 
-
+local cachedIsExist = object.IsExist
+local cachedIsFriend = object.IsFriend
 
 function BuffCondition:Init(aSettings, aCustomBuffs)
 	self.settings = aSettings
@@ -104,7 +105,10 @@ function BuffCondition:Check(aBuffInfo)
 		if not aBuffInfo.isPositive and 
 		(self.settings.autoDebuffModeButton 
 		or self.settings.checkFriendCleanableButton  
-		or (self.settings.autoDebuffModeButtonUnk and aBuffInfo.ownerId and object.IsExist(aBuffInfo.ownerId) and object.IsFriend(aBuffInfo.ownerId))) 
+		or (self.settings.autoDebuffModeButtonUnk and self.settings.checkEnemyCleanableDebuffUnk)
+		or (self.settings.autoDebuffModeButtonUnk and aBuffInfo.ownerId and cachedIsExist(aBuffInfo.ownerId) and cachedIsFriend(aBuffInfo.ownerId))
+		or (self.settings.checkEnemyCleanableDebuffUnk and aBuffInfo.ownerId and cachedIsExist(aBuffInfo.ownerId) and not cachedIsFriend(aBuffInfo.ownerId))
+		) 
 		then
 			local isCleanable = false
 			
@@ -118,7 +122,12 @@ function BuffCondition:Check(aBuffInfo)
 		end
 		
 		if aBuffInfo.isPositive and 
-		(self.settings.checkEnemyCleanable or (self.settings.checkEnemyCleanableUnk and aBuffInfo.ownerId and object.IsExist(aBuffInfo.ownerId) and not object.IsFriend(aBuffInfo.ownerId))) 
+		(
+		self.settings.checkEnemyCleanable 
+		or (self.settings.checkEnemyCleanableUnk and self.settings.checkFriendCleanableUnk)
+		or (self.settings.checkEnemyCleanableUnk and aBuffInfo.ownerId and cachedIsExist(aBuffInfo.ownerId) and not cachedIsFriend(aBuffInfo.ownerId))
+		or (self.settings.checkFriendCleanableUnk and aBuffInfo.ownerId and cachedIsExist(aBuffInfo.ownerId) and cachedIsFriend(aBuffInfo.ownerId))
+		) 
 		then
 			if aBuffInfo.groups["magics"] or aBuffInfo.groups["stackablemagics"] then
 				return true, searchRes, true
