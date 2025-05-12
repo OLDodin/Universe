@@ -1457,5 +1457,13 @@
       <name>checkEnemyCleanableDebuffUnk</name>
       <resource href="checkEnemyCleanableDebuffUnk.txt"/>
     </Item>
+	<Item>
+      <name>priorityMainForm</name>
+      <resource href="priorityMainForm.txt"/>
+    </Item>
+	<Item>
+      <name>normalFrameColorHeader</name>
+      <resource href="normalFrameColorHeader.txt"/>
+    </Item>
   </items>
 </UIRelatedTexts>

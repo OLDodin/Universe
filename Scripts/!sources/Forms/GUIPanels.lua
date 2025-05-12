@@ -235,7 +235,7 @@ function PlayerTargetsHighlightChanged(anInfo, aPlayerBar)
 	if anInfo then
 		barColor = aPlayerBar.formSettings.selectionColor
 	else
-		barColor = { r=1; g=1; b=1; a=1 }
+		barColor = aPlayerBar.formSettings.normalFrameColor
 	end
 	aPlayerBar.highlight = anInfo
 	aPlayerBar.highlightWdg:Show(anInfo)
@@ -614,6 +614,7 @@ function CreatePlayerPanel(aParentPanel, aX, aY, aRaidMode, aFormSettings, aNum)
 	resize(playerBar.barWdg, panelWidth-4, panelHeight-4)
 	setBackgroundColor(playerBar.barWdg, barColor)
 	setBackgroundColor(playerBar.highlightWdg, aFormSettings.selectionColor) 
+	setBackgroundColor(playerBar.barBackgroundWdg, aFormSettings.normalFrameColor)
 	
 	setBackgroundColor(playerBar.shieldContainerWdg, playerBar.optimizeInfo.shieldContainerColor)
 	

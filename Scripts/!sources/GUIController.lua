@@ -2474,7 +2474,7 @@ local function Update()
 	-- по словам разработчиков это из-за не работающего EVENT_MOB_ACTION_PROGRESS_FREEZE
 	for objID, progressInfo in pairs(m_progressActionQueue) do
 		local remainingMs = (progressInfo.duration - progressInfo.progress) - (g_cachedTimestamp - progressInfo.queueTimestamp_h)
-		if remainingMs <= 0 and  not cachedIsPlayer(objID) then
+		if remainingMs <= 0 and isExist(objID) and not cachedIsPlayer(objID) then
 			local mobActionProgressInfo = unit.GetMobActionProgress(objID)
 			if mobActionProgressInfo then
 				mobActionProgressInfo.id = objID

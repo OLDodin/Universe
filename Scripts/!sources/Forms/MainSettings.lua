@@ -25,6 +25,9 @@ function CreateMainSettingsForm()
 	createWidget(form, "useBindSubSystem", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 330, 25, 20, 170)
 	createWidget(form, "useCastSubSystem", "CheckBox", WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 330, 25, 20, 200)
 	
+	setLocaleText(createWidget(form, "priorityMainForm", "TextView",  WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW, 330, 25, 20, 230))
+	createWidget(form, "priorityMainFormEdit", "EditLine", nil, nil, 70, 25, 280, 230)
+	
 	DnD.Init(form, form, true)
 		
 	return form
@@ -40,6 +43,10 @@ function SaveMainFormSettings(aForm)
 	m_currentFormSettings.useBuffMngSubSystem = getCheckBoxState(getChild(aForm, "useBuffMngSubSystem"))
 	m_currentFormSettings.useBindSubSystem = getCheckBoxState(getChild(aForm, "useBindSubSystem"))
 	m_currentFormSettings.useCastSubSystem = getCheckBoxState(getChild(aForm, "useCastSubSystem"))
+	
+	local priorityMainFormEdit = getChild(aForm, "priorityMainFormEdit")
+	m_currentFormSettings.priorityMainForm = CheckEditVal(tonumber(getTextString(priorityMainFormEdit)), 4600, -2147483648, 2147483647, priorityMainFormEdit)
+	priority(mainForm, m_currentFormSettings.priorityMainForm)
 	
 	return m_currentFormSettings
 end
@@ -65,6 +72,9 @@ function LoadMainFormSettings(aForm)
 	setLocaleText(getChild(aForm, "useBuffMngSubSystem"), m_currentFormSettings.useBuffMngSubSystem)
 	setLocaleText(getChild(aForm, "useBindSubSystem"), m_currentFormSettings.useBindSubSystem)
 	setLocaleText(getChild(aForm, "useCastSubSystem"), m_currentFormSettings.useCastSubSystem)
+	
+	setText(getChild(aForm, "priorityMainFormEdit"), tostring(m_currentFormSettings.priorityMainForm))
+	priority(mainForm, m_currentFormSettings.priorityMainForm)
 	
 	UpdateMainFormButtons(aForm)
 end

@@ -255,8 +255,6 @@ function BuffsChanged(aParams)
 			for buffID, _ in pairs( buffs ) do
 				if cachedIsValidBuff(buffID) then
 					playerInfo.buffs.changeEventFunc(buffID)
-				else
-					playerInfo.buffs.delEventFunc( { buffId = buffID } )
 				end
 			end
 		end

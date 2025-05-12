@@ -133,6 +133,7 @@ function GetDefaultSettings()
 	mainFormSettings.useBuffMngSubSystem = true
 	mainFormSettings.useBindSubSystem = false
 	mainFormSettings.useCastSubSystem = true
+	mainFormSettings.priorityMainForm = 4600
 	
 	local raidFormSettings = {}
 	raidFormSettings.classColorModeButton = false
@@ -167,6 +168,7 @@ function GetDefaultSettings()
 	raidFormSettings.friendColor = g_relationColors[FRIEND_PANEL]
 	raidFormSettings.clearColor = g_needClearColor
 	raidFormSettings.selectionColor = g_selectionColor
+	raidFormSettings.normalFrameColor = g_normalFrameColor
 	raidFormSettings.farColor = g_farColor	
 	raidFormSettings.invulnerableColor = table.sclone(g_invulnerableColor)
 	raidFormSettings.invulnerableColor.a = 0
@@ -225,6 +227,7 @@ function GetDefaultSettings()
 	targeterFormSettings.enemyColor = g_relationColors[ENEMY_PANEL]
 	targeterFormSettings.neitralColor = g_relationColors[NEITRAL_PANEL]
 	targeterFormSettings.selectionColor = g_selectionColor
+	targeterFormSettings.normalFrameColor = g_normalFrameColor
 	targeterFormSettings.invulnerableColor = table.sclone(g_invulnerableColor)
 	targeterFormSettings.raidBuffs.customBuffs = {}
 	targeterFormSettings.myTargets = {}
@@ -631,7 +634,11 @@ function LoadSettings(aProfileInd)
 			buffGroupSettings.checkEnemyCleanableDebuffUnk = false
 		end
 	end
-	
+	if m_currentProfile.version < 3.45 or m_currentProfile.version == nil then
+		m_currentProfile.mainFormSettings.priorityMainForm = 4600
+		m_currentProfile.raidFormSettings.normalFrameColor = g_normalFrameColor
+		m_currentProfile.targeterFormSettings.normalFrameColor = g_normalFrameColor
+	end
 	if m_currentProfile.version < GetSettingsVersion() or m_currentProfile.version == nil then
 		m_currentProfile.version = GetSettingsVersion()
 		SaveAllSettings(allProfiles)
@@ -679,5 +686,5 @@ function ExportProfileByIndex(anInd)
 end
 
 function GetSettingsVersion()
-	return 3.44;
+	return 3.45
 end

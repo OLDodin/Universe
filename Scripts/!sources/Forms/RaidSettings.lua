@@ -60,6 +60,10 @@ function CreateRaidSettingsForm()
 	align(group12, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)
 	resize(group12, 315, 151)
 	
+	local group13 = createWidget(form, "group13", "Panel")
+	align(group13, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)
+	resize(group13, 315, 151)
+	
 	
 	setLocaleText(createWidget(form, "raidSettingsFormHeader", "TextView",  WIDGET_ALIGN_CENTER, nil, 150, 20, nil, 16))
 	setText(createWidget(form, "closeSomeSettingsButton", "Button", WIDGET_ALIGN_HIGH, WIDGET_ALIGN_LOW, 20, 20, 20, 20), "x")
@@ -107,6 +111,7 @@ function CreateRaidSettingsForm()
 	settingsContainer:PushBack(group10)
 	settingsContainer:PushBack(group11)
 	settingsContainer:PushBack(group12)
+	settingsContainer:PushBack(group13)
 	
 	
 	CreateColorSettingsPanel(group8, g_relationColors[FRIEND_PANEL], "friendColorHeader")
@@ -114,6 +119,7 @@ function CreateRaidSettingsForm()
 	CreateColorSettingsPanel(group10, g_selectionColor, "selectionColorHeader")
 	CreateColorSettingsPanel(group11, g_farColor, "farColorHeader")
 	CreateColorSettingsPanel(group12, g_invulnerableColor, "invulnerableColorHeader")
+	CreateColorSettingsPanel(group13, g_normalFrameColor, "normalFrameColorHeader")
 	
 	
 	setLocaleText(createWidget(group6, "raidBuffsButton", "TextView", nil, nil, 200, 25, 75, 3))
@@ -168,6 +174,7 @@ function SaveRaidFormSettings(aForm)
 	local group10 = settingsContainer:At(7)
 	local group11 = settingsContainer:At(8)
 	local group12 = settingsContainer:At(9)
+	local group13 = settingsContainer:At(10)
 	
 
 	m_currentFormSettings.showStandartRaidButton = getCheckBoxState(getChild(group1, "showStandartRaidButton"))
@@ -212,6 +219,7 @@ function SaveRaidFormSettings(aForm)
 	m_currentFormSettings.selectionColor = getChild(getChild(group10, "colorSettingsForm"), "colorPreview"):GetBackgroundColor()
 	m_currentFormSettings.farColor = getChild(getChild(group11, "colorSettingsForm"), "colorPreview"):GetBackgroundColor()
 	m_currentFormSettings.invulnerableColor = getChild(getChild(group12, "colorSettingsForm"), "colorPreview"):GetBackgroundColor()
+	m_currentFormSettings.normalFrameColor = getChild(getChild(group13, "colorSettingsForm"), "colorPreview"):GetBackgroundColor()
 		
 	return m_currentFormSettings
 end
@@ -237,6 +245,7 @@ function LoadRaidFormSettings(aForm)
 	local group10 = settingsContainer:At(7)
 	local group11 = settingsContainer:At(8)
 	local group12 = settingsContainer:At(9)
+	local group13 = settingsContainer:At(10)
 	
 
 	setLocaleText(getChild(group1, "showStandartRaidButton"), m_currentFormSettings.showStandartRaidButton)
@@ -282,6 +291,7 @@ function LoadRaidFormSettings(aForm)
 	UpdateColorSettingsPanel(getChild(group10, "colorSettingsForm"), m_currentFormSettings.selectionColor)
 	UpdateColorSettingsPanel(getChild(group11, "colorSettingsForm"), m_currentFormSettings.farColor)
 	UpdateColorSettingsPanel(getChild(group12, "colorSettingsForm"), m_currentFormSettings.invulnerableColor)
+	UpdateColorSettingsPanel(getChild(group13, "colorSettingsForm"), m_currentFormSettings.normalFrameColor)
 end
 
 function AddRaidBuffToSroller(aForm)

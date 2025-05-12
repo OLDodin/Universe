@@ -61,6 +61,10 @@ function CreateTargeterSettingsForm()
 	local group12 = createWidget(form, "group12", "Panel")
 	align(group12, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)
 	resize(group12, 315, 151)
+	
+	local group13 = createWidget(form, "group13", "Panel")
+	align(group13, WIDGET_ALIGN_LOW, WIDGET_ALIGN_LOW)
+	resize(group13, 315, 151)
 
 	
 	setLocaleText(createWidget(form, "targeterSettingsFormHeader", "TextView",  WIDGET_ALIGN_CENTER, nil, 200, 20, nil, 16))
@@ -109,12 +113,14 @@ function CreateTargeterSettingsForm()
 	settingsContainer:PushBack(group10)
 	settingsContainer:PushBack(group11)
 	settingsContainer:PushBack(group12)
+	settingsContainer:PushBack(group13)
 	
 	CreateColorSettingsPanel(group8, g_relationColors[FRIEND_PANEL], "friendColorHeader")
 	CreateColorSettingsPanel(group9, g_relationColors[NEITRAL_PANEL], "neitralColorHeader")
 	CreateColorSettingsPanel(group10, g_relationColors[ENEMY_PANEL], "enemyColorHeader")
 	CreateColorSettingsPanel(group11, g_selectionColor, "selectionColorHeader")
 	CreateColorSettingsPanel(group12, g_invulnerableColor, "invulnerableColorHeader")
+	CreateColorSettingsPanel(group13, g_normalFrameColor, "normalFrameColorHeader")
 
 	
 	setLocaleText(createWidget(group5, "raidBuffsButton", "TextView", nil, nil, 200, 25, 75, 3))
@@ -158,6 +164,7 @@ function SaveTargeterFormSettings(aForm)
 	local group10 = settingsContainer:At(6)
 	local group11 = settingsContainer:At(7)
 	local group12 = settingsContainer:At(8)
+	local group13 = settingsContainer:At(9)
 	
 	m_currentFormSettings.classColorModeButton = getCheckBoxState(getChild(group1, "classColorModeButton"))
 	m_currentFormSettings.showServerNameButton = getCheckBoxState(getChild(group1, "showServerNameButton"))
@@ -218,6 +225,7 @@ function SaveTargeterFormSettings(aForm)
 	m_currentFormSettings.enemyColor = getChild(getChild(group10, "colorSettingsForm"), "colorPreview"):GetBackgroundColor()
 	m_currentFormSettings.selectionColor = getChild(getChild(group11, "colorSettingsForm"), "colorPreview"):GetBackgroundColor()
 	m_currentFormSettings.invulnerableColor = getChild(getChild(group12, "colorSettingsForm"), "colorPreview"):GetBackgroundColor()
+	m_currentFormSettings.normalFrameColor = getChild(getChild(group13, "colorSettingsForm"), "colorPreview"):GetBackgroundColor()
 
 	return m_currentFormSettings
 end
@@ -243,6 +251,7 @@ function LoadTargeterFormSettings(aForm)
 	local group10 = settingsContainer:At(6)
 	local group11 = settingsContainer:At(7)
 	local group12 = settingsContainer:At(8)
+	local group13 = settingsContainer:At(9)
 	
 	setLocaleText(getChild(group1, "classColorModeButton"), m_currentFormSettings.classColorModeButton)
 	setLocaleText(getChild(group1, "showServerNameButton"), m_currentFormSettings.showServerNameButton)
@@ -288,6 +297,7 @@ function LoadTargeterFormSettings(aForm)
 	UpdateColorSettingsPanel(getChild(group10, "colorSettingsForm"), m_currentFormSettings.enemyColor)
 	UpdateColorSettingsPanel(getChild(group11, "colorSettingsForm"), m_currentFormSettings.selectionColor)
 	UpdateColorSettingsPanel(getChild(group12, "colorSettingsForm"), m_currentFormSettings.invulnerableColor)
+	UpdateColorSettingsPanel(getChild(group13, "colorSettingsForm"), m_currentFormSettings.normalFrameColor)
 end
 
 function AddTargetBuffToSroller(aForm)
