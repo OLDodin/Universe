@@ -1213,7 +1213,7 @@ local function BuildRaidGUI(aCurrentRaid, aReusedRaidListeners)
 					playerBar.isUsed = true
 					if (playerInfo.id and not aReusedRaidListeners[playerInfo.id]) or not playerInfo.id then
 						local isLeader = false
-						if playerInfo.id and cachedIsPlayer(playerInfo.id) then
+						if playerInfo.id and object.IsExist(playerInfo.id) and cachedIsPlayer(playerInfo.id) then
 							isLeader = playerInfo.uniqueId:IsEqual(m_currentRaid.currentLeaderUniqueID)
 						end
 						SetBaseInfoPlayerPanel(playerBar, playerInfo, isLeader, profile.raidFormSettings, FRIEND_PANEL)

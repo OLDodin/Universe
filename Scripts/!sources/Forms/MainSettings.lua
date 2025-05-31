@@ -62,6 +62,7 @@ end
 function LoadMainFormSettings(aForm)
 	local profile = GetCurrentProfile()
 	m_currentFormSettings = deepCopyTable(profile.mainFormSettings)
+	priority(mainForm, m_currentFormSettings.priorityMainForm)
 	
 	if not aForm then
 		return
@@ -74,7 +75,6 @@ function LoadMainFormSettings(aForm)
 	setLocaleText(getChild(aForm, "useCastSubSystem"), m_currentFormSettings.useCastSubSystem)
 	
 	setText(getChild(aForm, "priorityMainFormEdit"), tostring(m_currentFormSettings.priorityMainForm))
-	priority(mainForm, m_currentFormSettings.priorityMainForm)
 	
 	UpdateMainFormButtons(aForm)
 end
