@@ -258,17 +258,16 @@ end
 
 function move(widget, posX, posY)
 	if not widget then return end
-	local BarPlace = widget:GetPlacementPlain()
-	if not BarPlace then return nil end
+	local barPlace = {}
 	if posX then
-		BarPlace.posX = posX
-		BarPlace.highPosX = posX
+		barPlace.posX = posX
+		barPlace.highPosX = posX
 	end
 	if posY then
-		BarPlace.posY = posY
-		BarPlace.highPosY = posY
+		barPlace.posY = posY
+		barPlace.highPosY = posY
 	end
-	widget:SetPlacementPlain(BarPlace)
+	widget:SetPlacementPlain(barPlace)
 end
 
 function setFade(widget, fade)
@@ -279,39 +278,36 @@ end
 
 function resize(widget, width, height)
 	if not widget then return end
-	local BarPlace = widget:GetPlacementPlain()
-	if not BarPlace then return nil end
-	if width then BarPlace.sizeX = width end
-	if height then BarPlace.sizeY = height end
-	widget:SetPlacementPlain(BarPlace)
+	local barPlace = {}
+	if width then barPlace.sizeX = width end
+	if height then barPlace.sizeY = height end
+	widget:SetPlacementPlain(barPlace)
 end
 
 function align(widget, alignX, alignY)
 	if not widget then return end
-	local BarPlace = widget:GetPlacementPlain()
-	if not BarPlace then return nil end
-	if alignX then BarPlace.alignX = alignX end
-	if alignY then BarPlace.alignY = alignY end
-	widget:SetPlacementPlain(BarPlace)
+	local barPlace = {}
+	if alignX then barPlace.alignX = alignX end
+	if alignY then barPlace.alignY = alignY end
+	widget:SetPlacementPlain(barPlace)
 end
 
 function updatePlacementPlain(widget, alignX, alignY, posX, posY, width, height)
 	if not widget then return end
-	local BarPlace = widget:GetPlacementPlain()
-	if not BarPlace then return nil end
-	if alignX then BarPlace.alignX = alignX end
-	if alignY then BarPlace.alignY = alignY end
+	local barPlace = {}
+	if alignX then barPlace.alignX = alignX end
+	if alignY then barPlace.alignY = alignY end
 	if posX then
-		BarPlace.posX = posX
-		BarPlace.highPosX = posX
+		barPlace.posX = posX
+		barPlace.highPosX = posX
 	end
 	if posY then
-		BarPlace.posY = posY
-		BarPlace.highPosY = posY
+		barPlace.posY = posY
+		barPlace.highPosY = posY
 	end
-	if width then BarPlace.sizeX = width end
-	if height then BarPlace.sizeY = height end
-	widget:SetPlacementPlain(BarPlace)
+	if width then barPlace.sizeX = width end
+	if height then barPlace.sizeY = height end
+	widget:SetPlacementPlain(barPlace)
 end
 
 function priority(widget, priority)

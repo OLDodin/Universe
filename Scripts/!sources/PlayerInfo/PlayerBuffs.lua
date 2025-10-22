@@ -5,6 +5,8 @@ local cachedGetBuffs = object.GetBuffs
 local cachedRegisterEventHandler = common.RegisterEventHandler
 local cachedUnRegisterEventHandler = common.UnRegisterEventHandler
 local cachedGetBuffsInfo = object.GetBuffsInfo
+local cachedIsValidBuff = object.IsValidBuff
+local cachedGetBuffDynamicInfo = object.GetBuffDynamicInfo
 
 function PlayerBuffs:Init(anID)
 	self.playerID = anID
@@ -309,7 +311,11 @@ function PlayerBuffs:GetChangedEventFunc()
 	return function(aBuffID)	
 		self.wasBuffChanges = true
 		
-		local buffDynamicInfo = object.GetBuffDynamicInfo(aBuffID)
+		if not cachedIsValidBuff(aBuffID) then
+			return
+		end
+		
+		local buffDynamicInfo = cachedGetBuffDynamicInfo(aBuffID)
 		if not buffDynamicInfo then
 			return
 		end
@@ -329,6 +335,9 @@ function PlayerBuffs:RegisterEvent(anID)
 
 	cachedRegisterEventHandler(self.addEventFunc, 'EVENT_OBJECT_BUFF_ADDED', self.unitParams)
 	cachedRegisterEventHandler(self.delEventFunc, 'EVENT_OBJECT_BUFF_REMOVED', self.unitParams)
+	
+	--common.EnablePersonalEvent('EVENT_OBJECT_BUFF_ADDED', anID)
+	--common.EnablePersonalEvent('EVENT_OBJECT_BUFF_REMOVED', anID)
 	if g_debugSubsrb then
 		self.base:reg("buff")
 		self.base:reg("buff")
@@ -338,6 +347,9 @@ end
 function PlayerBuffs:UnRegisterEvent()
 	cachedUnRegisterEventHandler(self.addEventFunc, 'EVENT_OBJECT_BUFF_ADDED', self.unitParams)
 	cachedUnRegisterEventHandler(self.delEventFunc, 'EVENT_OBJECT_BUFF_REMOVED', self.unitParams)
+	
+	--common.DisablePersonalEvent('EVENT_OBJECT_BUFF_ADDED', anID)
+	--common.DisablePersonalEvent('EVENT_OBJECT_BUFF_REMOVED', anID)
 	
 	if g_debugSubsrb then
 		self.base:unreg("buff")

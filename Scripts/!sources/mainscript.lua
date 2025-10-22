@@ -52,7 +52,7 @@ end
 
 local function Init()
 	g_myAvatarID = avatar.GetId()
-	GUIControllerInit()
+	GUIControllerAfterAvatarInit()
 
 	common.RegisterEventHandler( onAOPanelStart, "AOPANEL_START" )
 	common.RegisterEventHandler( onAOPanelLeftClick, "AOPANEL_BUTTON_LEFT_CLICK" )
@@ -62,6 +62,7 @@ local function Init()
 end
 
 
+GUIControllerBeforeAvatarInit()
 if (avatar.IsExist()) then
 	Init()
 else

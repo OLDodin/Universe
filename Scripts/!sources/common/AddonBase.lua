@@ -73,6 +73,18 @@ function ProfilePrint()
 	LogInfo("========================================", "=")
 end
 
+local function CompareParams(aParam1, aParam2)
+	if GetTableSize(aParam1) ~= GetTableSize(aParam2) then
+		return false
+	end
+	for k, v in pairs(aParam1 or {}) do
+		if aParam2[k] ~= v then
+			return false
+		end
+	end
+	return true
+end
+
 function ProfileRegisterEventHandler(aFunc, aEventName, aParams)
 	local profileCaller = TEventProfile:CreateNewObject(aEventName, aFunc, aParams)
 	table.insert(m_callingTable, profileCaller)
@@ -82,7 +94,7 @@ end
 function ProfileUnRegisterEventHandler(aFunc, aEventName, aParams)
 	for _, profileCaller in ipairs(m_callingTable) do
 		if profileCaller.Active and profileCaller.EventName == aEventName then 
-			if profileCaller.OriginParams == aParams then
+			if CompareParams(profileCaller.OriginParams, aParams) then
 				if string.dump(profileCaller.OriginFunc) == string.dump(aFunc) then
 					profileCaller.Active = false
 					originUnRegisterEventHandler(profileCaller.MyFunc, aEventName, profileCaller.OriginParams)
@@ -175,6 +187,14 @@ function LogTable( t, tabstep )
 		if type( v ) == "table" then
 			LogInfo( TabString, i, ":" )
 			LogTable( v, tabstep + 1 )
+		elseif apitype( v ) == "WString" then
+			if v:IsEmpty() then
+				LogInfo( TabString, "(WString):", i, " = ", "(empty WString)")
+			else
+				LogInfo( TabString, "(WString):", i, " = ", v )
+			end
+		elseif v == nil then
+			LogInfo( TabString, i, " = ", tostring(v) )
 		else
 			LogInfo( TabString, i, " = ", v )
 		end

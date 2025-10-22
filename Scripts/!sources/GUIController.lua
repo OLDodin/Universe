@@ -636,16 +636,6 @@ local function FindClickedInRaid(anWdg)
 	end
 end
 
-local function FindMyUniqueIDInRaid()
-	for _, party in ipairs(m_raidPlayerPanelList) do
-		for _, playerBar in ipairs(party) do
-			if playerBar.isUsed and playerBar.playerID == g_myAvatarID then
-				return playerBar.uniqueID
-			end
-		end
-	end
-end
-
 local function FindClickedInRaidMove(anWdg)
 	for i, party in ipairs(m_raidPlayerPanelList) do
 		for _, playerBar in ipairs(party) do
@@ -737,7 +727,7 @@ end
 
 local function MoveModeClick(aParams)
 	local clickedPartyNum = FindClickedInRaidMove(aParams.widget)
-	MoveTo(clickedPartyNum, m_movingUniqueID, FindMyUniqueIDInRaid())
+	MoveTo(clickedPartyNum, m_movingUniqueID, avatar.GetUniqueId())
 	StopMove()
 end
 
@@ -2738,27 +2728,23 @@ function UnloadCastSubSystem()
 end
 
 
-
-
-function GUIControllerInit()
+function GUIControllerBeforeAvatarInit()
 	initTimeAbbr()
-	
 	InitClassIconsTexture()
 	InitCheckTextures()
 	InitButtonTextures()
 	InitBackgroundsTextures()
-	
-	
 	GUIInit()
+end
+
+function GUIControllerAfterAvatarInit()
 	InitializeDefaultSetting()
 	LoadLastUsedSetting()
-	
-	
+
 	LoadForms()
 	
 	InitBuffConditionMgr()
 	InitSpellConditionMgr()
-
 	
 	common.RegisterReactionHandler(ButtonPressed, "execute")
 	common.RegisterReactionHandler(CheckBoxChangedOn, "CheckBoxChangedOn")
