@@ -34,34 +34,19 @@ function PlayerSpells:ClearLastValues()
 	self.ignoredDuplSpells = {}
 end
 
-function PlayerSpells:SubscribeTargetGui(aLitener)
+function PlayerSpells:SubscribeByType(aType, aLitener)
+	if aType == enumSubscribeType.BuffPlate then
+		self:ClearLastValues()
+		self:BuildSpellDuplicatesList()
+		self.base:SubscribeBuffPlateGui(self.playerID, aLitener, self.readAllSpellEventFunc)
+	end
 end
 
-function PlayerSpells:UnsubscribeTargetGui()
+function PlayerSpells:UnsubscribeByType(aType)
+	if aType == enumSubscribeType.BuffPlate then
+		self.base:UnsubscribeBuffPlateGui()
+	end
 end
-
-function PlayerSpells:SubscribeRaidGui(aLitener)
-end
-
-function PlayerSpells:UnsubscribeRaidGui()
-end
-
-function PlayerSpells:SubscribeAboveHeadGui(aLitener)
-end
-
-function PlayerSpells:UnsubscribeAboveHeadGui()
-end
-
-function PlayerSpells:SubscribeBuffPlateGui(aLiteners)
-	self:ClearLastValues()
-	self:BuildSpellDuplicatesList()
-	self.base:SubscribeBuffPlateGui(self.playerID, aLiteners, self.readAllSpellEventFunc)
-end
-
-function PlayerSpells:UnsubscribeBuffPlateGui()
-	self.base:UnsubscribeBuffPlateGui()
-end
-
 
 function PlayerSpells:TryDestroy()
 	if self.base:CanDestroy() then

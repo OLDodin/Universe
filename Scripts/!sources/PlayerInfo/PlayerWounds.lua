@@ -25,22 +25,22 @@ function PlayerWounds:ClearLastValues()
 	self.lastWoundsComplexity = -1
 end
 
-function PlayerWounds:SubscribeTargetGui(aLitener)
-	self:ClearLastValues()
-	self.base:SubscribeTargetGui(self.playerID, aLitener, self.eventFunc)
+function PlayerWounds:SubscribeByType(aType, aLitener)
+	if aType == enumSubscribeType.Raid then
+		self:ClearLastValues()
+		self.base:SubscribeRaidGui(self.playerID, aLitener, self.eventFunc)
+	elseif aType == enumSubscribeType.Targeter then
+		self:ClearLastValues()
+		self.base:SubscribeTargetGui(self.playerID, aLitener, self.eventFunc)
+	end
 end
 
-function PlayerWounds:UnsubscribeTargetGui()
-	self.base:UnsubscribeTargetGui()
-end
-
-function PlayerWounds:SubscribeRaidGui(aLitener)
-	self:ClearLastValues()
-	self.base:SubscribeRaidGui(self.playerID, aLitener, self.eventFunc)
-end
-
-function PlayerWounds:UnsubscribeRaidGui()
-	self.base:UnsubscribeRaidGui()
+function PlayerWounds:UnsubscribeByType(aType)
+	if aType == enumSubscribeType.Raid then
+		self.base:UnsubscribeRaidGui()
+	elseif aType == enumSubscribeType.Targeter then
+		self.base:UnsubscribeTargetGui()
+	end
 end
 
 function PlayerWounds:TryDestroy()

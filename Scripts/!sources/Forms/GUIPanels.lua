@@ -390,30 +390,41 @@ function SetBaseInfoPlayerPanel(aPlayerBar, aPlayerInfo, anIsLeader, aFormSettin
 	setBackgroundColor(aPlayerBar.shieldContainerWdg, aPlayerBar.optimizeInfo.shieldContainerColor)
 	
 	local barColor = cachedTableSClone(aFormSettings.friendColor)
+	local useManaBar = false
 	if isUnitExist and (aFormSettings.showManaButton or aFormSettings.classColorModeButton) then
 		local playerClass = cachedGetClass(aPlayerInfo.id)
-		if playerClass and playerClass.className then 	
-			aPlayerInfo.className = playerClass.className
-			if aFormSettings.showManaButton and aPlayerBar.optimizeInfo.className ~= playerClass.className then
-				aPlayerBar.optimizeInfo.className = playerClass.className
-				if playerClass.manaType == MANA_TYPE_MANA then
-					setBackgroundColor(aPlayerBar.manaBarWdg, m_manaColor)
-					show(aPlayerBar.manaBarWdg)
-				elseif playerClass.manaType == MANA_TYPE_ENERGY then			
-					setBackgroundColor(aPlayerBar.manaBarWdg, m_energyColor)
-					show(aPlayerBar.manaBarWdg)
-				else
-					hide(aPlayerBar.manaBarWdg)
+		if playerClass then
+			if playerClass.className then 
+				aPlayerInfo.className = playerClass.className
+				if aFormSettings.classColorModeButton then
+					local color = g_classColors[playerClass.className]
+					if not color then
+						color = g_classColors["UNKNOWN"]
+					end
+					barColor = cachedTableSClone(color)
 				end
 			end
-			if aFormSettings.classColorModeButton then
-				local color = g_classColors[playerClass.className]
-				if not color then
-					color = g_classColors["UNKNOWN"]
+			if aFormSettings.showManaButton then
+				useManaBar = true
+				
+				if aPlayerBar.optimizeInfo.manaType ~= playerClass.manaType then
+					aPlayerBar.optimizeInfo.manaType = playerClass.manaType
+					if playerClass.manaType == MANA_TYPE_MANA then
+						setBackgroundColor(aPlayerBar.manaBarWdg, m_manaColor)
+						show(aPlayerBar.manaBarWdg)
+					elseif playerClass.manaType == MANA_TYPE_ENERGY then			
+						setBackgroundColor(aPlayerBar.manaBarWdg, m_energyColor)
+						show(aPlayerBar.manaBarWdg)
+					else
+						hide(aPlayerBar.manaBarWdg)
+					end
 				end
-				barColor = cachedTableSClone(color)
 			end
 		end
+	end
+	if not useManaBar then
+		aPlayerBar.optimizeInfo.manaType = nil
+		hide(aPlayerBar.manaBarWdg)
 	end
 	
 	if isUnitExist then

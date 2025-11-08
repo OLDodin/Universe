@@ -21,22 +21,17 @@ function PlayerAFK:ClearLastValues()
 	self.lastAfk = -1
 end
 
-function PlayerAFK:SubscribeTargetGui(aLitener)
---	self:ClearLastValues()
---	self.base:SubscribeTargetGui(self.playerID, aLitener, self.eventFunc)
+function PlayerAFK:SubscribeByType(aType, aLitener)
+	if aType == enumSubscribeType.Raid then
+		self:ClearLastValues()
+		self.base:SubscribeRaidGui(self.playerID, aLitener, self.eventFunc)
+	end
 end
 
-function PlayerAFK:UnsubscribeTargetGui()
---	self.base:UnsubscribeTargetGui()
-end
-
-function PlayerAFK:SubscribeRaidGui(aLitener)
-	self:ClearLastValues()
-	self.base:SubscribeRaidGui(self.playerID, aLitener, self.eventFunc)
-end
-
-function PlayerAFK:UnsubscribeRaidGui()
-	self.base:UnsubscribeRaidGui()
+function PlayerAFK:UnsubscribeByType(aType)
+	if aType == enumSubscribeType.Raid then
+		self.base:UnsubscribeRaidGui()
+	end
 end
 
 function PlayerAFK:TryDestroy()

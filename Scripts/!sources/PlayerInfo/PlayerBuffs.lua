@@ -1,16 +1,15 @@
 Global( "PlayerBuffs", {} )
 
+local cachedEnablePersonalEvent = common.EnablePersonalEvent
+local cachedDisablePersonalEvent = common.DisablePersonalEvent
 local cachedGetBuffInfo = object.GetBuffInfo
 local cachedGetBuffs = object.GetBuffs
-local cachedRegisterEventHandler = common.RegisterEventHandler
-local cachedUnRegisterEventHandler = common.UnRegisterEventHandler
 local cachedGetBuffsInfo = object.GetBuffsInfo
 local cachedIsValidBuff = object.IsValidBuff
 local cachedGetBuffDynamicInfo = object.GetBuffDynamicInfo
 
 function PlayerBuffs:Init(anID)
 	self.playerID = anID
-	self.unitParams = {}
 	self.ignoreRaidBuffsID = {}
 	self.ignoreTargeterBuffsID = {}
 	self.ignorePlateBuffsID = {}
@@ -57,42 +56,33 @@ function PlayerBuffs:ClearAboveHeadBuffsValues()
 	self.workingAboveHeadBuffsID = {}
 end
 
-function PlayerBuffs:SubscribeTargetGui(aLitener)
-	self:ClearTargeterBuffsValues()
-	self.base:SubscribeTargetGui(self.playerID, aLitener, self.readAllTargetEventFunc)
+function PlayerBuffs:SubscribeByType(aType, aLitener)
+	if aType == enumSubscribeType.Raid then
+		self:ClearRaidBuffsValues()
+		self.base:SubscribeRaidGui(self.playerID, aLitener, self.readAllRaidEventFunc)
+	elseif aType == enumSubscribeType.Targeter then
+		self:ClearTargeterBuffsValues()
+		self.base:SubscribeTargetGui(self.playerID, aLitener, self.readAllTargetEventFunc)
+	elseif aType == enumSubscribeType.BuffPlate then
+		self:ClearPlateBuffsValues()
+		self.base:SubscribeBuffPlateGui(self.playerID, aLitener, self.readAllBuffPlatesEventFunc)
+	elseif aType == enumSubscribeType.AboveHead then
+		self:ClearAboveHeadBuffsValues()
+		self.base:SubscribeAboveHeadGui(self.playerID, aLitener, self.readAllAboveHeadEventFunc)
+	end
 end
 
-function PlayerBuffs:UnsubscribeTargetGui()
-	self.base:UnsubscribeTargetGui()
+function PlayerBuffs:UnsubscribeByType(aType)
+	if aType == enumSubscribeType.Raid then
+		self.base:UnsubscribeRaidGui()
+	elseif aType == enumSubscribeType.Targeter then
+		self.base:UnsubscribeTargetGui()
+	elseif aType == enumSubscribeType.BuffPlate then
+		self.base:UnsubscribeBuffPlateGui()
+	elseif aType == enumSubscribeType.AboveHead then
+		self.base:UnsubscribeAboveHeadGui()
+	end
 end
-
-function PlayerBuffs:SubscribeRaidGui(aLitener)
-	self:ClearRaidBuffsValues()
-	self.base:SubscribeRaidGui(self.playerID, aLitener, self.readAllRaidEventFunc)
-end
-
-function PlayerBuffs:UnsubscribeRaidGui()
-	self.base:UnsubscribeRaidGui()
-end
-
-function PlayerBuffs:SubscribeAboveHeadGui(aLitener)
-	self:ClearAboveHeadBuffsValues()
-	self.base:SubscribeAboveHeadGui(self.playerID, aLitener, self.readAllAboveHeadEventFunc)
-end
-
-function PlayerBuffs:UnsubscribeAboveHeadGui()
-	self.base:UnsubscribeAboveHeadGui()
-end
-
-function PlayerBuffs:SubscribeBuffPlateGui(aLiteners)
-	self:ClearPlateBuffsValues()
-	self.base:SubscribeBuffPlateGui(self.playerID, aLiteners, self.readAllBuffPlatesEventFunc)
-end
-
-function PlayerBuffs:UnsubscribeBuffPlateGui()
-	self.base:UnsubscribeBuffPlateGui()
-end
-
 
 function PlayerBuffs:TryDestroy()
 	if self.base:CanDestroy() then
@@ -303,8 +293,11 @@ end
 
 local function CallChangeListenerIfNeeded(aBuffID, aBuffDynamicInfo, aListener, aWorkingBuffsList)
 	if aListener and aWorkingBuffsList[aBuffID] then
-		aListener.listenerChangeBuff(aBuffID, aBuffDynamicInfo, aListener)
+		local buffDynamicInfo = aBuffDynamicInfo or cachedGetBuffDynamicInfo(aBuffID)
+		aListener.listenerChangeBuff(aBuffID, buffDynamicInfo, aListener)
+		return buffDynamicInfo
 	end
+	return nil
 end
 
 function PlayerBuffs:GetChangedEventFunc()
@@ -314,30 +307,22 @@ function PlayerBuffs:GetChangedEventFunc()
 		if not cachedIsValidBuff(aBuffID) then
 			return
 		end
-		
-		local buffDynamicInfo = cachedGetBuffDynamicInfo(aBuffID)
-		if not buffDynamicInfo then
-			return
-		end
-		CallChangeListenerIfNeeded(aBuffID, buffDynamicInfo, self.base.guiRaidListener, self.workingRaidBuffsID)
-		CallChangeListenerIfNeeded(aBuffID, buffDynamicInfo, self.base.guiTargetListener, self.workingTargeterBuffsID)
+
+		local buffDynamicInfo = CallChangeListenerIfNeeded(aBuffID, nil, self.base.guiRaidListener, self.workingRaidBuffsID)
+		buffDynamicInfo = CallChangeListenerIfNeeded(aBuffID, buffDynamicInfo, self.base.guiTargetListener, self.workingTargeterBuffsID)
 		
 		for i, buffPlate in pairs(self.base.guiBuffPlatesListeners) do
 			self:InitPlatesBuffsList(i)
-			CallChangeListenerIfNeeded(aBuffID, buffDynamicInfo, buffPlate, self.workingPlateBuffsID[i])
+			buffDynamicInfo = CallChangeListenerIfNeeded(aBuffID, buffDynamicInfo, buffPlate, self.workingPlateBuffsID[i])
 		end
 		CallChangeListenerIfNeeded(aBuffID, buffDynamicInfo, self.base.guiAboveHeadListener, self.workingAboveHeadBuffsID)
 	end
 end
 
 function PlayerBuffs:RegisterEvent(anID)
-	self.unitParams.objectId = anID
-
-	cachedRegisterEventHandler(self.addEventFunc, 'EVENT_OBJECT_BUFF_ADDED', self.unitParams)
-	cachedRegisterEventHandler(self.delEventFunc, 'EVENT_OBJECT_BUFF_REMOVED', self.unitParams)
+	cachedEnablePersonalEvent('EVENT_OBJECT_BUFF_ADDED', anID)
+	cachedEnablePersonalEvent('EVENT_OBJECT_BUFF_REMOVED', anID)
 	
-	--common.EnablePersonalEvent('EVENT_OBJECT_BUFF_ADDED', anID)
-	--common.EnablePersonalEvent('EVENT_OBJECT_BUFF_REMOVED', anID)
 	if g_debugSubsrb then
 		self.base:reg("buff")
 		self.base:reg("buff")
@@ -345,12 +330,9 @@ function PlayerBuffs:RegisterEvent(anID)
 end
 
 function PlayerBuffs:UnRegisterEvent()
-	cachedUnRegisterEventHandler(self.addEventFunc, 'EVENT_OBJECT_BUFF_ADDED', self.unitParams)
-	cachedUnRegisterEventHandler(self.delEventFunc, 'EVENT_OBJECT_BUFF_REMOVED', self.unitParams)
-	
-	--common.DisablePersonalEvent('EVENT_OBJECT_BUFF_ADDED', anID)
-	--common.DisablePersonalEvent('EVENT_OBJECT_BUFF_REMOVED', anID)
-	
+	cachedDisablePersonalEvent('EVENT_OBJECT_BUFF_ADDED', self.playerID)
+	cachedDisablePersonalEvent('EVENT_OBJECT_BUFF_REMOVED', self.playerID)
+		
 	if g_debugSubsrb then
 		self.base:unreg("buff")
 		self.base:unreg("buff")

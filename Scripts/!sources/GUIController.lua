@@ -1352,7 +1352,7 @@ function RaidChanged(aParams, aFullUpdate)
 			end
 		end
 	else
-		UnsubscribeRaidListeners()
+		UnsubscribeAllByType(enumSubscribeType.Raid)
 	end
 	
 	for _, party in ipairs(m_raidPlayerPanelList) do
@@ -1630,7 +1630,7 @@ local function CreateTargeterPanelCache()
 end
 
 local function ClearTargetPanels()
-	UnsubscribeTargetListener()
+	UnsubscribeAllByType(enumSubscribeType.Targeter)
 	for _, statusGroup in ipairs(m_targeterPlayerPanelList) do
 		for _, playerBar in ipairs(statusGroup) do
 			HidePlayerBar(playerBar)
@@ -2186,19 +2186,6 @@ function StopShowProgressNow(anObjID)
 	m_progressBuffQueue[anObjID] = nil
 end
 
-
-local function CheckSpawnAndDespawnAtSameTime(aParams)
-	for _, despawnedObjID in pairs(aParams.despawned) do
-		for _, spawnedObjID in pairs(aParams.spawned) do
-			if despawnedObjID == spawnedObjID then
-				LogInfo("SPAWN AND DESPAWN = ", despawnedObjID)
-				return true
-			end
-		end
-	end
-	return false
-end
-
 local function UnitChanged(aParams)
 	local profile = GetCurrentProfile()
 	local existSpawned = {}
@@ -2216,22 +2203,14 @@ local function UnitChanged(aParams)
 	end
 	if m_targetSubSystemLoaded and m_currTargetType ~= TARGETS_DISABLE then	
 		for _, objID in ipairs(aParams.despawned) do
-			if objID then
-				EraseTarget(objID)
-			end
+			EraseTarget(objID)
+			UnsubscribeTargetListener(objID)
 		end
-		--[[ по заверению разработчика такое невозможно
-		--если один и тот же объект в spawned и в despawned, то нужно обязательно вызвать отписку всех для despawned, а лишь затем обработать spawned
-		if CheckSpawnAndDespawnAtSameTime(aParams) then
-			RedrawTargeter(m_currTargetType)
-		end]]
 	end
 	
 	if m_castSubSystemLoaded and profile.castFormSettings.showImportantCasts then
 		for _, objID in ipairs(aParams.despawned) do
-			if objID then
-				StopShowProgressNow(objID)
-			end
+			StopShowProgressNow(objID)
 		end
 	end
 	
@@ -2421,6 +2400,7 @@ function OnEventSecondTimer()
 					if not reallyExist then
 						eraseSomeTarget = true
 						EraseTarget(playerBar.playerID)
+						UnsubscribeTargetListener(playerBar.playerID)
 					end
 				end
 			end
@@ -2561,7 +2541,7 @@ function UnloadRaidSubSystem()
 	common.UnRegisterEventHandler(ReadyCheckChanged, "EVENT_READY_CHECK_INFO_CHANGED")
 	common.UnRegisterEventHandler(ReadyCheckEnded, "EVENT_READY_CHECK_ENDED")
 	
-	UnsubscribeRaidListeners()
+	UnsubscribeAllByType(enumSubscribeType.Raid)
 	FabricDestroyUnused()
 	StopMove()
 	for _, party in ipairs(m_raidPlayerPanelList) do
@@ -2634,7 +2614,7 @@ function UnloadGroupBuffSubSystem()
 	common.UnRegisterEventHandler(CannotAttachPanelAboveHead, "EVENT_CANNOT_ATTACH_WIDGET_3D")
 	
 	hide(m_buffsGroupParentForm)
-	UnsubscribeGroupBuffListeners()
+	UnsubscribeAllByType(enumSubscribeType.BuffPlate)
 	DestroyGroupBuffPanels()
 	m_buffGroupSubSystemLoaded = false
 	RemoveAllAboveHeadPanels()
@@ -2835,7 +2815,6 @@ function GUIControllerAfterAvatarInit()
 	common.RegisterEventHandler(OnEventSecondTimer, "EVENT_SECOND_TIMER")
 	
 	common.RegisterEventHandler(TargetChanged, "EVENT_AVATAR_TARGET_CHANGED")
-	common.RegisterEventHandler(BuffsChanged, "EVENT_OBJECT_BUFFS_ELEMENT_CHANGED")
 	common.RegisterEventHandler(UnitChanged, "EVENT_UNITS_CHANGED")
 	common.RegisterEventHandler(UnitNameChanged, "EVENT_OBJECT_NAME_CHANGED")
 	common.RegisterEventHandler(clearSpellCache, "EVENT_SPELLBOOK_CHANGED")
@@ -2859,14 +2838,15 @@ function GUIControllerAfterAvatarInit()
 	
 	common.RegisterEventHandler(AddonStateChanged, "EVENT_ADDON_LOAD_STATE_CHANGED", { name = common.GetAddonSysName() })
 		
-	--EVENT_TRACK_ADDED
 
-	
-	--из-за лимита в 500 подписок на события какие не требуют привязки по ID вынесены из PlayerInfo
 	common.RegisterEventHandler(AfkChanged, "EVENT_AFK_STATE_CHANGED")
 	common.RegisterEventHandler(UnitDeadChanged, "EVENT_UNIT_DEAD_CHANGED")
-	common.RegisterEventHandler(WoundsChanged, "EVENT_UNIT_WOUNDS_COMPLEXITY_CHANGED")
 	common.RegisterEventHandler(UpdateUnselectable, "EVENT_OBJECT_SELECTABLE_CHANGED")
+	common.RegisterEventHandler(ManaChanged, "EVENT_UNIT_MANA_PERCENTAGE_CHANGED")
+	common.RegisterEventHandler(HpChanged, "EVENT_OBJECT_HEALTH_CHANGED")
+	common.RegisterEventHandler(BuffsChanged, "EVENT_OBJECT_BUFFS_ELEMENT_CHANGED")
+	common.RegisterEventHandler(BuffAdded, "EVENT_OBJECT_BUFF_ADDED")
+	common.RegisterEventHandler(BuffRemoved, "EVENT_OBJECT_BUFF_REMOVED")
 	
 	common.RegisterReactionHandler(OnLeftClick, "OnPlayerBarLeftClick")
 	common.RegisterReactionHandler(OnRightClick, "OnPlayerBarRightClick" )

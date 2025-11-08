@@ -16,13 +16,13 @@ local function FabricMakePlayerInfoForGroupBuff(anID, aListeners, aNeedSpells)
 	if not player.buffs then
 		player.buffs = CreatePlayerSubInfo(anID, PlayerBuffs)
 	end
-	player.buffs:SubscribeBuffPlateGui(aListeners)
+	player.buffs:SubscribeByType(enumSubscribeType.BuffPlate, aListeners)
 	
 	if aNeedSpells then
 		if not player.spells then
 			player.spells = CreatePlayerSubInfo(anID, PlayerSpells)
 		end
-		player.spells:SubscribeBuffPlateGui(aListeners)
+		player.spells:SubscribeByType(enumSubscribeType.BuffPlate, aListeners)
 	end
 	
 	m_players[anID] = player
@@ -37,7 +37,7 @@ local function FabricMakePlayerInfoForAboveHead(anID, aListener)
 	if not player.buffs then
 		player.buffs = CreatePlayerSubInfo(anID, PlayerBuffs)
 	end
-	player.buffs:SubscribeAboveHeadGui(aListener)
+	player.buffs:SubscribeByType(enumSubscribeType.AboveHead, aListener)
 	
 	m_players[anID] = player
 end
@@ -53,64 +53,34 @@ local function FabricMakePlayerInfo(anID, aListener, anIsRaidInfo)
 	if not anIsRaidInfo then
 		settings = profile.targeterFormSettings
 	end
+	local subscribeType = anIsRaidInfo and enumSubscribeType.Raid or enumSubscribeType.Targeter
 	
 	if not player.hp then
 		player.hp = CreatePlayerSubInfo(anID, PlayerHP)	
 	end
-	if anIsRaidInfo then
-		player.hp:SubscribeRaidGui(aListener)
-	else
-		player.hp:SubscribeTargetGui(aListener)
-	end
-	--[[
-	--15.0 unit.GetRelativeWoundsComplexity removed
-	if settings.woundsShowButton and unit.GetRelativeWoundsComplexity then
-		if not player.wounds then
-			player.wounds = CreatePlayerSubInfo(anID, PlayerWounds)
-		end
-		if anIsRaidInfo then
-			player.wounds:SubscribeRaidGui(aListener)
-		else
-			player.wounds:SubscribeTargetGui(aListener)
-		end
-	end]]
+	player.hp:SubscribeByType(subscribeType, aListener)
+	
 	if anIsRaidInfo then
 		if not player.afk then
 			player.afk = CreatePlayerSubInfo(anID, PlayerAFK)	
 		end
-		if anIsRaidInfo then
-			player.afk:SubscribeRaidGui(aListener)
-		else
-			--player.afk:SubscribeTargetGui(aListener)
-		end
+		player.afk:SubscribeByType(subscribeType, aListener)
 	end
 	if not player.dead then
 		player.dead = CreatePlayerSubInfo(anID, PlayerDead)	
 	end
-	if anIsRaidInfo then
-		player.dead:SubscribeRaidGui(aListener)
-	else
-		player.dead:SubscribeTargetGui(aListener)
-	end
+	player.dead:SubscribeByType(subscribeType, aListener)
 	
 	if not player.canSelect then
 		player.canSelect = CreatePlayerSubInfo(anID, PlayerCanSelect)	
 	end
-	if anIsRaidInfo then
-		player.canSelect:SubscribeRaidGui(aListener)
-	else
-		player.canSelect:SubscribeTargetGui(aListener)
-	end
-	
+	player.canSelect:SubscribeByType(subscribeType, aListener)
+
 	if settings.showManaButton then
 		if not player.mana then
 			player.mana = CreatePlayerSubInfo(anID, PlayerMana)
 		end
-		if anIsRaidInfo then
-			player.mana:SubscribeRaidGui(aListener)
-		else
-			player.mana:SubscribeTargetGui(aListener)
-		end		
+		player.mana:SubscribeByType(subscribeType, aListener)
 	end
 		
 	if anIsRaidInfo then
@@ -118,18 +88,14 @@ local function FabricMakePlayerInfo(anID, aListener, anIsRaidInfo)
 			if not player.distance then
 				player.distance = CreatePlayerSubInfo(anID, PlayerDistance)
 			end
-			player.distance:SubscribeRaidGui(aListener)
+			player.distance:SubscribeByType(subscribeType, aListener)
 		end
 	end
 	
 	if not player.buffs then
 		player.buffs = CreatePlayerSubInfo(anID, PlayerBuffs)
 	end
-	if anIsRaidInfo then
-		player.buffs:SubscribeRaidGui(aListener)
-	else
-		player.buffs:SubscribeTargetGui(aListener)
-	end
+	player.buffs:SubscribeByType(subscribeType, aListener)
 	
 	m_players[anID] = player
 end
@@ -151,55 +117,39 @@ function FabricMakeGroupBuffPlayerInfo(anID, aListeners, aNeedSpells)
 end
 
 function FabricClearAll()
-	UnsubscribeRaidListeners()
-	UnsubscribeTargetListener()
-	UnsubscribeGroupBuffListeners()
-	UnsubscribeAboveHeadListeners()
+	UnsubscribeAllByType(enumSubscribeType.Raid)
+	UnsubscribeAllByType(enumSubscribeType.Targeter)
+	UnsubscribeAllByType(enumSubscribeType.BuffPlate)
+	UnsubscribeAllByType(enumSubscribeType.AboveHead)
 	FabricDestroyUnused()
 end
 
-function UnsubscribeAboveHeadListeners(anID)
-	for playerID, player in pairs(m_players) do
-		if not anID or playerID == anID then
-			for _, playerInfo in pairs(player) do
-				if playerInfo.UnsubscribeAboveHeadGui then
-					playerInfo:UnsubscribeAboveHeadGui()
-				end
-			end
-		end
+local function UnsubscribeListenerByType(aType, aPlayer)
+	for _, playerInfo in pairs(aPlayer or {}) do
+		playerInfo:UnsubscribeByType(aType)
 	end
+end
+
+function UnsubscribeAllByType(aType)
+	for _, player in pairs(m_players) do
+		UnsubscribeListenerByType(aType, player)
+	end
+end
+
+function UnsubscribeAboveHeadListeners(anID)
+	UnsubscribeListenerByType(enumSubscribeType.AboveHead, m_players[anID])
 end
 
 function UnsubscribeGroupBuffListeners(anID)
-	for playerID, player in pairs(m_players) do
-		if not anID or playerID == anID then
-			for _, playerInfo in pairs(player) do
-				if playerInfo.UnsubscribeBuffPlateGui then
-					playerInfo:UnsubscribeBuffPlateGui()
-				end
-			end
-		end
-	end
+	UnsubscribeListenerByType(enumSubscribeType.BuffPlate, m_players[anID])
 end
 
 function UnsubscribeRaidListeners(anID)
-	for playerID, player in pairs(m_players) do
-		if not anID or playerID == anID then
-			for _, playerInfo in pairs(player) do
-				playerInfo:UnsubscribeRaidGui()
-			end
-		end
-	end
+	UnsubscribeListenerByType(enumSubscribeType.Raid, m_players[anID])
 end
 
 function UnsubscribeTargetListener(anID)
-	for playerID, player in pairs(m_players) do
-		if not anID or playerID == anID then
-			for _, playerInfo in pairs(player) do
-				playerInfo:UnsubscribeTargetGui()
-			end
-		end
-	end
+	UnsubscribeListenerByType(enumSubscribeType.Targeter, m_players[anID])
 end
 
 function FabricDestroyUnused()
@@ -258,6 +208,34 @@ function BuffsChanged(aParams)
 	end 
 end
 
+function BuffAdded(aParams)
+	local playerInfo = m_players[aParams.objectId]
+	if playerInfo then
+		playerInfo.buffs.addEventFunc(aParams)
+	end
+end
+
+function BuffRemoved(aParams)
+	local playerInfo = m_players[aParams.objectId]
+	if playerInfo then
+		playerInfo.buffs.delEventFunc(aParams)
+	end
+end
+
+function ManaChanged(aParams)
+	local playerInfo = m_players[aParams.unitId]
+	if playerInfo and playerInfo.mana then
+		playerInfo.mana.eventFunc(aParams)
+	end
+end
+
+function HpChanged(aParams)
+	local playerInfo = m_players[aParams.id]
+	if playerInfo and playerInfo.hp then
+		playerInfo.hp.eventFunc(aParams)
+	end
+end
+
 function AfkChanged(aParams)
 	if aParams.id then
 		local playerInfo = m_players[aParams.id]
@@ -275,15 +253,6 @@ function UnitDead(aParams)
 		end
 		if playerInfo and playerInfo.hp then
 			playerInfo.hp.eventFunc(aParams)
-		end
-	end
-end
-
-function WoundsChanged(aParams)
-	if aParams.unitId then
-		local playerInfo = m_players[aParams.unitId]
-		if playerInfo and playerInfo.wounds then
-			playerInfo.wounds.eventFunc(aParams)
 		end
 	end
 end

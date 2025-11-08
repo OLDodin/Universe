@@ -17,27 +17,25 @@ function PlayerDistance:Init(anID)
 	self:RegisterEvent(anID)
 end
 
-function PlayerDistance:SubscribeTargetGui(aLitener)
+function PlayerDistance:SubscribeByType(aType, aLitener)
+	if aType == enumSubscribeType.Raid then
+		self.lastDistance = -1
+		self.lastAngle = -1
+		self.skipCnt = 0
+		self.base:SubscribeRaidGui(self.playerID, aLitener, self.eventFunc)
+		self:UpdateValueIfNeeded()
+	end
 end
 
-function PlayerDistance:UnsubscribeTargetGui()
-end
-
-function PlayerDistance:SubscribeRaidGui(aLitener)
-	self.lastDistance = -1
-	self.lastAngle = -1
-	self.skipCnt = 0
-	self.base:SubscribeRaidGui(self.playerID, aLitener, self.eventFunc)
-	self:UpdateValueIfNeeded()
-end
-
-function PlayerDistance:UnsubscribeRaidGui()
-	local info = { }
-	info.needShow = false
-	info.visibleChanged = true	
-	local res = self.base.guiRaidListener and self.base.guiRaidListener.listenerDistance(info, self.base.guiRaidListener)
-	
-	self.base:UnsubscribeRaidGui()
+function PlayerDistance:UnsubscribeByType(aType)
+	if aType == enumSubscribeType.Raid then
+		local info = { }
+		info.needShow = false
+		info.visibleChanged = true	
+		local res = self.base.guiRaidListener and self.base.guiRaidListener.listenerDistance(info, self.base.guiRaidListener)
+		
+		self.base:UnsubscribeRaidGui()
+	end
 end
 
 function PlayerDistance:TryDestroy()

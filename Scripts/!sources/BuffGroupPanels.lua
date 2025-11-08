@@ -306,10 +306,8 @@ function DespawnedUnitsForAboveHead(aDespawnedUnitList)
 	end
 	
 	for _, objID in ipairs(aDespawnedUnitList) do
-		if objID then
-			RemovePanelAboveHead(objID)
-			UnsubscribeAboveHeadListeners(objID)
-		end
+		RemovePanelAboveHead(objID)
+		UnsubscribeAboveHeadListeners(objID)
 	end
 	FabricDestroyUnused()
 end

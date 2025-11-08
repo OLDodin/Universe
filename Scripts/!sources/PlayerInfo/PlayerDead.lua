@@ -20,22 +20,22 @@ function PlayerDead:ClearLastValues()
 	self.lastDead = -1
 end
 
-function PlayerDead:SubscribeTargetGui(aLitener)
-	self:ClearLastValues()
-	self.base:SubscribeTargetGui(self.playerID, aLitener, self.eventFunc)
+function PlayerDead:SubscribeByType(aType, aLitener)
+	if aType == enumSubscribeType.Raid then
+		self:ClearLastValues()
+		self.base:SubscribeRaidGui(self.playerID, aLitener, self.eventFunc)
+	elseif aType == enumSubscribeType.Targeter then
+		self:ClearLastValues()
+		self.base:SubscribeTargetGui(self.playerID, aLitener, self.eventFunc)
+	end
 end
 
-function PlayerDead:UnsubscribeTargetGui()
-	self.base:UnsubscribeTargetGui()
-end
-
-function PlayerDead:SubscribeRaidGui(aLitener)
-	self:ClearLastValues()
-	self.base:SubscribeRaidGui(self.playerID, aLitener, self.eventFunc)
-end
-
-function PlayerDead:UnsubscribeRaidGui()
-	self.base:UnsubscribeRaidGui()
+function PlayerDead:UnsubscribeByType(aType)
+	if aType == enumSubscribeType.Raid then
+		self.base:UnsubscribeRaidGui()
+	elseif aType == enumSubscribeType.Targeter then
+		self.base:UnsubscribeTargetGui()
+	end
 end
 
 function PlayerDead:TryDestroy()

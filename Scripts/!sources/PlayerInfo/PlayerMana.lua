@@ -1,12 +1,11 @@
 Global( "PlayerMana", {} )
 
 local cachedGetManaPercentage = unit.GetManaPercentage
-local cachedRegisterEventHandler = common.RegisterEventHandler
-local cachedUnRegisterEventHandler = common.UnRegisterEventHandler
+local cachedEnablePersonalEvent = common.EnablePersonalEvent
+local cachedDisablePersonalEvent = common.DisablePersonalEvent
 
 function PlayerMana:Init(anID)
 	self.playerID = anID
-	self.unitParams = {}
 	self.mana = 0
 	self.lastMana = -1
 	
@@ -22,22 +21,22 @@ function PlayerMana:ClearLastValues()
 	self.lastMana = -1
 end
 
-function PlayerMana:SubscribeTargetGui(aLitener)
-	self:ClearLastValues()
-	self.base:SubscribeTargetGui(self.playerID, aLitener, self.eventFunc)
+function PlayerMana:SubscribeByType(aType, aLitener)
+	if aType == enumSubscribeType.Raid then
+		self:ClearLastValues()
+		self.base:SubscribeRaidGui(self.playerID, aLitener, self.eventFunc)
+	elseif aType == enumSubscribeType.Targeter then
+		self:ClearLastValues()
+		self.base:SubscribeTargetGui(self.playerID, aLitener, self.eventFunc)
+	end
 end
 
-function PlayerMana:UnsubscribeTargetGui()
-	self.base:UnsubscribeTargetGui()
-end
-
-function PlayerMana:SubscribeRaidGui(aLitener)
-	self:ClearLastValues()
-	self.base:SubscribeRaidGui(self.playerID, aLitener, self.eventFunc)
-end
-
-function PlayerMana:UnsubscribeRaidGui()
-	self.base:UnsubscribeRaidGui()
+function PlayerMana:UnsubscribeByType(aType)
+	if aType == enumSubscribeType.Raid then
+		self.base:UnsubscribeRaidGui()
+	elseif aType == enumSubscribeType.Targeter then
+		self.base:UnsubscribeTargetGui()
+	end
 end
 
 function PlayerMana:TryDestroy()
@@ -67,15 +66,16 @@ function PlayerMana:GetEventFunc()
 end
 
 function PlayerMana:RegisterEvent(anID)
-	self.unitParams.unitId = anID
-	cachedRegisterEventHandler(self.eventFunc, "EVENT_UNIT_MANA_PERCENTAGE_CHANGED", self.unitParams)
+	cachedEnablePersonalEvent("EVENT_UNIT_MANA_PERCENTAGE_CHANGED", anID)
+	
 	if g_debugSubsrb then
 		self.base:reg("mana")
 	end
 end
 
 function PlayerMana:UnRegisterEvent()
-	cachedUnRegisterEventHandler(self.eventFunc, "EVENT_UNIT_MANA_PERCENTAGE_CHANGED", self.unitParams)
+	cachedDisablePersonalEvent("EVENT_UNIT_MANA_PERCENTAGE_CHANGED", self.playerID)
+
 	if g_debugSubsrb then
 		self.base:unreg("mana")
 	end

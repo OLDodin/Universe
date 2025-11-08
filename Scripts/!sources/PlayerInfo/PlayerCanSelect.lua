@@ -20,22 +20,22 @@ function PlayerCanSelect:ClearLastValues()
 	self.lastCanSelect = -1
 end
 
-function PlayerCanSelect:SubscribeTargetGui(aLitener)
-	self:ClearLastValues()
-	self.base:SubscribeTargetGui(self.playerID, aLitener, self.eventFunc)
+function PlayerCanSelect:SubscribeByType(aType, aLitener)
+	if aType == enumSubscribeType.Raid then
+		self:ClearLastValues()
+		self.base:SubscribeRaidGui(self.playerID, aLitener, self.eventFunc)
+	elseif aType == enumSubscribeType.Targeter then
+		self:ClearLastValues()
+		self.base:SubscribeTargetGui(self.playerID, aLitener, self.eventFunc)
+	end
 end
 
-function PlayerCanSelect:UnsubscribeTargetGui()
-	self.base:UnsubscribeTargetGui()
-end
-
-function PlayerCanSelect:SubscribeRaidGui(aLitener)
-	self:ClearLastValues()
-	self.base:SubscribeRaidGui(self.playerID, aLitener, self.eventFunc)
-end
-
-function PlayerCanSelect:UnsubscribeRaidGui()
-	self.base:UnsubscribeRaidGui()
+function PlayerCanSelect:UnsubscribeByType(aType)
+	if aType == enumSubscribeType.Raid then
+		self.base:UnsubscribeRaidGui()
+	elseif aType == enumSubscribeType.Targeter then
+		self.base:UnsubscribeTargetGui()
+	end
 end
 
 function PlayerCanSelect:TryDestroy()

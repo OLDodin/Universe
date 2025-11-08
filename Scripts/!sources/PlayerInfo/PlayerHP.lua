@@ -2,12 +2,11 @@ Global( "PlayerHP", {} )
 
 local cachedIsDead = object.IsDead
 local cachedGetHealthInfo = object.GetHealthInfo
-local cachedRegisterEventHandler = common.RegisterEventHandler
-local cachedUnRegisterEventHandler = common.UnRegisterEventHandler
+local cachedEnablePersonalEvent = common.EnablePersonalEvent
+local cachedDisablePersonalEvent = common.DisablePersonalEvent
 
 function PlayerHP:Init(anID)
 	self.playerID = anID
-	self.objParams = {}
 	self.shield = 0
 	self.hp = 0
 	self.isInvulnerable = false
@@ -32,22 +31,22 @@ function PlayerHP:ClearLastValues()
 	self.lastIsInvulnerable = -1
 end
 
-function PlayerHP:SubscribeTargetGui(aLitener)
-	self:ClearLastValues()
-	self.base:SubscribeTargetGui(self.playerID, aLitener, self.eventFunc)
+function PlayerHP:SubscribeByType(aType, aLitener)
+	if aType == enumSubscribeType.Raid then
+		self:ClearLastValues()
+		self.base:SubscribeRaidGui(self.playerID, aLitener, self.eventFunc)
+	elseif aType == enumSubscribeType.Targeter then
+		self:ClearLastValues()
+		self.base:SubscribeTargetGui(self.playerID, aLitener, self.eventFunc)
+	end
 end
 
-function PlayerHP:UnsubscribeTargetGui()
-	self.base:UnsubscribeTargetGui()
-end
-
-function PlayerHP:SubscribeRaidGui(aLitener)
-	self:ClearLastValues()
-	self.base:SubscribeRaidGui(self.playerID, aLitener, self.eventFunc)
-end
-
-function PlayerHP:UnsubscribeRaidGui()
-	self.base:UnsubscribeRaidGui()
+function PlayerHP:UnsubscribeByType(aType)
+	if aType == enumSubscribeType.Raid then
+		self.base:UnsubscribeRaidGui()
+	elseif aType == enumSubscribeType.Targeter then
+		self.base:UnsubscribeTargetGui()
+	end
 end
 
 function PlayerHP:TryDestroy()
@@ -121,15 +120,16 @@ function PlayerHP:GetEventFunc()
 end
 
 function PlayerHP:RegisterEvent(anID)
-	self.objParams.id = anID
-	cachedRegisterEventHandler(self.eventFunc, "EVENT_OBJECT_HEALTH_CHANGED", self.objParams)
+	cachedEnablePersonalEvent("EVENT_OBJECT_HEALTH_CHANGED", anID)
+
 	if g_debugSubsrb then
 		self.base:reg("hp")
 	end
 end
 
 function PlayerHP:UnRegisterEvent()
-	cachedUnRegisterEventHandler(self.eventFunc, "EVENT_OBJECT_HEALTH_CHANGED", self.objParams)
+	cachedDisablePersonalEvent("EVENT_OBJECT_HEALTH_CHANGED", self.playerID)
+
 	if g_debugSubsrb then
 		self.base:unreg("hp")
 	end

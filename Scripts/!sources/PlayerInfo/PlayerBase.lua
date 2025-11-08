@@ -2,6 +2,8 @@ Global( "PlayerBase", {} )
 
 Global( "g_regCnt", {})
 
+Global( "enumSubscribeType", { Raid = 1, Targeter = 2, BuffPlate = 3, AboveHead = 4 } )
+
 function PlayerBase:Init()
 	self.refCnt = 0
 	self.guiRaidListener = nil
