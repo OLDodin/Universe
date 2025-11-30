@@ -1465,5 +1465,9 @@
       <name>normalFrameColorHeader</name>
       <resource href="normalFrameColorHeader.txt"/>
     </Item>
+	<Item>
+      <name>whisperHelp</name>
+      <resource href="whisperHelp.txt"/>
+    </Item>
   </items>
 </UIRelatedTexts>

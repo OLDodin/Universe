@@ -116,12 +116,15 @@ function GenerateMenuInfos(aPlayerBar, aMyUniqueID)
 ]]
 	if canWhisper then
 		AddToMenu("whisperMenuButton", function ()
+			LogToChat(getLocale()["whisperHelp"], "error")
+			mission.SetChatInputText(ConcatWString(toWString("/whisper "), name, toWString(" ")), 0)	
+			--[[
 			local chat = common.GetAddonMainForm("ChatInput")
 			chat=getChild(chat, "ChatInput")
 			m_whisperMode = true
 			show(chat)
 			getChild(chat, "Input", true):SetFocus(true)
-			mission.SetChatInputText(ConcatWString(toWString("/whisper "), name, toWString(" ")), 0)
+			]]
 			CloseMenu() end)
 	end
 
