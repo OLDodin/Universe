@@ -22,7 +22,7 @@ local function RemovePanel(anObjID)
 		panelForRemove.priority = NORMAL_PRIORITY_PANELS
 		
 		object.DetachWidget3D( anObjID, panelForRemove.panelWdg )
-		m_wtControl3D:RemoveWidget3D( panelForRemove.panelWdg )
+		--m_wtControl3D:RemoveWidget3D( panelForRemove.panelWdg )
 		m_usingPanels[anObjID] = nil
 		
 		--LogInfo("rem panel above head ", anObjID)
@@ -76,7 +76,7 @@ local function GetPanel(anObjID, aPriority)
 	panel.priority = aPriority
 	m_usingPanels[anObjID] = panel
 	
-	m_wtControl3D:AddWidget3D(panel.panelWdg, m_wdg3dSize, m_zeroPos, false, true, 80, WIDGET_3D_BIND_POINT_HIGH, 0.8, 1)
+	--m_wtControl3D:AddWidget3D(panel.panelWdg, m_wdg3dSize, m_zeroPos, false, true, 80, WIDGET_3D_BIND_POINT_HIGH, 0.8, 1)
 	object.AttachWidget3D( anObjID, m_wtControl3D, panel.panelWdg, 1.2)
 	show(panel.panelWdg)
 	
@@ -95,6 +95,7 @@ function InitAboveHeadPanelsCache(aForm)
 			local panelContainer = CreateGroupBuffPanel(aForm, settings, true, 100001+i)
 			hide(panelContainer.panelWdg)
 			panelContainer.ai = i
+			m_wtControl3D:AddWidget3D(panelContainer.panelWdg, m_wdg3dSize, m_zeroPos, false, true, 80, WIDGET_3D_BIND_POINT_HIGH, 0.8, 1)
 			table.insert(m_cachePanels, panelContainer)
 		end
 		m_aboveHeadInitialized = true
@@ -188,12 +189,10 @@ function RemoveAllAboveHeadPanels()
 		end
 	end
 	
-	m_usingPanels = {}
-	
-	for i=1, CACHE_PANELS_SIZE do
-		if m_cachePanels[i] then
-			destroy(m_cachePanels[i].panelWdg)
-		end
+	m_usingPanels = {} 
+	for _, panelContainer in ipairs(m_cachePanels) do
+		m_wtControl3D:RemoveWidget3D(panelContainer.panelWdg)
+		destroy(panelContainer.panelWdg)
 	end
 	m_cachePanels = {}
 	m_aboveHeadInitialized = false
