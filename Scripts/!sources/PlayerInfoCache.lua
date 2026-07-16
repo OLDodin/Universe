@@ -223,7 +223,7 @@ function BuffRemoved(aParams)
 end
 
 function ManaChanged(aParams)
-	local playerInfo = m_players[aParams.unitId]
+	local playerInfo = m_players[aParams.id]
 	if playerInfo and playerInfo.mana then
 		playerInfo.mana.eventFunc(aParams)
 	end

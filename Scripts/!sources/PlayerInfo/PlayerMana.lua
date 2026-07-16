@@ -1,6 +1,6 @@
 Global( "PlayerMana", {} )
 
-local cachedGetManaPercentage = unit.GetManaPercentage
+local cachedGetManaInfo = object.GetManaInfo
 local cachedEnablePersonalEvent = common.EnablePersonalEvent
 local cachedDisablePersonalEvent = common.DisablePersonalEvent
 
@@ -60,13 +60,14 @@ end
 
 function PlayerMana:GetEventFunc()
 	return function(aParams)
-		self.mana = cachedGetManaPercentage( aParams.unitId )
+		local manaInfo = cachedGetManaInfo( aParams.id or aParams.unitId)
+		self.mana = manaInfo and manaInfo.valuePercents or self.mana
 		self:UpdateValueIfNeededInternal()
 	end
 end
 
 function PlayerMana:RegisterEvent(anID)
-	cachedEnablePersonalEvent("EVENT_UNIT_MANA_PERCENTAGE_CHANGED", anID)
+	cachedEnablePersonalEvent("EVENT_OBJECT_MANA_CHANGED", anID)
 	
 	if g_debugSubsrb then
 		self.base:reg("mana")
@@ -74,7 +75,7 @@ function PlayerMana:RegisterEvent(anID)
 end
 
 function PlayerMana:UnRegisterEvent()
-	cachedDisablePersonalEvent("EVENT_UNIT_MANA_PERCENTAGE_CHANGED", self.playerID)
+	cachedDisablePersonalEvent("EVENT_OBJECT_MANA_CHANGED", self.playerID)
 
 	if g_debugSubsrb then
 		self.base:unreg("mana")

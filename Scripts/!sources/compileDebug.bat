@@ -34,7 +34,7 @@ set destPath=%startPath%..\%subPath:~0,-4%
 echo Converting %srcPath%
 
 cd /d "c:\LuaJIT\" 
-c:\LuaJIT\luajit.exe -bs "%srcPath%" "%destPath%.luac"
+c:\LuaJIT\luajit.exe -bg "%srcPath%" "%destPath%.luac"
 IF %ERRORLEVEL% NEQ 0 (
   goto :ERROR
 )

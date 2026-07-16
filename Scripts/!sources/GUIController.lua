@@ -2290,7 +2290,7 @@ local function GetPartyGUIToRaidGUIOptionsID()
 					for optionIndex = 0, GetTableSize( optionIds ) - 1 do
 						local optionId = optionIds[optionIndex]
 
-						if blockIndex == 0 and optionIndex == 6 then 
+						if blockIndex == 0 and optionIndex == 5 then 
 							return optionId
 						end
 					end
@@ -2842,7 +2842,7 @@ function GUIControllerAfterAvatarInit()
 	common.RegisterEventHandler(AfkChanged, "EVENT_AFK_STATE_CHANGED")
 	common.RegisterEventHandler(UnitDeadChanged, "EVENT_UNIT_DEAD_CHANGED")
 	common.RegisterEventHandler(UpdateUnselectable, "EVENT_OBJECT_SELECTABLE_CHANGED")
-	common.RegisterEventHandler(ManaChanged, "EVENT_UNIT_MANA_PERCENTAGE_CHANGED")
+	common.RegisterEventHandler(ManaChanged, "EVENT_OBJECT_MANA_CHANGED")
 	common.RegisterEventHandler(HpChanged, "EVENT_OBJECT_HEALTH_CHANGED")
 	common.RegisterEventHandler(BuffsChanged, "EVENT_OBJECT_BUFFS_ELEMENT_CHANGED")
 	common.RegisterEventHandler(BuffAdded, "EVENT_OBJECT_BUFF_ADDED")
