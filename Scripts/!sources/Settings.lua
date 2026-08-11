@@ -124,9 +124,7 @@ local function GenerateAboveHeadGroup()
 	return correctAboveHeadSettings
 end
 
-function GetDefaultSettings()
-	local defaultProfile = {}
-	
+local function GetDefaultMainSettings()
 	local mainFormSettings = {}
 	mainFormSettings.useRaidSubSystem = true
 	mainFormSettings.useTargeterSubSystem = true
@@ -135,6 +133,10 @@ function GetDefaultSettings()
 	mainFormSettings.useCastSubSystem = true
 	mainFormSettings.priorityMainForm = 4600
 	
+	return mainFormSettings
+end
+
+local function GetDefaultRaidSettings()
 	local raidFormSettings = {}
 	raidFormSettings.classColorModeButton = false
 	raidFormSettings.showManaButton = false
@@ -192,6 +194,10 @@ function GetDefaultSettings()
 	--"Выбит из седла"
 	table.insert(raidFormSettings.raidBuffs.customBuffs, GetRaidBuffSettings(locale["defaultBuff14"]))
 	
+	return raidFormSettings
+end
+
+local function GetDefaultTargeterSettings()
 	local targeterFormSettings = {}
 	targeterFormSettings.classColorModeButton = true
 	targeterFormSettings.showManaButton = false
@@ -232,6 +238,7 @@ function GetDefaultSettings()
 	targeterFormSettings.raidBuffs.customBuffs = {}
 	targeterFormSettings.myTargets = {}
 	
+	local locale = getLocale()
 
 	--"Аспект Защиты"
 	table.insert(targeterFormSettings.raidBuffs.customBuffs, GetTargeterBuffSettings(locale["defaultBuff1"]))
@@ -254,12 +261,19 @@ function GetDefaultSettings()
 	--"Лидерство"
 	table.insert(targeterFormSettings.raidBuffs.customBuffs, GetTargeterBuffSettings(locale["defaultBuff16"]))
 
-	
+	return targeterFormSettings
+end
+
+local function GetDefaultBuffSettings()
 	local buffFormSettings = {}
 	buffFormSettings.buffGroups = {}
 	buffFormSettings.buffGroupsUnicCnt = 0
 	table.insert(buffFormSettings.buffGroups, GenerateAboveHeadGroup())
-		
+	
+	return buffFormSettings
+end
+
+local function GetDefaultBindSettings()
 	local bindFormSettings = {}
 	bindFormSettings.actionLeftSwitchRaidSimple = SELECT_CLICK
 	bindFormSettings.actionLeftSwitchRaidShift = DISABLE_CLICK
@@ -288,6 +302,10 @@ function GetDefaultSettings()
 	bindFormSettings.actionRightSwitchProgressCastAlt = DISABLE_CLICK
 	bindFormSettings.actionRightSwitchProgressCastCtrl = DISABLE_CLICK
 	
+	return bindFormSettings
+end
+
+local function GetDefaultCastSettings()
 	local castFormSettings = {}
 	castFormSettings.showImportantCasts = true
 	castFormSettings.showImportantBuffs = true
@@ -298,14 +316,19 @@ function GetDefaultSettings()
 	castFormSettings.showOnlyMyTarget = false
 	castFormSettings.ignoreList = {}
 	
+	return castFormSettings
+end
+
+function GetDefaultSettings()
+	local defaultProfile = {}
 		
 	defaultProfile.name = "default"
-	defaultProfile.mainFormSettings = mainFormSettings
-	defaultProfile.raidFormSettings = raidFormSettings
-	defaultProfile.targeterFormSettings = targeterFormSettings
-	defaultProfile.buffFormSettings = buffFormSettings
-	defaultProfile.bindFormSettings = bindFormSettings
-	defaultProfile.castFormSettings = castFormSettings
+	defaultProfile.mainFormSettings = GetDefaultMainSettings()
+	defaultProfile.raidFormSettings = GetDefaultRaidSettings()
+	defaultProfile.targeterFormSettings = GetDefaultTargeterSettings()
+	defaultProfile.buffFormSettings = GetDefaultBuffSettings()
+	defaultProfile.bindFormSettings = GetDefaultBindSettings()
+	defaultProfile.castFormSettings = GetDefaultCastSettings()
 	
 	defaultProfile.version = GetSettingsVersion()
 	
@@ -341,7 +364,27 @@ function LoadSettings(aProfileInd)
 	m_currentProfileInd = aProfileInd
 
 	SetCurrentProfileInd(aProfileInd)
-
+	
+	-- исправляем если таинственным образом стерты настройки одной из подсиситем
+	if not m_currentProfile.mainFormSettings then
+		m_currentProfile.mainFormSettings = GetDefaultMainSettings()
+	end
+	if not m_currentProfile.raidFormSettings then
+		m_currentProfile.raidFormSettings = GetDefaultRaidSettings()
+	end
+	if not m_currentProfile.targeterFormSettings then
+		m_currentProfile.targeterFormSettings = GetDefaultTargeterSettings()
+	end
+	if not m_currentProfile.buffFormSettings then
+		m_currentProfile.buffFormSettings = GetDefaultBuffSettings()
+	end
+	if not m_currentProfile.bindFormSettings then
+		m_currentProfile.bindFormSettings = GetDefaultBindSettings()
+	end
+	if not m_currentProfile.castFormSettings then
+		m_currentProfile.castFormSettings = GetDefaultCastSettings()
+	end
+	
 	if m_currentProfile.version == 1 or m_currentProfile.version == nil then
 		local castFormSettings = {}
 		castFormSettings.showImportantCasts = true
