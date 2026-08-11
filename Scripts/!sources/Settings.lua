@@ -385,9 +385,11 @@ function LoadSettings(aProfileInd)
 		m_currentProfile.castFormSettings = GetDefaultCastSettings()
 	end
 	
-	if m_currentProfile.version == 1 or m_currentProfile.version == nil then
+	if m_currentProfile.version == nil then
 		m_currentProfile.version = 1
-		
+	end
+	
+	if m_currentProfile.version == 1 then
 		local castFormSettings = {}
 		castFormSettings.showImportantCasts = true
 		castFormSettings.showImportantBuffs = true
@@ -409,27 +411,27 @@ function LoadSettings(aProfileInd)
 		m_currentProfile.bindFormSettings.actionRightSwitchProgressCastAlt = DISABLE_CLICK
 		m_currentProfile.bindFormSettings.actionRightSwitchProgressCastCtrl = DISABLE_CLICK
 	end
-	if m_currentProfile.version < 2.2 or m_currentProfile.version == nil then
+	if m_currentProfile.version < 2.2 then
 		m_currentProfile.raidFormSettings.showRollOverInfo = true
 		m_currentProfile.targeterFormSettings.showRollOverInfo = true
 		
 		m_currentProfile.raidFormSettings.highlightSelectedButton = true
 		m_currentProfile.targeterFormSettings.highlightSelectedButton = true
 	end
-	if m_currentProfile.version < 2.3 or m_currentProfile.version == nil then
+	if m_currentProfile.version < 2.3 then
 		m_currentProfile.castFormSettings.ignoreList = {}
 	end
-	if m_currentProfile.version < 2.5 or m_currentProfile.version == nil then
+	if m_currentProfile.version < 2.5 then
 		m_currentProfile.raidFormSettings.showGrayOnDistanceButton = true
 		m_currentProfile.raidFormSettings.showFrameStripOnDistanceButton = true
 	end
-	if m_currentProfile.version < 2.6 or m_currentProfile.version == nil then
+	if m_currentProfile.version < 2.6 then
 		m_currentProfile.castFormSettings.fixed = false
 		for _, buffGroupSettings in pairs(m_currentProfile.buffFormSettings.buffGroups) do
 			buffGroupSettings.fixed = false
 		end
 	end
-	if m_currentProfile.version < 2.7 or m_currentProfile.version == nil then
+	if m_currentProfile.version < 2.7 then
 		-- панель настроек над головой должна быть одна, удаляем повторы причем основные настройки в таком случае с 1й, а бафов с последней (так это работало в таком случае)
 		local aboveHeadArr = {}
 		for i, buffGroupSettings in ipairs(m_currentProfile.buffFormSettings.buffGroups) do
@@ -477,7 +479,7 @@ function LoadSettings(aProfileInd)
 		m_currentProfile.buffFormSettings.buffGroupsUnicCnt = GetTableSize(m_currentProfile.buffFormSettings.buffGroups) + 1
 	end
 	
-	if m_currentProfile.version < 2.9 or m_currentProfile.version == nil then
+	if m_currentProfile.version < 2.9 then
 		m_currentProfile.raidFormSettings.showBuffTimeButton = false
 		m_currentProfile.targeterFormSettings.showBuffTimeButton = true
 		
@@ -505,7 +507,7 @@ function LoadSettings(aProfileInd)
 		end
 	end
 	
-	if m_currentProfile.version < 2.92 or m_currentProfile.version == nil then
+	if m_currentProfile.version < 2.92 then
 		for _, buffSettings in ipairs(m_currentProfile.raidFormSettings.raidBuffs.customBuffs) do
 			if not buffSettings.name then
 				buffSettings.name = common.GetEmptyWString()
@@ -530,14 +532,14 @@ function LoadSettings(aProfileInd)
 		end
 	end
 	
-	if m_currentProfile.version < 3.2 or m_currentProfile.version == nil then
+	if m_currentProfile.version < 3.2 then
 		if m_currentProfile.targeterFormSettings.classColorModeButton then
 			m_currentProfile.targeterFormSettings.enemyColor = copyTable(m_currentProfile.targeterFormSettings.friendColor)
 			m_currentProfile.targeterFormSettings.neitralColor = copyTable(m_currentProfile.targeterFormSettings.friendColor)
 		end
 	end
 	
-	if m_currentProfile.version < 3.3 or m_currentProfile.version == nil then
+	if m_currentProfile.version < 3.3 then
 		for _, buffGroupSettings in ipairs(m_currentProfile.buffFormSettings.buffGroups) do
 			buffGroupSettings.customBuffs = nil
 			for _, buffSettings in ipairs(buffGroupSettings.buffs or {}) do
@@ -561,7 +563,7 @@ function LoadSettings(aProfileInd)
 		end
 	end
 	
-	if m_currentProfile.version < 3.32 or m_currentProfile.version == nil then
+	if m_currentProfile.version < 3.32 then
 		--вынес старые проверки из окон настроек
 		if m_currentProfile.raidFormSettings.raidBuffs.colorDebuffButton == nil then
 			m_currentProfile.raidFormSettings.raidBuffs.colorDebuffButton = false 
@@ -666,20 +668,20 @@ function LoadSettings(aProfileInd)
 			m_currentProfile.mainFormSettings.useCastSubSystem = false 
 		end
 	end
-	if m_currentProfile.version < 3.36 or m_currentProfile.version == nil then
+	if m_currentProfile.version < 3.36 then
 		m_currentProfile.raidFormSettings.raidBuffs.systemBuffButton = false
 		m_currentProfile.targeterFormSettings.raidBuffs.systemBuffButton = false
 		for _, buffGroupSettings in ipairs(m_currentProfile.buffFormSettings.buffGroups) do
 			buffGroupSettings.systemBuffButton = false
 		end
 	end
-	if m_currentProfile.version < 3.44 or m_currentProfile.version == nil then
+	if m_currentProfile.version < 3.44 then
 		for _, buffGroupSettings in ipairs(m_currentProfile.buffFormSettings.buffGroups) do
 			buffGroupSettings.checkFriendCleanableUnk = false
 			buffGroupSettings.checkEnemyCleanableDebuffUnk = false
 		end
 	end
-	if m_currentProfile.version < 3.45 or m_currentProfile.version == nil then
+	if m_currentProfile.version < 3.45 then
 		m_currentProfile.mainFormSettings.priorityMainForm = 4600
 		m_currentProfile.raidFormSettings.normalFrameColor = g_normalFrameColor
 		m_currentProfile.targeterFormSettings.normalFrameColor = g_normalFrameColor

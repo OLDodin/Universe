@@ -1682,7 +1682,7 @@ local function TargetWorkSwitch()
 		HideTargetDropDownSelectPanel()
 		
 		UpdateLastTargetType(m_lastTargetType)
-		UpdateLastTargetWasActive(false)		
+		UpdateLastTargetWasActive(false)
 	else
 		m_currTargetType = m_lastTargetType
 		LoadTargeterData()
