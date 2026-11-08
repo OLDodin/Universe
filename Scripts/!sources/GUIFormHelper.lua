@@ -68,8 +68,7 @@ local function GetIndexForWidgetByMainPanel(anWidget)
 		local wdgName = getName(parentWdg)
 		if findSimpleString(wdgName, "containerMainPanel") then
 			local nStr = string.gsub(wdgName, "containerMainPanel", "")
-			--container from 0
-			return tonumber(nStr) - 1
+			return tonumber(nStr)
 		end
 		parentWdg = getParent(parentWdg)
 	end

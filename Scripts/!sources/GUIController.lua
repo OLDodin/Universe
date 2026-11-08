@@ -72,7 +72,7 @@ function DeleteProfile(aWdg)
 	
 	local allProfiles = GetAllProfiles()
 	DeleteContainer(allProfiles, aWdg, m_profilesForm)
-	ProfileWasDeleted(index+1)
+	ProfileWasDeleted(index)
 	if GetTableSize(allProfiles) == 0 then
 		local defaultProfile = GetDefaultSettings()
 		local currentDate = common.GetLocalDateTime()
@@ -144,7 +144,7 @@ function SaveProfileAs()
 end
 
 function LoadProfileBtnPressed(aWdg)
-	LoadSettings(GetIndexForWidget(aWdg) + 1)
+	LoadSettings(GetIndexForWidget(aWdg))
 	LoadForms()
 	ReloadAll()
 	HideFormsOfUnusedSubsystems()
@@ -161,7 +161,7 @@ function ExportProfile(aWdg)
 	if not m_exportProfileForm then
 		m_exportProfileForm = CreateExportProfilesForm()
 	end
-	SetEditText(m_exportProfileForm, ExportProfileByIndex(index+1))
+	SetEditText(m_exportProfileForm, ExportProfileByIndex(index))
 	WndMgr.ShowWdg(m_exportProfileForm)
 end
 
@@ -2274,49 +2274,12 @@ local function UpdateUnselectable(aParams)
 	SelectableChanged(aParams)
 end
 
-local function GetPartyGUIToRaidGUIOptionsID()
-	options.Update()
-	local pageIds = options.GetPageIds()
-	local pageId = pageIds[3]
-	if pageId then
-		local groupIds = options.GetGroupIds(pageId)
-		if groupIds then
-			for groupIndex = 0, GetTableSize( groupIds ) - 1 do
-				local groupId = groupIds[groupIndex]
-				local blockIds = options.GetBlockIds( groupId )
-				for blockIndex = 0, GetTableSize( blockIds ) - 1 do
-					local blockId = blockIds[blockIndex]
-					local optionIds = options.GetOptionIds( blockId )
-					for optionIndex = 0, GetTableSize( optionIds ) - 1 do
-						local optionId = optionIds[optionIndex]
-
-						if blockIndex == 0 and optionIndex == 5 then 
-							return optionId
-						end
-					end
-				end
-			end		
-		end
-	end
-end
-
 local function SwitchPartyGUIToRaidGUI()
-	local optionId = GetPartyGUIToRaidGUIOptionsID()
-	if optionId then
-		options.SetOptionCurrentIndex( optionId, 1 )
-		local pageIds = options.GetPageIds()
-		local pageId = pageIds[3]
-		options.Apply(pageId)
-	end
+	options.SetOptionEnabled("use_raid_for_group", true, true)
 end
 
 local function IsRaidGUIEnabled()
-	local optionId = GetPartyGUIToRaidGUIOptionsID()
-	if optionId then
-		local optionInfo = options.GetOptionInfo( optionId )
-		return optionInfo.currentIndex == 1
-	end
-	return false
+	return options.IsOptionEnabled("use_raid_for_group")
 end
 
 local function ApplyUnloadRaidSettings(anIsUnloadRaidSubsystem)

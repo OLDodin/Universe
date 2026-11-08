@@ -8,7 +8,7 @@ function onAOPanelStart( params )
 	
 		local SetVal = { val = userMods.ToWString( "U") }
 		local params = { header = SetVal, ptype = "button", size = 30 }
-		userMods.SendEvent( "AOPANEL_SEND_ADDON",
+		common.SendEvent( "AOPANEL_SEND_ADDON",
 			{ name = common.GetAddonName(), sysName = common.GetAddonName(), param = params } )
 
 		DnD.HideWdg(getChild(mainForm, "UniverseButton"))
@@ -25,7 +25,7 @@ end
 function onAOPanelRightClick( params )
 	if params.sender == common.GetAddonName() then
 		local SetVal = { val = userMods.ToWString( "U" )}
-		userMods.SendEvent( "AOPANEL_UPDATE_ADDON", { sysName = common.GetAddonName(), header = SetVal } )
+		common.SendEvent( "AOPANEL_UPDATE_ADDON", { sysName = common.GetAddonName(), header = SetVal } )
 	end
 	
 end

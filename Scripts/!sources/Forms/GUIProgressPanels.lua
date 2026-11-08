@@ -93,7 +93,7 @@ function SetBaseInfoProgressCastPanel(aBar, aInfo, aType)
 	
 	if aType == BUFF_PROGRESS then
 		if aInfo.buffInfo then
-			local buffCreatorID = aInfo.buffInfo.producer and aInfo.buffInfo.producer.casterId or nil
+			local buffCreatorID = aInfo.buffInfo.casterId
 			aBar.castedByMe = g_myAvatarID == buffCreatorID
 			if aInfo.buffInfo.texture then
 				setBackgroundTexture(aBar.iconWdg, aInfo.buffInfo.texture)

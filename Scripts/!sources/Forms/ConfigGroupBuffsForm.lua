@@ -182,15 +182,15 @@ function SaveConfigGroupBuffsForm(aForm, aClose)
 
 	local container = getChild(group5, "groupBuffContainer")
 	if container and m_currentFormSettings.buffs then
-		for i = 0, container:GetElementCount() - 1 do
+		for i = 1, container:GetElementCount() do
 			local mainContainerElementPanel = container:At(i)
 			local containerElementPanel = getChild(mainContainerElementPanel, "containerPanel")
-			local settingObj = m_currentFormSettings.buffs[i+1]
-			local editLine = getChild(containerElementPanel, "Name"..tostring(i+1))
+			local settingObj = m_currentFormSettings.buffs[i]
+			local editLine = getChild(containerElementPanel, "Name"..tostring(i))
 			settingObj.name = getText(editLine)
-			settingObj.isBuff = getCheckBoxState(getChild(containerElementPanel, "isBuff"..tostring(i+1)))
-			settingObj.castByMe = getCheckBoxState(getChild(containerElementPanel, "castByMe"..tostring(i+1)))
-			settingObj.isSpell = getCheckBoxState(getChild(containerElementPanel, "isSpell"..tostring(i+1)))
+			settingObj.isBuff = getCheckBoxState(getChild(containerElementPanel, "isBuff"..tostring(i)))
+			settingObj.castByMe = getCheckBoxState(getChild(containerElementPanel, "castByMe"..tostring(i)))
+			settingObj.isSpell = getCheckBoxState(getChild(containerElementPanel, "isSpell"..tostring(i)))
 			settingObj.nameLowerStr = nil
 			editLine:SetFocus(false)
 		end
@@ -388,7 +388,7 @@ function CreateColorSettingsForBuffsGroupScroller(aForm, anIndex)
 		DestroyColorPanel(colorForm)
 		resize(panelOfElement, nil, 30)		
 	else
-		colorForm = CreateColorPanelForBuff(panelOfElement, m_currentFormSettings.buffs[anIndex+1])
+		colorForm = CreateColorPanelForBuff(panelOfElement, m_currentFormSettings.buffs[anIndex])
 		resize(panelOfElement, nil, GetColorSettingsHeight())
 	end
 	groupBuffContainer:ForceReposition()
@@ -399,7 +399,7 @@ function UpdateColorSettingsForBuffsGroupScroller(aForm, anIndex)
 	local groupBuffContainer = getChild(group5, "groupBuffContainer")
 	local panelOfElement = groupBuffContainer:At(anIndex)
 	local colorForm = getChild(panelOfElement, "colorSettingsForm")
-	SaveBuffColorHighlight(colorForm, m_currentFormSettings.buffs[anIndex+1])
+	SaveBuffColorHighlight(colorForm, m_currentFormSettings.buffs[anIndex])
 	DestroyColorPanel(colorForm)
 	resize(panelOfElement, nil, 30)
 	groupBuffContainer:ForceReposition()

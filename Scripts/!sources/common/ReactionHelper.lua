@@ -169,7 +169,7 @@ function ShowValuesFromTable(aTable, aForm, aContainer)
 	end
 
 	local containerArr = {}
-	for i = 0, aContainer:GetElementCount() - 1 do
+	for i = 1, aContainer:GetElementCount() do
 		table.insert(containerArr, aContainer:At(i))
 	end
 	
@@ -203,7 +203,7 @@ function DeleteContainer(aTable, anWidget, aForm)
 
 	local deletingWdg = container:At(index)
 	container:RemoveAt(index)
-	table.remove(aTable, index+1)
+	table.remove(aTable, index)
 
 	container:ForceReposition()
 	deletingWdg:DestroyWidget()
@@ -224,10 +224,10 @@ function UpdateTableValuesFromContainer(aTable, aForm, aContainer)
 	end
 	local containerName = getName(aContainer)
 	
-	for i = 0, aContainer:GetElementCount() - 1 do
-		local editLine = m_getNameEditWdgFunc(aContainer:At(i), i+1)
+	for i = 1, aContainer:GetElementCount() do
+		local editLine = m_getNameEditWdgFunc(aContainer:At(i), i)
 		editLine:SetFocus(false)
-		local tableElement = aTable[i+1]
+		local tableElement = aTable[i]
 		tableElement.name = getText(editLine)
 		if containerName == "myTargetsContainer" then
 			tableElement.nameLowerStr = toLowerString(tableElement.name)
@@ -297,7 +297,7 @@ function AddElementFromFormWithEditLine(aTable, aForm, aEditLine, aContainer)
 end
 
 function FindWdgInContainer(aContainer, aWdgName)
-	for i = 0, aContainer:GetElementCount() - 1 do
+	for i = 1, aContainer:GetElementCount() do
 		local wdg = aContainer:At(i)
 		if getName(wdg) == aWdgName then
 			return wdg

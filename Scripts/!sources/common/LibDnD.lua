@@ -1,6 +1,6 @@
 --------------------------------------------------------------------------------
 -- LibDnD.lua // "Drag&Drop Library" by SLA, version 2011-05-28
---                                   updated version 2024-09-24 by oldodin
+--                                   updated version 2026-09-23 by oldodin
 -- Help, support and updates: 
 -- https://alloder.pro/topic/260-how-to-libdndlua-biblioteka-dragdrop/
 --------------------------------------------------------------------------------
@@ -52,6 +52,16 @@ function DnD.Init( wtMovable, wtReacting, fUseCfg, fLockedToParentArea, Padding,
 	if fUseCfg then
 		local Cfg = GetConfig( newDndInfo.CfgName )
 		if Cfg then
+			-- c 14.1 можно менять масштаб интерфейса игры - при его изменении меняется VirtualSize экрана
+			-- поэтому теперь нужно хранить позицию как долю от VirtualSize, чтобы окна не уезжали за экран при смене масштаба
+			if Cfg.posX then
+				-- также обеспечивается совместимость с установкой координат из вне по старому
+				Cfg = ConvertPosToPart(Cfg)
+				SetConfig( newDndInfo.CfgName, Cfg)
+			end
+			
+			Cfg = ConvertPartToPos(Cfg)
+
 			local LimitMin, LimitMax = DnD.PrepareLimits( ID, InitialPlace )
 			InitialPlace.posX = Cfg.posX or InitialPlace.posX
 			InitialPlace.posY = Cfg.posY or InitialPlace.posY
@@ -111,6 +121,25 @@ function DnD.IsDragging()
 	return DnD.Dragging and true or false
 end
 -- FREE BONUS --
+function ConvertPosToPart(aPos)
+	local posConverter = common.GetPosConverterParams()
+	
+	return { 
+		partX = aPos.posX / posConverter.fullVirtualSizeX, 
+		partY = aPos.posY / posConverter.fullVirtualSizeY,
+		partHighX = aPos.highPosX / posConverter.fullVirtualSizeX,
+		partHighY = aPos.highPosY / posConverter.fullVirtualSizeY
+	}
+end
+function ConvertPartToPos(aPart)
+	local posConverter = common.GetPosConverterParams()
+	return { 
+		posX = aPart.partX * posConverter.fullVirtualSizeX, 
+		posY = aPart.partY * posConverter.fullVirtualSizeY,
+		highPosX = aPart.partHighX * posConverter.fullVirtualSizeX,
+		highPosY = aPart.partHighY * posConverter.fullVirtualSizeY
+	}
+end
 function GetConfig( name )
 	local cfg = userMods.GetGlobalConfigSection( common.GetAddonName() )
 	if not name then return cfg end
@@ -305,7 +334,7 @@ function DnD.StopDragging( fSuccess )
 	if fSuccess then
 		dndInfo.wtReacting:DNDConfirmDropAttempt()
 		if dndInfo.fUseCfg then
-			SetConfig( dndInfo.CfgName, { posX = DnD.Place.posX, posY = DnD.Place.posY, highPosX = DnD.Place.highPosX, highPosY = DnD.Place.highPosY } )
+			SetConfig( dndInfo.CfgName, ConvertPosToPart({ posX = DnD.Place.posX, posY = DnD.Place.posY, highPosX = DnD.Place.highPosX, highPosY = DnD.Place.highPosY }) )
 		end
 		dndInfo.Initial = { X = DnD.Place.posX, Y = DnD.Place.posY, HX = DnD.Place.highPosX, HY = DnD.Place.highPosY }
 	else
@@ -325,6 +354,7 @@ function DnD.OnResolutionChanged()
 	end
 	DnD.OnDragCancelled()
 	DnD.Screen = common.GetPosConverterParams()
+	
 	for ID, W in pairs( DnD.Widgets ) do
 		if W.fLockedToParentArea then
 			local InitialPlace = W.wtMovable:GetPlacementPlain()

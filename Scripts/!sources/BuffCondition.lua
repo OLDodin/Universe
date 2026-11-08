@@ -90,7 +90,7 @@ function BuffCondition:Check(aBuffInfo)
 			searchRes = self.avlCustomTree:find(aBuffInfo)
 
 			if searchRes ~= nil and searchRes.castByMe then
-				if not (aBuffInfo.producer and g_myAvatarID == aBuffInfo.producer.casterId) then
+				if not (g_myAvatarID == aBuffInfo.casterId) then
 					searchRes = nil
 				end
 			end
@@ -152,7 +152,7 @@ function BuffCondition:Check(aBuffInfo)
 
 		if searchRes ~= nil then
 			if searchRes.castByMe then 
-				if aBuffInfo.producer and g_myAvatarID == aBuffInfo.producer.casterId then
+				if g_myAvatarID == aBuffInfo.casterId then
 					return true, searchRes
 				end
 				return false
