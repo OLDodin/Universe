@@ -74,7 +74,8 @@ function InitPlayerShortInfoForm(aPlayerID)
 		end
 		local guildInfo = unit.GetGuildInfo(aPlayerID)
 		guildStr = guildInfo and guildInfo.name or m_emptyWStr		
-		title = unit.GetPlayerTitle(aPlayerID)
+		local titleId = unit.GetPlayerRegalia(aPlayerID, ENUM_PLAYER_REGALIA_TITLE)
+		title = titleId and titleId:GetInfo() or m_emptyWStr
 	
 		local sex = unit.GetSex(aPlayerID)
 		if sex then
