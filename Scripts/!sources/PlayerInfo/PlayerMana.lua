@@ -60,9 +60,11 @@ end
 
 function PlayerMana:GetEventFunc()
 	return function(aParams)
-		local manaInfo = cachedGetManaInfo( aParams.id or aParams.unitId)
-		self.mana = manaInfo and manaInfo.valuePercents or self.mana
-		self:UpdateValueIfNeededInternal()
+		if isExist(aParams.id or aParams.unitId) then
+			local manaInfo = cachedGetManaInfo( aParams.id or aParams.unitId)
+			self.mana = manaInfo and manaInfo.valuePercents or self.mana
+			self:UpdateValueIfNeededInternal()
+		end
 	end
 end
 
